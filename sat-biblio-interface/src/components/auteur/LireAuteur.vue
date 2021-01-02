@@ -1,10 +1,18 @@
 <template>
+  <div>
 
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Enregistrement"
+  name: "LireAuteur",
+  data: function () {
+
+  },
+  methods: {
+
+  }
 }
 </script>
 
