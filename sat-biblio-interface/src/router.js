@@ -26,6 +26,7 @@ import ListeReferenceLivre from "@/components/reference_livre/ListeReferenceLivr
 import Contact from "@/components/Contact";
 import Emprunter from "@/components/emprunt/Emprunter";
 import ListeEmprunt from "@/components/emprunt/ListeEmprunt";
+import ListeAuteur from "@/components/auteur/ListeAuteur";
 
 Vue.use(VueRouter);
 
@@ -105,6 +106,10 @@ export default new VueRouter({
         {
             path: '/auteur/lire',
             component: LireAuteur
+        },
+        {
+            path: '/auteur/liste',
+            component: ListeAuteur
         },
         // endregion
         // region référence bibliographique livre

@@ -1,10 +1,11 @@
 <template>
   <div>
     <h2>Contacter</h2>
-    Message à envoyer à l'administrateur de SatBiblio
 
-    <b-form>
-      <b-form-textarea :value="message"></b-form-textarea>
+    <b-form @submit.prevent="sendMessage">
+      <b-form-group label="Message à envoyer à l'administrateur de SatBiblio">
+        <b-form-textarea v-model="message"/>
+      </b-form-group>
       <b-button type="submit">Envoyer</b-button>
     </b-form>
   </div>
@@ -28,8 +29,10 @@ export default {
           (response) => {
             if(response.data.result) {
               console.log("message correctement envoyé");
+              this.message = "Le message a été envoyé."
             } else {
               console.log("message non envoyé");
+              this.message = "Le message n'a pas pu être envoyé."
             }
           }
       )

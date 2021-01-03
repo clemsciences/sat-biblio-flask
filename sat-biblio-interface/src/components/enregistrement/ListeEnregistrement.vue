@@ -13,6 +13,9 @@
         {{ enregistrement.valide }}
       </b-list-group-item>
     </b-list-group>
+    <div v-show="enregistrements.length === 0">
+      <p>Il n'y a aucun enregistrement.</p>
+    </div>
   </div>
 </template>
 

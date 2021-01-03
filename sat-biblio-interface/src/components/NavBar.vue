@@ -17,7 +17,12 @@
                     </b-nav-item-dropdown>
                 </b-nav-item>
                 <b-nav-item class="active">
-                  <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>
+                  <b-nav-item-dropdown text="Consulter">
+                    <b-dropdown-item to="/auteur/liste">Consulter auteurs</b-dropdown-item>
+                    <b-dropdown-item to="/reference-livre/liste">Consulter références</b-dropdown-item>
+                    <b-dropdown-item to="/enregistrement/liste">Consulter catalogue</b-dropdown-item>
+<!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
+                  </b-nav-item-dropdown>
                 </b-nav-item>
                 <b-nav-item class="active">
                   <router-link to="/exporter" class="nav-link space-around">Exporter</router-link>

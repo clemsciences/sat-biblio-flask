@@ -4,6 +4,9 @@
     <b-list-group>
       <b-list-group-item :key="author.id" v-for="author in authors">{{ author.first_name}} {{ author.family_name}}</b-list-group-item>
     </b-list-group>
+    <div v-show="authors.length === 0">
+      <p>Il n'y a aucun auteur.</p>
+    </div>
   </div>
 </template>
 
@@ -19,7 +22,7 @@ export default {
   },
   methods: {
     retrieveAuthors: function() {
-      axios.get("/api/author/list").then(
+      axios.get("/api/auteur/liste").then(
           (response) => {
             if(response.data.success) {
               this.authors = response.data.authors;
