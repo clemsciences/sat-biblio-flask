@@ -18,8 +18,8 @@
       </b-col>
       <b-col cols="3">
         <h3>Connexion</h3>
-        <div v-if="connected">
-          <p>Vous êtes connecté en tant que {{ username }}.</p>
+        <div v-if="connectionInfo.connected">
+          <p>Vous êtes connecté en tant que {{ connectionInfo.email }} {{ connectionInfo.first_name }} {{ connectionInfo.family_name }}.</p>
           <p><router-link to="/utilisateur/deconnexion">Se déconnecter</router-link></p>
         </div>
         <div v-else>
@@ -36,14 +36,20 @@
 
 <script>
 
+import localStorageManager from "@/services/localstorageManager";
 export default {
 name: "Accueil",
   components: {},
   data: function () {
     return {
-      connected: false
+      connectionInfo: {}
     }
   },
+  mounted() {
+  this.connectionInfo = localStorageManager.getSessionInfo();
+    console.log("info de session");
+    console.log(localStorageManager.getSessionInfo());
+  }
 
 }
 </script>

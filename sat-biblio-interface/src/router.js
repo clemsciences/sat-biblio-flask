@@ -30,130 +30,165 @@ import ListeAuteur from "@/components/auteur/ListeAuteur";
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+let router = new VueRouter({
     mode: "history",
     routes: [
         {
             path: '/recherche',
-            component: Recherche
+            component: Recherche,
+            needAuth: false
         },
         {
             path: '',
-            component: Accueil
+            component: Accueil,
+            needAuth: false,
+            name: 'accueil'
         },
         {
-            path: '/export',
-            component: Export
+            path: '/exporter',
+            component: Export,
+            needAuth: true
         },
         // region utilisateurs
         {
             path: '/utilisateur/creer',
-            component: CreationUtilisateur
+            component: CreationUtilisateur,
+            needAuth: false
         },
         {
             path: '/utilisateur/enregistre',
-            component: UtilisateurEnregistre
+            component: UtilisateurEnregistre,
+            needAuth: false
         },
         {
             path: '/utilisateur/mot-de-passe-oublie',
-            component: MotDePasseOublie
+            component: MotDePasseOublie,
+            needAuth: false
         },
         {
             path: '/utilisateur/reinitialiser-mot-de-passe',
-            component: ReinitialisationMotDePasse
+            component: ReinitialisationMotDePasse,
+            needAuth: false
         },
         {
             path: '/utilisateur/mot-de-passe-email',
-            component: MotDePasseEmail
+            component: MotDePasseEmail,
+            needAuth: false
         },
         {
             path: '/utilisateur/mot-de-passe-reinitialise',
-            component: MotDePasseReinitialise
+            component: MotDePasseReinitialise,
+            needAuth: false
         },
         {
             path: '/utilisateur/invite',
-            component: Invite
+            component: Invite,
+            needAuth: false
         },
         {
             path: '/utilisateur/connexion',
-            component: Connexion
+            component: Connexion,
+            needAuth: false
         },
         {
             path: '/utilisateur/deconnexion',
-            component: Deconnexion
+            component: Deconnexion,
+            needAuth: false
         },
         // endregion
 
         // region rechercher
         {
             path: '/rechercher',
-            component: Recherche
+            component: Recherche,
+            needAuth: false
         },
         {
             path: '/rechercher/resultats',
-            component: ResultatsRecherche
+            component: ResultatsRecherche,
+            needAuth: false
         },
         // endregion
         // region auteur
         {
             path: '/auteur/creer',
-            component: CreationAuteur
-        },
-        {
-            path: '/auteur/creer',
-            component: CreationAuteur
+            component: CreationAuteur,
+            needAuth: true
         },
         {
             path: '/auteur/lire',
-            component: LireAuteur
+            component: LireAuteur,
+            needAuth: false
         },
         {
             path: '/auteur/liste',
-            component: ListeAuteur
+            component: ListeAuteur,
+            needAuth: false
         },
         // endregion
         // region référence bibliographique livre
         {
             path: '/reference-livre/creer',
-            component: CreationReferenceLivre
+            component: CreationReferenceLivre,
+            needAuth: true
         },
         {
             path: '/reference-livre/lire',
-            component: LireReferenceLivre
+            component: LireReferenceLivre,
+            needAuth: false
         },
         {
             path: '/reference-livre/liste',
-            component: ListeReferenceLivre
+            component: ListeReferenceLivre,
+            needAuth: false
         },
         // endregion
         // region enregistrement
         {
             path: '/enregistrement/creer',
-            component: Enregistrement
+            component: Enregistrement,
+            needAuth: true
         },
         {
             path: '/enregistrement/lire',
-            component: LireEnregistrement
+            component: LireEnregistrement,
+            needAuth: false
         },
         {
             path: '/enregistrement/liste',
-            component: ListeEnregistrement
+            component: ListeEnregistrement,
+            needAuth: false
         },
         // endregion
         {
             path: "/contact",
-            component: Contact
+            component: Contact,
+            needAuth: false
         },
         // region emprunt
         {
             path: "/emprunt/livre",
-            component: Emprunter
+            component: Emprunter,
+            needAuth: true
         },
         {
             path: '/emprunt/liste',
-            component: ListeEmprunt
+            component: ListeEmprunt,
+            needAuth: true
         }
         // endregion
-    ]
-
+    ],
+});
+router.beforeEach((to, from, next) => {
+        if(to.needAuth) {
+            next({
+                name: 'accueil',
+                query: {
+                    redirect: to.fullPath
+                }
+            })
+        } else {
+            next();
+        }
 })
+export default router;

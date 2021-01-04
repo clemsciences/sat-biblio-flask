@@ -6,7 +6,7 @@
         <b-form-input v-model="record"/>
       </b-form-group>
       <b-form-group label="Emprunteur">
-        <b-form-input v-model="borrowed"></b-form-input>
+        <b-form-input v-model="borrower"/>
       </b-form-group>
       <b-form-group label="Date de retour prévue">
         <b-form-datepicker v-model="dateComebackExpected"/>
@@ -28,10 +28,9 @@ export default {
     return {
       record: "",
       comment: "",
+      borrower: "",
       borrowed: true,
       dateComebackExpected: null,
-
-
     }
   },
   methods: {
@@ -41,9 +40,10 @@ export default {
         record: this.record,
         comment: this.comment,
         borrowed: this.borrowed,
+        borrower: this.borrower,
         dateComebackExpected: this.dateComebackExpected
       };
-    axios.post("/api/emprunt/emprunter", formData).then(
+    axios.post("/api/emprunt/creer", formData).then(
         (response) => {
           if(response.data.success) {
             console.log("borrow registered")

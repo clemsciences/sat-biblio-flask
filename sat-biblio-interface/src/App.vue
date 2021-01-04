@@ -9,6 +9,7 @@
 
 import NavBar from "@/components/NavBar";
 import axios from "axios";
+import localStorageManager from './services/localstorageManager';
 export default {
   name: 'App',
   components: {
@@ -16,8 +17,7 @@ export default {
   },
   data: function() {
     return {
-      connected: false,
-      username: "",
+      connectionInfo: {},
     }
   },
   methods: {
@@ -26,9 +26,11 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
-                  this.connected = response.data.connected;
+                  this.connectionInfo = response.data.connectionInfo;
                 } else {
-                  this.connected = false;
+                  this.connectionInfo = {
+                    connected: false
+                  };
                 }
               }
           );
@@ -36,6 +38,14 @@ export default {
   },
   mounted() {
     this.checkLogin();
+  },
+  watch: {
+    connectionInfo: {
+      deep: true,
+      handler(newValue) {
+        localStorageManager.updateSessionInfo(newValue)
+      }
+    }
   }
 }
 </script>

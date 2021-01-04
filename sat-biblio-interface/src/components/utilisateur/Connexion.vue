@@ -15,6 +15,7 @@
 
 <script>
 import axios from "axios";
+import localStorageManager from "@/services/localstorageManager";
 
 export default {
   name: "Connexion",
@@ -34,7 +35,9 @@ export default {
       };
       axios.post('/api/user/connect', args).then(
           (value) => {
-            if (value.data.success) {
+            if (value.data.success && value.data.connectionInfo) {
+              localStorageManager.updateSessionInfo(value.data.connectionInfo)
+
               this.$router.push("/")
               console.log("connected");
             } else {
