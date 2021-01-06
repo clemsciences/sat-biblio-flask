@@ -3,7 +3,7 @@
     <h2>Nouvelle référence bibliographique - livre</h2>
     <b-form @submit.prevent="saveReference">
       <b-form-group label="Auteurs">
-        <vue-bootstrap-typeahead
+        <vue-typeahead-bootstrap
           v-model="author_query"
           :data="suggestedAuthors"
           :serializer="s => s.text"
@@ -28,7 +28,7 @@
         <b-form-input v-model="annee"/>
       </b-form-group>
       <b-form-group label="Nombre de pages">
-        <b-form-input v-model="nb_pages"/>
+        <b-form-input v-model="nb_page"/>
       </b-form-group>
       <b-button type="submit">Enregistrer</b-button>
       <span class="mx-3">{{ saveMessage }}</span>
@@ -51,7 +51,7 @@ export default {
       lieu_edition: "",
       editeur: "",
       annee: "",
-      nb_pages: "",
+      nb_page: "",
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
       saveMessage: ""
     }
@@ -74,11 +74,12 @@ export default {
     },
     saveReference: function () {
       const formData = {
+        auteurs: this.selectedAuthors,
         titre: this.titre,
         lieu_edition: this.lieu_edition,
         editeur: this.editeur,
         annee: this.annee,
-        nb_pages: this.nb_pages
+        nb_page: this.nb_page
       };
       axios.post("/api/reference-livre/creer", formData)
           .then(
