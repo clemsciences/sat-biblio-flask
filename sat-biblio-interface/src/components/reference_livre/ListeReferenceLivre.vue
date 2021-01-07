@@ -31,7 +31,7 @@ export default {
       axios.get("/api/reference-livre/liste").then(
           (response) => {
             if(response.data.success) {
-              this.enregistrements = response.data.enregistrements;
+              this.references = response.data.references;
             }
           }
       )

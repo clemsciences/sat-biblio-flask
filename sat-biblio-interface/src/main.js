@@ -14,7 +14,7 @@ Vue.use(BootstrapVue)
 Vue.component('vue-typeahead-bootstrap', VueTypeaheadBootstrap)
 
 axios.defaults.baseURL = "http://localhost:5000";
-
+axios.defaults.withCredentials = true;
 new Vue({
   render: h => h(App),
   router
