@@ -116,7 +116,7 @@ let router = new VueRouter({
             needAuth: true
         },
         {
-            path: '/auteur/lire',
+            path: '/auteur/lire/:id',
             component: LireAuteur,
             needAuth: false
         },
