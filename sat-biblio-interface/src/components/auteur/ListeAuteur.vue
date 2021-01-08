@@ -2,7 +2,10 @@
   <div>
     <h2>Liste des auteurs</h2>
     <b-list-group>
-      <b-list-group-item :key="author.id" v-for="author in authors">{{ author.first_name}} {{ author.family_name}}</b-list-group-item>
+      <b-list-group-item :key="author.id" v-for="author in authors">
+      {{ author.first_name}} {{ author.family_name}}
+      <span><b-button :to="'/auteur/lire/'+author.id">Voir/Modifier</b-button></span>
+      </b-list-group-item>
     </b-list-group>
     <div v-show="authors.length === 0">
       <p>Il n'y a aucun auteur.</p>

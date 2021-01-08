@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form @submit.prevent="onSubmit">
+    <b-form @submit.prevent="saveAuthor">
       <b-form-group label="Prénom">
         <b-form-input type="text" v-model="first_name"></b-form-input>
       </b-form-group>
@@ -10,6 +10,13 @@
       <b-button type="submit">Valider</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
+
+    <b-button class="my-3" v-b-modal.suppression>Supprimer</b-button>
+
+    <b-modal id="suppression" title="Suppression de l'auteur"
+      cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">
+      <p>Êtes-vous sûr de supprimer cet auteur ?</p>
+    </b-modal>
 
   </div>
 </template>
@@ -31,8 +38,8 @@ export default {
       axios.get("/api/auteur/lire/"+this.$route.params.id).then(
         (response) => {
           if(response.data.success) {
-            this.first_name = response.data.first_name;
-            this.family_name = response.data.family_name;
+            this.first_name = response.data.author.first_name;
+            this.family_name = response.data.author.family_name;
           } else {
             console.log("erreur de récupération de l'auteur");
           }
@@ -45,6 +52,7 @@ export default {
         (response) => {
           if(response.data.success) {
             console.log("modifications enregistrées");
+            this.$router.push("/auteur/liste")
           } else {
             console.log("échec de la modification");
           }
@@ -56,6 +64,7 @@ export default {
         (response) => {
           if(response.data.success) {
             console.log("la suppression a fonctionné");
+            this.$router.replace("/auteur/liste");
           }
         }
       );
