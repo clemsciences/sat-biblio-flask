@@ -14,6 +14,9 @@ let localStorageManager = {
     },
     getSessionInfo() {
         return JSON.parse(localStorage.getItem(SAT_BIBLIO_INFO) || {connected: false})
+    },
+    removeSessionInfo() {
+        localStorage.clear();
     }
 }
 
