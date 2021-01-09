@@ -6,7 +6,10 @@
 <!--        <b-form-input v-model=""/>-->
 <!--      </b-form-group>-->
       <b-list-group>
-        <b-list-group-item :key="reference.id" v-for="reference in references">{{ reference.titre }}</b-list-group-item>
+        <b-list-group-item :key="reference.id" v-for="reference in references">
+          {{ reference.titre }}
+          <span><b-button :to="'/reference-livre/lire/'+reference.id">Voir/Modifier</b-button></span>
+        </b-list-group-item>
       </b-list-group>
 
     </b-form>
