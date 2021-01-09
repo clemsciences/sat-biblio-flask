@@ -8,8 +8,8 @@ flask-cors
 Flask-Login
 Flask-Mail
 Flask-Migrate
+Flask-Session
 Flask-SQLAlchemy
-Flask-WTF
 itsdangerous
 Jinja2
 kiwisolver
