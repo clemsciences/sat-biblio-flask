@@ -2,23 +2,29 @@
   <div>
     <h2>Recherche</h2>
     <b-form @submit.prevent="search">
-      <b-form-group label-for="first_name" label="Prénom">
-        <b-form-input id="first_name" name="first_name" type="text"/>
+      <b-form-group label="Prénom">
+        <b-form-input v-model="first_name" type="text"/>
       </b-form-group>
-      <b-form-group label="Nom de famille" label-for="family_name">
-        <b-form-input id="family_name" name="family_name" type="text"/>
+      <b-form-group label="Nom de famille">
+        <b-form-input v-model="family_name" type="text"/>
       </b-form-group>
-      <b-form-group label-for="year" label="Année">
-        <b-form-input id="year" name="year" type="text"/>
+      <b-form-group label="Année">
+        <b-form-input v-model="year" type="text"/>
       </b-form-group>
-      <b-form-group label-for="editor" label="Editeur">
-        <b-form-input id="editor" name="editor" type="text"/>
+      <b-form-group label="Editeur">
+        <b-form-input v-model="editor" type="text"/>
       </b-form-group>
-      <b-form-group label-for="keywords" label="Mots-clef">
-        <b-form-input id="keywords" name="keywords" :value="keywords"/>
+      <b-form-group label="Mots-clef">
+        <b-form-input v-model="keywords" type="text"/>
+      </b-form-group>
+      <b-form-group label="Cote">
+      <b-form-input v-model="cote" type="text"/>
       </b-form-group>
       <b-button type="submit">Rechercher</b-button>
+      <span class="mx-3">{{ message }}</span>
     </b-form>
+
+    <p v-for="resultat in resultats" :key="resultat.id">{{ resultat }}</p>
   </div>
 </template>
 
@@ -33,7 +39,10 @@ export default {
       family_name: "",
       year: "",
       editor: "",
-      keywords: ""
+      cote: "",
+      keywords: "",
+
+      message: ""
     }
   },
   methods: {
@@ -43,12 +52,17 @@ export default {
         family_name: this.family_name,
         year: this.year,
         editor: this.editor,
-        keywords: this.keywords
+        keywords: this.keywords,
+        cote: this.cote
       };
-      axios.post("/api/recherche/rechercher", formData).then(
+      axios.post("/api/rechercher", formData).then(
           (response) => {
             if(response.data.success) {
               console.log("rechercher");
+              this.resultats = response.data.resultats;
+              if(this.resultats.length === 0) {
+                this.message = "Aucun résultat n'a été trouvé."
+              }
             }
           }
       )

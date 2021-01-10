@@ -133,7 +133,7 @@ let router = new VueRouter({
             needAuth: true
         },
         {
-            path: '/reference-livre/lire',
+            path: '/reference-livre/lire/:id',
             component: LireReferenceLivre,
             needAuth: false
         },
@@ -150,7 +150,7 @@ let router = new VueRouter({
             needAuth: true
         },
         {
-            path: '/enregistrement/lire',
+            path: '/enregistrement/lire/:id',
             component: LireEnregistrement,
             needAuth: false
         },
