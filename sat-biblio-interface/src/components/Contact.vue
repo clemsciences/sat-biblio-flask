@@ -27,7 +27,7 @@ export default {
         message: this.message
       }).then(
           (response) => {
-            if(response.data.result) {
+            if(response.data.success) {
               console.log("message correctement envoyé");
               this.message = "Le message a été envoyé."
             } else {

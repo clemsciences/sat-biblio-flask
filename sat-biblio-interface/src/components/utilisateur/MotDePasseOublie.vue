@@ -17,7 +17,7 @@ export default {
     passwordForgotten: function () {
       axios.post('/api/user/forgotten_password').then(
           (response) => {
-            if(response.data.result) {
+            if(response.data.success) {
               console.log("check if email address is in the base");
             }
           }

@@ -11,6 +11,7 @@
         {{ enregistrement.provenance }}
         {{ enregistrement.mots_clef }}
         {{ enregistrement.valide }}
+        <span class="mx-3"><b-button :to="'/enregistrement/lire/'+enregistrement.id">Voir/Modifier</b-button></span>
       </b-list-group-item>
     </b-list-group>
     <div v-show="enregistrements.length === 0">

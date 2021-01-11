@@ -104,13 +104,6 @@ export default {
     reference_query: function (newValue) {
       this.getSuggestedReferences(newValue);
     },
-    // selectedReferences: function (newValue) {
-    //   if(newValue.length > 1) {
-    //     this.selectedReferenceMessage = "Auteurs sélectionnés"
-    //   } else {
-    //     this.selectedAuthorsMessage = "Auteur sélectionné"
-    //   }
-    // }
   }
 }
 </script>
