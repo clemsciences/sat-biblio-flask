@@ -9,22 +9,31 @@
         <b-form-input v-model="family_name" type="text"/>
       </b-form-group>
       <b-form-group label="Année">
-        <b-form-input v-model="year" type="text"/>
+        <b-form-input v-model="annee" type="text"/>
       </b-form-group>
       <b-form-group label="Editeur">
         <b-form-input v-model="editor" type="text"/>
       </b-form-group>
-      <b-form-group label="Mots-clef">
-        <b-form-input v-model="keywords" type="text"/>
+      <b-form-group label="Titre">
+        <b-form-input v-model="titre" type="text"/>
       </b-form-group>
       <b-form-group label="Cote">
       <b-form-input v-model="cote" type="text"/>
+      </b-form-group>
+      <b-form-group label="Provenance">
+      <b-form-input v-model="provenance" type="text"/>
+      </b-form-group>
+      <b-form-group label="Mots-clef">
+        <b-form-input v-model="keywords" type="text"/>
       </b-form-group>
       <b-button type="submit">Rechercher</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
 
-    <p v-for="resultat in resultats" :key="resultat.id">{{ resultat }}</p>
+    <p v-for="resAuthor in researchedAuthors" :key="resAuthor.id">{{ resAuthor }}</p>
+
+    <p v-for="resRef in researchedRef" :key="resRef.id">{{ resRef }}</p>
+    <p v-for="resRecord in researchedRecord" :key="resRecord.id">{{ resRecord}}</p>
   </div>
 </template>
 
@@ -37,35 +46,69 @@ export default {
     return {
       first_name: "",
       family_name: "",
-      year: "",
+      researchedAuthors: [],
+
+      titre: "",
+      annee: "",
       editor: "",
+      researchedRef: [],
+
       cote: "",
       keywords: "",
+      researchedRecord: [],
+      provenance: "",
 
-      message: ""
+      message: "",
     }
   },
   methods: {
     search: function () {
-      const formData = {
+
+      const formAuthor = {
         first_name: this.first_name,
         family_name: this.family_name,
-        year: this.year,
-        editor: this.editor,
-        keywords: this.keywords,
-        cote: this.cote
+
       };
-      axios.post("/api/rechercher", formData).then(
+      axios.post("/api/auteur/chercher", formAuthor).then(
           (response) => {
             if(response.data.success) {
-              console.log("rechercher");
-              this.resultats = response.data.resultats;
-              if(this.resultats.length === 0) {
-                this.message = "Aucun résultat n'a été trouvé."
-              }
+              this.researchedAuthors = response.data.results;
             }
           }
-      )
+      );
+      const formRef = {
+        annee: this.annee,
+        editeur: this.editor,
+        cote: this.cote,
+        titre: this.titre
+      };
+      axios.post("/api/reference-livre/chercher", formRef).then(
+          (response) => {
+            if(response.data.success) {
+              // console.log("rechercher");
+              this.researchedRef = response.data.results;
+              // if(this.researchedRef.length === 0) {
+              //   this.message = "Aucun résultat n'a été trouvé."
+              // }
+            }
+          }
+      );
+
+      const formRecord = {
+        cote: this.cote,
+        annee: this.annee,
+        provenance: this.provenance,
+        mots_clef: this.mots_clef,
+        valide: this.valide
+      };
+
+      axios.post("/api/enregistrement/chercher", formRecord).then(
+          (response) => {
+            if(response.data.success) {
+              this.researchedRecord = response.data.results;
+            }
+          }
+      );
     }
   }
 }

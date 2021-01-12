@@ -69,7 +69,7 @@ export default {
     },
     getSuggestedReferences: function (query) {
       if(query.length >= 2) {
-        axios.get("/api/reference-livre/chercher?titre=:query".replace(":query", query))
+        axios.get("/api/reference-livre/chercher-proches?titre=:query".replace(":query", query))
             .then((response) => {
               if (response.data.success) {
                 console.log("suggestedReferences", response.data)
