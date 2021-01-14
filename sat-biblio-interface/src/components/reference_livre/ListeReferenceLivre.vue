@@ -1,21 +1,21 @@
 <template>
   <div>
     <h2>Liste des références</h2>
-    <b-form @submit.prevent="">
-<!--      <b-form-group>-->
-<!--        <b-form-input v-model=""/>-->
-<!--      </b-form-group>-->
-      <b-list-group>
-        <b-list-group-item :key="reference.id" v-for="reference in references">
-          {{ reference.titre }}
-          <span class="mx-3"><b-button :to="'/reference-livre/lire/'+reference.id">Voir/Modifier</b-button></span>
-        </b-list-group-item>
-      </b-list-group>
-
-    </b-form>
-    <div v-show="references.length === 0">
-      <p>Il n'y a aucune référence.</p>
-    </div>
+    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <b-form-group label="Filtrer par le titre">
+      <b-input v-model="titreFiltre"/>
+    </b-form-group>
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="refTotalNumber"
+      :per-page="perPage"
+      aria-controls="my-table"
+    ></b-pagination>
+    <b-table striped bordered hover :items="retrieveRef" :fields="fields"
+             primary-key="id" :per-page="perPage" :current-page="currentPage"
+             :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
+      <template #table-caption>La liste des références bibliographiques dans la base.</template>
+    </b-table>
   </div>
 </template>
 
@@ -26,22 +26,100 @@ export default {
   name: "ListeReferenceLivre",
   data: function () {
     return {
-      references: []
+      references: [],
+      currentPage: 1,
+      perPage: 50,
+      sortBy: "titre",
+      refTotalNumber: 0,
+      fields: [
+        {
+          key: "authors",
+          label: "Auteurs",
+          sortable: false
+        },
+        {
+          key: "titre",
+          label: "Titre",
+          sortable: false
+        },
+        {
+          key: "lieu_edition",
+          label: "Lieu d'édition",
+          sortable: false
+        },
+        {
+          key: "editeur",
+          label: "Editeur",
+          sortable: false
+        },
+        {
+          key: "annee",
+          label: "Année",
+          sortable: false
+        },
+        {
+          key: "nb_page",
+          label: "N° pages",
+          sortable: false
+        },
+      ],
+      titreFiltre: ""
     }
   },
   methods: {
-    retrieveReferenceList: function () {
-      axios.get("/api/reference-livre/liste").then(
+    retrieveRef: function (ctx, callback) {
+      const params = "?page="+ctx.currentPage+
+          "&size="+ctx.perPage+
+          "&sortBy="+ctx.sortBy;
+      let filterParams = "";
+      if(this.titreFiltre.length > 0) {
+        filterParams = filterParams+"&titre="+encodeURI(this.titreFiltre);
+      }
+      axios.get("/api/reference-livre/liste"+params+filterParams).then(
           (response) => {
             if(response.data.success) {
               this.references = response.data.references;
+              callback(this.references);
+            }
+          }
+      ).catch(
+          (reason) => {
+            console.log(reason);
+            callback([]);
+          }
+      );
+      return null;
+    },
+    getRefTotalNumber: function() {
+      let filterParams = "";
+
+      if(this.titreFiltre.length > 0) {
+        filterParams = filterParams+"?titre="+encodeURI(this.titreFiltre);
+      }
+      axios.get("/api/reference-livre/nombre"+filterParams).then(
+          (response) => {
+            if(response.data.success) {
+              this.refTotalNumber = response.data.number;
             }
           }
       )
+    },
+    goToReference: function (item) {
+      this.$router.push('/reference-livre/lire/'+item.id);
     }
   },
   mounted() {
-    this.retrieveReferenceList();
+    this.getRefTotalNumber();
+  },
+  watch: {
+    titreFiltre: function () {
+      this.getRefTotalNumber();
+    },
+  },
+  computed: {
+    onFilter() {
+      return this.titreFiltre;
+    }
   }
 }
 </script>
