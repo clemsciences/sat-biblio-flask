@@ -1,22 +1,27 @@
 <template>
   <div>
     <h2>Catalogue</h2>
-    <b-list-group>
-      <b-list-group-item :key="enregistrement.id" v-for="enregistrement in enregistrements">
-        {{ enregistrement.reference.titre }}
-        {{ enregistrement.description }}
-        {{ enregistrement.cote }}
-        {{ enregistrement.annee }}
-        {{ enregistrement.nb_exemplaire_supp }}
-        {{ enregistrement.provenance }}
-        {{ enregistrement.mots_clef }}
-        {{ enregistrement.valide }}
-        <span class="mx-3"><b-button :to="'/enregistrement/lire/'+enregistrement.id">Voir/Modifier</b-button></span>
-      </b-list-group-item>
-    </b-list-group>
-    <div v-show="enregistrements.length === 0">
-      <p>Il n'y a aucun enregistrement.</p>
-    </div>
+    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <b-form-group label="Filtre de la cote">
+      <b-input v-model="coteFiltre"/>
+    </b-form-group>
+    <b-form-group label="Filtre des mots-clef">
+      <b-input v-model="motClefFiltre"/>
+    </b-form-group>
+    <b-form-group label="Filtre des titres">
+      <b-input v-model="titreFiltre"/>
+    </b-form-group>
+    <b-pagination
+        v-model="currentPage"
+        :total-rows="recordTotalNumber"
+        :per-page="perPage"
+        aria-controls="my-table"
+      />
+    <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
+             primary-key="id" :per-page="perPage" :current-page="currentPage"
+             :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
+      <template #table-caption>La liste des références bibliographiques dans la base.</template>
+    </b-table>
   </div>
 </template>
 
@@ -27,24 +32,134 @@ export default {
   name: "ListeEnregistrement",
   data: function () {
     return {
-      enregistrements: []
+      enregistrements: [],
+      currentPage: 1,
+      perPage: 50,
+      sortBy: "cote",
+      recordTotalNumber: 0,
+      fields: [
+        {
+          key: "cote",
+          label: "Cote",
+          sortable: false
+        },
+        {
+          key: "reference",
+          label: "Titre",
+          sortable: false
+        },
+        {
+          key: "description",
+          label: "Description",
+          sortable: false
+        },
+        {
+          key: "annee",
+          label: "Année d'obtention",
+          sortable: false
+        },
+        {
+          key: "nb_exemplaire_supp",
+          label: "N° d'exemplaires supplémentaires",
+          sortable: false
+        },
+        {
+          key: "provenance",
+          label: "Provenance",
+          sortable: false
+        },
+        {
+          key: "mots_clef",
+          label: "Mots-clef",
+          sortable: false
+        },
+      ],
+      coteFiltre: "",
+      motClefFiltre: "",
+      titreFiltre: ""
     }
   },
   methods: {
-    retrieveEnregistrementList: function () {
-      axios.get("/api/enregistrement/liste")
+    retrieveEnregistrementList: function (ctx, callback) {
+      const params = "?page="+ctx.currentPage+
+          "&size="+ctx.perPage+
+          "&sortBy="+ctx.sortBy;
+      let filterParams = "";
+      if(this.coteFiltre.length > 0) {
+        filterParams = filterParams+"&cote="+this.coteFiltre;
+      }
+      if(this.titreFiltre.length > 0) {
+        filterParams = filterParams+"&titre="+this.titreFiltre;
+      }
+      if(this.motClefFiltre.length > 0) {
+        filterParams = filterParams+"&mot_clef="+this.motClefFiltre;
+      }
+      axios.get("/api/enregistrement/liste"+params+filterParams)
           .then(
               (response) => {
                 if(response.data.success) {
                   this.enregistrements = response.data.enregistrements;
-                  console.log("youhou");
+                  callback(this.enregistrements);
                 }
               }
-          );
-    }
+          ).catch(
+          (reason) => {
+            console.log(reason);
+            callback([]);
+          }
+      );
+    },
+    getRecordTotalNumber: function() {
+      let filterParams = "";
+      if(this.coteFiltre.length > 0) {
+        filterParams = filterParams+"&cote="+encodeURI(this.coteFiltre);
+      }
+      if(this.titreFiltre.length > 0) {
+        if(filterParams.length > 0) {
+          filterParams = filterParams+"&";
+        }
+        filterParams = filterParams+"titre="+encodeURI(this.titreFiltre);
+      }
+      if(this.motClefFiltre.length > 0) {
+        if(filterParams.length > 0) {
+          filterParams = filterParams+"&";
+        }
+        filterParams = filterParams+"mot_clef="+encodeURI(this.motClefFiltre);
+      }
+      let url = "/api/reference-livre/nombre";
+      if(filterParams.length > 0) {
+        url = url + "?" + filterParams;
+      }
+      axios.get(url).then(
+          (response) => {
+            if(response.data.success) {
+              this.refTotalNumber = response.data.number;
+            }
+          }
+      );
+    },
+    goToEnregistrement: function(item) {
+      this.$router.push('/enregistrement/lire/'+item.id);
+    },
   },
   mounted() {
-    this.retrieveEnregistrementList();
+    this.getRecordTotalNumber();
+  },
+  watch: {
+    coteFiltre: function () {
+      this.getRecordTotalNumber();
+    },
+    motClefFiltre: function () {
+      this.getRecordTotalNumber();
+    },
+    titreFiltre: function () {
+      this.getRecordTotalNumber();
+    }
+  },
+  computed: {
+    onFilter() {
+      return this.coteFiltre+" "+this.titreFiltre+" "+this.motClefFiltre;
+    }
   }
 }
 </script>
