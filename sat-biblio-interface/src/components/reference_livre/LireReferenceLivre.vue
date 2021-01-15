@@ -13,11 +13,15 @@
 <!--        <b-form-input readonly v-if="selectedAuthor" v-model="selectedAuthor"/> &lt;!&ndash; pour chercher l'auteur &ndash;&gt;-->
       </b-form-group>
       <b-form-group :label="selectedAuthorsMessage">
-        <b-form-select :options="selectedAuthors" :select-size="5" size="sm"></b-form-select>
+        <b-form-select v-model="selectedAuthorId" :options="selectedAuthors" :select-size="5" size="sm"/>
       </b-form-group>
+      <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>
+      <b-button class="mx-3" v-if="selectedAuthorId > 0" @click="removeSelectedAuthor">Enlever auteur</b-button>
+
       <b-form-group label="Titre">
-        <b-form-input v-model="titre"></b-form-input>
+        <b-form-input class="mx-3" v-if="selectedAuthorId >= 0" v-model="titre"></b-form-input>
       </b-form-group>
+
       <b-form-group label="Lieu d'édition">
         <b-form-input v-model="lieu_edition"></b-form-input>
       </b-form-group>
@@ -50,7 +54,7 @@ name: "LireReferenceLivre",
     return {
       author_query: '',
       suggestedAuthors: [],
-      selectedAuthor: '',
+      selectedAuthorId: '',
       selectedAuthors: [],
       titre: "",
       lieu_edition: "",
@@ -67,8 +71,8 @@ name: "LireReferenceLivre",
           .then(
               (response) => {
                 if(response.data.success) {
-                  console.log("authors");
-                  console.log(response.data.reference);
+                  // console.log("authors");
+                  // console.log(response.data.reference);
                   this.selectedAuthors = response.data.reference.authors,
 
                   this.titre = response.data.reference.titre,
@@ -110,7 +114,7 @@ name: "LireReferenceLivre",
               (response) => {
                 if(response.data.success) {
                   console.log("référence livresque supprimée");
-                  this.$router.push("/auteur/liste")
+                  this.$router.push("/reference-livre/liste")
                 } else {
                   this.saveMessage = "La référence n'a pas pu être supprimée."
                 }
@@ -130,10 +134,23 @@ name: "LireReferenceLivre",
     },
     // TODO store
     addAuthor: function(event) {
-      this.selectedAuthor = event;
+      this.selectedAuthorId = event;
       this.selectedAuthors.push(event);
       this.author_query = "";
     },
+    goToAuthor: function() {
+      console.log(this.selectedAuthorId);
+      let routeData = this.$router.resolve("/auteur/lire/"+this.selectedAuthorId);
+      window.open(routeData.href, '_blank');
+    },
+    removeSelectedAuthor: function() {
+      this.selectedAuthors = this.selectedAuthors.filter(
+          (author) => {
+            return author.value !== this.selectedAuthorId;
+          }
+      );
+      this.selectedAuthorId = '';
+    }
   },
   mounted() {
     this.loadReference();
