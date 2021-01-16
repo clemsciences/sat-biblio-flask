@@ -11,6 +11,9 @@
         />
         <b-form-input v-model="selectedReference.text" readonly/>
       </b-form-group>
+      <b-button v-show="selectedReference.value > 0" @click="goToRef">
+        Voir référence bibliographique
+      </b-button>
       <!-- Recherche assisté de la référence -->
       <b-form-group label="Description">
         <b-form-textarea v-model="description"/>
@@ -81,7 +84,7 @@ export default {
     loadRecord: function() {
       axios.get('/api/enregistrement/lire/'+this.$route.params.id).then(
           (value) => {
-            if(value.data.success) {
+            if(value.data.success && value.data.enregistrement) {
               this.selectedReference = value.data.enregistrement.reference;
               this.description = value.data.enregistrement.description;
               this.cote = value.data.enregistrement.cote;
@@ -132,6 +135,10 @@ export default {
                 }
               }
           )
+    },
+    goToRef: function() {
+      let routeData = this.$router.resolve("/reference-livre/lire/"+this.selectedReference.value);
+      window.open(routeData.href, '_blank');
     }
   },
   mounted() {
