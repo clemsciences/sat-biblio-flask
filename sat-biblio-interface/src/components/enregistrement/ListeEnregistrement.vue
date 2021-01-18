@@ -2,21 +2,35 @@
   <div>
     <h2>Catalogue</h2>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
-    <b-form-group label="Filtre de la cote">
-      <b-input v-model="coteFiltre"/>
-    </b-form-group>
-    <b-form-group label="Filtre des mots-clef">
-      <b-input v-model="motClefFiltre"/>
-    </b-form-group>
-    <b-form-group label="Filtre des titres">
-      <b-input v-model="titreFiltre"/>
-    </b-form-group>
+    <b-row class="my-1">
+      <b-col lg="4">
+        <b-form-group label="Cote" label-cols-sm="3"
+          label-align-sm="right" label-size="sm" class="mb-0">
+          <b-input v-model="coteFiltre"
+                   placeholder="Filtrer en fonction de la cote"/>
+        </b-form-group>
+      </b-col>
+      <b-col lg="4">
+        <b-form-group label="Mots-clef" label-cols-sm="3"
+          label-align-sm="right" label-size="sm" class="mb-0">
+          <b-input v-model="motClefFiltre"
+                   placeholder="Filtrer en fonction d'un mot clef"/>
+        </b-form-group>
+      </b-col>
+      <b-col lg="4">
+        <b-form-group label="Titre" label-cols-sm="3"
+          label-align-sm="right" label-size="sm" class="mb-0">
+          <b-input v-model="titreFiltre"
+                   placeholder="Filtrer en fonction du titre"/>
+        </b-form-group>
+      </b-col>
+    </b-row>
     <b-pagination
         v-model="currentPage"
         :total-rows="recordTotalNumber"
         :per-page="perPage"
         aria-controls="my-table"
-      />
+        class="my-3"/>
     <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
@@ -98,6 +112,7 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
+                  this.currentPage = 1;
                   this.enregistrements = response.data.enregistrements;
                   callback(this.enregistrements);
                 }
@@ -133,7 +148,7 @@ export default {
       axios.get(url).then(
           (response) => {
             if(response.data.success) {
-              this.refTotalNumber = response.data.number;
+              this.recordTotalNumber = response.data.number;
             }
           }
       );
