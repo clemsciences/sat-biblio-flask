@@ -1,6 +1,8 @@
 <template>
   <div>
-    <p>{{ message }}</p>
+    <h2>Déconnexion</h2>
+    <p>La déconnexion s'est correctement déroulée.</p>
+    <b-button to="/">Retourner à l'accueil</b-button>
   </div>
 </template>
 

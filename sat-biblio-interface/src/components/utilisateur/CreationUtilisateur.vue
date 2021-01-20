@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>Création d'un compte utilisateur</h2>
     <b-form @submit.prevent="sendUserCreation">
       <b-form-group label="Prénom">
         <b-form-input v-model="first_name"/>
@@ -60,7 +61,11 @@ export default {
               if(response.data.success) {
                 this.$router.push('/');
               } else {
-                this.message = "Impossible de se connecter, veuillez vérifier vos informations de connexion."
+                if(response.data.message) {
+                  this.message = response.data.message;
+                } else {
+                  this.message = "Impossible de se connecter, veuillez vérifier vos informations de connexion."
+                }
               }
             }
         )

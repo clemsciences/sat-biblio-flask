@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>Connexion</h2>
     <b-form @submit.prevent="login">
       <b-form-group label="Adresse email">
         <b-form-input v-model="email"></b-form-input>

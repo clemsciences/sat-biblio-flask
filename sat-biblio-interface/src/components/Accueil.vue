@@ -20,12 +20,12 @@
         <h3>Connexion</h3>
         <div v-if="connectionInfo.connected">
           <p>Vous êtes connecté en tant que {{ connectionInfo.email }} {{ connectionInfo.first_name }} {{ connectionInfo.family_name }}.</p>
-          <p><router-link to="/utilisateur/deconnexion">Se déconnecter</router-link></p>
+          <p><b-button to="/utilisateur/deconnexion">Se déconnecter</b-button></p>
         </div>
         <div v-else>
-          <p><router-link to="/utilisateur/connexion">Se connecter</router-link></p>
-          <p><router-link to="/utilisateur/mot-de-passe-oublie">Mot de passe oublié</router-link></p>
-          <p><router-link to="/utilisateur/creer">Créer un nouveau compte utilisateur</router-link></p>
+          <p><b-button to="/utilisateur/connexion">Se connecter</b-button></p>
+          <p><b-button to="/utilisateur/mot-de-passe-oublie">Mot de passe oublié</b-button></p>
+          <p><b-button to="/utilisateur/creer">Créer un nouveau compte utilisateur</b-button></p>
         </div>
       </b-col>
     </b-row>
@@ -36,7 +36,7 @@
 
 <script>
 
-import localStorageManager from "@/services/localstorageManager";
+import localStorageManager from "../services/localstorageManager";
 export default {
 name: "Accueil",
   components: {},
@@ -46,7 +46,7 @@ name: "Accueil",
     }
   },
   mounted() {
-  this.connectionInfo = localStorageManager.getSessionInfo();
+    this.connectionInfo = localStorageManager.getSessionInfo();
     console.log("info de session");
     console.log(localStorageManager.getSessionInfo());
   }
