@@ -26,3 +26,4 @@ Werkzeug
 WTForms
 pdfkit
 wkhtmltopdf
+xlrd
