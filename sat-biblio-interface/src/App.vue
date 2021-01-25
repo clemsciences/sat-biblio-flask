@@ -1,15 +1,17 @@
 <template>
   <div id="app">
-    <NavBar/>
+    <NavBar v-bind:connected="connected"/>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 
-import NavBar from "@/components/NavBar";
+import NavBar from "./components/NavBar";
 import axios from "axios";
 import localStorageManager from './services/localstorageManager';
+import router from "./router";
+// import router from "./router";
 export default {
   name: 'App',
   components: {
@@ -18,6 +20,7 @@ export default {
   data: function() {
     return {
       connectionInfo: {},
+      connected: false,
     }
   },
   methods: {
@@ -27,17 +30,26 @@ export default {
               (response) => {
                 if(response.data.success) {
                   this.connectionInfo = response.data.connectionInfo;
+                  this.connected = this.connectionInfo.connected;
                 } else {
                   this.connectionInfo = {
                     connected: false
                   };
+                  this.connected = false;
                 }
               }
           );
     }
   },
   mounted() {
-    this.checkLogin();
+    router.beforeEach((to, from, next) => {
+      this.checkLogin();
+      next();
+    });
+    // axios.interceptors.response.use(function(response) {
+    //   response.connected = this.connected;
+    //   return response;
+    // });
   },
   watch: {
     connectionInfo: {

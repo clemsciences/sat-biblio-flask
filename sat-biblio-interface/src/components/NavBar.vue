@@ -7,7 +7,7 @@
       <b-collapse is-nav style="height: 1px;" id="navbarSupportedContent">
             <b-navbar-nav>
                 <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>
-                <b-nav-item>
+                <b-nav-item v-if="connected">
                     <b-nav-item-dropdown text="Créer" class="titre-nav-item">
                       <b-dropdown-item to="/auteur/creer">Créer auteur</b-dropdown-item>
                       <b-dropdown-item to="/reference-livre/creer">Créer référence</b-dropdown-item>
@@ -24,7 +24,7 @@
                 </b-nav-item>
                 <b-nav-item class="active nav-link space-around titre-nav-item" to="/exporter">Exporter</b-nav-item>
                 <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>
-                <b-nav-item>
+                <b-nav-item v-if="connected">
                   <b-nav-item-dropdown text="Emprunter" class="titre-nav-item">
                       <b-dropdown-item to="/emprunt/livre">Nouvel emprunt</b-dropdown-item>
                       <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
@@ -39,8 +39,22 @@
 </template>
 
 <script>
+
 export default {
-  name: "NavBar"
+  name: "NavBar",
+  props: {
+    connected: Boolean
+  },
+  data: function () {
+    return {
+    }
+  },
+  watch: {
+    connected: function(newValue) {
+      console.log("nouvelle valeur "+newValue);
+    }
+  }
+
 }
 </script>
 
