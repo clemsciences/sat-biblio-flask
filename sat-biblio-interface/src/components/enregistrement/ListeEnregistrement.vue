@@ -112,7 +112,6 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
-                  this.currentPage = 1;
                   this.enregistrements = response.data.enregistrements;
                   callback(this.enregistrements);
                 }
@@ -127,7 +126,7 @@ export default {
     getRecordTotalNumber: function() {
       let filterParams = "";
       if(this.coteFiltre.length > 0) {
-        filterParams = filterParams+"&cote="+encodeURI(this.coteFiltre);
+        filterParams = filterParams+"cote="+encodeURI(this.coteFiltre);
       }
       if(this.titreFiltre.length > 0) {
         if(filterParams.length > 0) {
@@ -141,7 +140,7 @@ export default {
         }
         filterParams = filterParams+"mot_clef="+encodeURI(this.motClefFiltre);
       }
-      let url = "/api/reference-livre/nombre";
+      let url = "/api/enregistrement/nombre";
       if(filterParams.length > 0) {
         url = url + "?" + filterParams;
       }
@@ -162,12 +161,15 @@ export default {
   },
   watch: {
     coteFiltre: function () {
+      this.currentPage = 1;
       this.getRecordTotalNumber();
     },
     motClefFiltre: function () {
+      this.currentPage = 1;
       this.getRecordTotalNumber();
     },
     titreFiltre: function () {
+      this.currentPage = 1;
       this.getRecordTotalNumber();
     }
   },
