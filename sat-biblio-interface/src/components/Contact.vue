@@ -4,7 +4,7 @@
 
     <b-form @submit.prevent="sendMessage">
       <b-form-group label="Message à envoyer à l'administrateur de SatBiblio">
-        <b-form-textarea v-model="message"/>
+        <b-form-textarea v-model="message" rows="10"/>
       </b-form-group>
       <b-button type="submit">Envoyer</b-button>
     </b-form>
