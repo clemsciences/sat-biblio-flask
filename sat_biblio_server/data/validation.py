@@ -41,7 +41,8 @@ def check_enregistrement(enregistrement):
            "mots_clef" in enregistrement and \
            enregistrement["id_reference"] > 0 and \
            enregistrement["provenance"] and \
-           enregistrement["nb_exemplaire_supp"].isdigit()
+           ((type(enregistrement["nb_exemplaire_supp"]) == str and enregistrement["nb_exemplaire_supp"].isdigit()) or
+            (type(enregistrement["nb_exemplaire_supp"]) == int))
 
 
 def check_reference_bibliographique_livre(reference):
