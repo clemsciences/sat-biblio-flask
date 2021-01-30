@@ -1,5 +1,4 @@
 <template>
-
   <div class="container">
     <b-navbar class="navbar-default fixed-top navbar-dark sat-color-nav">
       <b-navbar-brand><h1>SAT - Biblio</h1></b-navbar-brand>
@@ -40,20 +39,16 @@
 
 <script>
 
+// import {mapState} from "vuex";
+
 export default {
   name: "NavBar",
   props: {
     connected: Boolean
   },
-  data: function () {
-    return {
-    }
-  },
-  watch: {
-    connected: function(newValue) {
-      console.log("nouvelle valeur "+newValue);
-    }
-  }
+  // computed: {
+  //   ...mapState(["connected", "connectionInfo"])
+  // }
 
 }
 </script>

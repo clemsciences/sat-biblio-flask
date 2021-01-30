@@ -10,18 +10,12 @@
 import NavBar from "./components/NavBar";
 import axios from "axios";
 import localStorageManager from './services/localstorageManager';
-import router from "./router";
 // import router from "./router";
+import {mapState} from 'vuex';
 export default {
   name: 'App',
   components: {
     NavBar
-  },
-  data: function() {
-    return {
-      connectionInfo: {},
-      connected: false,
-    }
   },
   methods: {
     checkLogin: function() {
@@ -29,27 +23,34 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
-                  this.connectionInfo = response.data.connectionInfo;
-                  this.connected = this.connectionInfo.connected;
+                  let connectionInfo = response.data.connectionInfo;
+                  if(response.data.connected) {
+                    this.$store.commit("connect", {...connectionInfo});
+                  } else {
+                    this.$store.commit("disconnect");
+                  }
                 } else {
-                  this.connectionInfo = {
-                    connected: false
-                  };
-                  this.connected = false;
+                  this.$store.commit("disconnect");
                 }
               }
           );
     }
   },
   mounted() {
-    router.beforeEach((to, from, next) => {
-      this.checkLogin();
-      next();
-    });
+    this.checkLogin();
+
+    // router.beforeEach((to, from, next) => {
+    //   this.checkLogin();
+    //   next();
+    // });
+
     // axios.interceptors.response.use(function(response) {
     //   response.connected = this.connected;
     //   return response;
     // });
+  },
+  computed: {
+    ...mapState(["connected"])
   },
   watch: {
     connectionInfo: {

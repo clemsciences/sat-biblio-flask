@@ -19,12 +19,9 @@ export default {
   mounted() {
     localStorageManager.removeSessionInfo();
     axios.get("/api/user/disconnect").then(
-      (response) => {
-        if(response.data.success) {
-          this.message = "Vous êtes correctement déconnecté."
-        } else {
-          this.message = "La déconnexion a échoué."
-        }
+      () => {
+        this.$store.commit("disconnect");
+        this.message = "Vous êtes correctement déconnecté."
       }
     );
   }

@@ -37,18 +37,23 @@ export default {
       axios.post('/api/user/connect', args).then(
           (value) => {
             if (value.data.success && value.data.connectionInfo) {
-              localStorageManager.updateSessionInfo(value.data.connectionInfo)
+              localStorageManager.updateSessionInfo(value.data.connectionInfo);
+              let connectionInfo = value.data.connectionInfo;
+              if(value.data.connected) {
+                this.$store.commit("connect", {...connectionInfo});
+              }
 
               this.$router.push("/")
               console.log("connected");
             } else {
-              this.message = value.data.message;
+              this.message = value.datca.message;
               console.log("not connected")
             }
           }
       ).catch(
           (reason) => {
             console.log(reason);
+            this.message = "Problème de réseau";
           }
       );
     }

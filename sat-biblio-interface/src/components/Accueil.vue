@@ -18,7 +18,7 @@
       </b-col>
       <b-col cols="3">
         <h3>Connexion</h3>
-        <div v-if="connectionInfo.connected">
+        <div v-if="connected">
           <p>Vous êtes connecté en tant que {{ connectionInfo.email }} {{ connectionInfo.first_name }} {{ connectionInfo.family_name }}.</p>
           <p><b-button to="/utilisateur/deconnexion">Se déconnecter</b-button></p>
         </div>
@@ -36,19 +36,12 @@
 
 <script>
 
-import localStorageManager from "../services/localstorageManager";
+import {mapState} from "vuex";
 export default {
 name: "Accueil",
   components: {},
-  data: function () {
-    return {
-      connectionInfo: {}
-    }
-  },
-  mounted() {
-    this.connectionInfo = localStorageManager.getSessionInfo();
-    console.log("info de session");
-    console.log(localStorageManager.getSessionInfo());
+  computed: {
+    ...mapState(["connected", "connectionInfo"])
   }
 
 }
