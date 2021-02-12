@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {createAuthor} from "../../services/api";
 
 export default {
   name: "Auteur",
@@ -33,7 +33,8 @@ export default {
           first_name: this.first_name.trim(),
           family_name: this.family_name.trim()
         };
-        axios.post('/api/auteur/creer', form_data).then(
+
+        createAuthor(form_data).then(
             (response) => {
               if (response.data.success) {
                 this.message = "L'auteur " + this.first_name + " " + this.family_name + " a été correctement créé.";

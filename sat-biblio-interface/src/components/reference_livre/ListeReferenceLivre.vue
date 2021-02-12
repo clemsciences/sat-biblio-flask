@@ -26,6 +26,7 @@
 
 <script>
 import axios from "axios";
+import {retrieveBookReferenceNumber, retrieveBookReferences} from "../../services/api";
 
 export default {
   name: "ListeReferenceLivre",
@@ -80,7 +81,7 @@ export default {
       if(this.titreFiltre.length > 0) {
         filterParams = filterParams+"&titre="+encodeURI(this.titreFiltre);
       }
-      axios.get("/api/reference-livre/liste"+params+filterParams).then(
+      retrieveBookReferences(params+filterParams).then(
           (response) => {
             if(response.data.success) {
               this.currentPage = 1;
@@ -102,7 +103,7 @@ export default {
       if(this.titreFiltre.length > 0) {
         filterParams = filterParams+"?titre="+encodeURI(this.titreFiltre);
       }
-      axios.get("/api/reference-livre/nombre"+filterParams).then(
+      retrieveBookReferenceNumber(filterParams).then(
           (response) => {
             if(response.data.success) {
               this.refTotalNumber = response.data.number;
@@ -111,7 +112,7 @@ export default {
       )
     },
     goToReference: function (item) {
-      this.$router.push('/reference-livre/lire/'+item.id);
+      this.$router.push(`/reference-livre/lire/${item.id}`);
     }
   },
   mounted() {

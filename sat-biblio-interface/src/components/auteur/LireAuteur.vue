@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form @submit.prevent="saveAuthor">
+    <b-form @submit.prevent="updateAuthor">
       <b-form-group label="Prénom">
         <b-form-input type="text" v-model="first_name"></b-form-input>
       </b-form-group>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {deleteAuthor, retrieveAuthor, updateAuthor} from "../../services/api";
 export default {
   name: "LireAuteur",
   data: function () {
@@ -34,8 +34,8 @@ export default {
     }
   },
   methods: {
-    loadAuthor: function() {
-      axios.get("/api/auteur/lire/"+this.$route.params.id).then(
+    getAuthor: function() {
+      retrieveAuthor(this.$route.params.id).then(
         (response) => {
           if(response.data.success) {
             this.first_name = response.data.author.first_name;
@@ -46,9 +46,9 @@ export default {
         }
       );
     },
-    saveAuthor: function() {
+    updateAuthor: function() {
       const formData = {first_name: this.first_name, family_name: this.family_name};
-      axios.post("/api/auteur/modifier/"+this.$route.params.id, formData).then(
+      updateAuthor(this.$route.params.id, formData).then(
         (response) => {
           if(response.data.success) {
             console.log("modifications enregistrées");
@@ -60,7 +60,7 @@ export default {
       );
     },
     deleteAuthor: function() {
-      axios.get("/api/auteur/supprimer/"+this.$route.params.id).then(
+      deleteAuthor(this.$route.params.id).then(
         (response) => {
           if(response.data.success) {
             console.log("la suppression a fonctionné");
@@ -73,7 +73,7 @@ export default {
 
   },
   mounted() {
-    this.loadAuthor();
+    this.getAuthor();
   },
 }
 </script>

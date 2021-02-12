@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Emprunter</h2>
-    <b-form @submit.prevent="saveBorrow">
+    <b-form @submit.prevent="saveBorrowing">
       <b-form-group label="Enregistrement">
         <b-form-input v-model="record"/>
       </b-form-group>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import axios from "axios";
+
+import {createBorrowing} from "../../services/api";
 
 export default {
   name: "Emprunter",
@@ -35,7 +36,7 @@ export default {
   },
   methods: {
 
-    saveBorrow: function () {
+    saveBorrowing: function () {
       const formData = {
         record: this.record,
         comment: this.comment,
@@ -43,10 +44,10 @@ export default {
         borrower: this.borrower,
         dateComebackExpected: this.dateComebackExpected
       };
-    axios.post("/api/emprunt/creer", formData).then(
+      createBorrowing(formData).then(
         (response) => {
           if(response.data.success) {
-            console.log("borrow registered")
+            console.log("borrowing registered")
           }
         }
     )

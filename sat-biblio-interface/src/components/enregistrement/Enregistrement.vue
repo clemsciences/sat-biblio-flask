@@ -38,6 +38,7 @@
 
 <script>
 import axios from "axios";
+import {createBookRecord} from "../../services/api";
 
 export default {
   name: "Enregistrement",
@@ -64,6 +65,7 @@ export default {
     },
     getSuggestedReferences: function (query) {
       if(query.length >= 2) {
+
         axios.get("/api/reference-livre/chercher-proches?titre=:query".replace(":query", query))
             .then((response) => {
               if (response.data.success) {
@@ -83,7 +85,7 @@ export default {
           provenance: this.provenance,
           mots_clef: this.mots_clef
       };
-      axios.post("/api/enregistrement/creer", formData)
+      createBookRecord(formData)
           .then((response) => {
             if(response.data.success) {
               console.log("record saved");

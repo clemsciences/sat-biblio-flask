@@ -45,6 +45,7 @@
 
 <script>
 import axios from "axios";
+import {deleteBookRecord, retrieveBookRecord, updateBookRecord} from "../../services/api";
 
 export default {
   name: "LireEnregistrement",
@@ -81,8 +82,8 @@ export default {
             }).catch();
       }
     },
-    loadRecord: function() {
-      axios.get('/api/enregistrement/lire/'+this.$route.params.id).then(
+    getBookRecord: function() {
+      retrieveBookRecord(this.$route.params.id).then(
           (value) => {
             if(value.data.success && value.data.enregistrement) {
               this.selectedReference = value.data.enregistrement.reference;
@@ -107,7 +108,7 @@ export default {
           provenance: this.provenance,
           mots_clef: this.mots_clef
       };
-      axios.post("/api/enregistrement/modifier/"+this.$route.params.id, formData)
+      updateBookRecord(this.$route.params.id, formData)
           .then((response) => {
             if(response.data.success) {
               console.log("record saved");
@@ -124,7 +125,7 @@ export default {
           );
     },
     deleteRecord: function() {
-      axios.get("/api/enregistrement/supprimer/"+this.$route.params.id)
+      deleteBookRecord(this.$route.params.id)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -137,12 +138,12 @@ export default {
           )
     },
     goToRef: function() {
-      let routeData = this.$router.resolve("/reference-livre/lire/"+this.selectedReference.value);
+      let routeData = this.$router.resolve(`/reference-livre/lire/${this.selectedReference.value}`);
       window.open(routeData.href, '_blank');
     }
   },
   mounted() {
-    this.loadRecord();
+    this.getBookRecord();
   },
   watch: {
     reference_query: function (newValue) {

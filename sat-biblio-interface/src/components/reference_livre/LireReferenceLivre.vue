@@ -1,7 +1,7 @@
 <template>
   <div>
   <h2>Référence bibliographique</h2>
-    <b-form @submit.prevent="saveReference">
+    <b-form @submit.prevent="updateReference">
       <b-form-group label="Auteurs">
         <vue-typeahead-bootstrap
           v-model="author_query"
@@ -47,6 +47,7 @@
 
 <script>
 import axios from "axios";
+import {deleteBookReference, retrieveBookReference, updateBookReference} from "../../services/api";
 
 export default {
 name: "LireReferenceLivre",
@@ -66,8 +67,8 @@ name: "LireReferenceLivre",
     }
   },
   methods: {
-    loadReference: function() {
-        axios.get("/api/reference-livre/lire/"+this.$route.params.id)
+    getReference: function() {
+        retrieveBookReference(this.$route.params.id)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -87,7 +88,7 @@ name: "LireReferenceLivre",
               }
           )
     },
-    saveReference: function() {
+    updateReference: function() {
       const formData = {
         auteurs: this.selectedAuthors,
         titre: this.titre,
@@ -96,7 +97,7 @@ name: "LireReferenceLivre",
         annee: this.annee,
         nb_page: this.nb_page
       };
-      axios.post("/api/reference-livre/modifier/"+this.$route.params.id, formData)
+      updateBookReference(this.$route.params.id, formData)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -109,7 +110,7 @@ name: "LireReferenceLivre",
           )
     },
     deleteReference: function() {
-        axios.get("/api/reference-livre/supprimer/"+this.$route.params.id)
+        deleteBookReference(this.$route.params.id)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -140,7 +141,7 @@ name: "LireReferenceLivre",
     },
     goToAuthor: function() {
       console.log(this.selectedAuthorId);
-      let routeData = this.$router.resolve("/auteur/lire/"+this.selectedAuthorId);
+      let routeData = this.$router.resolve(`/auteur/lire/${this.selectedAuthorId}`);
       window.open(routeData.href, '_blank');
     },
     removeSelectedAuthor: function() {
@@ -153,7 +154,7 @@ name: "LireReferenceLivre",
     }
   },
   mounted() {
-    this.loadReference();
+    this.getReference();
   },
   watch: {
     author_query: function (newValue) {

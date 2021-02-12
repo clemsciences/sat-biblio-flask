@@ -32,7 +32,8 @@
 </template>
 
 <script>
-import axios from "axios";
+
+import {retrieveAuthorNumber, retrieveAuthors} from "../../services/api";
 
 export default {
   name: "ListeAuteur",
@@ -61,7 +62,7 @@ export default {
   },
   methods: {
     retrieveAuthors: function(ctx, callback) {
-      const params = "?page="+ctx.currentPage+
+      let params = "?page="+ctx.currentPage+
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy;
 
@@ -73,12 +74,10 @@ export default {
         filterParams = filterParams+"&family_name="+this.familyNameFiltre;
       }
 
-      // console.log("bizarre ?");
-      let url = "/api/auteur/liste"+params;
       if(filterParams.length > 0) {
-        url = url + filterParams;
+        params = params + filterParams;
       }
-      axios.get(url).then(
+      retrieveAuthors(params).then(
           (response) => {
             if(response.data.success) {
               this.currentPage = 1;
@@ -106,11 +105,10 @@ export default {
         }
         filterParams = filterParams + "family_name="+encodeURI(this.familyNameFiltre);
       }
-      let url = "/api/auteur/nombre";
       if(filterParams.length > 0) {
-        url = url + "?" + filterParams;
+        filterParams = "?" + filterParams;
       }
-      axios.get(url).then(
+      retrieveAuthorNumber(filterParams).then(
           (response) => {
             if(response.data.success) {
               this.authorTotalNumber = response.data.number;
@@ -119,7 +117,7 @@ export default {
       )
     },
     goToAuthor: function(item) {
-      this.$router.push('/auteur/lire/'+item.id);
+      this.$router.push(`/auteur/lire/${item.id}`);
     }
   },
   mounted() {
@@ -135,7 +133,7 @@ export default {
   },
   computed: {
     onFilter: function() {
-      return this.firstNameFiltre+" "+this.familyNameFiltre;
+      return `${this.firstNameFiltre} ${this.familyNameFiltre}`;
     }
   }
 }

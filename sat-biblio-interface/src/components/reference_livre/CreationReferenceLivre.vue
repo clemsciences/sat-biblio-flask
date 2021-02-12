@@ -38,6 +38,7 @@
 
 <script>
 import axios from "axios";
+import {createBookReference} from "../../services/api";
 
 export default {
   name: "ReferenceLivre",
@@ -81,7 +82,8 @@ export default {
         annee: this.annee,
         nb_page: this.nb_page
       };
-      axios.post("/api/reference-livre/creer", formData)
+
+      createBookReference(formData)
           .then(
               (response) => {
                 if(response.data.success) {

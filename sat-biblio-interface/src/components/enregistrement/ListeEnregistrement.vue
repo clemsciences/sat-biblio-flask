@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {retrieveBookRecordNumber, retrieveBookRecords} from "../../services/api";
 
 export default {
   name: "ListeEnregistrement",
@@ -108,7 +108,7 @@ export default {
       if(this.motClefFiltre.length > 0) {
         filterParams = filterParams+"&mot_clef="+this.motClefFiltre;
       }
-      axios.get("/api/enregistrement/liste"+params+filterParams)
+      retrieveBookRecords(params+filterParams)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -140,11 +140,11 @@ export default {
         }
         filterParams = filterParams+"mot_clef="+encodeURI(this.motClefFiltre);
       }
-      let url = "/api/enregistrement/nombre";
+
       if(filterParams.length > 0) {
-        url = url + "?" + filterParams;
+        filterParams = "?" + filterParams;
       }
-      axios.get(url).then(
+      retrieveBookRecordNumber(filterParams).then(
           (response) => {
             if(response.data.success) {
               this.recordTotalNumber = response.data.number;
@@ -175,7 +175,7 @@ export default {
   },
   computed: {
     onFilter() {
-      return this.coteFiltre+" "+this.titreFiltre+" "+this.motClefFiltre;
+      return `${this.coteFiltre} ${this.titreFiltre} ${this.motClefFiltre}`;
     }
   }
 }
