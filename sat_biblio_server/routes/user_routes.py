@@ -8,8 +8,9 @@ from flask import url_for, session, jsonify, request
 from flask_login import login_user, logout_user
 from werkzeug.security import generate_password_hash
 
+
+from sat_biblio_server import sat_biblio
 from sat_biblio_server.managers import mail_manager
-from sat_biblio_server.routes import sat_biblio
 import sat_biblio_server.database as dbm
 import sat_biblio_server.sessions.session_manager as sm
 import sat_biblio_server.data.validation as dv
@@ -31,25 +32,37 @@ def connect_user_login(user):
 @sat_biblio.route("/api/user/connect", methods=["POST"])
 def connect_user():
     if "email" in session:
-        return jsonify({"success": True})
+        print("déjà connecté")
+        return jsonify({"success": True,
+                        "connectionInfo": {
+                            "email": session["email"],
+                            "first_name": session["first_name"],
+                            "family_name": session["family_name"]
+                        }
+                        })
     else:
         data = request.get_json()
         if dv.check_user_connection(data):
             user = dbm.UserDB.query.filter_by(email=data["email"]).first()
             if user is None:
+                print("identification a échoué")
                 return json_result(False, message="L'adresse email ou le mot de passe est incorrect.")
 
             if not user.verify_password(data["password"]):
+                print("mauvais mot de passe")
                 return json_result(False, message="L'adresse email ou le mot de passe est incorrect.")
             if not user.confirmed:
+                print("utilisateur non confirmé")
                 return json_result(False, message="L'utilisateur n'est pas confirmé")
             connect_user_login(user)
+            print("bien connecté")
             return json_result(True, message="Vous êtes bien connecté.",
                                connectionInfo={"connected": True,
-                                               "email": session["email"],
-                                               "first_name": session["first_name"],
-                                               "family_name": session["family_name"]}
-                               )
+                                               "connectionInfo": {
+                                                   "email": session["email"],
+                                                   "first_name": session["first_name"],
+                                                   "family_name": session["family_name"]
+                                               }})
     return json_result(False)
 
 
@@ -136,9 +149,12 @@ def check_login():
     # print(session.keys())
     if "email" in session:
         return json_result(True, connectionInfo={"connected": True,
-                                                 "email": session["email"],
-                                                 "first_name": session["first_name"],
-                                                 "family_name": session["family_name"]})
+                                                 "connectionInfo": {
+                                                     "email": session["email"],
+                                                     "first_name": session["first_name"],
+                                                     "family_name": session["family_name"]
+                                                 }
+                                                 })
     else:
         return json_result(False)
 
