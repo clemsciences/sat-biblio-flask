@@ -13,7 +13,7 @@ Vue.use(BootstrapVue)
 import store from "./store";
 
 Vue.component('vue-typeahead-bootstrap', VueTypeaheadBootstrap)
-axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL = process.env.VUE_APP_SITE_API_URL;
 axios.defaults.withCredentials = true;
 
 new Vue({
