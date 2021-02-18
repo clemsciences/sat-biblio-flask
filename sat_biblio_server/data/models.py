@@ -14,11 +14,11 @@ class Author:
 
     @staticmethod
     def from_db_to_data(author_db: AuthorDB):
-        return {
-            "first_name": author_db.first_name,
-            "family_name": author_db.family_name,
-            "id": author_db.id
-        }
+        return dict(
+            first_name=author_db.first_name,
+            family_name=author_db.family_name,
+            id=author_db.id
+        )
 
     @staticmethod
     def from_data_to_db(author):
@@ -67,15 +67,15 @@ class ReferenceBibliographiqueLivre:
 
     @staticmethod
     def from_db_to_data(reference: ReferenceBibliographiqueLivreDB):
-        return {
-            "id": reference.id,
-            "authors": [Author.from_db_to_data(author_db) for author_db in reference.authors],
-            "titre": reference.titre,
-            "lieu_edition": reference.lieu_edition,
-            "editeur": reference.editeur,
-            "annee": reference.annee,
-            "nb_page": reference.nb_page
-        }
+        return dict(
+            id=reference.id,
+            authors=[Author.from_db_to_data(author_db) for author_db in reference.authors],
+            titre=reference.titre,
+            lieu_edition=reference.lieu_edition,
+            editeur=reference.editeur,
+            annee=reference.annee,
+            nb_page=reference.nb_page
+        )
 
     @staticmethod
     def from_id_to_db(id_):
@@ -116,19 +116,17 @@ class Enregistrement:
 
     @staticmethod
     def from_db_to_data(enregistrement_db: EnregistrementDB) -> dict:
-        return {
-            "id": enregistrement_db.id,
-            "reference": ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
-            "annee": enregistrement_db.annee,  # année d'obtention
-            "description": enregistrement_db.description,
-            "cote": enregistrement_db.cote,
-            "nb_exemplaire_supp": enregistrement_db.nb_exemplaire_supp,
-            "provenance": enregistrement_db.provenance,
-            "mots_clef": enregistrement_db.mots_clef,
-            "date_modification": enregistrement_db.date_modification,
-            "valide": enregistrement_db.valide
-
-        }
+        return dict(
+            id=enregistrement_db.id,
+            reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
+            annee=enregistrement_db.annee,  # année d'obtention
+            description=enregistrement_db.description,
+            cote=enregistrement_db.cote,
+            nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
+            provenance=enregistrement_db.provenance,
+            mots_clef=enregistrement_db.mots_clef,
+            date_modification=enregistrement_db.date_modification,
+            valide=enregistrement_db.valide)
 
 
 class EmpruntLivre:
@@ -146,30 +144,30 @@ class EmpruntLivre:
 
     @staticmethod
     def from_db_to_data(emprunt_db: EmpruntLivreDB):
-        return {
-            "id_gestionnaire": emprunt_db.id_gestionnaire,
-            "gestionnaire": User.from_db_to_data(emprunt_db.gestionnaire),
-            "id_enregistrement": emprunt_db.id_enregistrement,
-            "enregistrement": Enregistrement.from_db_to_data(emprunt_db.enregistrement),
-            "id_emprunteur": emprunt_db.id_emprunteur,
-            "emprunteur": emprunt_db.emprunteur,
-            "commentaire": emprunt_db.commentaire,
-            "emprunte": emprunt_db.emprunte,
-            "date_emprunt": emprunt_db.date_emprunt,
-            "date_retour_prevu": emprunt_db.date_retour_prevu,
-            "date_retour_reel": emprunt_db.date_retour_reel,
-            "rendu": emprunt_db.rendu
-        }
+        return dict(
+            id_gestionnaire=emprunt_db.id_gestionnaire,
+            gestionnaire=User.from_db_to_data(emprunt_db.gestionnaire),
+            id_enregistrement=emprunt_db.id_enregistrement,
+            enregistrement=Enregistrement.from_db_to_data(emprunt_db.enregistrement),
+            id_emprunteur=emprunt_db.id_emprunteur,
+            emprunteur=emprunt_db.emprunteur,
+            commentaire=emprunt_db.commentaire,
+            emprunte=emprunt_db.emprunte,
+            date_emprunt=emprunt_db.date_emprunt,
+            date_retour_prevu=emprunt_db.date_retour_prevu,
+            date_retour_reel=emprunt_db.date_retour_reel,
+            rendu=emprunt_db.rendu
+        )
 
 
 class User:
     @staticmethod
     def from_db_to_data(user_db: UserDB):
-        return {
-            "first_name": user_db.first_name,
-            "family_name": user_db.family_name,
-            "email": user_db.email
-        }
+        return dict(
+            first_name=user_db.first_name,
+            family_name=user_db.family_name,
+            email=user_db.email
+        )
 
     @staticmethod
     def from_data_to_db(user: dict):
