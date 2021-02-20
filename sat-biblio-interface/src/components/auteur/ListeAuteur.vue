@@ -33,7 +33,7 @@
 
 <script>
 
-import {retrieveAuthorNumber, retrieveAuthors} from "../../services/api";
+import {getAuthorsCount, retrieveAuthors} from "../../services/api";
 
 export default {
   name: "ListeAuteur",
@@ -108,10 +108,10 @@ export default {
       if(filterParams.length > 0) {
         filterParams = "?" + filterParams;
       }
-      retrieveAuthorNumber(filterParams).then(
+      getAuthorsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.authorTotalNumber = response.data.number;
+              this.authorTotalNumber = response.data.total;
             }
           }
       )

@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {retrieveBookRecordNumber, retrieveBookRecords} from "../../services/api";
+import {getBookRecordsCount, retrieveBookRecords} from "../../services/api";
 
 export default {
   name: "ListeEnregistrement",
@@ -124,9 +124,9 @@ export default {
       );
     },
     getRecordTotalNumber: function() {
-      let filterParams = "";
+      let filterParams = "?result_type=number";
       if(this.coteFiltre.length > 0) {
-        filterParams = filterParams+"cote="+encodeURI(this.coteFiltre);
+        filterParams = filterParams+"&cote="+encodeURI(this.coteFiltre);
       }
       if(this.titreFiltre.length > 0) {
         if(filterParams.length > 0) {
@@ -141,13 +141,10 @@ export default {
         filterParams = filterParams+"mot_clef="+encodeURI(this.motClefFiltre);
       }
 
-      if(filterParams.length > 0) {
-        filterParams = "?" + filterParams;
-      }
-      retrieveBookRecordNumber(filterParams).then(
+      getBookRecordsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.recordTotalNumber = response.data.number;
+              this.recordTotalNumber = response.data.total;
             }
           }
       );

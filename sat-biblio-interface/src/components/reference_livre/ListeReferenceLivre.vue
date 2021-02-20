@@ -25,8 +25,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import {retrieveBookReferenceNumber, retrieveBookReferences} from "../../services/api";
+import {getBookReferencesCount, retrieveBookReferences} from "../../services/api";
 
 export default {
   name: "ListeReferenceLivre",
@@ -103,10 +102,10 @@ export default {
       if(this.titreFiltre.length > 0) {
         filterParams = filterParams+"?titre="+encodeURI(this.titreFiltre);
       }
-      retrieveBookReferenceNumber(filterParams).then(
+      getBookReferencesCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.refTotalNumber = response.data.number;
+              this.refTotalNumber = response.data.total;
             }
           }
       )

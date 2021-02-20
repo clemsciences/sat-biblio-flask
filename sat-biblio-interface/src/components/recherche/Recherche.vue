@@ -69,7 +69,7 @@ export default {
         family_name: this.family_name,
 
       };
-      axios.post("/api/auteur/chercher", formAuthor).then(
+      axios.post("/api/authors/chercher", formAuthor).then(
           (response) => {
             if(response.data.success) {
               this.researchedAuthors = response.data.results;

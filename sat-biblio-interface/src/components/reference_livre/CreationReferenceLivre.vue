@@ -60,7 +60,7 @@ export default {
   methods: {
     getSuggestedAuthors: function (query) {
       if (query.length >= 2) {
-        axios.get("/api/auteur/chercher-proches?auteur=:query".replace(":query", query))
+        axios.get("/api/authors/chercher-proches?auteur=:query".replace(":query", query))
             .then((response) => {
               if (response.data.success) {
                 this.suggestedAuthors = response.data.suggestedAuthors;

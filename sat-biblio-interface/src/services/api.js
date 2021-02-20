@@ -9,10 +9,6 @@ export function retrieveAuthors(params) {
   return axios.get(`/authors${params}`);
 }
 
-export function retrieveAuthorNumber(params) {
-  return axios.get(`/authors/number${params}`);
-}
-
 export function retrieveAuthor(authorId) {
   return axios.get(`/authors/${authorId}/`);
 }
@@ -23,6 +19,10 @@ export function updateAuthor(authorId, author) {
 
 export function deleteAuthor(authorId) {
   return axios.delete(`/authors/${authorId}`);
+}
+
+export function getAuthorsCount(params) {
+  return axios.get(`/authors/count${params}`);
 }
 
 // endregion
@@ -37,10 +37,6 @@ export function retrieveBookReferences(params) {
   return axios.get(`/book-references${params}`);
 }
 
-export function retrieveBookReferenceNumber(params) {
-  return axios.get(`/book-references/number${params}`);
-}
-
 export function retrieveBookReference(bookReferenceId) {
   return axios.get(`/book-references/${bookReferenceId}/`);
 }
@@ -51,6 +47,10 @@ export function updateBookReference(bookReferenceId, bookReference) {
 
 export function deleteBookReference(bookReferenceId) {
   return axios.delete(`/book-references/${bookReferenceId}`);
+}
+
+export function getBookReferencesCount(params) {
+  return axios.get(`/book-references/count${params}`);
 }
 
 // endregion
@@ -65,10 +65,6 @@ export function retrieveBookRecords(params) {
   return axios.get(`/book-records${params}`);
 }
 
-export function retrieveBookRecordNumber(params) {
-  return axios.get(`/book-records/number${params}`);
-}
-
 export function retrieveBookRecord(bookRecordId) {
   return axios.get(`/book-records/${bookRecordId}/`);
 }
@@ -79,6 +75,10 @@ export function updateBookRecord(bookRecordId, bookRecord) {
 
 export function deleteBookRecord(bookRecordId) {
   return axios.delete(`/book-records/${bookRecordId}`);
+}
+
+export function getBookRecordsCount(params) {
+  return axios.get(`/book-records/count${params}`);
 }
 
 // endregion
@@ -92,10 +92,6 @@ export function retrieveBorrowings(params) {
   return axios.get(`/borrowings${params}`);
 }
 
-export function retrieveBorrowingNumber(params) {
-  return axios.get(`/borrowings/number${params}`);
-}
-
 export function retrieveBorrowing(borrowingId) {
   return axios.get(`/borrowings/${borrowingId}/`);
 }
@@ -106,5 +102,9 @@ export function updateBorrowing(borrowingId, borrowing) {
 
 export function deleteBorrowing(borrowingId) {
   return axios.delete(`/borrowings/${borrowingId}`);
+}
+
+export function getBorrowingsCount(params) {
+  return axios.get(`/borrowings/count${params}`);
 }
 // endregion
