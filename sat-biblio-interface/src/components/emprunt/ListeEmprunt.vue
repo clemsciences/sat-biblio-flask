@@ -48,8 +48,7 @@
 
 <script>
 
-import {retrieveBorrowingNumber, retrieveBorrowings} from "../../services/api";
-import axios from "axios";
+import {getBorrowingsCount, retrieveBorrowings} from "../../services/api";
 
 export default {
   name: "ListeEmprunt",
@@ -95,8 +94,7 @@ export default {
                   callback(this.borrowings);
                 }
               }
-          )
-          .catch(
+          ).catch(
           (reason) => {
             console.log(reason)
             callback([]);
@@ -119,10 +117,10 @@ export default {
       if(filterParams.length > 0) {
         filterParams = "?" + filterParams;
       }
-      retrieveBorrowingNumber(filterParams).then(
+      getBorrowingsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.authorTotalNumber = response.data.number;
+              this.authorTotalNumber = response.data.total;
             }
           }
       )
@@ -137,11 +135,11 @@ export default {
   watch: {
 
   },
-  computed: {
-    onFilter: function () {
-      return `${}`
-    }
-  }
+  // computed: {
+  //   onFilter: function () {
+  //     return `${}`
+  //   }
+  // }
 
 }
 </script>
