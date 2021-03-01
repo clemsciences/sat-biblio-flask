@@ -1,0 +1,746 @@
+openapi: 3.0.2
+info:
+  title: SAT biblio API
+  version: 1.0.0
+  description: >-
+    C'est un serveur pour gérer les données de la Société Archéologique de
+    Touraine (SAT). On gère les auteurs, les références bibliographiques (ce qui
+    concerne les livres) et les enregistrements (les informations sur le
+    rangement des livres à la SAT). On peut aussi gérer les emprunts des
+    ouvrages.
+
+    Il y a plusieurs catégories d'utilisateurs.
+  termsOfService: ''
+  contact:
+    name: Clément Besnier
+    url: 'https://www.clementbesnier.fr'
+    email: clem@clementbesnier.fr
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  x-logo:
+    url: ''
+servers:
+  - url: 'https://www.clementbesnier.fr/sat-biblio'
+    description: >-
+      This is the doc for API developers.
+    x-last-modified: 1613214233536
+paths:
+  /user:
+    post:
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      tags:
+        - user
+      responses:
+        default:
+          description: successful operation
+      operationId: createUser
+      summary: Create user
+      description: This can only be done by the logged in user.
+  /user/login:
+    get:
+      tags:
+        - user
+      parameters:
+        - name: username
+          description: The user name for login
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: password
+          description: The password for login in clear text
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          headers:
+            X-Rate-Limit:
+              schema:
+                format: int32
+                type: integer
+              description: calls per hour allowed by the user
+            X-Expires-After:
+              schema:
+                format: date-time
+                type: string
+              description: date in UTC when token expires
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+          description: successful operation
+        '400':
+          description: Invalid username/password supplied
+      operationId: loginUser
+      summary: Logs user into the system
+      description: ''
+  /user/logout:
+    get:
+      tags:
+        - user
+      responses:
+        default:
+          description: successful operation
+      operationId: logoutUser
+      summary: Logs out current logged in user session
+      description: ''
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      parameters:
+        - name: username
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: successful operation
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+      operationId: getUserByName
+      summary: Get user by user name
+      description: ''
+    put:
+      requestBody:
+        description: Updated user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      tags:
+        - user
+      parameters:
+        - name: username
+          description: name that need to be updated
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '400':
+          description: Invalid user supplied
+        '404':
+          description: User not found
+      operationId: updateUser
+      summary: Updated user
+      description: This can only be done by the logged in user.
+    delete:
+      tags:
+        - user
+      parameters:
+        - name: username
+          description: The name that needs to be deleted
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+      operationId: deleteUser
+      summary: Delete user
+      description: This can only be done by the logged in user.
+  /authors:
+    post:
+      tags: []
+      summary: Create a new author
+      responses:
+        200:
+          description: Author well created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+      parameters:
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            example: ''
+            type: integer
+            format: ''
+            pattern: ''
+          x-last-modified: 1613817848749
+    get:
+      tags: []
+      summary: Get all authors
+      responses:
+        200:
+          description: All authors received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+      parameters:
+        - name: page
+          in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          x-last-modified: 1613818405614
+        - name: size
+          in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          description: Used for pagination
+          x-last-modified: 1613818433340
+        - name: sortBy
+          in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          description: Used for pagination. Name of entity.
+          x-last-modified: 1613818475077
+        - name: first_name
+          in: ''
+          example: ''
+          description: Used for filtering.
+          x-last-modified: 1613818522708
+        - name: family_name
+          in: ''
+          example: ''
+          description: Used for filtering.
+          x-last-modified: 1613818537145
+        - in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          description: >-
+            Result type returned: 'number' or 'entities'. Default value is
+            'entities'.
+          schema:
+            enum:
+              - entities
+              - number
+          x-last-modified: 1613818687249
+          name: result_type
+  
+    x-last-modified: 1613817047558
+  /authors/count:
+    get:
+      summary: Get the total number of authors
+      responses:
+        200:
+          description: Got the total number of authors
+          content:
+            application/json:
+              schema:
+                type: integer
+  '/author/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of authors
+        schema:
+          type: integer
+    get:
+      tags: []
+      responses:
+        200:
+          description: got an author
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The author
+      summary: Get an author
+    put:
+      tags: []
+      responses:
+        200:
+          description: Updated the author
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The author
+      summary: Update an author
+    delete:
+      tags: []
+      responses:
+        200:
+          description: Deleted the author
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The author
+      summary: Delete an author
+    x-last-modified: 1613817073421
+  /book-references:
+    post:
+      tags: []
+      responses:
+        200:
+          description: Created a book reference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReference'
+      summary: Create a new book reference
+    get:
+      tags: []
+      responses:
+        200:
+          description: Got the book reference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReference'
+      summary: Get all book references
+    x-last-modified: 1613817107562
+  /book-references/count:
+    get:
+      summary: Get the total number of book references
+      responses:
+        200:
+          description: Got the total number of book references
+          content:
+            application/json:
+              schema:
+                type: integer
+  '/book-references/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: the id of the book reference
+    get:
+      tags: []
+      responses:
+        200:
+          description: Get the book reference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReference'
+      summary: Get a book reference
+    put:
+      tags: []
+      responses:
+        200:
+          description: Update the book reference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReference'
+      summary: Update a book reference
+    delete:
+      tags: []
+      responses:
+        200:
+          description: Delete the book reference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReference'
+      summary: Delete a book reference
+    x-last-modified: 1613817122804
+  /book-records:
+    post:
+      tags: []
+      responses:
+        200:
+          description: Create a new book record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookRecord'
+      summary: Create a new book record
+    get:
+      tags: []
+      summary: Get all book records
+      responses:
+        200:
+          description: Got all book records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookRecord'
+      parameters:
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          description: Used for pagination.
+          schema:
+            example: ''
+            type: integer
+            format: ''
+            pattern: '[0-9]*'
+          x-last-modified: 1613818872349
+        - name: size
+          in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          description: Used for pagination.
+          schema:
+            example: ''
+            type: number
+            format: '[0-9]*'
+            pattern: ''
+          x-last-modified: 1613818909185
+        - name: sortBy
+          in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          description: Used for pagination. Name of entities.
+          schema:
+            example: ''
+            type: integer
+            format: ''
+            pattern: ''
+          x-last-modified: 1613818989164
+        - in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          x-last-modified: 1613819147379
+          description: Used for filtering.
+          name: cote
+        - in: query
+          example: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          x-last-modified: 1613819130480
+          description: Used for filtering.
+          name: titre
+        - in: query
+          example: ''
+          x-last-modified: 1613819121571
+          description: Used for filtering.
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          name: mot_clef
+        - in: query
+          example: ''
+          schema:
+            example: ''
+            type: ''
+            enum:
+              - entities
+              - number
+          x-last-modified: 1613819105504
+          description: >-
+            Result type returned: 'number' or 'entities'. Default value is
+            'entities'.
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          name: result_type
+    x-last-modified: 1613817158569
+  /book-records/count:
+    get:
+      summary: Get the total number of book records
+      responses:
+        200:
+          description: Got the total number of book records
+          content:
+            application/json:
+              schema:
+                type: integer
+  '/book-records/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the book record
+        schema:
+          type: integer
+    put:
+      tags: []
+      responses:
+        200:
+          description: Updated the book record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookRecord'
+      summary: Update the book record
+    get:
+      tags: []
+      responses:
+        200:
+          description: Got the book record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookRecord'
+
+      summary: Get the book record
+    delete:
+      tags: []
+      responses:
+        200:
+          description: Deleted the book record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookRecord'
+      summary: Delete the book record
+    x-last-modified: 1613817174788
+  /borrowings:
+    get:
+      tags: []
+      responses:
+        200:
+          description: Got all borrowings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrowing'
+      summary: Get all borrowings
+    post:
+      tags: []
+      responses:
+        200:
+          description: Created a borrowing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrowing'
+      summary: Create a new borrowing
+    x-last-modified: 1613817191345
+  /borrowings/count:
+    get:
+      responses:
+        200:
+          description: Got the total number of borrowings
+          content:
+            application/json:
+              schema:
+                type: integer
+  '/borrowings/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the borrowing
+        schema:
+          type: integer
+    get:
+      tags: []
+      responses:
+        200:
+          description: Got the borrowing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrowing'
+
+      summary: Get the borrowing
+    put:
+      tags: []
+      responses:
+        200:
+          description: Updated the borrowing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrowing'
+      summary: Update the borrowing
+    delete:
+      tags: []
+      responses:
+        200:
+          description: Deleted the borrowing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Borrowing'
+      summary: Delete a borrowing
+    x-last-modified: 1613817208082
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        petId:
+          format: int64
+          type: integer
+        quantity:
+          format: int32
+          type: integer
+        shipDate:
+          format: date-time
+          type: string
+        status:
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+          type: string
+        complete:
+          default: false
+          type: boolean
+      xml:
+        name: Order
+    Category:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+      xml:
+        name: Category
+    User:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          format: int32
+          description: User Status
+          type: integer
+      xml:
+        name: User
+    Tag:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+      xml:
+        name: Tag
+    Pet:
+      required:
+        - name
+        - photoUrls
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        category:
+          $ref: '#/components/schemas/Category'
+        name:
+          type: string
+          example: doggie
+        photoUrls:
+          type: array
+          items:
+            type: string
+          xml:
+            name: photoUrl
+            wrapped: true
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          xml:
+            name: tag
+            wrapped: true
+        status:
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+          type: string
+      xml:
+        name: Pet
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          format: int32
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+    Author:
+      type: object
+    BookReference:
+      type: object
+    BookRecord:
+      type: object
+    Borrowing:
+      type: object
+
+
+  securitySchemes:
+    petstore_auth:
+      flows:
+        implicit:
+          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
+          scopes:
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
+      type: oauth2
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  responses: {}
+  parameters: {}
+
+tags: []
+externalDocs:
+  description: ''
+  url: 'https://www.clementbesnier.fr/sat-biblio/documentation'
+security: []
