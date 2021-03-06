@@ -8,10 +8,10 @@
 <script>
 
 import NavBar from "./components/NavBar";
-import axios from "axios";
 import localStorageManager from './services/localstorageManager';
 // import router from "./router";
 import {mapState} from 'vuex';
+import {checkUserLogin} from "./services/api";
 export default {
   name: 'App',
   components: {
@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     checkLogin: function() {
-      axios.post('/api/user/check_login')
+      checkUserLogin()
           .then(
               (response) => {
                 if(response.data.success) {

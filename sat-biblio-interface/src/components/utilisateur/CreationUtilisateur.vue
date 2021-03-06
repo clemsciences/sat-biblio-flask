@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {createUser} from "../../services/api";
 
 export default {
   name: "CreationUtilisateur",
@@ -56,7 +56,7 @@ export default {
       } else if(this.password1 !== this.password2) {
         this.message = "Les mots de passe doivent être identiques"
       } else {
-        axios.post('/api/user/create', formData).then(
+        createUser(formData).then(
             (response) => {
               if(response.data.success) {
                 this.$router.push('/');

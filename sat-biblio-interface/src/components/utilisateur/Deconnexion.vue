@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import localStorageManager from "@/services/localstorageManager";
+import {disconnectUser} from "../../services/api";
 export default {
   name: "Deconnexion",
   data: function() {
@@ -18,7 +18,7 @@ export default {
   },
   mounted() {
     localStorageManager.removeSessionInfo();
-    axios.get("/api/user/disconnect").then(
+    disconnectUser().then(
       () => {
         this.$store.commit("disconnect");
         this.message = "Vous êtes correctement déconnecté."

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {recreatePassword} from "../../services/api";
 
 export default {
   name: "ReinitialisationMotDePasse",
@@ -24,9 +24,7 @@ export default {
   methods: {
     reinitialisePassword: function () {
       if(this.password1 === this.password2) {
-        axios.post('/api/user/reinitiate-password',
-            {password: this.password1})
-            .then();
+        recreatePassword(this.password1).then();
       }
     }
   }

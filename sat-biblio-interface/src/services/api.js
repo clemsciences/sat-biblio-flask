@@ -1,5 +1,32 @@
 import axios from 'axios';
 
+// region users
+export function connectUser(args) {
+  return axios.post("/users/connect", args);
+}
+
+export function createUser(formData) {
+  return axios.post('/users/create', formData);
+}
+
+export function disconnectUser() {
+  return axios.get("/users/disconnect");
+}
+
+export function haveForgottenPassword() {
+  return axios.get("/users/forgotten_password");
+}
+
+export function recreatePassword(password) {
+  return axios.post('/users/reinitiate-password', {password});
+}
+
+export function checkUserLogin() {
+  return axios.post('/user/check_login');
+}
+
+// endregion
+
 // region auteurs
 export function createAuthor(author) {
   return axios.post("/authors", author);

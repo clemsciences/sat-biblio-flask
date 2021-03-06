@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import localStorageManager from "@/services/localstorageManager";
+import {connectUser} from "../../services/api";
 
 export default {
   name: "Connexion",
@@ -29,12 +29,11 @@ export default {
   },
   methods: {
     login: function () {
-      console.log("bonjour");
       const args = {
         email: this.email,
         password: this.password
       };
-      axios.post('/api/user/connect', args).then(
+      connectUser(args).then(
           (value) => {
             if (value.data.success && value.data.connectionInfo) {
               localStorageManager.updateSessionInfo(value.data.connectionInfo);

@@ -9,13 +9,13 @@
 </template>
 
 <script>
-import axios from "axios";
+import {haveForgottenPassword} from "../../services/api";
 
 export default {
   name: "MotDePasseOublie",
   methods: {
     passwordForgotten: function () {
-      axios.post('/api/user/forgotten_password').then(
+      haveForgottenPassword().then(
           (response) => {
             if(response.data.success) {
               console.log("check if email address is in the base");
