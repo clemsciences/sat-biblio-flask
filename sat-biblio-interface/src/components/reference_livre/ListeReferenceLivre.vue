@@ -83,7 +83,7 @@ export default {
       retrieveBookReferences(params+filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.currentPage = 1;
+              // this.currentPage = 1;
               this.references = response.data.references;
               callback(this.references);
             }
@@ -120,6 +120,7 @@ export default {
   watch: {
     titreFiltre: function () {
       this.getRefTotalNumber();
+      this.currentPage = 1;
     },
   },
   computed: {

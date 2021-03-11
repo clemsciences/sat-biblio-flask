@@ -158,16 +158,16 @@ export default {
   },
   watch: {
     coteFiltre: function () {
-      this.currentPage = 1;
       this.getRecordTotalNumber();
+      this.currentPage = 1;
     },
     motClefFiltre: function () {
-      this.currentPage = 1;
       this.getRecordTotalNumber();
+      this.currentPage = 1;
     },
     titreFiltre: function () {
-      this.currentPage = 1;
       this.getRecordTotalNumber();
+      this.currentPage = 1;
     }
   },
   computed: {

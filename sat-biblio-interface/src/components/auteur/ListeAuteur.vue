@@ -80,8 +80,10 @@ export default {
       retrieveAuthors(params).then(
           (response) => {
             if(response.data.success) {
-              this.currentPage = 1;
               this.authors = response.data.authors;
+              // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
+              //   this.currentPage = 1;
+              // }
               callback(this.authors);
             }
           }
@@ -124,11 +126,15 @@ export default {
     this.getAuthorTotalNumber();
   },
   watch: {
-    firstNameFiltre: function () {
-      this.getAuthorTotalNumber();
+    firstNameFiltre: function (newValue, oldValue) {
+      if(newValue !== oldValue) {
+        this.getAuthorTotalNumber();
+        this.currentPage = 1;
+      }
     },
     familyNameFiltre: function () {
       this.getAuthorTotalNumber();
+      this.currentPage = 1
     }
   },
   computed: {
