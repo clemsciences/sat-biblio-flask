@@ -22,7 +22,7 @@ export function recreatePassword(password) {
 }
 
 export function checkUserLogin() {
-  return axios.post('/user/check_login');
+  return axios.post('/users/check_login');
 }
 
 // endregion
