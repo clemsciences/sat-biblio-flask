@@ -20,17 +20,17 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
 # region enregistrement
-@sat_biblio.route("/enregistrements", methods=["GET", "POST"])
-# @validation_connexion_et_retour_defaut("email", redirect("/api"))
-def creer_enregistrement():
+@sat_biblio.route("/book-records", methods=["GET", "POST"])
+@validation_connexion_et_retour_defaut("email", redirect("/api"), ["POST", "PUT"])
+def book_records():
     if request.method == "POST":
         data = request.get_json()
         if dv.check_enregistrement(data):
             enregistrement_db = Enregistrement.from_data_to_db(data)
             db.session.add(enregistrement_db)
             db.session.commit()
-            return json_result(True, message="L'enregistrement a correctement été sauvegardé.")
-        return json_result(False, message="Erreur de la sauvegarde de l'enregistrement.")
+            return json_result(True, message="L'enregistrement a correctement été sauvegardé."), 201
+        return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
     elif request.method == "GET":
         n_page = int(request.args.get("page"))
         size = int(request.args.get("size"))
@@ -57,25 +57,28 @@ def creer_enregistrement():
             # print(record)
             record["reference"] = record['reference']['titre']
             enregistrements.append(record)
-        return json_result(True, enregistrements=enregistrements)
+        return json_result(True, enregistrements=enregistrements), 200
 
 
-@sat_biblio.route("/enregistrements/<int:id_>", methods=["GET", "DELETE", "PUT"])
+@sat_biblio.route("/book-records/<int:id_>", methods=["GET", "DELETE", "PUT"])
 @validation_connexion_et_retour_defaut("email", redirect("/api"), ["DELETE", "PUT"])
-def lire_enregistrement(id_):
+def book_record(id_):
     if request.method == "GET":
         enregistrement_db = EnregistrementDB.query.filter_by(id=id_).first()
         if enregistrement_db:
             enregistrement = Enregistrement.from_db_to_data(enregistrement_db)
             enregistrement["reference"] = {"text": enregistrement_db.reference.titre,
                                            "value": enregistrement_db.id_reference}
-            return json_result(True, enregistrement=enregistrement)
-        return json_result(False)
+            return json_result(True, enregistrement=enregistrement), 200
+        return json_result(False), 404
     elif request.method == "DELETE":
         enregistrement_db = EnregistrementDB.query.filter_by(id=id_).first()
-        db.session.delete(enregistrement_db)
-        db.session.commit()
-        return json_result(True)
+        if enregistrement_db:
+            db.session.delete(enregistrement_db)
+            db.session.commit()
+            return json_result(True), 204
+        else:
+            return json_result(False), 404
     elif request.method == "PUT":
         data = request.get_json()
         enregistrement_db = EnregistrementDB.query.filter_by(id=id_).first()
@@ -95,12 +98,12 @@ def lire_enregistrement(id_):
             if "mots_clef" in data:
                 enregistrement_db.mots_clef = data["mots_clef"]
             db.session.commit()
-            return json_result(True)
-        return json_result(False)
+            return json_result(True), 200
+        return json_result(False), 404
 
 
-@sat_biblio.route("/api/enregistrement/nombre", methods=["GET"])
-def get_record_total_number():
+@sat_biblio.route("/book-records/count", methods=["GET"])
+def book_records_count():
     cote = request.args.get("cote", "")
     titre = request.args.get("titre", "")
     mot_clef = request.args.get("mot_clef", "")
@@ -115,10 +118,10 @@ def get_record_total_number():
         the_query = the_query.filter(EnregistrementDB.mots_clef.like(f"%{mot_clef}%"))
     number = the_query.count()
     logging.debug(number)
-    return json_result(True, number=number)
+    return json_result(True, total=number), 200
 
 
-@sat_biblio.route("/api/enregistrement/chercher", methods=["POST"])
+@sat_biblio.route("/book-records/chercher", methods=["POST"])
 def chercher_enregistrement():
 
     data = request.get_json()
@@ -145,7 +148,7 @@ def chercher_enregistrement():
     if filtered:
         results_db = the_query.all()
         results = [Enregistrement.from_db_to_data(res) for res in results_db]
-        return json_result(True, results=results)
+        return json_result(True, results=results), 200
     else:
-        return json_result(True, results=[])
+        return json_result(True, results=[]), 200
 # endregion
