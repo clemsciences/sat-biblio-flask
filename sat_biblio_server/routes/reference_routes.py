@@ -19,17 +19,17 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
 # region références
-@sat_biblio.route("/book-references/", methods=["GET", "POST"])
+@sat_biblio.route("/book-references", methods=["GET", "POST"])
 @validation_connexion_et_retour_defaut("email", redirect("/"), ["POST"])
-def references_livres():
+def book_references():
     if request.method == "POST":
         data = request.get_json()
         if dv.check_reference_bibliographique_livre(data):
             reference_db = ReferenceBibliographiqueLivre.from_data_to_db(data)
             db.session.add(reference_db)
             db.session.commit()
-            return json_result(True, message="La référence a été sauvegardée")
-        return json_result(False, message="La sauvegarde de la référence a échoué.")
+            return json_result(True, message="La référence a été sauvegardée"), 201
+        return json_result(False, message="La sauvegarde de la référence a échoué."), 400
     elif request.method == "GET":
         n_page = int(request.args.get("page"))
         size = int(request.args.get("size"))
@@ -54,12 +54,12 @@ def references_livres():
                 [f"{author['first_name']} {author['family_name']}" for author in reference['authors']])
             references.append(reference)
         logging.debug(len(references))
-        return json_result(True, references=references)
+        return json_result(True, references=references), 200
 
 
 @sat_biblio.route("/book-references/<int:id_>", methods=["GET", "PUT", "DELETE"])
 @validation_connexion_et_retour_defaut("email", redirect("/"), ["PUT", "DELETE"])
-def reference_livre(id_):
+def book_reference(id_):
     if request.method == "GET":
         ref_livre_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)
         if ref_livre_db:
@@ -68,8 +68,8 @@ def reference_livre(id_):
             ref_livre["authors"] = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
                                     for author_db in ref_livre_db.authors]
             logging.debug(ref_livre)
-            return json_result(True, reference=ref_livre)
-        return json_result(False)
+            return json_result(True, reference=ref_livre), 200
+        return json_result(False), 404
     elif request.method == "PUT":
         data = request.get_json()
         ref_biblio_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)
@@ -89,15 +89,26 @@ def reference_livre(id_):
 
             db.session.commit()
 
-            return json_result(True)
-        return json_result(False)
+            return json_result(True), 200
+        return json_result(False), 404
     elif request.method == "DELETE":
         ref_biblio_db = ReferenceBibliographiqueLivreDB.query.filter_by(id=id_).first()
         if ref_biblio_db:
             db.session.delete(ref_biblio_db)
             db.session.commit()
-            return json_result(True)
-        return json_result(False)
+            return json_result(True), 204
+        return json_result(False), 404
+
+
+@sat_biblio.route("/book-references/count", methods=["GET"])
+def book_references_count():
+    titre = request.args.get("titre", "")
+    the_query = ReferenceBibliographiqueLivreDB.query
+    if titre:
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
+    count = the_query.count()
+    logging.debug(count)
+    return json_result(True, total=count), 200
 
 
 @sat_biblio.route("/book-references/chercher-proches", methods=["GET"])
@@ -110,7 +121,7 @@ def chercher_reference_livre_plus_proches():
         # reference = ReferenceBibliographiqueLivre.from_db_to_data(reference_db)
         references.append({"text": reference_db.titre,
                            "value": reference_db.id})
-    return json_result(True, suggestedReferences=references)
+    return json_result(True, suggestedReferences=references), 200
 
 
 @sat_biblio.route("/book-references/chercher", methods=["POST"])
@@ -123,16 +134,5 @@ def chercher_reference_livre():
         results = [ReferenceBibliographiqueLivre.from_db_to_data(ref_livre_db)
                    for ref_livre_db in ref_livres_db]
         return json_result(True, results=results)
-    return json_result(True, results=[])
-
-
-@sat_biblio.route("/book-references/nombre", methods=["GET"])
-def get_reference_total_number():
-    titre = request.args.get("titre", "")
-    the_query = ReferenceBibliographiqueLivreDB.query
-    if titre:
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
-    number = the_query.count()
-    logging.debug(number)
-    return json_result(True, number=number)
+    return json_result(True, results=[]), 200
 # endregion
