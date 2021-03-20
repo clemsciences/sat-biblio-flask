@@ -90,6 +90,13 @@ export default {
             if(response.data.success) {
               console.log("record saved");
               this.message = "L'enregistrement a été sauvegardé.";
+              this.selectedReference = {value: -1, text: ""};
+              this.description = "";
+              this.cote = "";
+              this.annee = "";
+              this.nb_exemplaire_supp = "";
+              this.provenance = "";
+              this.mots_clef = "";
             } else {
               console.log("bizarre");
               this.message = "Echec de la sauvegarde de l'enregistrement.";

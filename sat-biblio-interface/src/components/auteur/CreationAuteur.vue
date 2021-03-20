@@ -38,6 +38,8 @@ export default {
             (response) => {
               if (response.data.success) {
                 this.message = "L'auteur " + this.first_name + " " + this.family_name + " a été correctement créé.";
+                this.first_name = "";
+                this.family_name = "";
               } else {
                 this.message = "Impossible de sauvegarder l'auteur."
               }

@@ -84,16 +84,22 @@ export default {
       };
 
       createBookReference(formData)
-          .then(
-              (response) => {
-                if(response.data.success) {
-                  this.saveMessage = "La référence a été créée."
-                  console.log("créer une référence livresque");
-                } else {
-                  this.saveMessage = "La création de la référence a échoué."
-                }
+        .then(
+            (response) => {
+              if(response.data.success) {
+                this.saveMessage = "La référence a été créée."
+                console.log("créer une référence livresque");
+                this.selectedAuthors = [];
+                this.titre = "";
+                this.lieu_edition = "";
+                this.editeur = "";
+                this.annee = "";
+                this.nb_page = "";
+              } else {
+                this.saveMessage = "La création de la référence a échoué."
               }
-          )
+            }
+        )
     }
   },
   watch: {
