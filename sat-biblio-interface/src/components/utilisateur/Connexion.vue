@@ -45,7 +45,7 @@ export default {
               this.$router.push("/")
               console.log("connected");
             } else {
-              this.message = value.datca.message;
+              this.message = value.data.message;
               console.log("not connected")
             }
           }
