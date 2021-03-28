@@ -5,6 +5,7 @@ Records are hints fto manage books in the library.
 """
 
 import logging
+import re
 
 from flask import redirect, request
 
@@ -121,9 +122,8 @@ def book_records_count():
     return json_result(True, total=number), 200
 
 
-@sat_biblio.route("/book-records/chercher", methods=["POST"])
-def chercher_enregistrement():
-
+@sat_biblio.route("/book-records/search", methods=["POST"])
+def chercher_enregistrements():
     data = request.get_json()
     the_query = EnregistrementDB.query
     filtered = False
@@ -151,4 +151,30 @@ def chercher_enregistrement():
         return json_result(True, results=results), 200
     else:
         return json_result(True, results=[]), 200
+
+
+@sat_biblio.route("/book-records/search-near", methods=["GET"])
+def chercher_enregistrements_proches():
+    query_result = request.args.get("record")
+    res = []
+    if re.match(r"^(A|B|C|D|MM|BBH|GHA|GHB|GHC|GHbr|BBC|CAF|JSFA|RCAF|Congrès|"
+                r"RCNSS|CNSS|CSS|TAB|FAG|FAM|FAP|MML|NUM|NUMbr) [0-9]{1,5}.*", query_result):
+
+        book_records_db = EnregistrementDB.query.filter(EnregistrementDB.cote.like(f"%{query_result}%")).all()
+
+        for book_record_db in book_records_db:
+            if book_record_db:
+                res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",
+                                value=book_record_db.id))
+    else:
+        book_records_db = db.session\
+            .query(EnregistrementDB, ReferenceBibliographiqueLivreDB)\
+            .filter(EnregistrementDB.id_reference == ReferenceBibliographiqueLivreDB.id)\
+            .filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{query_result}%"))
+        for book_record_db, ref_biblio_db in book_records_db:
+            print(book_record_db)
+            res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",
+                            value=book_record_db.id))
+
+    return json_result(True, suggestedRecords=res), 200
 # endregion

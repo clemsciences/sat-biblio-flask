@@ -4,7 +4,7 @@ Manages authors.
 Authors have only a first name and family name.
 """
 
-from flask import redirect, jsonify, request
+from flask import redirect, request
 
 import logging
 
@@ -64,7 +64,7 @@ def author():
             db.session.commit()
             return json_result(True), 201
         else:
-            return jsonify(False), 304
+            return json_result(False), 304
 
 
 @sat_biblio.route("/authors/<int:id_>", methods=["GET", "PUT", "DELETE"])
@@ -101,7 +101,7 @@ def authors(id_):
         if author_db:
             db.session.delete(author_db)
             db.session.commit()
-        return jsonify({"success": True, }), 204
+        return json_result(True), 204
 
 
 @sat_biblio.route("/authors/count", methods=["GET"])
@@ -123,7 +123,7 @@ def authors_count():
     return json_result(True, total=number), 200
 
 
-@sat_biblio.route("/authors/chercher-proches", methods=["GET", "POST"])
+@sat_biblio.route("/authors/search-near", methods=["GET"])
 def chercher_auteurs_plus_proches():
     query_result = request.args.get("auteur")
 
@@ -137,7 +137,7 @@ def chercher_auteurs_plus_proches():
     return json_result(True, suggestedAuthors=res), 200
 
 
-@sat_biblio.route("/authors/chercher", methods=["POST"])
+@sat_biblio.route("/authors/search", methods=["POST"])
 def chercher_auteurs():
     data = request.get_json()
     the_query = AuthorDB.query

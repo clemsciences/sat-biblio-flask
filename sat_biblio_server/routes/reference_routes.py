@@ -111,7 +111,7 @@ def book_references_count():
     return json_result(True, total=count), 200
 
 
-@sat_biblio.route("/book-references/chercher-proches", methods=["GET"])
+@sat_biblio.route("/book-references/search-near", methods=["GET"])
 def chercher_reference_livre_plus_proches():
     titre = request.args.get("titre")
     references_db = ReferenceBibliographiqueLivreDB.query\
@@ -124,10 +124,12 @@ def chercher_reference_livre_plus_proches():
     return json_result(True, suggestedReferences=references), 200
 
 
-@sat_biblio.route("/book-references/chercher", methods=["POST"])
+@sat_biblio.route("/book-references/search", methods=["POST"])
 def chercher_reference_livre():
     data = request.get_json()
     the_query = ReferenceBibliographiqueLivreDB.query
+    if data is None:
+        return json_result(False), 400
     if "titre" in data and data["titre"]:
         the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{data['titre']}%"))
         ref_livres_db = the_query.all()

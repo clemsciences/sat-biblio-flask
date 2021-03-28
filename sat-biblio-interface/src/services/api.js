@@ -25,6 +25,10 @@ export function checkUserLogin() {
   return axios.post('/users/check_login');
 }
 
+export function searchNearUsers(params) {
+  return axios.get(`/users/search-near?${params}`)
+}
+
 // endregion
 
 // region auteurs
@@ -50,6 +54,14 @@ export function deleteAuthor(authorId) {
 
 export function getAuthorsCount(params) {
   return axios.get(`/authors/count${params}`);
+}
+
+export function searchAuthors(params) {
+  return axios.post("/authors/search", params);
+}
+
+export function searchNearAuthors(params) {
+  return axios.get(`/authors/search-near?${params}`);
 }
 
 // endregion
@@ -80,6 +92,14 @@ export function getBookReferencesCount(params) {
   return axios.get(`/book-references/count${params}`);
 }
 
+export function searchBookReferences(params) {
+  return axios.post("/book-references/search", params)
+}
+
+export function searchNearBookReferences(params) {
+  return axios.get(`/book-references/search-near?${params}`)
+}
+
 // endregion
 
 // region records
@@ -106,6 +126,14 @@ export function deleteBookRecord(bookRecordId) {
 
 export function getBookRecordsCount(params) {
   return axios.get(`/book-records/count${params}`);
+}
+
+export function searchBookRecords(params) {
+  return axios.post("/book-records/search", params);
+}
+
+export function searchNearBookRecords(params) {
+  return axios.get(`/book-records/search-near?${params}`);
 }
 
 // endregion
