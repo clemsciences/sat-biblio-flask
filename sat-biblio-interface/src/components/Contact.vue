@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {sendMessageToAdmin} from "../services/api";
 
 export default {
   name: "Contact",
@@ -23,19 +23,16 @@ export default {
   },
   methods: {
     sendMessage: function () {
-      axios.post('/api/contact/send-message', {
-        message: this.message
-      }).then(
-          (response) => {
-            if(response.data.success) {
-              console.log("message correctement envoyé");
-              this.message = "Le message a été envoyé."
-            } else {
-              console.log("message non envoyé");
-              this.message = "Le message n'a pas pu être envoyé."
-            }
+      sendMessageToAdmin().then(
+        (response) => {
+          if(response.data.success) {
+            console.log("message correctement envoyé");
+            this.message = "Le message a été envoyé."
+          } else {
+            console.log("message non envoyé");
+            this.message = "Le message n'a pas pu être envoyé."
           }
-      )
+        });
     }
   }
 }

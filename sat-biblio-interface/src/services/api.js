@@ -163,3 +163,9 @@ export function getBorrowingsCount(params) {
   return axios.get(`/borrowings/count${params}`);
 }
 // endregion
+
+// region contact
+export function sendMessageToAdmin(message) {
+  return axios.post('/contact/send-message', {message});
+}
+// endregion
