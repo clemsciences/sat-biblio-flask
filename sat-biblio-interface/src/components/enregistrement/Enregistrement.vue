@@ -2,16 +2,7 @@
   <div>
     <h2>Nouvel enregistrement</h2>
     <b-form @submit.prevent="saveRecord">
-      <b-form-group label="Référence">
-        <vue-typeahead-bootstrap
-          v-model="reference_query"
-          :data="suggestedReferences"
-          :serializer="s => s.text"
-          placeholder="Tapez le titre d'un ouvrage"
-          @hit="addReference($event)"
-        />
-        <b-form-input v-model="selectedReference.text" readonly/>
-      </b-form-group>
+      <SuggestionReference v-model="selectedReference"/>
       <!-- Recherche assisté de la référence -->
       <b-form-group label="Description">
         <b-form-textarea v-model="description"/>
@@ -37,17 +28,15 @@
 </template>
 
 <script>
-import axios from "axios";
 import {createBookRecord} from "../../services/api";
+import SuggestionReference from "../reference_livre/SuggestionReference";
 
 export default {
   name: "Enregistrement",
+  components: {SuggestionReference},
   data: function () {
     return {
-      reference_query: "",
-      reference: {value: -1, text: ""},
-      selectedReference: {text: "", value: -1},
-      suggestedReferences: [],
+      selectedReference: {value: -1, text: ""},
       description: "",
       cote: "",
       annee: "",
@@ -59,22 +48,6 @@ export default {
     }
   },
   methods: {
-    addReference: function (event) {
-      this.selectedReference = event;
-      this.reference_query = "";
-    },
-    getSuggestedReferences: function (query) {
-      if(query.length >= 2) {
-
-        axios.get("/api/reference-livre/chercher-proches?titre=:query".replace(":query", query))
-            .then((response) => {
-              if (response.data.success) {
-                console.log("suggestedReferences", response.data)
-                this.suggestedReferences = response.data.suggestedReferences;
-              }
-            }).catch();
-      }
-    },
     saveRecord: function () {
       const formData = {
           id_reference: this.selectedReference.value,
@@ -109,11 +82,6 @@ export default {
           );
     }
   },
-  watch: {
-    reference_query: function (newValue) {
-      this.getSuggestedReferences(newValue);
-    },
-  }
 }
 </script>
 

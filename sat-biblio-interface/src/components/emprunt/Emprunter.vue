@@ -2,17 +2,14 @@
   <div>
     <h2>Emprunter</h2>
     <b-form @submit.prevent="saveBorrowing">
-      <b-form-group label="Enregistrement">
-        <b-form-input v-model="record"/>
-      </b-form-group>
-      <b-form-group label="Emprunteur">
-        <b-form-input v-model="borrower"/>
-      </b-form-group>
+
+      <SuggestionEnregistrement v-model="record"/>
+      <SuggestionUtilisateur label="Emprunteur" v-model="borrower"/>
       <b-form-group label="Date de retour prévue">
         <b-form-datepicker v-model="dateComebackExpected"/>
       </b-form-group>
       <b-form-group label="Commentaire">
-        <b-form-input v-model="comment"/>
+        <b-form-textarea size="3" v-model="comment"/>
       </b-form-group>
       <b-button type="submit">Enregistrer</b-button>
     </b-form>
@@ -22,15 +19,18 @@
 <script>
 
 import {createBorrowing} from "../../services/api";
+import SuggestionEnregistrement from "../enregistrement/SuggestionEnregistrement";
+import SuggestionUtilisateur from "../utilisateur/SuggestionUtilisateur";
 
 export default {
   name: "Emprunter",
+  components: {SuggestionUtilisateur, SuggestionEnregistrement},
   data: function () {
     return {
-      record: "",
+      record: {value: -1, text: ""},
       comment: "",
-      borrower: "",
-      borrowed: true,
+      borrower: {value: -1, text: ""},
+      isBorrowed: true,
       dateComebackExpected: null,
     }
   },
@@ -38,9 +38,9 @@ export default {
 
     saveBorrowing: function () {
       const formData = {
-        record: this.record,
+        record: this.record.value,
         comment: this.comment,
-        borrowed: this.borrowed,
+        borrowed: this.isBorrowed,
         borrower: this.borrower,
         dateComebackExpected: this.dateComebackExpected
       };
