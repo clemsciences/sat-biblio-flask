@@ -4,7 +4,7 @@
     <p>Double-cliquez sur la ligne pour voir les détails sur un emprunt.</p>
     <b-row class="my-1">
       <b-col lg="4">
-        <b-form-group label="Nom de famille" label-cols-sm="3"
+        <b-form-group label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <b-input type="search" v-model="firstNameFiltre"
                    placeholder="Filtrer en fonction du prénom"/>
@@ -14,20 +14,20 @@
       <b-col lg="4">
         <b-form-group label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="firstNameFiltre"
-                   placeholder="Filtrer en fonction du prénom"/>
+          <b-input type="search" v-model="familyNameFiltre"
+                   placeholder="Filtrer en fonction du nom de famille"/>
         </b-form-group>
       </b-col>
     </b-row>
 
     <b-pagination v-model="currentPage"
-      :total-rows="authorTotalNumber"
+      :total-rows="borrowingTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
 
-    <b-table striped bordered hover :items="retrieveAuthors" :fields="fields"
+    <b-table striped bordered hover :items="retrieveBorrowings" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToAuthor" :filter="onFilter">
+             :sort-by="sortBy" @row-dblclicked="goToBorrowing" :filter="onFilter">
       <template #table-caption>La liste des emprunts dans la base.</template>
     </b-table>
 <!--    <b-list-group>-->
@@ -56,9 +56,11 @@ export default {
     return {
       borrowings: [],
       currentPage: 1,
-      parPage: 10,
+      perPage: 10,
       sortBy: "",
       borrowingTotalNumber: 0,
+      firstNameFiltre: "",
+      familyNameFiltre: "",
       fields: [
         {
           key: "",
@@ -132,15 +134,11 @@ export default {
   mounted() {
     this.getBorrowingsTotalNumber();
   },
-  watch: {
-
-  },
-  // computed: {
-  //   onFilter: function () {
-  //     return `${}`
-  //   }
-  // }
-
+  computed: {
+    onFilter: function() {
+      return `${this.firstNameFiltre} ${this.familyNameFiltre}`;
+    }
+  }
 }
 </script>
 
