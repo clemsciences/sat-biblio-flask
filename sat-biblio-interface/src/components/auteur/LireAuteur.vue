@@ -7,7 +7,7 @@
       <b-form-group label="Nom">
         <b-form-input type="text" v-model="family_name"></b-form-input>
       </b-form-group>
-      <b-button type="submit">Valider</b-button>
+      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
 
@@ -75,6 +75,11 @@ export default {
   mounted() {
     this.getAuthor();
   },
+  computed: {
+    isIncorrect: function () {
+      return this.first_name.length === 0 || this.family_name.length === 0;
+    }
+  }
 }
 </script>
 

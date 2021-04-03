@@ -13,6 +13,9 @@
     <b-form-group :label="selectedAuthorsMessage">
       <b-form-select :options="value" :select-size="5" size="sm"></b-form-select>
     </b-form-group>
+    <b-button :disabled="selectedAuthors.length === 0" @click="removeLastAuthor()">
+      Retirer le dernier auteur ajouté
+    </b-button>
   </div>
 </template>
 
@@ -29,13 +32,14 @@ name: "SuggestionAuteur",
       author_query: '',
       suggestedAuthors: [],
       selectedAuthor: '',
+      selectedAuthors: [],
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
     }
   },
   methods: {
     getSuggestedAuthors: function (query) {
       if (query.length >= 2) {
-        searchNearAuthors(`auteur=${query}`)
+        searchNearAuthors(`auteur=${encodeURIComponent(query)}`)
             .then((response) => {
               if (response.data.success) {
                 this.suggestedAuthors = response.data.suggestedAuthors;
@@ -44,10 +48,17 @@ name: "SuggestionAuteur",
       }
     },
     addAuthor: function(event) {
+      // TODO check that chosen Author is not already in selectedAuthors
       this.selectedAuthor = event;
       this.selectedAuthors.push(event);
       this.author_query = "";
+      this.$emit("input", this.selectedAuthors);
     },
+    removeLastAuthor: function() {
+      // const indexOfAuthor = this.selectedAuthors.indexOf(event);
+      this.selectedAuthors.pop()  // splice(indexOfAuthor, 1);
+      this.$emit("input", this.selectedAuthors);
+    }
   },
   watch: {
     author_query: function (newValue) {
