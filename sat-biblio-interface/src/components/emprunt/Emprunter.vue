@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h2>Emprunter</h2>
+  <b-container>
+    <Title title="Emprunter"
+           info="Un emprunt permet à un emprunteur enregistré de ramener un enregistrement chez lui. Lors de l'emprunt, il faut se mettre d'accord sur la date de retour."
+           id="id-borrowing"/>
     <b-form @submit.prevent="saveBorrowing">
 
       <SuggestionEnregistrement v-model="record"/>
@@ -11,9 +13,10 @@
       <b-form-group label="Commentaire">
         <b-form-textarea size="3" v-model="comment"/>
       </b-form-group>
-      <b-button type="submit">Enregistrer</b-button>
+      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
+      <span class="mx-3">{{ message }}</span>
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -21,10 +24,11 @@
 import {createBorrowing} from "../../services/api";
 import SuggestionEnregistrement from "../enregistrement/SuggestionEnregistrement";
 import SuggestionUtilisateur from "../utilisateur/SuggestionUtilisateur";
+import Title from "../visuel/Title";
 
 export default {
   name: "Emprunter",
-  components: {SuggestionUtilisateur, SuggestionEnregistrement},
+  components: {Title, SuggestionUtilisateur, SuggestionEnregistrement},
   data: function () {
     return {
       record: {value: -1, text: ""},
@@ -32,6 +36,7 @@ export default {
       borrower: {value: -1, text: ""},
       isBorrowed: true,
       dateComebackExpected: null,
+      message: ""
     }
   },
   methods: {
@@ -47,10 +52,18 @@ export default {
       createBorrowing(formData).then(
         (response) => {
           if(response.data.success) {
-            console.log("borrowing registered")
+            console.log("borrowing registered");
+            this.message = "L'emprunt a correctement été enregistré. Un courriel a été envoyé à l'emprunteur."
+          } else {
+            this.message = "Echec de l'enregistrement de l'emprunt."
           }
         }
     )
+    }
+  },
+  computed: {
+    isIncorrect: function () {
+      return this.record.value < 0 || this.borrower.length === 0;
     }
   }
 }

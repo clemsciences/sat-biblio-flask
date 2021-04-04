@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <h2>Nouvelle référence bibliographique - livre</h2>
+  <b-container>
+    <Title title="Nouvelle référence bibliographique - livre"
+           info="Une référence bibliographique désigne les informations propres à un livre"
+           id="id-ref"/>
+
     <b-form @submit.prevent="saveReference">
-      <SuggestionAuteur v-model="selectedAuthors"/>
+      <SuggestionAuteur v-model="selectedAuthors" class="my-3"/>
       <b-form-group label="Titre">
         <b-form-input v-model="titre"></b-form-input>
       </b-form-group>
@@ -18,19 +21,20 @@
       <b-form-group label="Nombre de pages">
         <b-form-input v-model="nb_page"/>
       </b-form-group>
-      <b-button type="submit">Enregistrer</b-button>
+      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
       <span class="mx-3">{{ saveMessage }}</span>
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import {createBookReference} from "../../services/api";
 import SuggestionAuteur from "../auteur/SuggestionAuteur";
+import Title from "../visuel/Title";
 
 export default {
   name: "ReferenceLivre",
-  components: {SuggestionAuteur},
+  components: {Title, SuggestionAuteur},
   data: function () {
     return {
       selectedAuthors: [],
@@ -72,6 +76,11 @@ export default {
         )
     }
   },
+  computed: {
+    isIncorrect: function () {
+      return this.selectedAuthors.length === 0 || this.titre.length === 0 || this.editeur.length === 0;
+    }
+  }
 }
 </script>
 

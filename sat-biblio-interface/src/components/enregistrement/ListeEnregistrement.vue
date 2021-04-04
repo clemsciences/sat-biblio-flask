@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <h2>Catalogue</h2>
+  <b-container>
+    <Title info="Le catalogue est la liste des enregistrements dans la bibliothèque."
+    id="id-catalogue">
+      Catalogue
+    </Title>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
     <b-row class="my-1">
       <b-col lg="4">
@@ -36,14 +39,16 @@
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import {getBookRecordsCount, retrieveBookRecords} from "../../services/api";
+import Title from "../visuel/Title";
 
 export default {
   name: "ListeEnregistrement",
+  components: {Title},
   data: function () {
     return {
       enregistrements: [],

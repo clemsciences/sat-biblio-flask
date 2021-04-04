@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <h2>Création d'un compte utilisateur</h2>
+  <b-container>
+    <Title info="Un utilisateur"
+           id="id-user">Création d'un compte utilisateur</Title>
     <b-form @submit.prevent="sendUserCreation">
       <b-form-group label="Prénom">
         <b-form-input v-model="first_name"/>
@@ -17,16 +18,18 @@
       <b-form-group label="Confirmation du mot de passe">
         <b-form-input type="password" v-model="password2"/>
       </b-form-group>
-      <b-button type="submit">Créer</b-button> <span class="mx-3">{{ message }}</span>
+      <b-button type="submit">Enregistrer</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import {createUser} from "../../services/api";
+import Title from "../visuel/Title";
 
 export default {
   name: "CreationUtilisateur",
+  components: {Title},
   data: function() {
     return {
       first_name: "",

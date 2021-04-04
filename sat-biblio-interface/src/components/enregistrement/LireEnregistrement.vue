@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <b-container>
+    <Title title="Enregistrement"
+           info=""
+           id=""/>
     <b-form @submit.prevent="updateRecord">
     <b-form-group label="Référence">
         <vue-typeahead-bootstrap
@@ -40,15 +43,17 @@
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
           <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
         </b-modal>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import axios from "axios";
 import {deleteBookRecord, retrieveBookRecord, updateBookRecord} from "../../services/api";
+import Title from "../visuel/Title";
 
 export default {
   name: "LireEnregistrement",
+  components: {Title},
   data: function () {
     return {
     reference_query: "",

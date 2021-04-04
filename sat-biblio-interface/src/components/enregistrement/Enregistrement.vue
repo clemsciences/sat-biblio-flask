@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h2>Nouvel enregistrement</h2>
+  <b-container>
+    <Title title="Nouvel enregistrement"
+           info="Un enregistrement désigne les informations sur un livre tel qu'il est enregistré dans la bibliothèque."
+           id="id-record"/>
     <b-form @submit.prevent="saveRecord">
       <SuggestionReference v-model="selectedReference"/>
       <!-- Recherche assisté de la référence -->
@@ -22,18 +24,20 @@
       <b-form-group label="Mots-clef">
         <b-form-input v-model="mots_clef"/>
       </b-form-group>
-      <b-button type="submit">Enregistrer</b-button><span class="mx-3">{{ message }}</span>
+      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
+      <span class="mx-3">{{ message }}</span>
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import {createBookRecord} from "../../services/api";
 import SuggestionReference from "../reference_livre/SuggestionReference";
+import Title from "../visuel/Title";
 
 export default {
   name: "Enregistrement",
-  components: {SuggestionReference},
+  components: {Title, SuggestionReference},
   data: function () {
     return {
       selectedReference: {value: -1, text: ""},
@@ -82,6 +86,11 @@ export default {
           );
     }
   },
+  computed: {
+    isIncorrect: function () {
+      return this.cote.length === 0 || this.selectedReference.value < 0;
+    }
+  }
 }
 </script>
 

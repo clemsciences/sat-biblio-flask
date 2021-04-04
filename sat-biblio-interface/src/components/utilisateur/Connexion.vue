@@ -8,7 +8,7 @@
       <b-form-group label="Mot de passe">
         <b-form-input type="password" v-model="password"></b-form-input>
       </b-form-group>
-      <b-button type="submit">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
+      <b-button type="submit" :disabled="isIncorrect">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
 
   </div>
@@ -37,9 +37,9 @@ export default {
           (value) => {
             if (value.data.success && value.data.connectionInfo) {
               localStorageManager.updateSessionInfo(value.data.connectionInfo);
-              let connectionInfo = value.data.connectionInfo;
+              const connectionInfo = value.data.connectionInfo;
               if(value.data.connected) {
-                this.$store.commit("connect", {...connectionInfo});
+                this.$store.commit("connect", {connectionInfo});
               }
 
               this.$router.push("/")
@@ -55,6 +55,11 @@ export default {
             this.message = "Problème de réseau";
           }
       );
+    }
+  },
+  computed: {
+    isIncorrect: function () {
+      return this.email.length === 0 || this.password.length === 0;
     }
   }
 }
