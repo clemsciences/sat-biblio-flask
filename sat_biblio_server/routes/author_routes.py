@@ -4,10 +4,11 @@ Manages authors.
 Authors have only a first name and family name.
 """
 
-from flask import redirect, request
 
 import logging
+from urllib.parse import urlparse
 
+from flask import redirect, request
 from sqlalchemy import or_
 
 from data import validation
@@ -126,14 +127,21 @@ def authors_count():
 @sat_biblio.route("/authors/search-near", methods=["GET"])
 def chercher_auteurs_plus_proches():
     query_result = request.args.get("auteur")
+    queries_string = query_result.split(" ")
+    # print(queries_string)
 
-    authors_db = AuthorDB.query.filter(
-        or_(AuthorDB.first_name.like(f"%{query_result}%"),
-            AuthorDB.family_name.like(f"%{query_result}%"))
-    ).all()
-
-    res = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
-           for author_db in authors_db]
+    authors_db = set()
+    for query_string in queries_string:
+        res_authors_db = set(AuthorDB.query.filter(
+            or_(AuthorDB.first_name.like(f"%{query_string}%"),
+                AuthorDB.family_name.like(f"%{query_string}%"))
+        ).all())
+        print(len(res_authors_db))
+        authors_db.update(res_authors_db)
+    res = []
+    for author_db in authors_db:
+        res.append(dict(text=f"{author_db.first_name} {author_db.family_name}",
+                        value=author_db.id))
     return json_result(True, suggestedAuthors=res), 200
 
 

@@ -35,7 +35,7 @@ export default {
     },
     getSuggestedUsers: function (query) {
       if(query.length >= 1) {
-        searchNearUsers(`user=${query}`).then((response) => {
+        searchNearUsers(`user=${encodeURIComponent(query)}`).then((response) => {
           if (response.data.success) {
             console.log("suggestedUsers", response.data)
             this.suggestedUsers = response.data.suggestedUsers;

@@ -34,7 +34,7 @@ export default {
     },
     getSuggestedReferences: function (query) {
       if(query.length >= 2) {
-        searchNearBookReferences(`titre=${query}`).then((response) => {
+        searchNearBookReferences(`titre=${encodeURIComponent(query)}`).then((response) => {
               if (response.data.success) {
                 console.log("suggestedReferences", response.data)
                 this.suggestedReferences = response.data.suggestedReferences;

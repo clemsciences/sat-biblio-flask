@@ -35,7 +35,7 @@ export default {
     },
     getSuggestedRecords: function (query) {
       if(query.length >= 2) {
-        searchNearBookRecords(`record=${query}`)
+        searchNearBookRecords(`record=${encodeURIComponent(query)}`)
             .then((response) => {
               if (response.data.success) {
                 console.log("suggestedRecords", response.data)
