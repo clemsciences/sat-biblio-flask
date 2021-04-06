@@ -21,15 +21,26 @@
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
                   </b-nav-item-dropdown>
                 </b-nav-item>
-                <b-nav-item class="active nav-link space-around titre-nav-item" to="/exporter">Exporter</b-nav-item>
                 <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>
-                <b-nav-item v-if="connected">
-                  <b-nav-item-dropdown text="Emprunter" class="titre-nav-item">
+                <b-nav-item v-if="isManager">
+                  <b-nav-item-dropdown text="Autres" class="titre-nav-item">
+                    <b-dropdown-group v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
                       <b-dropdown-item to="/emprunt/livre">Nouvel emprunt</b-dropdown-item>
                       <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
+                      <b-dropdown-item to="/gestionnaire">Gestionnaire</b-dropdown-item>
+                    </b-dropdown-group>
+                    <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
+                      <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
+                    </b-dropdown-group>
+                    <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
+                      <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
+                    </b-dropdown-group>
                   </b-nav-item-dropdown>
                 </b-nav-item>
+
                 <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
+
+
             </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -39,33 +50,42 @@
 
 <script>
 
-// import {mapState} from "vuex";
+import {mapState} from "vuex";
+import {canEdit, canManage, isAdmin} from "../services/rights";
 
 export default {
   name: "NavBar",
-  props: {
-    connected: Boolean
-  },
-  // computed: {
-  //   ...mapState(["connected", "connectionInfo"])
-  // }
+  computed: {
+    isAdmin: function () {
+      return isAdmin(this.connectionInfo.right);
+    },
+    isManager: function () {
+      return canManage(this.connectionInfo.right);
+    },
+    isEditor: function () {
+      return canEdit(this.connectionInfo.right);
+    },
+    ...mapState(["connected", "connectionInfo"])
+  }
 
 }
 </script>
 
 <style scoped>
-.sat-color-nav
-{
-background-color: #6cb0f3;
+.sat-color-nav {
+  background-color: #6cb0f3;
 }
 /*b-nav-item-dropdown
 {
   background-color: #6cb0f3;
 }*/
 
-.titre-nav-item
-{
+.titre-nav-item {
   font-size: 1.5rem;
+}
+
+.my-nav-group {
+  background-color: white;
 }
 
 

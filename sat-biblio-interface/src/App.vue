@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavBar v-bind:connected="connected"/>
+    <NavBar/>
     <router-view></router-view>
   </div>
 </template>
@@ -9,8 +9,6 @@
 
 import NavBar from "./components/NavBar";
 import localStorageManager from './services/localstorageManager';
-// import router from "./router";
-import {mapState} from 'vuex';
 import {checkUserLogin} from "./services/api";
 export default {
   name: 'App',
@@ -48,9 +46,6 @@ export default {
     //   response.connected = this.connected;
     //   return response;
     // });
-  },
-  computed: {
-    ...mapState(["connected"])
   },
   watch: {
     connectionInfo: {

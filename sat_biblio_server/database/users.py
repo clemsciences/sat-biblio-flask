@@ -56,6 +56,9 @@ class UserDB(db.Model):
     def verify_password(self, password):
         return check_password_hash(self.mdp_hash, password)
 
+    def get_right(self):
+        return self.right
+
     @staticmethod
     def register(email, password):
         user = UserDB(email=email)

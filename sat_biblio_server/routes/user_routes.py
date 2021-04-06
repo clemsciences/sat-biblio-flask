@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from sat_biblio_server import sat_biblio
+from sat_biblio_server import sat_biblio, UserDB
 from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.database as dbm
 import sat_biblio_server.sessions.session_manager as sm
@@ -22,23 +22,22 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 # region connexion
 
 
-def connect_user_login(user):
+def connect_user_login(user: UserDB):
     if login_user(user):
         session["email"] = user.email
         session["first_name"] = user.first_name
         session["family_name"] = user.family_name
+        session["right"] = user.right.value
 
 
 @sat_biblio.route("/users/connect", methods=["POST"])
 def connect_user():
     if "email" in session:
-        return json_result(True, {
-            "connectionInfo": {
-                "email": session["email"],
-                "first_name": session["first_name"],
-                "family_name": session["family_name"]
-            }
-        })
+        return json_result(True, message="Connexion réussie", connectionInfo={
+            "email": session["email"],
+            "first_name": session["first_name"],
+            "family_name": session["family_name"],
+            "right": session["right"]}, connected=True)
     else:
         data = request.get_json()
         if dv.check_user_connection(data):
@@ -56,12 +55,13 @@ def connect_user():
             connect_user_login(user)
             print("bien connecté")
             return json_result(True, message="Vous êtes bien connecté.",
-                               connectionInfo={"connected": True,
-                                               "connectionInfo": {
-                                                   "email": session["email"],
-                                                   "first_name": session["first_name"],
-                                                   "family_name": session["family_name"]
-                                               }})
+                               connected=True,
+                               connectionInfo={
+                                   "email": session["email"],
+                                   "first_name": session["first_name"],
+                                   "family_name": session["family_name"],
+                                   "right": session["right"]
+                               })
     return json_result(False)
 
 
@@ -98,6 +98,8 @@ def deconnecter_patient():
             del session["first_name"]
         if "family_name" in session:
             del session["family_name"]
+        if "right" in session:
+            del session["right"]
     # session.pop("pseudo_patient", None)
     # session.modified = True
     return json_result(True)
@@ -152,7 +154,8 @@ def check_login():
                                            "connectionInfo": {
                                                "email": session["email"],
                                                "first_name": session["first_name"],
-                                               "family_name": session["family_name"]
+                                               "family_name": session["family_name"],
+                                               "right": session["right"]
                                            }
                                            })
     else:

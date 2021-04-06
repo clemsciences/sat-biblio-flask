@@ -19,7 +19,8 @@
       <b-col cols="3">
         <h3>Connexion</h3>
         <div v-if="connected">
-          <p>Vous êtes connecté en tant que {{ connectionInfo.email }} {{ connectionInfo.first_name }} {{ connectionInfo.family_name }}.</p>
+          <p>Vous êtes connecté en tant que {{ connectionInfo.first_name }} {{ connectionInfo.family_name }} ({{ connectionInfo.email }}).</p>
+          <p>Vous êtes {{ rightString }}.</p>
           <p><b-button to="/utilisateur/deconnexion">Se déconnecter</b-button></p>
         </div>
         <div v-else>
@@ -37,11 +38,15 @@
 <script>
 
 import {mapState} from "vuex";
+import {getRightString} from "../services/rights";
 export default {
 name: "Accueil",
   components: {},
   computed: {
-    ...mapState(["connected", "connectionInfo"])
+    ...mapState(["connected", "connectionInfo"]),
+    rightString: function () {
+      return getRightString(this.connectionInfo.right);
+    }
   }
 
 }
