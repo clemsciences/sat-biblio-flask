@@ -79,7 +79,7 @@ a:hover {
     color: #33bbdf;
 }
 
-header, footer, div.page {
+footer, div.page {
     width: 100%;
     margin: auto auto;
     background: #6cb0f3;
