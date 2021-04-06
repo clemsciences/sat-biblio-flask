@@ -15,6 +15,7 @@ class CustomJSONEncoder(JSONEncoder):
 Blueprint.json_encoder = CustomJSONEncoder
 
 from sat_biblio_server.routes.check_routes import *
+from sat_biblio_server.routes.contact_routes import *
 from sat_biblio_server.routes.user_routes import *
 from sat_biblio_server.routes.book_routes import *
 from sat_biblio_server.routes.author_routes import *

@@ -18,7 +18,7 @@ from sat_biblio_server.config.development import Config
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 
-SENDER = "admin@skilvit.fr"
+SENDER = "sarcheot@gmail.com"
 
 
 def send_email(msg: Message, recipient_email_address: str):
@@ -51,10 +51,10 @@ def send_email_new_password(recipient: str, nouveau_mot_de_passe: str):
     :return:
     """
     msg = Message("Réinitialisation du mot de passe de SatBiblio",
-                  sender=Config.EMAIL_HOST_USER,
-                  html=render_template(recipient=recipient,
+                  sender=Config.MAIL_DEFAULT_SENDER,
+                  html=render_template("mails/nouveau_mot_de_passe.html", recipient=recipient,
                                        nouveau_mot_de_passe=nouveau_mot_de_passe,
-                                       expediteur=Config.EMAIL_HOST_USER))
+                                       expediteur=Config.MAIL_DEFAULT_SENDER))
     send_email(msg, recipient)
 
 
@@ -70,24 +70,19 @@ def envoyer_mail_demande_inscription_utilisateur(user: Union[UserDB], link):
     return send_email(msg, user.email)
 
 
-def envoyer_mail_attente_inscription_praticien(user: Union[UserDB], token):
-    msg = Message(lazy_gettext("Skilvit - attente validation inscription"), sender=SENDER,
-                  html=render_template("mails/attente_validation_praticien.html", user=user))
-    msg.add_recipient((user.first_name + " " + user.family_name, user.email))
-    return send_email(msg, user.email)
-
-
-def envoyer_message_contact(email_address: str, content: str):
+def envoyer_message_contact(user_email_address: str, message: str):
     # Send to contact
-    msg1 = Message(subject=lazy_gettext("Message envoyé à Skilvit"), sender=SENDER,
-                   html=render_template("mails/message_contact.html", corps=content))
-    msg1.add_recipient((email_address, email_address))
-    res = send_email(msg1, email_address)
+
+    msg1 = Message(subject="Message envoyé à SAT biblio", sender=SENDER,
+                   html=render_template("mails/message_contact.html", message=message))
+    msg1.add_recipient(user_email_address)
+    # mail.send(msg1)
+    send_email(msg1, user_email_address)
 
     # Send to admin of the website
-    msg2 = Message(subject=lazy_gettext("Message reçu d'un curieux"), sender=SENDER,
-                   html=render_template("mails/message_contact_admin.html", destinataire=email_address, corps=content))
-    msg2.add_recipient((SENDER, SENDER))
-    return send_email(msg2, SENDER) and res
+    msg2 = Message(subject="Message reçu d'un curieux", sender=SENDER,
+                   html=render_template("mails/message_contact.html", destinataire=user_email_address, message=message))
+    msg2.add_recipient(SENDER)
+    send_email(msg2, user_email_address)
 
 
