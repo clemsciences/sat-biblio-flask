@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --dest satbiblio-dist",
+    "zip": "tar.exe -a -c -f satbiblio.zip satbiblio-dist",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
