@@ -26,10 +26,10 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], val, for_
                 if pseudo in session:
                     return methode(*args, **kwargs)
                 logging.log(logging.DEBUG, "not connected")
-                return val
+                return val, 401
             else:
                 logging.log(logging.DEBUG, "not connected")
-                return val
+                return val, 401
         return fonction_modifiee
     return deco
 
