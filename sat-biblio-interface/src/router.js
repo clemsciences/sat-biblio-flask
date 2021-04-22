@@ -27,6 +27,8 @@ import Contact from "@/components/Contact";
 import Emprunter from "@/components/emprunt/Emprunter";
 import ListeEmprunt from "@/components/emprunt/ListeEmprunt";
 import ListeAuteur from "@/components/auteur/ListeAuteur";
+import Admin from "./components/admin/Admin";
+import Gestionnaire from "./components/admin/Gestionnaire";
 
 Vue.use(VueRouter);
 
@@ -198,6 +200,18 @@ let router = new VueRouter({
             name: "emprunt-liste",
             path: '/emprunt/liste',
             component: ListeEmprunt,
+            needAuth: true
+        },
+        {
+            name: "administrateur",
+            path: "/administrateur",
+            component: Admin,
+            needAuth: true,
+        },
+        {
+            name: "gestionnaire",
+            path: "/gestionnaire",
+            component: Gestionnaire,
             needAuth: true
         }
         // endregion
