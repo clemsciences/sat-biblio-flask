@@ -1,0 +1,5 @@
+/sat_biblio_server/config/secret_key
+/sat_biblio_server/config/mail_password
+TO-DO.md
+flask_session/
+/sat_biblio_server/config/email_address
