@@ -27,3 +27,4 @@ WTForms
 pdfkit
 wkhtmltopdf
 xlrd
+pylatex

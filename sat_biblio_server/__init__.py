@@ -202,7 +202,7 @@ def create_app():
         header = response.headers
         header["Access-Control-Allow-Origin"] = "*"
         return response
-    app.register_blueprint(sat_biblio, url_prefix="/api")
+    app.register_blueprint(sat_biblio)
     # print("application lancée")
     app.secret_key = "Essai"
     return app
