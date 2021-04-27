@@ -52,5 +52,5 @@ class Config:
 
     PERMANENT_SESSION_LIFETIME = 60*60*24*7
     CORS_HEADERS = 'Content-Type'
-    SESSION_TYPE = "filesystem"
+    SESSION_TYPE = "null"
 
