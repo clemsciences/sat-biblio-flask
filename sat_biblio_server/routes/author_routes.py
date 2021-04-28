@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from flask import redirect, request
 from sqlalchemy import or_
 
-from data import validation
+from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author
 from sat_biblio_server.database import db, AuthorDB
 from sat_biblio_server import sat_biblio

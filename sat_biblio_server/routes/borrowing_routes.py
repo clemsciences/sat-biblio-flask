@@ -6,7 +6,7 @@ from flask import redirect, session, request
 
 import logging
 
-from data.models import EmpruntLivre
+from sat_biblio_server.data.models import EmpruntLivre
 from sat_biblio_server.sessions import UserSess
 
 from sat_biblio_server.database import db, EmpruntLivreDB

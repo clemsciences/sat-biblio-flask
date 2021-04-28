@@ -7,8 +7,7 @@ from flask import redirect, request
 
 import logging
 
-from data.models import ReferenceBibliographiqueLivre, Author
-
+from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
