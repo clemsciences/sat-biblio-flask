@@ -3,3 +3,5 @@
 TO-DO.md
 flask_session/
 /sat_biblio_server/config/email_address
+venv
+.idea
