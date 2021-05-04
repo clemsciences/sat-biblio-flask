@@ -50,8 +50,11 @@ export default {
             }
         ).catch(
             (reason => {
-              console.log(reason);
-              this.message = "Il y a une erreur réseau."
+              if(reason.response.data && reason.response.data.message) {
+                this.message = reason.response.data.message
+              } else {
+                this.message = "Il y a une erreur réseau."
+              }
             })
         );
       } else if(this.first_name.length === 0) {
