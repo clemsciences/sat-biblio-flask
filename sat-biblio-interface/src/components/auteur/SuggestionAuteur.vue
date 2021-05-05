@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container>
     <b-form-group label="Auteurs">
       <vue-typeahead-bootstrap
         v-model="author_query"
@@ -16,11 +16,11 @@
     <b-button :disabled="selectedAuthors.length === 0" @click="removeLastAuthor()">
       Retirer le dernier auteur ajouté
     </b-button>
-  </div>
+  </b-container>
 </template>
 
 <script>
-import {searchNearAuthors} from "../../services/api";
+import {searchNearAuthors} from "@/services/api";
 
 export default {
 name: "SuggestionAuteur",

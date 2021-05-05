@@ -1,16 +1,20 @@
 <template>
-  <div>
-    <h2>Déconnexion</h2>
+  <b-container>
+    <Title title="Déconnexion"
+      info=""
+      id="id-deconnexion"/>
     <p>La déconnexion s'est correctement déroulée.</p>
     <b-button to="/">Retourner à l'accueil</b-button>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import localStorageManager from "@/services/localstorageManager";
-import {disconnectUser} from "../../services/api";
+import {disconnectUser} from "@/services/api";
+import Title from "@/components/visuel/Title";
 export default {
   name: "Deconnexion",
+  components: {Title},
   data: function() {
     return {
       message: "",

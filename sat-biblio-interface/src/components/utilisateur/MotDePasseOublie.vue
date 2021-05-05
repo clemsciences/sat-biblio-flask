@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <b-container>
     <b-form @submit="passwordForgotten">
       <b-form-input type="email" name="email_address"/>
       <b-form-input/>
 
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
-import {haveForgottenPassword} from "../../services/api";
+import {haveForgottenPassword} from "@/services/api";
 
 export default {
   name: "MotDePasseOublie",
@@ -22,6 +22,11 @@ export default {
             }
           }
       )
+          // .catch(
+          // (reason) => {
+          //   reason.
+          // }
+      // )
     }
   }
 }

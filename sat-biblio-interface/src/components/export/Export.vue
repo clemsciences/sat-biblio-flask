@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <b-container>
     <h2>Export</h2>
     <b-button class="mx-3" @click="exporterPDF">Exporter au format PDF</b-button>
     <b-button class="mx-3" @click="exporterExcel">Exporter au format Excel (.xsl)</b-button>
 
 
-  </div>
+  </b-container>
 </template>
 
 <script>

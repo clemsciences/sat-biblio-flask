@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <b-container>
     <h2>Utilisateur enregistré</h2>
-  </div>
+  </b-container>
 </template>
 
 <script>

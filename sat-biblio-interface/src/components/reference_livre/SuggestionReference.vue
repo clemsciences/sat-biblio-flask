@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {searchNearBookReferences} from "../../services/api";
+import {searchNearBookReferences} from "@/services/api";
 
 export default {
   name: "SuggestionReference",

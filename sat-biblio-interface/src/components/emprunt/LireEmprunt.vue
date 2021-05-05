@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container>
     <h2>Emprunt</h2>
     <b-form @submit.prevent="updateBorrowing">
       <b-form-group label="Enregistrement">
@@ -17,7 +17,7 @@
       <b-button type="submit">Sauvegarder</b-button>
     </b-form>
     <b-button @click="deleteBorrowing">Supprimer</b-button>
-  </div>
+  </b-container>
 
 </template>
 

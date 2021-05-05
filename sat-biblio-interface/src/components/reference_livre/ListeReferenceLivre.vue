@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h2>Liste des références</h2>
+  <b-container>
+    <Title title="Liste des références"
+           info=""
+           id="id-liste-ref"/>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
     <b-row class="my-3">
       <b-col lg="4">
@@ -21,14 +23,16 @@
              :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
-  </div>
+  </b-container>
 </template>
 
 <script>
-import {getBookReferencesCount, retrieveBookReferences} from "../../services/api";
+import {getBookReferencesCount, retrieveBookReferences} from "@/services/api";
+import Title from "@/components/visuel/Title";
 
 export default {
   name: "ListeReferenceLivre",
+  components: {Title},
   data: function () {
     return {
       references: [],

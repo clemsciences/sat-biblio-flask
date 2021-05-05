@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container>
     <b-form @submit.prevent="updateAuthor">
       <b-form-group label="Prénom">
         <b-form-input type="text" v-model="first_name"></b-form-input>
@@ -18,11 +18,11 @@
       <p>Êtes-vous sûr de supprimer cet auteur ?</p>
     </b-modal>
 
-  </div>
+  </b-container>
 </template>
 
 <script>
-import {deleteAuthor, retrieveAuthor, updateAuthor} from "../../services/api";
+import {deleteAuthor, retrieveAuthor, updateAuthor} from "@/services/api";
 export default {
   name: "LireAuteur",
   data: function () {

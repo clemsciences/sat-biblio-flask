@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <b-container>
     {{ username }}
     <b-form @submit="reinitialisePassword">
       <b-form-input name="password1" :value="password1"/>
       <b-form-input name="password2" :value="password2"/>
 
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script>
-import {recreatePassword} from "../../services/api";
+import {recreatePassword} from "@/services/api";
 
 export default {
   name: "ReinitialisationMotDePasse",

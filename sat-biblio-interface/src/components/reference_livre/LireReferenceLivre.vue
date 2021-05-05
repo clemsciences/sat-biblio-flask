@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container>
   <h2>Référence bibliographique</h2>
     <b-form @submit.prevent="updateReference">
       <b-form-group label="Auteurs">
@@ -42,7 +42,7 @@
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
       <p>Êtes-vous sûr de supprimer cette référence ?</p>
     </b-modal>
-  </div>
+  </b-container>
 </template>
 
 <script>

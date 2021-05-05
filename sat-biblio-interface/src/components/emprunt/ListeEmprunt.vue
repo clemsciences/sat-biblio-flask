@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-container>
     <h2>Liste d'emprunts</h2>
     <p>Double-cliquez sur la ligne pour voir les détails sur un emprunt.</p>
     <b-row class="my-1">
@@ -43,12 +43,12 @@
 <!--        {{ borrow.rendu }}-->
 <!--      </b-list-group-item>-->
 <!--    </b-list-group>-->
-  </div>
+  </b-container>
 </template>
 
 <script>
 
-import {getBorrowingsCount, retrieveBorrowings} from "../../services/api";
+import {getBorrowingsCount, retrieveBorrowings} from "@/services/api";
 
 export default {
   name: "ListeEmprunt",

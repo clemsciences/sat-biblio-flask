@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <h2>Liste des auteurs</h2>
-      <p>Double-cliquez sur la ligne pour voir les détails.</p>
+  <b-container>
+    <Title title="Liste des auteurs"
+       info=""
+       id="id-liste-auteurs"/>
+    <p>Double-cliquez sur la ligne pour voir les détails.</p>
     <b-row class="my-1">
       <b-col lg="4">
         <b-form-group label="Prénom" label-cols-sm="3"
@@ -28,15 +30,17 @@
              :sort-by="sortBy" @row-dblclicked="goToAuthor" :filter="onFilter">
       <template #table-caption>La liste des auteurs dans la base.</template>
     </b-table>
-  </div>
+  </b-container>
 </template>
 
 <script>
 
-import {getAuthorsCount, retrieveAuthors} from "../../services/api";
+import {getAuthorsCount, retrieveAuthors} from "@/services/api";
+import Title from "@/components/visuel/Title";
 
 export default {
   name: "ListeAuteur",
+  components: {Title},
   data: function () {
     return {
       authors: [],

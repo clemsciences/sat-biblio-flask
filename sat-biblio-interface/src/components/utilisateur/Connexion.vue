@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h2>Connexion</h2>
+  <b-container>
+    <Title title="Se connecter"
+           info="Il est nécessaire de se connecter si on veut faire des modifications. A contrario, la lecture est accessible par tout le monde."
+           id="id-connexion"/>
     <b-form @submit.prevent="login">
       <b-form-group label="Adresse email">
         <b-form-input v-model="email"></b-form-input>
@@ -11,15 +13,17 @@
       <b-button type="submit" :disabled="isIncorrect">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
 
-  </div>
+  </b-container>
 </template>
 
 <script>
 import localStorageManager from "@/services/localstorageManager";
-import {connectUser} from "../../services/api";
+import {connectUser} from "@/services/api";
+import Title from "@/components/visuel/Title";
 
 export default {
   name: "Connexion",
+  components: {Title},
   data: function () {
     return {
       email: "",
