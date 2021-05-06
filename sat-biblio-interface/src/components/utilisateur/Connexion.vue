@@ -42,8 +42,9 @@ export default {
             if (value.data.success && value.data.connectionInfo) {
               localStorageManager.updateSessionInfo(value.data.connectionInfo);
               const connectionInfo = value.data.connectionInfo;
+              const right = value.data.right;
               if(value.data.connected) {
-                this.$store.commit("connect", {connectionInfo});
+                this.$store.commit("connect", {connectionInfo, right});
               }
 
               this.$router.push("/")
@@ -55,8 +56,11 @@ export default {
           }
       ).catch(
           (reason) => {
-            console.log(reason);
-            this.message = "Problème de réseau";
+            if(reason.response.data.message) {
+              this.message = reason.response.data.message;
+            } else {
+              this.message = "Problème de réseau";
+            }
           }
       );
     }

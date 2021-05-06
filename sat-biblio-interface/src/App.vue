@@ -21,9 +21,10 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
-                  let connectionInfo = response.data.connectionInfo;
+                  const connectionInfo = response.data.connectionInfo;
+                  const right = response.data.right;
                   if(response.data.connected) {
-                    this.$store.commit("connect", {...connectionInfo});
+                    this.$store.commit("connect", {connectionInfo, right});
                   } else {
                     this.$store.commit("disconnect");
                   }
