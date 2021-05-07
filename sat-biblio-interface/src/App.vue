@@ -36,7 +36,7 @@ export default {
     }
   },
   mounted() {
-    this.checkLogin();
+    // this.checkLogin();
 
     // router.beforeEach((to, from, next) => {
     //   this.checkLogin();

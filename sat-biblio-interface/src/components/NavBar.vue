@@ -54,6 +54,7 @@ import {canEdit, canManage, isAdmin} from "../services/rights";
 export default {
   name: "NavBar",
   computed: {
+    ...mapState(["connected", "connectionInfo"]),
     isAdmin: function () {
       return isAdmin(this.connectionInfo.right);
     },

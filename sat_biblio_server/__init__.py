@@ -7,6 +7,7 @@ import os
 from flask import Flask, url_for, redirect, render_template, request, jsonify, Blueprint
 from flask_babel import Babel
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail
@@ -17,7 +18,6 @@ from werkzeug.security import check_password_hash
 from flask_admin import Admin, AdminIndexView, expose, helpers
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
-from flask_session import Session
 
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB, AuthorDB, ReferenceBibliographiqueLivreDB
@@ -38,7 +38,7 @@ mail = Mail()
 migrate = Migrate()
 cors = CORS(automatic_options=True, support_credentials=True,
             origins=["api.satbiblio.clementbesnier.eu", "satbiblio.clementbesnier.eu"])
-session = Session()
+jwt = JWTManager()
 
 
 class SatAdminModelView(ModelView):
@@ -177,7 +177,7 @@ def create_app():
     csrf.init_app(app)
     cors.init_app(app)
     mail.init_app(app)
-    session.init_app(app)
+    jwt.init_app(app)
 
     # admin page
     admin = Admin(app, "Administration", index_view=MyAdminIndexView(), template_mode="bootstrap3")

@@ -7,6 +7,7 @@ import logging
 from typing import Union, List, AnyStr
 
 from flask import request, session, abort
+from flask_jwt_extended import verify_jwt_in_request
 
 from sat_biblio_server import sat_biblio
 
@@ -23,6 +24,7 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], val, for_
             if request.method not in for_request_method:
                 return methode(*args, **kwargs)
             if type(pseudo) == str:
+                verify_jwt_in_request()
                 if pseudo in session:
                     return methode(*args, **kwargs)
                 logging.log(logging.DEBUG, "not connected")

@@ -105,7 +105,7 @@ let router = new VueRouter({
             name: "utilisateur-deconnexion",
             path: '/utilisateur/deconnexion',
             component: Deconnexion,
-            needAuth: false
+            needAuth: true
         },
         // endregion
 

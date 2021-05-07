@@ -9,10 +9,9 @@ from itsdangerous import TimedJSONWebSignatureSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sat_biblio_server.database.db_manager import db
+from sat_biblio_server.utils import UserRight
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
-
-from sat_biblio_server.utils import UserRight
 
 
 class UserDB(db.Model):
@@ -33,9 +32,9 @@ class UserDB(db.Model):
     right = db.Column(db.Enum(UserRight))
 
     date_inscription = db.Column(db.DateTime, nullable=False)
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     # mdp = db.Column(db.String(80), unique=False, nullable=False)
-    mdp_hash = db.Column(db.String(128), unique=False)
+    mdp_hash = db.Column(db.String(128), unique=False, nullable=False)
     confirmed = db.Column(db.Boolean, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True, default=None)
     is_admin = db.Column(db.Boolean, nullable=True, default=False)
@@ -66,6 +65,36 @@ class UserDB(db.Model):
         db.session.add(user)
         db.session.commit()
         return user
+
+    @classmethod
+    def authenticate(cls, **kwargs):
+        email = kwargs.get("email")
+        password = kwargs.get("password")
+        if not email:
+            print("identification a échoué")
+            message = "L'adresse email ou le mot de passe est incorrect."
+            return None, message
+        user = cls.query.filter_by(email=email).first()
+
+        if not password:
+            message = "Aucun mot de passe."
+            return None, message
+
+        if not user:
+            message = "L'adresse email est inconnue."
+            return None, message
+
+        if not user.verify_password(password):
+            print("mauvais mot de passe")
+            message = "L'adresse email ou le mot de passe est incorrect."
+            return None, message
+
+        if not user.confirmed:
+            print("utilisateur non confirmé")
+            message = "L'utilisateur n'est pas confirmé."
+            return None, message
+
+        return user, ""
 
     def is_active(self):
         return True
