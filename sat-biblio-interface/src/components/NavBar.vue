@@ -1,45 +1,59 @@
 <template>
   <b-container>
-    <b-navbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav">
-      <b-navbar-brand><h1>SAT - Biblio</h1></b-navbar-brand>
+    <b-navbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
+      <b-navbar-brand to="/" id="accueil-tooltip">
+        <h1>SAT - Biblio</h1>
+        <b-tooltip target="accueil-tooltip" triggers="hover" class="my-tooltip">
+              Accueil
+        </b-tooltip>
+      </b-navbar-brand>
       <b-navbar-toggle target="navbarSupportedContent"></b-navbar-toggle>
       <b-collapse is-nav style="height: 1px;" id="navbarSupportedContent">
-          <b-navbar-nav>
-              <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>
-              <b-nav-item v-if="connected">
-                  <b-nav-item-dropdown text="Créer" class="titre-nav-item">
-                    <b-dropdown-item to="/auteur/creer">Créer auteur</b-dropdown-item>
-                    <b-dropdown-item to="/reference-livre/creer">Créer référence</b-dropdown-item>
-                    <b-dropdown-item to="/enregistrement/creer">Créer enregistrement</b-dropdown-item>
-                  </b-nav-item-dropdown>
-              </b-nav-item>
-              <b-nav-item class="active">
-                <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
-                  <b-dropdown-item to="/auteur/liste">Consulter auteurs</b-dropdown-item>
-                  <b-dropdown-item to="/reference-livre/liste">Consulter références</b-dropdown-item>
-                  <b-dropdown-item to="/enregistrement/liste">Consulter catalogue</b-dropdown-item>
+        <b-navbar-nav>
+<!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
+          <b-nav-item v-if="connected">
+            <b-nav-item-dropdown text="Créer" class="titre-nav-item">
+              <b-dropdown-item to="/auteur/creer">Créer auteur</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/creer">Créer référence</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/creer">Créer enregistrement</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-nav-item>
+          <b-nav-item class="active" active>
+            <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
+              <b-dropdown-item to="/auteur/liste">Consulter auteurs</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/liste">Consulter références</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/liste">Consulter catalogue</b-dropdown-item>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
-                </b-nav-item-dropdown>
-              </b-nav-item>
-              <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>
-              <b-nav-item v-if="isManager">
-                <b-nav-item-dropdown text="Autres" class="titre-nav-item">
-                  <b-dropdown-group v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
-                    <b-dropdown-item to="/emprunt/livre">Nouvel emprunt</b-dropdown-item>
-                    <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
-                    <b-dropdown-item to="/gestionnaire">Gestionnaire</b-dropdown-item>
-                  </b-dropdown-group>
-                  <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
-                    <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
-                  </b-dropdown-group>
-                  <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
-                    <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
-                  </b-dropdown-group>
-                </b-nav-item-dropdown>
-              </b-nav-item>
+            </b-nav-item-dropdown>
+          </b-nav-item>
+<!--          <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>-->
+          <b-nav-item v-if="isManager">
+            <b-nav-item-dropdown text="Autres" class="titre-nav-item">
+              <b-dropdown-group v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
+                <b-dropdown-item to="/emprunt/livre">Nouvel emprunt</b-dropdown-item>
+                <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
+                <b-dropdown-item to="/gestionnaire">Gestionnaire</b-dropdown-item>
+              </b-dropdown-group>
+              <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
+                <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
+              </b-dropdown-group>
+              <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
+                <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
+              </b-dropdown-group>
+            </b-nav-item-dropdown>
+          </b-nav-item>
 
-              <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
-          </b-navbar-nav>
+          <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
+
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item id="connection-tooltip" :to="{name: connectionLink}" class="nav-link space-around titre-nav-item ml-auto">
+            {{ connectionLabel }}
+            <b-tooltip target="connection-tooltip" triggers="hover" class="my-tooltip" v-if="connected">
+              {{ connectionTooltipHints }}
+            </b-tooltip>
+          </b-nav-item>
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
   </b-container>
@@ -49,7 +63,7 @@
 <script>
 
 import {mapState} from "vuex";
-import {canEdit, canManage, isAdmin} from "../services/rights";
+import {canEdit, canManage, getRightString, isAdmin} from "@/services/rights";
 
 export default {
   name: "NavBar",
@@ -64,7 +78,24 @@ export default {
     isEditor: function () {
       return canEdit(this.connectionInfo.right);
     },
-    ...mapState(["connected", "connectionInfo"])
+    connectionTooltipHints: function () {
+      return `${this.connectionInfo.first_name} ${this.connectionInfo.family_name} - ${this.connectionInfo.email}
+      ${getRightString(this.connectionInfo.right)}`
+    },
+    connectionLabel: function() {
+      if(!this.connected) {
+        return "Se connecter";
+      } else {
+        return "Se déconnecter";
+      }
+    },
+    connectionLink: function() {
+      if(!this.connected) {
+        return "utilisateur-connexion";
+      } else {
+        return "utilisateur-deconnexion";
+      }
+    }
   }
 
 }
@@ -85,6 +116,10 @@ export default {
 
 .my-nav-group {
   background-color: white;
+}
+
+.my-tooltip {
+  text-justify: auto;
 }
 
 
