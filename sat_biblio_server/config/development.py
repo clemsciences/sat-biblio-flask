@@ -19,6 +19,10 @@ with open(os.path.join(PACKDIR, "secret_key"), "r") as f:
     secret_key = f.read().strip()
 
 
+with open(os.path.join(PACKDIR, "jwt_secret_key"), "r") as f:
+    jwt_secret_key = f.read().strip()
+
+
 class Config:
     ENV = "development"
     DEBUG = True
@@ -32,6 +36,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     WTF_CSRF_CHECK_DEFAULT = False
+    JWT_SECRET_KEY = jwt_secret_key
 
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
