@@ -36,8 +36,7 @@ lm = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
 migrate = Migrate()
-cors = CORS(automatic_options=True, support_credentials=True,
-            origins=["api.satbiblio.clementbesnier.eu", "satbiblio.clementbesnier.eu"])
+cors = CORS(automatic_options=True, support_credentials=True)
 jwt = JWTManager()
 
 
