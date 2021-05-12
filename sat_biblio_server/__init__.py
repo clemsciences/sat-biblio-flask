@@ -126,15 +126,15 @@ class MyAdminIndexView(AdminIndexView):
 sat_biblio = Blueprint('sat_biblio', __name__)
 
 
-def create_app():
+def create_app(config):
     """Create an application instance."""
     app = Flask(__name__)
 
     # import configuration
     # cfg = os.path.join(os.getcwd(), 'app', 'config', config_name + '.py')
-    app.config.from_object(Config)
+    app.config.from_object(config)
     # app.config.from_pyfile(cfg)
-    app.secret_key = Config.SECRET_KEY
+    app.secret_key = config.SECRET_KEY
 
     @app.errorhandler(404)
     def page_not_found(e):

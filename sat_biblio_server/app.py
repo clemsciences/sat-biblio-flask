@@ -8,11 +8,12 @@ import os
 
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server import create_app, sat_biblio
+from sat_biblio_server.config.development import Config
 
 
 @sat_biblio.route("/test")
 def test():
-    return jsonify({"success": True, "message": "Test succeeded"})@app.route("/test")
+    return jsonify({"success": True, "message": "Test succeeded"})
 
 
 @sat_biblio.route("/")
@@ -20,7 +21,7 @@ def api_redirect():
     return jsonify({"success": False, "message": "Vous n'êtes pas connecté. Veuillez vous connecter pour continuer."})
 
 
-app = create_app()
+app = create_app(Config)
 
 
 with app.app_context():

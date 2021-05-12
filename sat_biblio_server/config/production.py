@@ -28,8 +28,7 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = secret_key
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-        os.path.dirname(__file__), '../data-dev.sqlite3')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
     SERVER_NAME = "api.satbiblio.clementbesnier.eu"

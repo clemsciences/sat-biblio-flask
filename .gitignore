@@ -5,3 +5,4 @@ flask_session/
 /sat_biblio_server/config/email_address
 venv
 .idea
+/sat_biblio_server/config/jwt_secret_key
