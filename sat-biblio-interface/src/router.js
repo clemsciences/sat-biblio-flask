@@ -29,6 +29,7 @@ import ListeEmprunt from "@/components/emprunt/ListeEmprunt";
 import ListeAuteur from "@/components/auteur/ListeAuteur";
 import Admin from "./components/admin/Admin";
 import Gestionnaire from "./components/admin/Gestionnaire";
+import PageNotFound from "@/components/PageNotFound";
 
 Vue.use(VueRouter);
 
@@ -213,6 +214,14 @@ let router = new VueRouter({
             path: "/gestionnaire",
             component: Gestionnaire,
             needAuth: true
+        },
+        // endregion
+        // region page not found
+        {
+            name: "not-found",
+            path: "*",
+            component: PageNotFound,
+            needAuth: false
         }
         // endregion
     ],
