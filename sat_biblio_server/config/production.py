@@ -28,10 +28,11 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = secret_key
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
     SERVER_NAME = "api.satbiblio.clementbesnier.eu"
+    VUE_SERVER_NAME = "satbiblio.clementbesnier.eu"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     WTF_CSRF_CHECK_DEFAULT = False

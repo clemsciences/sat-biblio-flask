@@ -48,15 +48,14 @@ class SatAdminModelView(ModelView):
         # print(current_user.is_active)
         # print(current_user.is_authenticated)
 
-        return True
-        # if not current_user.is_active or not current_user.is_authenticated:
-        #     return False
-        #
-        # if hasattr(current_user, "is_admin"):
-        #     if current_user.is_admin:
-        #         return True
-        # # return False
         # return True
+        if not current_user.is_active or not current_user.is_authenticated:
+            return False
+
+        if hasattr(current_user, "is_admin"):
+            if current_user.is_admin:
+                return True
+        return False
 
 
 class AdminLoginForm(wtforms.form.Form):
@@ -197,63 +196,12 @@ def create_app(config):
     # import blueprints
     from sat_biblio_server.routes import sat_biblio
 
-    @sat_biblio.after_request
-    def after_request(response):
-        header = response.headers
-        header["Access-Control-Allow-Origin"] = "*"
-        return response
+    # @sat_biblio.after_request
+    # def after_request(response):
+    #     header = response.headers
+    #     header["Access-Control-Allow-Origin"] = "*"
+    #     return response
     app.register_blueprint(sat_biblio)
     # print("application lancée")
-    app.secret_key = "Essai"
+    # app.secret_key = "Essai"
     return app
-
-
-# def create_app_test():
-#     app = Flask(__name__)
-#
-#     # import configuration
-#     # cfg = os.path.join(os.getcwd(), 'app', 'config', config_name + '.py')
-#     app.config.from_object(config_test.Config)
-#     # app.config.from_pyfile(cfg)
-#     app.secret_key = Config.SECRET_KEY
-#
-#     # initialize extensions
-#     db.init_app(app)
-#
-#     # login manager for admin
-#     lm.init_app(app)
-#
-#     babel.init_app(app)
-#     # print(babel.list_translations())
-#     # print(babel.default_locale)
-#     # print(babel.default_timezone)
-#     # print(babel.translation_directories)
-#     cors = CORS(app, automatic_options=True, support_credentials=True)
-#     cors.init_app(app)
-#     csrf.init_app(app)
-#     mail.init_app(app)
-#
-#     # admin page
-#     admin = Admin(app, "Administration", base_template='my_master.html', index_view=MyAdminIndexView(),
-#                   template_mode="bootstrap3")
-#     admin.add_view(SatAdminModelView(UserDB, db.session))
-#     admin.add_view(SatAdminModelView(AuthorDB, db.session))
-#     admin.add_view(SatAdminModelView(EnregistrementDB, db.session))
-#     # admin.add_view(SatAdminModelView(ReferenceBibliographiqueArticleDB, db.session))
-#     admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivreDB, db.session))
-#     admin.add_view(SatAdminModelView(EmpruntLivreDB, db.session))
-#
-#     # migration
-#     migrate.init_app(app, db)
-#
-#     @lm.user_loader
-#     def load_user(user_id):
-#         return UserDB.query.get(int(user_id))
-#
-#     # import blueprints
-#     from .routes import sat_biblio
-#     app.register_blueprint(sat_biblio)
-#     # print("application lancée test")
-#     return app
-
-
