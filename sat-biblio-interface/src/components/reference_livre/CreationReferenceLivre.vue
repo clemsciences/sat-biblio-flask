@@ -57,7 +57,7 @@ export default {
         nb_page: this.nb_page
       };
 
-      createBookReference(formData)
+      createBookReference(formData, this.$store.state.connectionInfo.token)
         .then(
             (response) => {
               if(response.data.success) {

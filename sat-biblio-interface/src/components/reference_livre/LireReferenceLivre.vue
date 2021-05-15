@@ -97,7 +97,7 @@ name: "LireReferenceLivre",
         annee: this.annee,
         nb_page: this.nb_page
       };
-      updateBookReference(this.$route.params.id, formData)
+      updateBookReference(this.$route.params.id, formData, this.$store.state.connectionInfo.token)
           .then(
               (response) => {
                 if(response.data.success) {
@@ -110,7 +110,7 @@ name: "LireReferenceLivre",
           )
     },
     deleteReference: function() {
-        deleteBookReference(this.$route.params.id)
+        deleteBookReference(this.$route.params.id, this.$store.state.connectionInfo.token)
           .then(
               (response) => {
                 if(response.data.success) {

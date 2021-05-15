@@ -62,7 +62,7 @@ export default {
         borrower: this.borrower,
         dateComebackExpected: this.dateComebackExpected
       };
-      updateBorrowing(this.$route.params.id, formData).then(
+      updateBorrowing(this.$route.params.id, formData, this.$store.state.connectionInfo.token).then(
           (response) => {
             if(response.data.success) {
               console.log("borrowing updated");
@@ -75,7 +75,7 @@ export default {
       );
     },
     deleteBorrowing: function () {
-      deleteBorrowing(this.$route.params.id).then(
+      deleteBorrowing(this.$route.params.id, this.$store.state.connectionInfo.token).then(
           (response) => {
             console.log(response);
             this.$router.replace("/emprunts");

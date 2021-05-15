@@ -49,7 +49,7 @@ export default {
         borrower: this.borrower,
         dateComebackExpected: this.dateComebackExpected
       };
-      createBorrowing(formData).then(
+      createBorrowing(formData, this.$store.state.connectionInfo.token).then(
         (response) => {
           if(response.data.success) {
             console.log("borrowing registered");

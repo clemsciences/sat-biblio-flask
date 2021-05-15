@@ -38,7 +38,7 @@ export default {
           family_name: this.family_name.trim()
         };
 
-        createAuthor(form_data).then(
+        createAuthor(form_data, this.$store.state.connectionInfo.token).then(
             (response) => {
               if (response.data.success) {
                 this.message = "L'auteur " + this.first_name + " " + this.family_name + " a été correctement créé.";

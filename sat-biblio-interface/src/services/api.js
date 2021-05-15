@@ -32,8 +32,8 @@ export function searchNearUsers(params) {
 // endregion
 
 // region auteurs
-export function createAuthor(author) {
-  return axios.post("/authors", author);
+export function createAuthor(author, token) {
+  return axios.post("/authors", author, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function retrieveAuthors(params) {
@@ -44,12 +44,12 @@ export function retrieveAuthor(authorId) {
   return axios.get(`/authors/${authorId}/`);
 }
 
-export function updateAuthor(authorId, author) {
-  return axios.put(`/authors/${authorId}`, author);
+export function updateAuthor(authorId, author, token) {
+  return axios.put(`/authors/${authorId}`, author, { headers: { Authorization: `Bearer ${token}` } });
 }
 
-export function deleteAuthor(authorId) {
-  return axios.delete(`/authors/${authorId}`);
+export function deleteAuthor(authorId, token) {
+  return axios.delete(`/authors/${authorId}`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function getAuthorsCount(params) {
@@ -68,8 +68,8 @@ export function searchNearAuthors(params) {
 
 // region references
 
-export function createBookReference(bookReference) {
-  return axios.post("/book-references", bookReference);
+export function createBookReference(bookReference, token) {
+  return axios.post("/book-references", bookReference, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function retrieveBookReferences(params) {
@@ -80,12 +80,12 @@ export function retrieveBookReference(bookReferenceId) {
   return axios.get(`/book-references/${bookReferenceId}/`);
 }
 
-export function updateBookReference(bookReferenceId, bookReference) {
-  return axios.put(`/book-references/${bookReferenceId}`, bookReference);
+export function updateBookReference(bookReferenceId, bookReference, token) {
+  return axios.put(`/book-references/${bookReferenceId}`, bookReference, { headers: { Authorization: `Bearer ${token}` } });
 }
 
-export function deleteBookReference(bookReferenceId) {
-  return axios.delete(`/book-references/${bookReferenceId}`);
+export function deleteBookReference(bookReferenceId, token) {
+  return axios.delete(`/book-references/${bookReferenceId}`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function getBookReferencesCount(params) {
@@ -104,8 +104,8 @@ export function searchNearBookReferences(params) {
 
 // region records
 
-export function createBookRecord(bookRecord) {
-  return axios.post("/book-records", bookRecord);
+export function createBookRecord(bookRecord, token) {
+  return axios.post("/book-records", bookRecord, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function retrieveBookRecords(params) {
@@ -116,12 +116,12 @@ export function retrieveBookRecord(bookRecordId) {
   return axios.get(`/book-records/${bookRecordId}/`);
 }
 
-export function updateBookRecord(bookRecordId, bookRecord) {
-  return axios.put(`/book-records/${bookRecordId}`, bookRecord);
+export function updateBookRecord(bookRecordId, bookRecord, token) {
+  return axios.put(`/book-records/${bookRecordId}`, bookRecord, { headers: { Authorization: `Bearer ${token}` } });
 }
 
-export function deleteBookRecord(bookRecordId) {
-  return axios.delete(`/book-records/${bookRecordId}`);
+export function deleteBookRecord(bookRecordId, token) {
+  return axios.delete(`/book-records/${bookRecordId}`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function getBookRecordsCount(params) {
@@ -139,8 +139,8 @@ export function searchNearBookRecords(params) {
 // endregion
 
 // region borrowings
-export function createBorrowing(borrowing) {
-  return axios.post("/borrowings", borrowing);
+export function createBorrowing(borrowing, token) {
+  return axios.post("/borrowings", borrowing, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function retrieveBorrowings(params) {
@@ -151,12 +151,12 @@ export function retrieveBorrowing(borrowingId) {
   return axios.get(`/borrowings/${borrowingId}/`);
 }
 
-export function updateBorrowing(borrowingId, borrowing) {
-  return axios.put(`/borrowings/${borrowingId}`, borrowing);
+export function updateBorrowing(borrowingId, borrowing, token) {
+  return axios.put(`/borrowings/${borrowingId}`, borrowing, { headers: { Authorization: `Bearer ${token}` } });
 }
 
-export function deleteBorrowing(borrowingId) {
-  return axios.delete(`/borrowings/${borrowingId}`);
+export function deleteBorrowing(borrowingId, token) {
+  return axios.delete(`/borrowings/${borrowingId}`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function getBorrowingsCount(params) {

@@ -113,7 +113,7 @@ export default {
           provenance: this.provenance,
           mots_clef: this.mots_clef
       };
-      updateBookRecord(this.$route.params.id, formData)
+      updateBookRecord(this.$route.params.id, formData, this.$store.state.connectionInfo.token)
           .then((response) => {
             if(response.data.success) {
               console.log("record saved");
@@ -130,7 +130,7 @@ export default {
           );
     },
     deleteRecord: function() {
-      deleteBookRecord(this.$route.params.id)
+      deleteBookRecord(this.$route.params.id, this.$store.state.connectionInfo.token)
           .then(
               (response) => {
                 if(response.data.success) {

@@ -48,7 +48,7 @@ export default {
     },
     updateAuthor: function() {
       const formData = {first_name: this.first_name, family_name: this.family_name};
-      updateAuthor(this.$route.params.id, formData).then(
+      updateAuthor(this.$route.params.id, formData, this.$store.state.connectionInfo.token).then(
         (response) => {
           if(response.data.success) {
             console.log("modifications enregistrées");
@@ -60,7 +60,7 @@ export default {
       );
     },
     deleteAuthor: function() {
-      deleteAuthor(this.$route.params.id).then(
+      deleteAuthor(this.$route.params.id, this.$store.state.connectionInfo.token).then(
         (response) => {
           if(response.data.success) {
             console.log("la suppression a fonctionné");

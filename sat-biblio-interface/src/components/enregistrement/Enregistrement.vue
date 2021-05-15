@@ -62,7 +62,7 @@ export default {
           provenance: this.provenance,
           mots_clef: this.mots_clef
       };
-      createBookRecord(formData)
+      createBookRecord(formData, this.$store.state.connectionInfo.token)
           .then((response) => {
             if(response.data.success) {
               console.log("record saved");

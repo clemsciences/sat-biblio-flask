@@ -16,7 +16,7 @@ let localStorageManager = {
         if(localStorage.getItem(SAT_BIBLIO_INFO)) {
             return JSON.parse( localStorage.getItem(SAT_BIBLIO_INFO))
         } else {
-            return {connected: false};
+            return {};
         }
     },
     removeSessionInfo() {
