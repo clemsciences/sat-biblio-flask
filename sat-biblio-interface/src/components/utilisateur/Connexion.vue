@@ -12,6 +12,7 @@
       </b-form-group>
       <b-button type="submit" :disabled="isIncorrect">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
+    <p class="my-3"><b-button to="/utilisateur/mot-de-passe-oublie">Mot de passe oublié ?</b-button></p>
 
   </b-container>
 </template>
@@ -56,7 +57,7 @@ export default {
           }
       ).catch(
           (reason) => {
-            if(reason.response.data.message) {
+            if(reason.response && reason.response.data.message) {
               this.message = reason.response.data.message;
             } else {
               this.message = "Problème de réseau";

@@ -14,7 +14,7 @@ export function disconnectUser() {
 }
 
 export function haveForgottenPassword() {
-  return axios.get("/users/forgotten_password");
+  return axios.get("/users/forgotten-password");
 }
 
 export function recreatePassword(password) {

@@ -229,4 +229,59 @@ def search_near_users():
     return json_result(True, suggestedUsers=res), 200
 
 
+def generate_new_password(password_length=10):
+    """
+    Generate a new password.
+    :return: new password
+    """
+    password = []
+    for i in range(password_length):
+        password.append(random.choice(["azertyuiopqsdfghjklmwxcvbn1234567890"]))
+    return "".join(password)
+
+
+@sat_biblio.route("/users/forgotten-password")
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def send_forgotten_password_email():
+    """
+    Send an email to a user with a new password.
+    :return:
+    """
+    data = request.get_json()
+    if "email_address" in data:
+        user_db = UserDB.query.filter_by(email=session["email"]).first()
+        if not user_db:
+            return json_result(False, "L'adresse email donné est inconnu"), 200
+        new_password = generate_new_password()
+        new_password_hash = generate_password_hash(new_password)
+        user_db.mdp_hash = new_password_hash
+        db.session.commit()
+        mail_manager.send_email_new_password(session["email"], new_password)
+        return json_result(True, "Un courriel vous a été envoyé"), 200
+    return json_result(False, "Il manque l'adresse email dans la requête"), 401
+
+
+@sat_biblio.route("/users/new-password", methods=["POST"])
+def set_new_password():
+    """
+    Change password for a user.
+    :return:
+    """
+    data = request.get_json()
+    if "currentPassword" in data and "newPassword" in data:
+        current_password = data["currentPassword"]
+        new_password = data["newPassword"]
+        user_db = UserDB.query.filter_by(email=session["email"]).first()
+        if not user_db:
+            return json_result(False, message="L'utilisateur n'a pas été trouvé."), 200
+        if not user_db.verify_password(current_password):
+            return json_result(False, message="Le mot de passe actuel est incorrect."), 200
+        if len(new_password) < 6:
+            return json_result(False, message="Le nouveau mot de passe proposé est trop court. "
+                                              "Il doit avoir une taille de 6 caractères au minimum."), 200
+        new_password_hash = generate_password_hash(new_password)
+        user_db.mdp_hash = new_password_hash
+        db.session.commit()
+        return json_result(True, message="Le nouveau mot de passe a été accepté."), 200
+    return json_result(False, "La requête est incorrect"), 400
 # endregion
