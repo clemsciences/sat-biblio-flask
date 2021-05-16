@@ -21,6 +21,10 @@ export function recreatePassword(currentPassword, newPassword) {
   return axios.post('/users/new-password', {currentPassword, newPassword});
 }
 
+export function confirmUserRegistration(inscriptionToken, emailAddress) {
+  return axios.get(`/users/confirm/${inscriptionToken}?email=${emailAddress}`);
+}
+
 export function checkUserLogin() {
   return axios.post('/users/check_login');
 }

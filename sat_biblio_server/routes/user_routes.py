@@ -18,6 +18,7 @@ from sat_biblio_server import sat_biblio, UserDB, jwt, Config
 from sat_biblio_server.data.models import User
 from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.database as dbm
+from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.sessions.session_manager as sm
 import sat_biblio_server.data.validation as dv
 from sat_biblio_server.utils import json_result
@@ -116,15 +117,27 @@ def disconnect_user():
     else:
         print("strange")
 
-@sat_biblio.route("/users/confirm/<token>", methods=["GET"])
-def confirmer_inscription_utilisateur(token):
+
+@sat_biblio.route("/users/confirm/<inscription_token>", methods=["GET"])
+def confirmer_inscription_utilisateur(inscription_token):
     email = request.args.get("email")
     user_sess = sm.UserSess(email)
-    if user_sess and user_sess.confirmer_token(token):
-        connect_user_login(user_sess.user_db)
-        return json_result(True, message="Vous êtes connecté.")
+    if user_sess and user_sess.confirmer_token(inscription_token):
+        token = create_access_token(identity=user_sess.user_db.email)
+        connect_user_login(user_sess.user_db, token)
+        return json_result(True,
+                           message="Votre compte est validé.",
+                           connected=True,
+                           connectionInfo={
+                               "token": session["token"],
+                               "email": session["email"],
+                               "first_name": session["first_name"],
+                               "family_name": session["family_name"],
+                               "right": session["right"]
+                           }), 200
     else:
-        return json_result(False, message="L'utilisateur n'existe pas")
+        return json_result(False, message="Le lien donné est invalide. "
+                                          "Veuillez contacter l'administrateur si vous pensez qu'il y a un problème.")
 
 
 # @sat_biblio.route("/user/confirmed", methods=["GET"])
@@ -162,17 +175,18 @@ def create_new_user():
                 # print("Créer nouvel utilisateur")
                 if user:
                     token = user.generate_confirmation_token()
-                    link = url_for("sat_biblio.confirmer_inscription_utilisateur", token=token, email=user.email,
-                                   _external=True)
+                    # satbibilio.clementbesnier.eu/utilisateur/enregistre
+                    link = f"https://satbibilio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
+                           f"inscription_token={token}&email={user.email}"
+                    # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
+                    #                inscription_token=token,
+                    #                email=user.email,
+                    #                _external=True)
                     link_to_resend = ""
-                    # print(link)
                     mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
-                    # connecter_patient_login(patient)
-                    # flash(lazy_gettext())
-                    return json_result(True, message="Le compte a correctement été créé.",
+                    return json_result(True,
+                                       message="Le compte a correctement été créé.",
                                        link_to_resend=link_to_resend)
-                    # return render_template("patient/connexion/patient_enregistre.html", inscription_validee=True,
-                    #                        mettre_message_succes=True)
                 else:
                     return json_result(False, message="Les données reçues sont invalides")
     return json_result(False)
