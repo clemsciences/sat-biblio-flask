@@ -45,7 +45,7 @@ export function retrieveAuthors(params) {
 }
 
 export function retrieveAuthor(authorId) {
-  return axios.get(`/authors/${authorId}/`);
+  return axios.get(`/authors/${authorId}`);
 }
 
 export function updateAuthor(authorId, author, token) {

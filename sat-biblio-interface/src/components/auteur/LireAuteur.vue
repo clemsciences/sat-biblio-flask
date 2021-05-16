@@ -1,5 +1,8 @@
 <template>
   <b-container>
+    <Title id="id-lecture-auteur"
+           info=""
+           title="Auteur"/>
     <b-form @submit.prevent="updateAuthor">
       <b-form-group label="Prénom">
         <b-form-input type="text" v-model="first_name"></b-form-input>
@@ -23,8 +26,10 @@
 
 <script>
 import {deleteAuthor, retrieveAuthor, updateAuthor} from "@/services/api";
+import Title from "@/components/visuel/Title";
 export default {
   name: "LireAuteur",
+  components: {Title},
   data: function () {
     return {
     first_name: '',
