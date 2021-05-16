@@ -9,11 +9,27 @@ from typing import Union, List, AnyStr
 from flask import request, session, abort
 from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended.exceptions import FreshTokenRequired
+from flask_login import logout_user
 
 from sat_biblio_server import sat_biblio, json_result
-from sat_biblio_server.routes import disconnect_user
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
+
+
+def disconnect_user():
+    if logout_user():
+        if "email" in session:
+            del session["email"]
+        if "first_name" in session:
+            del session["first_name"]
+        if "family_name" in session:
+            del session["family_name"]
+        if "right" in session:
+            del session["right"]
+        if "token" in session:
+            del session["token"]
+    else:
+        print("strange")
 
 
 def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_request_method=None):

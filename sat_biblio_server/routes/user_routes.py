@@ -12,7 +12,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from routes import validation_connexion_et_retour_defaut
+from routes import validation_connexion_et_retour_defaut, disconnect_user
 from sat_biblio_server import sat_biblio, UserDB, db
 import sat_biblio_server.data.validation as dv
 import sat_biblio_server.database as dbm
@@ -71,22 +71,6 @@ def connect_user(data):
                                "family_name": session["family_name"],
                                "right": session["right"]
                            }), 200
-
-
-def disconnect_user():
-    if logout_user():
-        if "email" in session:
-            del session["email"]
-        if "first_name" in session:
-            del session["first_name"]
-        if "family_name" in session:
-            del session["family_name"]
-        if "right" in session:
-            del session["right"]
-        if "token" in session:
-            del session["token"]
-    else:
-        print("strange")
 
 
 @sat_biblio.route("/users/confirm/<inscription_token>", methods=["GET"])
