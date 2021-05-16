@@ -19,7 +19,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 # region références
 @sat_biblio.route("/book-references", methods=["GET", "POST"])
-@validation_connexion_et_retour_defaut("email", redirect("/"), ["POST"])
+@validation_connexion_et_retour_defaut("email", ["POST"])
 def book_references():
     if request.method == "POST":
         data = request.get_json()
@@ -57,7 +57,7 @@ def book_references():
 
 
 @sat_biblio.route("/book-references/<int:id_>", methods=["GET", "PUT", "DELETE"])
-@validation_connexion_et_retour_defaut("email", redirect("/"), ["PUT", "DELETE"])
+@validation_connexion_et_retour_defaut("email", ["PUT", "DELETE"])
 def book_reference(id_):
     if request.method == "GET":
         ref_livre_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)

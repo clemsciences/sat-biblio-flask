@@ -30,6 +30,9 @@ import ListeAuteur from "@/components/auteur/ListeAuteur";
 import Admin from "./components/admin/Admin";
 import Gestionnaire from "./components/admin/Gestionnaire";
 import PageNotFound from "@/components/PageNotFound";
+import {isValidJwt} from "@/services/authentication";
+import localStorageManager from "@/services/localstorageManager";
+import {rights} from "@/services/rights";
 
 Vue.use(VueRouter);
 
@@ -40,73 +43,73 @@ let router = new VueRouter({
             name: "recherche",
             path: '/recherche',
             component: Recherche,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
-            path: '',
+            path: '/',
             component: Accueil,
-            needAuth: false,
-            name: 'accueil'
+            name: 'accueil',
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             path: '/exporter',
             component: Export,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         // region utilisateurs
         {
             name: "utilisateur-creer",
             path: '/utilisateur/creer',
             component: CreationUtilisateur,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.contributeur}
         },
         {
-            name: "utilisateur-enregistre",
-            path: '/utilisateur/enregistre',
+            name: "verification-enregistrement",
+            path: '/utilisateur/verification-enregistrement',
             component: UtilisateurEnregistre,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-mot-de-passe-oublie",
             path: '/utilisateur/mot-de-passe-oublie',
             component: MotDePasseOublie,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-reinitialiser-mot-de-passe",
             path: '/utilisateur/reinitialiser-mot-de-passe',
             component: ReinitialisationMotDePasse,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-mot-de-passe-oublie-email",
             path: '/utilisateur/mot-de-passe-email',
             component: MotDePasseEmail,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: 'utilisateur-mot-de-passe-reinitialise',
             path: '/utilisateur/mot-de-passe-reinitialise',
             component: MotDePasseReinitialise,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-invite",
             path: '/utilisateur/invite',
             component: Invite,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-connexion",
             path: '/utilisateur/connexion',
             component: Connexion,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-deconnexion",
             path: '/utilisateur/deconnexion',
             component: Deconnexion,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         // endregion
 
@@ -115,13 +118,13 @@ let router = new VueRouter({
             name: "utilisateur-rechercher",
             path: '/rechercher',
             component: Recherche,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-resultats",
             path: '/rechercher/resultats',
             component: ResultatsRecherche,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         // region auteur
@@ -129,19 +132,19 @@ let router = new VueRouter({
             name: "auteur-creer",
             path: '/auteur/creer',
             component: CreationAuteur,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
         {
             name: "auteur-lire",
             path: '/auteur/lire/:id',
             component: LireAuteur,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.contributeur}
         },
         {
             name: "auteur-liste",
             path: '/auteur/liste',
             component: ListeAuteur,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         // region référence bibliographique livre
@@ -149,19 +152,19 @@ let router = new VueRouter({
             name: "reference-livre-creer",
             path: '/reference-livre/creer',
             component: CreationReferenceLivre,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
         {
             name: "reference-livre-lire",
             path: '/reference-livre/lire/:id',
             component: LireReferenceLivre,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "reference-livre-liste",
             path: '/reference-livre/liste',
             component: ListeReferenceLivre,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         // region enregistrement
@@ -169,51 +172,53 @@ let router = new VueRouter({
             name: "enregistrement-creer",
             path: '/enregistrement/creer',
             component: Enregistrement,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
         {
             name: "enregistrement-lire",
             path: '/enregistrement/lire/:id',
             component: LireEnregistrement,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "enregistrement-liste",
             path: '/enregistrement/liste',
             component: ListeEnregistrement,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         {
             name: "contact",
             path: "/contact",
             component: Contact,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // region emprunt
         {
             name: "emprunt-livre",
             path: "/emprunt/livre",
             component: Emprunter,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.gestionnaire}
         },
         {
             name: "emprunt-liste",
             path: '/emprunt/liste',
             component: ListeEmprunt,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
+        // endregion
+        // region
         {
             name: "administrateur",
             path: "/administrateur",
             component: Admin,
-            needAuth: true,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         {
             name: "gestionnaire",
             path: "/gestionnaire",
             component: Gestionnaire,
-            needAuth: true
+            meta: {needAuth: true, reachableFrom: rights.gestionnaire}
         },
         // endregion
         // region page not found
@@ -221,21 +226,37 @@ let router = new VueRouter({
             name: "not-found",
             path: "*",
             component: PageNotFound,
-            needAuth: false
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         }
         // endregion
     ],
 });
 router.beforeEach((to, from, next) => {
-        if(to.needAuth) {
+    if(to.meta.needAuth) {
+        const sessionInfo = localStorageManager.getSessionInfo();
+        console.log(sessionInfo);
+        const isValid = isValidJwt(sessionInfo.token);
+        console.log(isValid);
+        if(isValid) { // sessionInfo.connected &&
+            if(to.meta.reachableFrom.index <= this.$store.getters.getUserRight()) {
+                next();
+            } else {
+                next({
+                    name: 'accueil',
+                });
+            }
+        } else {
+            console.log("needAuth");
+            this.$store.commit("disconnect");
             next({
                 name: 'accueil',
                 query: {
                     redirect: to.fullPath
                 }
-            })
-        } else {
-            next();
+            });
         }
+    } else {
+        next();
+    }
 })
 export default router;

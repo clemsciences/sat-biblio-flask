@@ -11,7 +11,7 @@
       <b-collapse is-nav style="height: 1px;" id="navbarSupportedContent">
         <b-navbar-nav>
 <!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
-          <b-nav-item v-if="connected">
+          <b-nav-item v-if="connected && isContributor">
             <b-nav-item-dropdown text="Créer" class="titre-nav-item">
               <b-dropdown-item to="/auteur/creer">Créer auteur</b-dropdown-item>
               <b-dropdown-item to="/reference-livre/creer">Créer référence</b-dropdown-item>
@@ -63,7 +63,7 @@
 <script>
 
 import {mapState} from "vuex";
-import {canEdit, canManage, getRightString, isAdmin} from "@/services/rights";
+import {canContribute, canEdit, canManage, getRightString, isAdmin} from "@/services/rights";
 
 export default {
   name: "NavBar",
@@ -77,6 +77,9 @@ export default {
     },
     isEditor: function () {
       return canEdit(this.connectionInfo.right);
+    },
+    isContributor: function () {
+      return canContribute(this.connectionInfo.right);
     },
     connectionTooltipHints: function () {
       return `${this.connectionInfo.first_name} ${this.connectionInfo.family_name} - ${this.connectionInfo.email}

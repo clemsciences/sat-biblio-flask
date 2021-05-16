@@ -299,9 +299,7 @@ class DateHeure(Date, Heure):
 
 def json_result(success: bool,
                 message="",
-                token="",
                 **data):
     return jsonify({"success": success,
                     "message": message,
-                    "token": token,
                     **data})

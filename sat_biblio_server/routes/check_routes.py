@@ -8,13 +8,15 @@ from typing import Union, List, AnyStr
 
 from flask import request, session, abort
 from flask_jwt_extended import verify_jwt_in_request
+from flask_jwt_extended.exceptions import FreshTokenRequired
 
-from sat_biblio_server import sat_biblio
+from sat_biblio_server import sat_biblio, json_result
+from sat_biblio_server.routes import disconnect_user
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 
-def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], val, for_request_method=None):
+def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_request_method=None):
     if not for_request_method:
         for_request_method = ["GET"]
 
@@ -24,14 +26,17 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], val, for_
             if request.method not in for_request_method:
                 return methode(*args, **kwargs)
             if type(pseudo) == str:
-                verify_jwt_in_request()
+                try:
+                    verify_jwt_in_request()
+                except FreshTokenRequired:
+                    disconnect_user()
                 if pseudo in session:
                     return methode(*args, **kwargs)
                 logging.log(logging.DEBUG, "not connected")
-                return val, 401
+                return json_result(False, "Vous n'êtes pas connecté"), 401
             else:
                 logging.log(logging.DEBUG, "not connected")
-                return val, 401
+                return json_result(False, "Vous n'êtes pas conencté"), 401
         return fonction_modifiee
     return deco
 

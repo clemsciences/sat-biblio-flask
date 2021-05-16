@@ -2,25 +2,22 @@
 
 """
 
-from datetime import datetime, timedelta
-from functools import wraps
+from datetime import timedelta
 import json
+import random
 
-from flask import url_for, session, request, jsonify
+from flask import session, request
 from flask_login import login_user, logout_user
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import jwt_required
-import jwt
+from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from sat_biblio_server import sat_biblio, UserDB, jwt, Config
-from sat_biblio_server.data.models import User
-from sat_biblio_server.managers import mail_manager
+from routes import validation_connexion_et_retour_defaut
+from sat_biblio_server import sat_biblio, UserDB, db
+import sat_biblio_server.data.validation as dv
 import sat_biblio_server.database as dbm
 from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.sessions.session_manager as sm
-import sat_biblio_server.data.validation as dv
 from sat_biblio_server.utils import json_result
 
 
@@ -28,79 +25,53 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
 # region connexion
-
-def token_required(f):
-    @wraps(f)
-    def _verify(*args, **kwargs):
-        auth_headers = request.headers.get('Authorization', '').split()
-
-        invalid_msg = {
-            'message': 'Invalid token. Registeration and / or authentication required',
-            'authenticated': False
-        }
-        expired_msg = {
-            'message': 'Expired token. Reauthentication required.',
-            'authenticated': False
-        }
-
-        if len(auth_headers) != 2:
-            return jsonify(invalid_msg), 401
-
-        try:
-            token = auth_headers[1]
-            data = jwt.decode(token, Config.JWT_SECRET_KEY)
-            user = User.query.filter_by(email=data['sub']).first()
-            if not user:
-                raise RuntimeError('User not found')
-            return f(user, *args, **kwargs)
-        except jwt.ExpiredSignatureError:
-            return jsonify(expired_msg), 401  # 401 is Unauthorized HTTP status code
-        except (jwt.InvalidTokenError, Exception) as e:
-            print(e)
-            return jsonify(invalid_msg), 401
-
-    return _verify
-
-
-def connect_user_login(user: UserDB):
+def connect_user_login(user: UserDB, token: str):
     if login_user(user):
         session["email"] = user.email
         session["first_name"] = user.first_name
         session["family_name"] = user.family_name
         session["right"] = user.right.value
+        session["token"] = token
 
 
 @sat_biblio.route("/users/connect", methods=["POST"])
-def connect_user():
-    if "email" in session:
-        return json_result(True, message="Connexion réussie", token="", connectionInfo={
-            "email": session["email"],
-            "first_name": session["first_name"],
-            "family_name": session["family_name"],
-            "right": session["right"]}, connected=True)
-    else:
-        data = request.get_json()
-        if dv.check_user_connection(data):
-            user, message = UserDB.authenticate(**data)
-            if not user:
-                return json_result(False, message=message), 401
+def login():
+    data = request.get_json()
+    return connect_user(data)
 
-            connect_user_login(user)
 
-            token = create_access_token(identity=user.email)
+def connect_user(data):
+    """
 
-            print("bien connecté")
-            return json_result(True, message="Vous êtes bien connecté.",
-                               connected=True,
-                               token=token,
-                               connectionInfo={
-                                   "token": token,
-                                   "email": session["email"],
-                                   "first_name": session["first_name"],
-                                   "family_name": session["family_name"],
-                                   "right": session["right"]
-                               }), 200
-    return json_result(False)
+    :param data: request data
+    :return:
+    """
+    if dv.check_user_connection(data):
+        user, message = UserDB.authenticate(**data)
+        if not user:
+            return json_result(False,
+                               message=message,
+                               connected=False), 401
+
+        expires_duration = timedelta(hours=4)
+        token = create_access_token(identity=user.email,
+                                    fresh=True,
+                                    expires_delta=expires_duration)
+        print("created_token", token)
+        connect_user_login(user, token)
+
+        print("bien connecté")
+        return json_result(True,
+                           message="Vous êtes bien connecté.",
+                           connected=True,
+                           connectionInfo={
+                               "token": session["token"],
+                               "email": session["email"],
+                               "first_name": session["first_name"],
+                               "family_name": session["family_name"],
+                               "right": session["right"]
+                           }), 200
+
 
 def disconnect_user():
     if logout_user():
@@ -204,19 +175,21 @@ def valider_inscription(link):
 
 @sat_biblio.route("/users/check_login", methods=["POST"])
 def check_login():
-    # print(session.keys())
     if "email" in session:
         return json_result(True,
-                           connectionInfo={"connected": True,
-                                           "connectionInfo": {
-                                               "email": session["email"],
-                                               "first_name": session["first_name"],
-                                               "family_name": session["family_name"],
-                                               "right": session["right"]
-                                           }
-                                           })
+                           connected=True,
+                           message="Vous êtes connecté",
+                           connectionInfo=dict(
+                               token=session["token"],
+                               email=session["email"],
+                               first_name=session["first_name"],
+                               family_name=session["family_name"],
+                               right=session["right"]),
+                           )
     else:
-        return json_result(False)
+        return json_result(False,
+                           connected=False,
+                           message="Vous êtes déconnecté")
 
 
 @sat_biblio.after_request

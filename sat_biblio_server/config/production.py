@@ -1,5 +1,6 @@
 
 
+import datetime
 import os
 
 from sat_biblio_server.config import PACKDIR
@@ -37,6 +38,13 @@ class Config:
 
     WTF_CSRF_CHECK_DEFAULT = False
     JWT_SECRET_KEY = jwt_secret_key
+    JWT_TOKEN_LOCATION = ['headers', 'cookies', "json", "query_string"]
+    JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=4)
+    JWT_COOKIE_SECURE = True
+    JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=15)
+    JWT_COOKIE_CSRF_PROTECT = True
+    JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
+    JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
 
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
@@ -54,8 +62,4 @@ class Config:
         "fr": "Français",
         "de": "Deutsch"
     }
-
-    PERMANENT_SESSION_LIFETIME = 60*60*24*7
-    CORS_HEADERS = 'Content-Type'
-    SESSION_TYPE = "filesystem"
 

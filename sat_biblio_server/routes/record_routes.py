@@ -22,7 +22,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 # region enregistrement
 @sat_biblio.route("/book-records", methods=["GET", "POST"])
-@validation_connexion_et_retour_defaut("email", redirect("/api"), ["POST", "PUT"])
+@validation_connexion_et_retour_defaut("email", ["POST", "PUT"])
 def book_records():
     if request.method == "POST":
         data = request.get_json()
@@ -62,7 +62,7 @@ def book_records():
 
 
 @sat_biblio.route("/book-records/<int:id_>", methods=["GET", "DELETE", "PUT"])
-@validation_connexion_et_retour_defaut("email", redirect("/api"), ["DELETE", "PUT"])
+@validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def book_record(id_):
     if request.method == "GET":
         enregistrement_db = EnregistrementDB.query.filter_by(id=id_).first()
