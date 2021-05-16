@@ -101,6 +101,20 @@ def connect_user():
                                }), 200
     return json_result(False)
 
+def disconnect_user():
+    if logout_user():
+        if "email" in session:
+            del session["email"]
+        if "first_name" in session:
+            del session["first_name"]
+        if "family_name" in session:
+            del session["family_name"]
+        if "right" in session:
+            del session["right"]
+        if "token" in session:
+            del session["token"]
+    else:
+        print("strange")
 
 @sat_biblio.route("/users/confirm/<token>", methods=["GET"])
 def confirmer_inscription_utilisateur(token):
@@ -128,25 +142,10 @@ def confirmer_inscription_utilisateur(token):
 # @login_required
 @sat_biblio.route("/users/disconnect", methods=["GET"])
 # @jwt_required
-def deconnecter_patient():
+def logout():
     if "email" in session:
-        message = "Vous êtiez déjà déconnecté."
-
-        if logout_user():
-            if "email" in session:
-                del session["email"]
-            if "first_name" in session:
-                del session["first_name"]
-            if "family_name" in session:
-                del session["family_name"]
-            if "right" in session:
-                del session["right"]
-
-    else:
-        message = "Vous êtes correctement déconnecté."
-    # session.pop("pseudo_patient", None)
-    # session.modified = True
-    return json_result(True, message=message)
+        disconnect_user()
+    return json_result(True, message="Vous êtes correctement déconnecté.")
 
 
 @sat_biblio.route("/users/create", methods=["POST"])

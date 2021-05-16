@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import localStorageManager from "@/services/localstorageManager";
 import {disconnectUser} from "@/services/api";
 import Title from "@/components/visuel/Title";
 export default {
@@ -21,10 +20,9 @@ export default {
     }
   },
   mounted() {
-    localStorageManager.removeSessionInfo();
+    this.$store.commit("disconnect");
     disconnectUser().then(
       () => {
-        this.$store.commit("disconnect");
         this.message = "Vous êtes correctement déconnecté."
       }
     );

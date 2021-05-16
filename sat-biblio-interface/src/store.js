@@ -21,10 +21,8 @@ const store = new Vuex.Store({
         },
         disconnect(state) {
             state.connected = false;
-            state.right = 1;
             state.connectionInfo = {};
-            state.token = '';
-            localStorage.token = '';
+            localStorageManager.removeSessionInfo();
         },
     },
     getters: {
