@@ -17,8 +17,8 @@ export function haveForgottenPassword() {
   return axios.get("/users/forgotten-password");
 }
 
-export function recreatePassword(password) {
-  return axios.post('/users/reinitiate-password', {password});
+export function recreatePassword(currentPassword, newPassword) {
+  return axios.post('/users/new-password', {currentPassword, newPassword});
 }
 
 export function checkUserLogin() {
