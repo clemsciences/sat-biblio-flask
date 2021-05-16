@@ -12,7 +12,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from routes import validation_connexion_et_retour_defaut, disconnect_user
+from routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
 import sat_biblio_server.data.validation as dv
 import sat_biblio_server.database as dbm
@@ -105,6 +105,22 @@ def confirmer_inscription_utilisateur(inscription_token):
 # @sat_biblio.route("/pas_connecte_patient")
 # def pas_connecte_patient():
 #     return render_template("patient/connexion/pas_connecte_patient.html")
+
+
+def disconnect_user():
+    if logout_user():
+        if "email" in session:
+            del session["email"]
+        if "first_name" in session:
+            del session["first_name"]
+        if "family_name" in session:
+            del session["family_name"]
+        if "right" in session:
+            del session["right"]
+        if "token" in session:
+            del session["token"]
+    else:
+        print("strange")
 
 
 # @login_required

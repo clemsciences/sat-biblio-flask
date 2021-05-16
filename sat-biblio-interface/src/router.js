@@ -33,6 +33,7 @@ import PageNotFound from "@/components/PageNotFound";
 import {isValidJwt} from "@/services/authentication";
 import localStorageManager from "@/services/localstorageManager";
 import {rights} from "@/services/rights";
+import store from "@/store";
 
 Vue.use(VueRouter);
 
@@ -231,14 +232,15 @@ let router = new VueRouter({
         // endregion
     ],
 });
-router.beforeEach((to, from, next) => {
+
+router.beforeEach(function (to, from, next) {
     if(to.meta.needAuth) {
         const sessionInfo = localStorageManager.getSessionInfo();
         console.log(sessionInfo);
         const isValid = isValidJwt(sessionInfo.token);
         console.log(isValid);
         if(isValid) { // sessionInfo.connected &&
-            if(to.meta.reachableFrom.index <= this.$store.getters.getUserRight()) {
+            if(to.meta.reachableFrom.index <= store.getters.getUserRight) {
                 next();
             } else {
                 next({
@@ -247,7 +249,7 @@ router.beforeEach((to, from, next) => {
             }
         } else {
             console.log("needAuth");
-            this.$store.commit("disconnect");
+            store.commit("disconnect");
             next({
                 name: 'accueil',
                 query: {
