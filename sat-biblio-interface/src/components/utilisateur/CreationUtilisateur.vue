@@ -20,12 +20,13 @@
       </b-form-group>
       <b-button type="submit">Enregistrer</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
+    <p>{{ message }}</p>
   </b-container>
 </template>
 
 <script>
-import {createUser} from "../../services/api";
-import Title from "../visuel/Title";
+import {createUser} from "@/services/api";
+import Title from "@/components/visuel/Title";
 
 export default {
   name: "CreationUtilisateur",
