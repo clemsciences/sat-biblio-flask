@@ -10,10 +10,10 @@ from flask import request, session, abort
 from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended.exceptions import FreshTokenRequired
 from flask_login import logout_user
-
-from sat_biblio_server import sat_biblio, json_result
+from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
+
 
 
 def disconnect_user():
@@ -55,14 +55,3 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_reque
                 return json_result(False, "Vous n'êtes pas conencté"), 401
         return fonction_modifiee
     return deco
-
-
-@sat_biblio.route("/shutdown")
-def server_shutdown():
-    if not sat_biblio.Config.TESTING:
-        abort(404)
-    shutdown = request.environ.get("werkzeug.server.shutdown")
-    if not shutdown:
-        abort(500)
-    shutdown()
-    return "Shutting down"
