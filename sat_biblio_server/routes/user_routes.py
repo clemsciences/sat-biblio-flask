@@ -147,7 +147,7 @@ def create_new_user():
                 if user:
                     token = user.generate_confirmation_token()
                     # satbibilio.clementbesnier.eu/utilisateur/enregistre
-                    link = f"https://satbibilio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
+                    link = f"https://satbiblio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
                            f"inscription_token={token}&email={user.email}"
                     # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
                     #                inscription_token=token,
@@ -156,11 +156,16 @@ def create_new_user():
                     link_to_resend = ""
                     mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
                     return json_result(True,
-                                       message="Le compte a correctement été créé.",
+                                       message="Le compte a correctement été créé. "
+                                               "Vous allez recevoir un courriel de confirmation "
+                                               "à l'adresse email donnée.",
                                        link_to_resend=link_to_resend)
                 else:
                     return json_result(False, message="Les données reçues sont invalides")
-    return json_result(False)
+        else:
+            return json_result(False, message="Les données reçues ne permettent pas de créer un compte utilisateur. "
+                                              "Contactez l'administrateur de ce site.")
+    return json_result(False, "Mauvaise méthode de requête.")
 
 
 @sat_biblio.route("/users/validation_inscription_patient/<string:link>", methods=["GET"])
