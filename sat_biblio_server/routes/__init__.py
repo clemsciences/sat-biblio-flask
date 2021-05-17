@@ -21,3 +21,4 @@ from sat_biblio_server.routes.book_routes import *
 from sat_biblio_server.routes.author_routes import *
 from sat_biblio_server.routes.reference_routes import *
 from sat_biblio_server.routes.record_routes import *
+from sat_biblio_server.routes.admin_routes import *

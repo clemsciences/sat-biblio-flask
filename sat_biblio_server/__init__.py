@@ -57,6 +57,10 @@ class SatAdminModelView(ModelView):
                 return True
         return False
 
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
 
 class AdminLoginForm(wtforms.form.Form):
     email = StringField(validators=[wtforms.validators.required()])
@@ -93,7 +97,7 @@ class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
         if not current_user.is_authenticated:
-            return redirect(url_for('.login_view'))
+            return redirect(url_for('admin.login_view'))
         return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
@@ -107,10 +111,10 @@ class MyAdminIndexView(AdminIndexView):
             # print('validat')
 
         if current_user.is_authenticated:
-            return redirect(url_for('.index'))
+            return redirect(url_for('admin.index'))
         # print(form)
         self._template_args['form'] = form
-        # link = '<p>Don't have an account? <a href="' + url_for('.register_view') + '">Click here to register.</a></p>'
+        # link = "<p>Don't have an account? <a href=\"" + url_for('.register_view') + "\">Click here to register.</a></p>"
         # self._template_args['link'] = link
         # print('login ntr')
         # return render_template('gestion/index.html')
@@ -119,7 +123,7 @@ class MyAdminIndexView(AdminIndexView):
     @expose('/logout/')
     def logout_view(self):
         logout_user()
-        return redirect(url_for('.index'))
+        return redirect(url_for('admin.index'))
 
 
 sat_biblio = Blueprint('sat_biblio', __name__)
@@ -178,7 +182,10 @@ def create_app(config):
     jwt.init_app(app)
 
     # admin page
-    admin = Admin(app, "Administration", index_view=MyAdminIndexView(), template_mode="bootstrap3")
+    admin = Admin(app, "Administration",
+                  base_template="admin/index.html",
+                  index_view=MyAdminIndexView(),
+                  template_mode="bootstrap3")
     admin.add_view(SatAdminModelView(UserDB, db.session))
     admin.add_view(SatAdminModelView(AuthorDB, db.session))
     admin.add_view(SatAdminModelView(EnregistrementDB, db.session))
@@ -191,7 +198,7 @@ def create_app(config):
 
     @lm.user_loader
     def load_user(user_id):
-        return UserDB.query.get(int(user_id))
+        return UserDB.query.get(user_id)
 
     # import blueprints
     from sat_biblio_server.routes import sat_biblio

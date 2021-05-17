@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="post" class="form-control">
+        <div class="form-group">
+            <label for="pseudo-patient">Adresse email : </label>
+            <input type="text" class="form-control" name="email" id="pseudo-patient">
+        </div>
+        <div class="form-group">
+            <label for="mdp-patient">Mot de passe : </label>
+            <input type="password" class="form-control" name="password" id="mdp-patient">
+        </div>
+        <div class="form-group">
+            <input type="submit" class="form-control" name="tester_pseudo_mdp">
+        </div>
+    </form>
+    <p>{{ message }}</p>
+
+</body>
+</html>
