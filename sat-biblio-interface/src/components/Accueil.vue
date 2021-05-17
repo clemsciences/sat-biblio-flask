@@ -7,7 +7,7 @@
     <b-row v-if="connected">
       <b-col>
         <b-row>
-          <p>Vous êtes connecté en tant que <b>{{ connectionInfo.first_name }} {{ connectionInfo.family_name }}</b> ù(<i>{{ connectionInfo.email }}</i>).
+          <p>Vous êtes connecté en tant que <b>{{ connectionInfo.first_name }} {{ connectionInfo.family_name }}</b> (<i>{{ connectionInfo.email }}</i>).
             Vous êtes <b>{{ rightString }}</b>.</p>
         </b-row>
         <b-row>

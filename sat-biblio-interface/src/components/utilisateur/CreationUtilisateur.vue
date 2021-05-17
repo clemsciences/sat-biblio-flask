@@ -63,7 +63,7 @@ export default {
         createUser(formData).then(
             (response) => {
               if(response.data.success) {
-                this.$router.push('/');
+                this.message = response.data.message;
               } else {
                 if(response.data.message) {
                   this.message = response.data.message;
