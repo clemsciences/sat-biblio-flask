@@ -4,7 +4,7 @@
 
 import os
 
-from flask import Flask, url_for, redirect, render_template, request, jsonify, Blueprint
+from flask import Flask, url_for, redirect, request, Blueprint
 from flask_babel import Babel
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -22,8 +22,6 @@ from flask_migrate import Migrate
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB, AuthorDB, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.database.users import UserDB
-from sat_biblio_server.config.development import Config
-# import sat_biblio_server.config.testing as config_test
 from sat_biblio_server.utils import json_result
 
 PACKDIR = os.path.abspath(os.path.dirname(__file__))
@@ -40,6 +38,7 @@ cors = CORS(automatic_options=True, support_credentials=True)
 jwt = JWTManager()
 
 
+# region admin
 class SatAdminModelView(ModelView):
     page_size = 50  # the number of entries to display on the list view
     column_exclude_list = ['password', ]
@@ -124,6 +123,7 @@ class MyAdminIndexView(AdminIndexView):
     def logout_view(self):
         logout_user()
         return redirect(url_for('admin.index'))
+# endregion
 
 
 sat_biblio = Blueprint('sat_biblio', __name__)
@@ -132,11 +132,7 @@ sat_biblio = Blueprint('sat_biblio', __name__)
 def create_app(config):
     """Create an application instance."""
     app = Flask(__name__)
-
-    # import configuration
-    # cfg = os.path.join(os.getcwd(), 'app', 'config', config_name + '.py')
     app.config.from_object(config)
-    # app.config.from_pyfile(cfg)
     app.secret_key = config.SECRET_KEY
 
     @app.errorhandler(404)
@@ -170,12 +166,7 @@ def create_app(config):
 
     # login manager for admin
     lm.init_app(app)
-
     babel.init_app(app)
-    # print(babel.list_translations())
-    # print(babel.default_locale)
-    # print(babel.default_timezone)
-    # print(babel.translation_directories)
     csrf.init_app(app)
     cors.init_app(app)
     mail.init_app(app)

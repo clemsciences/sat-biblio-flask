@@ -197,14 +197,14 @@ def check_login():
                            message="Vous êtes déconnecté")
 
 
-@sat_biblio.after_request
-def add_connection_hints(response):
-    print(response.get_json())
-    if response.get_json():
-        d = response.get_json()
-        d["connected"] = "email" in session
-        response.set_data(json.dumps(d))
-    return response
+# @sat_biblio.after_request
+# def add_connection_hints(response):
+#     print(response.get_json())
+#     if response.get_json():
+#         d = response.get_json()
+#         d["connected"] = "email" in session
+#         response.set_data(json.dumps(d))
+#     return response
 
 
 @sat_biblio.route("/users/search-near")

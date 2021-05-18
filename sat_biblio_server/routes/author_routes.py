@@ -136,7 +136,6 @@ def chercher_auteurs_plus_proches():
             or_(AuthorDB.first_name.like(f"%{query_string}%"),
                 AuthorDB.family_name.like(f"%{query_string}%"))
         ).all())
-        print(len(res_authors_db))
         authors_db.update(res_authors_db)
     res = []
     for author_db in authors_db:

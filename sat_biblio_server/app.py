@@ -1,7 +1,6 @@
 """
 
 """
-import logging
 
 from flask import jsonify
 import os

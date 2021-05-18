@@ -172,7 +172,6 @@ def chercher_enregistrements_proches():
             .filter(EnregistrementDB.id_reference == ReferenceBibliographiqueLivreDB.id)\
             .filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{query_result}%"))
         for book_record_db, ref_biblio_db in book_records_db:
-            print(book_record_db)
             res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",
                             value=book_record_db.id))
 
