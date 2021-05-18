@@ -51,13 +51,15 @@ export default {
       if(this.email.length === 0) {
         this.message = "L'adresse email ne peut pas être vide.";
       } else if(this.first_name.length === 0) {
-        this.message = "Le prénom ne peut être vide."
+        this.message = "Le prénom ne peut être vide.";
       } else if(this.family_name.length === 0) {
-        this.message = "Le nom de famille ne peut être vide."
+        this.message = "Le nom de famille ne peut être vide.";
       } else if(this.password1.length === 0 || this.password2.length === 0) {
         this.message = "Le mot de passe ne peut être vide";
       } else if(this.password1 !== this.password2) {
-        this.message = "Les mots de passe doivent être identiques"
+        this.message = "Les mots de passe doivent être identiques";
+      } else if(this.password1.length >= 6) {
+        this.message = "Le mot de passe doit être composé d'au moins 6 caractères.";
       } else {
         createUser(formData).then(
             (response) => {
@@ -71,7 +73,12 @@ export default {
                 }
               }
             }
-        )
+        ).catch(
+            reason => {
+              console.log(reason.response.data.message);
+              this.message = reason.response.data.message;
+            }
+        );
       }
     }
   }
