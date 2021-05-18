@@ -77,8 +77,8 @@ export default {
             }
         ).catch(
             reason => {
-              console.log(reason.response.data.message);
-              this.message = reason.response.data.message;
+              console.log(reason);
+              this.message = "Problème de réseau";
             }
         );
       }
