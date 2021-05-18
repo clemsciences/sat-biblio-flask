@@ -15,7 +15,6 @@ from sat_biblio_server.utils import json_result
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 
-
 def disconnect_user():
     if logout_user():
         if "email" in session:

@@ -25,7 +25,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 # region auteur
 
 # @sat_biblio.route("/api/auteur/creer", methods=["POST"])
-@sat_biblio.route("/authors", methods=["POST", "GET"])
+@sat_biblio.route("/authors/", methods=["POST", "GET"])
 @validation_connexion_et_retour_defaut("email", ["POST"])
 def author():
     """
@@ -68,7 +68,7 @@ def author():
             return json_result(False), 304
 
 
-@sat_biblio.route("/authors/<int:id_>", methods=["GET", "PUT", "DELETE"])
+@sat_biblio.route("/authors/<int:id_>/", methods=["GET", "PUT", "DELETE"])
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def authors(id_):
     """
@@ -105,7 +105,7 @@ def authors(id_):
         return json_result(True), 204
 
 
-@sat_biblio.route("/authors/count", methods=["GET"])
+@sat_biblio.route("/authors/count/", methods=["GET"])
 def authors_count():
     """
 
@@ -124,7 +124,7 @@ def authors_count():
     return json_result(True, total=number), 200
 
 
-@sat_biblio.route("/authors/search-near", methods=["GET"])
+@sat_biblio.route("/authors/search-near/", methods=["GET"])
 def chercher_auteurs_plus_proches():
     query_result = request.args.get("auteur")
     queries_string = query_result.split(" ")
@@ -144,7 +144,7 @@ def chercher_auteurs_plus_proches():
     return json_result(True, suggestedAuthors=res), 200
 
 
-@sat_biblio.route("/authors/search", methods=["POST"])
+@sat_biblio.route("/authors/search/", methods=["POST"])
 def chercher_auteurs():
     data = request.get_json()
     the_query = AuthorDB.query

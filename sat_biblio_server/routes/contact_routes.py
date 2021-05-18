@@ -8,7 +8,7 @@ from sat_biblio_server import sat_biblio, UserDB, json_result
 from sat_biblio_server.managers.mail_manager import envoyer_message_contact
 
 
-@sat_biblio.route("/contact/send-message", methods=["POST"])
+@sat_biblio.route("/contact/send-message/", methods=["POST"])
 def send_email_to_admin():
     """
 

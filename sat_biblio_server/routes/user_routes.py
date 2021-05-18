@@ -34,7 +34,7 @@ def connect_user_login(user: UserDB, token: str):
         session["token"] = token
 
 
-@sat_biblio.route("/users/connect", methods=["POST"])
+@sat_biblio.route("/users/connect/", methods=["POST"])
 def login():
     data = request.get_json()
     return connect_user(data)
@@ -73,7 +73,7 @@ def connect_user(data):
                            }), 200
 
 
-@sat_biblio.route("/users/confirm/<inscription_token>", methods=["GET"])
+@sat_biblio.route("/users/confirm/<inscription_token>/", methods=["GET"])
 def confirmer_inscription_utilisateur(inscription_token):
     email = request.args.get("email")
     user_sess = sm.UserSess(email)
@@ -124,7 +124,7 @@ def disconnect_user():
 
 
 # @login_required
-@sat_biblio.route("/users/disconnect", methods=["GET"])
+@sat_biblio.route("/users/disconnect/", methods=["GET"])
 # @jwt_required
 def logout():
     if "email" in session:
@@ -132,7 +132,7 @@ def logout():
     return json_result(True, message="Vous êtes correctement déconnecté.")
 
 
-@sat_biblio.route("/users/create", methods=["POST"])
+@sat_biblio.route("/users/create/", methods=["POST"])
 def create_new_user():
     if request.method == "POST":
         user_form = request.get_json()
@@ -168,7 +168,7 @@ def create_new_user():
     return json_result(False, "Mauvaise méthode de requête.")
 
 
-@sat_biblio.route("/users/validation_inscription_patient/<string:link>", methods=["GET"])
+@sat_biblio.route("/users/validation_inscription_patient/<string:link>/", methods=["GET"])
 def valider_inscription(link):
     user = sm.Users.load_user_by_validation_link(link)
     if user is None:
@@ -178,7 +178,7 @@ def valider_inscription(link):
         return json_result(True)
 
 
-@sat_biblio.route("/users/check_login", methods=["POST"])
+@sat_biblio.route("/users/check_login/", methods=["POST"])
 def check_login():
     if "email" in session:
         return json_result(True,
@@ -207,7 +207,7 @@ def check_login():
 #     return response
 
 
-@sat_biblio.route("/users/search-near")
+@sat_biblio.route("/users/search-near/")
 def search_near_users():
     query_result = request.args.get("user")
     res = []
@@ -231,7 +231,7 @@ def generate_new_password(password_length=10):
     return "".join(password)
 
 
-@sat_biblio.route("/users/forgotten-password")
+@sat_biblio.route("/users/forgotten-password/")
 @validation_connexion_et_retour_defaut("email", ["GET"])
 def send_forgotten_password_email():
     """
@@ -252,7 +252,7 @@ def send_forgotten_password_email():
     return json_result(False, "Il manque l'adresse email dans la requête"), 401
 
 
-@sat_biblio.route("/users/new-password", methods=["POST"])
+@sat_biblio.route("/users/new-password/", methods=["POST"])
 def set_new_password():
     """
     Change password for a user.

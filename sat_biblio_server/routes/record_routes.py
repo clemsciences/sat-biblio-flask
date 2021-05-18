@@ -21,7 +21,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
 # region enregistrement
-@sat_biblio.route("/book-records", methods=["GET", "POST"])
+@sat_biblio.route("/book-records/", methods=["GET", "POST"])
 @validation_connexion_et_retour_defaut("email", ["POST", "PUT"])
 def book_records():
     if request.method == "POST":
@@ -61,7 +61,7 @@ def book_records():
         return json_result(True, enregistrements=enregistrements), 200
 
 
-@sat_biblio.route("/book-records/<int:id_>", methods=["GET", "DELETE", "PUT"])
+@sat_biblio.route("/book-records/<int:id_>/", methods=["GET", "DELETE", "PUT"])
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def book_record(id_):
     if request.method == "GET":
@@ -103,7 +103,7 @@ def book_record(id_):
         return json_result(False), 404
 
 
-@sat_biblio.route("/book-records/count", methods=["GET"])
+@sat_biblio.route("/book-records/count/", methods=["GET"])
 def book_records_count():
     cote = request.args.get("cote", "")
     titre = request.args.get("titre", "")
@@ -122,7 +122,7 @@ def book_records_count():
     return json_result(True, total=number), 200
 
 
-@sat_biblio.route("/book-records/search", methods=["POST"])
+@sat_biblio.route("/book-records/search/", methods=["POST"])
 def chercher_enregistrements():
     data = request.get_json()
     the_query = EnregistrementDB.query
@@ -153,7 +153,7 @@ def chercher_enregistrements():
         return json_result(True, results=[]), 200
 
 
-@sat_biblio.route("/book-records/search-near", methods=["GET"])
+@sat_biblio.route("/book-records/search-near/", methods=["GET"])
 def chercher_enregistrements_proches():
     query_result = request.args.get("record")
     res = []

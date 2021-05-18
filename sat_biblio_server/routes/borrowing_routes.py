@@ -19,7 +19,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
 # region borrowing
-@sat_biblio.route("/borrowings", methods=["POST", "GET"])
+@sat_biblio.route("/borrowings/", methods=["POST", "GET"])
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def borrowings():
     if request.method == "GET":
@@ -47,7 +47,7 @@ def borrowings():
         return json_result(False), 400
 
 
-@sat_biblio.route("/borrowings/<int:id_>", methods=["GET", "DELETE", "PUT"])
+@sat_biblio.route("/borrowings/<int:id_>/", methods=["GET", "DELETE", "PUT"])
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def borrowing(id_: int):
     """
@@ -119,7 +119,7 @@ def borrowing(id_: int):
         return json_result(False), 400
 
 
-@sat_biblio.route("/borrowings/count", methods=["GET"])
+@sat_biblio.route("/borrowings/count/", methods=["GET"])
 def borrowings_count():
     """
 
