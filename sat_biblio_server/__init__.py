@@ -194,11 +194,15 @@ def create_app(config):
     # import blueprints
     from sat_biblio_server.routes import sat_biblio
 
-    # @sat_biblio.after_request
-    # def after_request(response):
-    #     header = response.headers
-    #     header["Access-Control-Allow-Origin"] = "*"
-    #     return response
+    @sat_biblio.after_request
+    def after_request(response):
+        header = response.headers
+        if config.ENV == "production":
+            header["Access-Control-Allow-Origin"] = "https://satbiblio.clementbesnier.eu"
+        else:
+            header["Access-Control-Allow-Origin"] = "https://satbiblio.clementbesnier.eu"
+        header["Access-Control-Allow-Credentials'"] = "Origin, X-Requested-With, Content-Type, Accept"
+        return response
     app.register_blueprint(sat_biblio)
     # print("application lancée")
     # app.secret_key = "Essai"
