@@ -11,6 +11,7 @@ Flask-Migrate
 # Flask-Session
 flask-jwt-extended[asymmetric_crypto]
 Flask-SQLAlchemy
+Flask-WTF
 itsdangerous
 Jinja2
 kiwisolver
