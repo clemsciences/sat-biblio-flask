@@ -34,7 +34,7 @@ lm = LoginManager()
 csrf = CSRFProtect()
 mail = Mail()
 migrate = Migrate()
-cors = CORS(automatic_options=True, support_credentials=True)
+cors = CORS()
 jwt = JWTManager()
 
 
@@ -194,15 +194,19 @@ def create_app(config):
     # import blueprints
     from sat_biblio_server.routes import sat_biblio
 
-    @sat_biblio.after_request
-    def after_request(response):
-        header = response.headers
-        if config.ENV == "production":
-            header["Access-Control-Allow-Origin"] = "https://satbiblio.clementbesnier.eu"
-        else:
-            header["Access-Control-Allow-Origin"] = "https://satbiblio.clementbesnier.eu"
-        header["Access-Control-Allow-Credentials'"] = "Origin, X-Requested-With, Content-Type, Accept"
-        return response
+    # @sat_biblio.after_request
+    # def after_request(response):
+    # if config.ENV == "production":
+    # response.headers.add("Access-Control-Allow-Origin", "https://satbiblio.clementbesnier.eu")
+    # else:
+    # response.headers.add("Access-Control-Allow-Origin", "http://localhost:5000")
+    # #header["Access-Control-Allow-Credentials'"] = "Origin, X-Requested-With, Content-Type, Accept"
+    # response.headers.add("Access-Control-Allow-Credentials", "true")
+    # response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    # response.headers.add("Access-Control-Allow-Headers", "x-csrf-token")
+    # response.headers.add("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS")
+    # return response
+
     app.register_blueprint(sat_biblio)
     # print("application lancée")
     # app.secret_key = "Essai"

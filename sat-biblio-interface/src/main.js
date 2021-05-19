@@ -15,7 +15,7 @@ import store from "./store";
 Vue.component('vue-typeahead-bootstrap', VueTypeaheadBootstrap)
 axios.defaults.baseURL = process.env.VUE_APP_SITE_API_URL;
 axios.defaults.withCredentials = true;
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'https://api.satbiblio.clementbesnier.eu,https://satbiblio.clementbesnier';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'https://satbiblio.clementbesnier';
 
 new Vue({
   render: h => h(App),

@@ -63,4 +63,17 @@ class Config:
         "de": "Deutsch"
     }
 
+    CORS_ALLOW_HEADERS = "*"
+    CORS_ALWAYS_SEND = True
+    CORS_AUTOMATIC_OPTIONS = True
+    CORS_EXPOSE_HEADERS = ["Content-Type"]
+    CORS_INTERCEPT_EXCEPTIONS = True
+    CORS_MAX_AGE = None
+    CORS_METHODS = ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
+    CORS_ORIGINS = "http://localhost:8080"
+    CORS_RESOURCES = "/*"
+    CORS_SEND_WILDCARD = True
+    CORS_SUPPORTS_CREDENTIALS = True
+    CORS_VARY_HEADER = True
+
 
