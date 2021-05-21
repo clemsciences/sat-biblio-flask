@@ -27,7 +27,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 # @sat_biblio.route("/api/auteur/creer", methods=["POST"])
 @sat_biblio.route("/authors/", methods=["POST", "GET"])
 @validation_connexion_et_retour_defaut("email", ["POST"])
-def author():
+def authors_():
     """
     POST: add an author
     GET: get list of authors
@@ -70,7 +70,7 @@ def author():
 
 @sat_biblio.route("/authors/<int:id_>/", methods=["GET", "PUT", "DELETE"])
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
-def authors(id_):
+def author_(id_):
     """
     GET: read an author
     PUT: update an author

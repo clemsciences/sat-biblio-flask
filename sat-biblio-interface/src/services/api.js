@@ -33,6 +33,26 @@ export function searchNearUsers(params) {
   return axios.get(`/users/search-near/?${params}`)
 }
 
+export function retrieveUsers(params, token) {
+  return axios.get(`/users/${params}`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function getUsersCount(params, token) {
+  return axios.get(`/users/count/${params}`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function retrieveUser(id, token) {
+  return axios.get(`/users/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function updateUser(id, user, token) {
+  return axios.post(`/users/${id}/`, user, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function deleteUser(id, token) {
+  return axios.delete(`/users/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
 // endregion
 
 // region auteurs

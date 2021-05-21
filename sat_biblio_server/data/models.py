@@ -166,11 +166,13 @@ class User:
         return dict(
             first_name=user_db.first_name,
             family_name=user_db.family_name,
-            email=user_db.email
+            email=user_db.email,
+            right=user_db.right
         )
 
     @staticmethod
     def from_data_to_db(user: dict):
         return UserDB(first_name=user["first_name"],
                       family_name=user["family_name"],
-                      email=user["email"])
+                      email=user["email"],
+                      right=user["right"])

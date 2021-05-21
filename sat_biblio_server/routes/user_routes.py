@@ -12,6 +12,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
+from data.models import User
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
 import sat_biblio_server.data.validation as dv
@@ -24,7 +25,7 @@ from sat_biblio_server.utils import json_result
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
-# region connexion
+# region connection
 def connect_user_login(user: UserDB, token: str):
     if login_user(user):
         session["email"] = user.email
@@ -73,28 +74,6 @@ def connect_user(data):
                            }), 200
 
 
-@sat_biblio.route("/users/confirm/<inscription_token>/", methods=["GET"])
-def confirmer_inscription_utilisateur(inscription_token):
-    email = request.args.get("email")
-    user_sess = sm.UserSess(email)
-    if user_sess and user_sess.confirmer_token(inscription_token):
-        token = create_access_token(identity=user_sess.user_db.email)
-        connect_user_login(user_sess.user_db, token)
-        return json_result(True,
-                           message="Votre compte est validé.",
-                           connected=True,
-                           connectionInfo={
-                               "token": session["token"],
-                               "email": session["email"],
-                               "first_name": session["first_name"],
-                               "family_name": session["family_name"],
-                               "right": session["right"]
-                           }), 200
-    else:
-        return json_result(False, message="Le lien donné est invalide. "
-                                          "Veuillez contacter l'administrateur si vous pensez qu'il y a un problème.")
-
-
 # @sat_biblio.route("/user/confirmed", methods=["GET"])
 # def est_utilisateur_confirme():
 #     email = request.args.get("email")
@@ -132,52 +111,6 @@ def logout():
     return json_result(True, message="Vous êtes correctement déconnecté.")
 
 
-@sat_biblio.route("/users/create/", methods=["POST"])
-def create_new_user():
-    if request.method == "POST":
-        user_form = request.get_json()
-        if dv.check_user(user_form):
-            already_exists = sm.Users.check_if_user_exist(user_form["email"]) is not None
-            if already_exists:
-                return json_result(False,
-                                   message="Il existe déjà un compte avec cet adresse email.")
-            else:
-                user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
-                # print("Créer nouvel utilisateur")
-                if user:
-                    token = user.generate_confirmation_token()
-                    # satbibilio.clementbesnier.eu/utilisateur/enregistre
-                    link = f"https://satbiblio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
-                           f"inscription_token={token}&email={user.email}"
-                    # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
-                    #                inscription_token=token,
-                    #                email=user.email,
-                    #                _external=True)
-                    link_to_resend = ""
-                    mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
-                    return json_result(True,
-                                       message="Le compte a correctement été créé. "
-                                               "Vous allez recevoir un courriel de confirmation "
-                                               "à l'adresse email donnée.",
-                                       link_to_resend=link_to_resend)
-                else:
-                    return json_result(False, message="Les données reçues sont invalides")
-        else:
-            return json_result(False, message="Les données reçues ne permettent pas de créer un compte utilisateur. "
-                                              "Contactez l'administrateur de ce site.")
-    return json_result(False, "Mauvaise méthode de requête.")
-
-
-@sat_biblio.route("/users/validation_inscription_patient/<string:link>/", methods=["GET"])
-def valider_inscription(link):
-    user = sm.Users.load_user_by_validation_link(link)
-    if user is None:
-        return json_result(False)
-    else:
-        sm.Users.validate_user(user)
-        return json_result(True)
-
-
 @sat_biblio.route("/users/check_login/", methods=["POST"])
 def check_login():
     if "email" in session:
@@ -205,8 +138,10 @@ def check_login():
 #         d["connected"] = "email" in session
 #         response.set_data(json.dumps(d))
 #     return response
+# endregion
 
 
+# region password management
 @sat_biblio.route("/users/search-near/")
 def search_near_users():
     query_result = request.args.get("user")
@@ -276,3 +211,123 @@ def set_new_password():
         return json_result(True, message="Le nouveau mot de passe a été accepté."), 200
     return json_result(False, "La requête est incorrect"), 400
 # endregion
+
+
+# region creation
+@sat_biblio.route("/users/create/", methods=["POST"])
+def create_new_user():
+    if request.method == "POST":
+        user_form = request.get_json()
+        if dv.check_user(user_form):
+            already_exists = sm.Users.check_if_user_exist(user_form["email"]) is not None
+            if already_exists:
+                return json_result(False,
+                                   message="Il existe déjà un compte avec cet adresse email.")
+            else:
+                user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
+                # print("Créer nouvel utilisateur")
+                if user:
+                    token = user.generate_confirmation_token()
+                    # satbibilio.clementbesnier.eu/utilisateur/enregistre
+                    link = f"https://satbiblio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
+                           f"inscription_token={token}&email={user.email}"
+                    # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
+                    #                inscription_token=token,
+                    #                email=user.email,
+                    #                _external=True)
+                    link_to_resend = ""
+                    mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
+                    return json_result(True,
+                                       message="Le compte a correctement été créé. "
+                                               "Vous allez recevoir un courriel de confirmation "
+                                               "à l'adresse email donnée.",
+                                       link_to_resend=link_to_resend)
+                else:
+                    return json_result(False, message="Les données reçues sont invalides")
+        else:
+            return json_result(False, message="Les données reçues ne permettent pas de créer un compte utilisateur. "
+                                              "Contactez l'administrateur de ce site.")
+    return json_result(False, "Mauvaise méthode de requête.")
+
+
+@sat_biblio.route("/users/confirm/<inscription_token>/", methods=["GET"])
+def confirmer_inscription_utilisateur(inscription_token):
+    email = request.args.get("email")
+    user_sess = sm.UserSess(email)
+    if user_sess and user_sess.confirmer_token(inscription_token):
+        token = create_access_token(identity=user_sess.user_db.email)
+        connect_user_login(user_sess.user_db, token)
+        return json_result(True,
+                           message="Votre compte est validé.",
+                           connected=True,
+                           connectionInfo={
+                               "token": session["token"],
+                               "email": session["email"],
+                               "first_name": session["first_name"],
+                               "family_name": session["family_name"],
+                               "right": session["right"]
+                           }), 200
+    else:
+        return json_result(False, message="Le lien donné est invalide. "
+                                          "Veuillez contacter l'administrateur si vous pensez qu'il y a un problème.")
+
+
+@sat_biblio.route("/users/validation_inscription_patient/<string:link>/", methods=["GET"])
+def valider_inscription(link):
+    user = sm.Users.load_user_by_validation_link(link)
+    if user is None:
+        return json_result(False)
+    else:
+        sm.Users.validate_user(user)
+        return json_result(True)
+# endregion
+
+
+@sat_biblio.route("/users/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def users_():
+    if request.method == "GET":
+        n_page = int(request.args.get("page"))
+        size = int(request.args.get("size"))
+        sort_by = request.args.get("sortBy")
+
+        the_query = UserDB.query
+        first_name = request.args.get("first_name", "")
+        if first_name:
+            the_query = the_query.filter(UserDB.first_name.like(f"%{first_name}%"))
+        family_name = request.args.get("family_name", "")
+        if family_name:
+            the_query = the_query.filter(UserDB.family_name.like(f"%{family_name}%"))
+        right = request.args.get("right", "")
+        if right:
+            the_query = the_query.filter(UserDB.right.like(f"%{right}%"))
+        users = [dict(first_name=user.first_name,
+                      family_name=user.family_name,
+                      id=user.id,
+                      right=user.right.value)
+                 for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
+        return json_result(True, users=users), 200
+
+
+@sat_biblio.route("/authors/<int:id_>")
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def user_(id_):
+    if request.method =="GET":
+        user_db = UserDB.query.filter_by(id=id_).first()
+        user = User.from_db_to_data(user_db)
+        return json_result(True, user=user)
+
+
+@sat_biblio.route("/users/count/", methods=["GET"])
+def users_count():
+    the_query = UserDB.query
+    if "first_name" in request.args:
+        the_query = the_query.filter(UserDB.first_name.like(f"%{request.args.get('first_name')}%"))
+
+    if "family_name" in request.args:
+        the_query = the_query.filter(UserDB.family_name.like(f"%{request.args.get('family_name')}%"))
+
+    if "right" in request.args:
+        the_query = the_query.filter(UserDB.right.like(f"%{request.args.get('right')}%"))
+    number = the_query.count()
+    return json_result(True, total=number), 200
