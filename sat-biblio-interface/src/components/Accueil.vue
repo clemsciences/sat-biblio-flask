@@ -3,31 +3,16 @@
     <b-row>
       <h2>Accueil</h2>
     </b-row>
-    <b-row><h3>Connexion</h3></b-row>
+    <b-row v-if="connected"><h3>Connexion</h3></b-row>
     <b-row v-if="connected">
       <b-col>
         <b-row>
           <p>Vous êtes connecté en tant que <b>{{ connectionInfo.first_name }} {{ connectionInfo.family_name }}</b> (<i>{{ connectionInfo.email }}</i>).
             Vous êtes <b>{{ rightString }}</b>.</p>
         </b-row>
-        <b-row>
-          <b-col cols="2">
-            <p><b-button to="/utilisateur/deconnexion">Se déconnecter</b-button></p>
-          </b-col>
-          <b-col cols="2">
-            <p><b-button to="/utilisateur/reinitialiser-mot-de-passe">Changer de mot de passe</b-button></p>
-          </b-col>
-        </b-row>
       </b-col>
     </b-row>
-    <b-row v-else>
-      <b-col cols="2">
-        <p><b-button to="/utilisateur/connexion">Se connecter</b-button></p>
-      </b-col>
-      <b-col cols="2">
-        <p><b-button to="/utilisateur/creer">Créer un nouveau compte utilisateur</b-button></p>
-      </b-col>
-    </b-row>
+
     <b-row><h3>Description</h3></b-row>
     <b-row>
 <!--      <b-col cols="9">-->
