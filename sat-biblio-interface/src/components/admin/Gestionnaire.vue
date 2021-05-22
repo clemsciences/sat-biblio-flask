@@ -34,7 +34,7 @@
       :total-rows="userTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
-    <b-table striped bordered hover :items="retrieveUsers" :fields="fields"
+    <b-table striped bordered hover :items="loadUsers" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToUser" :filter="onFilter">
       <template #table-caption>La liste des utilisateurs dans la base.</template>
@@ -78,38 +78,38 @@ name: "Gestionnaire",
     }
   },
   methods: {
-    retrieveUsers: function(ctx, callback) {
+    loadUsers: function(ctx, callback) {
         let params = "?page="+ctx.currentPage+
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy;
 
-      let filterParams = "";
-      if(this.firstNameFiltre.length > 0) {
-        filterParams = filterParams+"&first_name="+this.firstNameFiltre;
-      }
-      if(this.familyNameFiltre.length > 0) {
-        filterParams = filterParams+"&family_name="+this.familyNameFiltre;
-      }
-      if(this.rightFiltre.length > 0) {
-        filterParams = filterParams+"&right="+this.rightFiltre;
-      }
+        let filterParams = "";
+        if(this.firstNameFiltre.length > 0) {
+          filterParams = filterParams+"&first_name="+this.firstNameFiltre;
+        }
+        if(this.familyNameFiltre.length > 0) {
+          filterParams = filterParams+"&family_name="+this.familyNameFiltre;
+        }
+        if(this.rightFiltre.length > 0) {
+          filterParams = filterParams+"&right="+this.rightFiltre;
+        }
 
-      if(filterParams.length > 0) {
-        params = params + filterParams;
-      }
-      retrieveUsers(params, this.$store.state.connectionInfo.token).then(
-          (response) => {
-            if(response.data.success) {
-              this.users = response.data.users;
-              callback(this.users);
+        if(filterParams.length > 0) {
+          params = params + filterParams;
+        }
+        retrieveUsers(params, this.$store.state.connectionInfo.token).then(
+            (response) => {
+              if(response.data.success) {
+                this.users = response.data.users;
+                callback(this.users);
+              }
             }
-          }
-      ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
+        ).catch(
+            (reason) => {
+              console.log(reason);
+              callback([]);
+            }
+        );
       return null;
     },
     getUserTotalNumber: function() {
