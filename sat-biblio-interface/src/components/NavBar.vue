@@ -50,20 +50,14 @@
           <b-nav-item id="connection-tooltip" class="nav-link space-around titre-nav-item ml-auto">
             <!-- v-b-tooltip.hover.bottomleft="connectionTooltipHints" -->
             <b-nav-item-dropdown v-if="connected" text="Mon profil" class="titre-nav-item">
-              <b-dropdown-item :to="{name: connectionLink}">
-                {{ connectionLabel }}
-<!--                <b-tooltip target="connection-tooltip" triggers="hover" class="my-tooltip" v-if="connected">-->
-<!--                  {{ connectionTooltipHints }}-->
-<!--                </b-tooltip>-->
-              </b-dropdown-item>
               <b-dropdown-item to="/utilisateur/reinitialiser-mot-de-passe">
                 Changer <br/> de mot de passe
               </b-dropdown-item>
               <b-dropdown-item to="/utilisateur/deconnexion">Se déconnecter</b-dropdown-item>
             </b-nav-item-dropdown>
             <b-nav-item-dropdown v-else text="Connexion" class="titre-nav-item">
-              <b-dropdown-item :to="{name: connectionLink}">
-                {{ connectionLabel }}
+              <b-dropdown-item :to="{name: 'utilisateur-connexion'}">
+                Se connecter
               </b-dropdown-item>
               <b-dropdown-item to="/utilisateur/creer">
                 Nouveau compte
@@ -109,13 +103,6 @@ export default {
         return "Se déconnecter";
       }
     },
-    connectionLink: function() {
-      if(!this.connected) {
-        return "utilisateur-connexion";
-      } else {
-        return "utilisateur-deconnexion";
-      }
-    }
   }
 
 }
