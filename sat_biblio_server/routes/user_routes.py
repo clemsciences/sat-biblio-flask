@@ -19,8 +19,7 @@ import sat_biblio_server.data.validation as dv
 import sat_biblio_server.database as dbm
 from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.sessions.session_manager as sm
-from sat_biblio_server.utils import json_result
-
+from sat_biblio_server.utils import json_result, UserRight
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
@@ -304,18 +303,36 @@ def users_():
         users = [dict(first_name=user.first_name,
                       family_name=user.family_name,
                       id=user.id,
-                      right=user.right.value)
+                      email=user.email,
+                      right=user.right.name)
                  for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         return json_result(True, users=users), 200
 
 
-@sat_biblio.route("/authors/<int:id_>")
-@validation_connexion_et_retour_defaut("email", ["GET"])
+@sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT"])
+@validation_connexion_et_retour_defaut("email", ["GET",  "PUT"])
 def user_(id_):
-    if request.method =="GET":
+    user_db = UserDB.query.filter_by(id=id_).first()
+    if request.method == "GET":
         user_db = UserDB.query.filter_by(id=id_).first()
         user = User.from_db_to_data(user_db)
-        return json_result(True, user=user)
+        return json_result(True, user=user), 200
+    elif request.method == "PUT":
+        data = request.get_json()
+        if dv.check_user(data):
+            user_db.first_name = data["first_name"]
+            user_db.family_name = data["family_name"]
+            user_db.right = UserRight.from_value(data["right"])
+            db.session.commit()
+            return json_result(True), 200
+        else:
+            return json_result(False), 400
+    elif request.method == "DELETE":
+        if user_db:
+            db.session.delete(user_db)
+            db.session.commit()
+            return json_result(True), 204
+        return json_result(False), 400
 
 
 @sat_biblio.route("/users/count/", methods=["GET"])

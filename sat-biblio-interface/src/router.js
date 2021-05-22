@@ -34,6 +34,7 @@ import {isValidJwt} from "@/services/authentication";
 import localStorageManager from "@/services/localstorageManager";
 import {rights} from "@/services/rights";
 import store from "@/store";
+import Utilisateur from "@/components/utilisateur/Utilisateur";
 
 Vue.use(VueRouter);
 
@@ -110,6 +111,12 @@ let router = new VueRouter({
             name: "utilisateur-deconnexion",
             path: '/utilisateur/deconnexion',
             component: Deconnexion,
+            meta: {needAuth: true, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "utilisateur-lecture",
+            path: '/utilisateur/lire/:id',
+            component: Utilisateur,
             meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         // endregion

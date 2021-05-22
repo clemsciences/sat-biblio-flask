@@ -167,7 +167,8 @@ class User:
             first_name=user_db.first_name,
             family_name=user_db.family_name,
             email=user_db.email,
-            right=user_db.right
+            right=user_db.right.value,
+            id=user_db.id
         )
 
     @staticmethod
@@ -175,4 +176,5 @@ class User:
         return UserDB(first_name=user["first_name"],
                       family_name=user["family_name"],
                       email=user["email"],
-                      right=user["right"])
+                      right=user["right"],
+                      id=user["id"])

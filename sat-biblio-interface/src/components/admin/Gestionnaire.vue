@@ -123,6 +123,12 @@ name: "Gestionnaire",
         }
         filterParams = filterParams + "family_name="+encodeURI(this.familyNameFiltre);
       }
+      if(this.rightFiltre.length > 0) {
+        if(filterParams.length > 0) {
+          filterParams = filterParams+"&";
+        }
+        filterParams = filterParams + "right="+encodeURI(this.rightFiltre);
+      }
       if(filterParams.length > 0) {
         filterParams = "?"+filterParams;
       }
@@ -159,7 +165,7 @@ name: "Gestionnaire",
   },
   computed: {
     onFilter: function() {
-      return `${this.firstNameFiltre} ${this.familyNameFiltre}`;
+      return `${this.firstNameFiltre} ${this.familyNameFiltre} ${this.rightFiltre}`;
     }
   }
 

@@ -48,6 +48,9 @@ const store = new Vuex.Store({
         },
         getUserRight(state) {
             return state.connectionInfo.right;
+        },
+        getConnectionInfo(state) {
+            return state.connectionInfo;
         }
     }
 });

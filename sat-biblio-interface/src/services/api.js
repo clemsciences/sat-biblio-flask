@@ -46,7 +46,7 @@ export function retrieveUser(id, token) {
 }
 
 export function updateUser(id, user, token) {
-  return axios.post(`/users/${id}/`, user, { headers: { Authorization: `Bearer ${token}` } });
+  return axios.put(`/users/${id}/`, user, { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function deleteUser(id, token) {

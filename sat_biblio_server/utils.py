@@ -22,6 +22,19 @@ class UserRight(enum.Enum):
     gestionnaire = enum.auto()
     administrateur = enum.auto()
 
+    @classmethod
+    def from_value(cls, value):
+        if value == cls.lecteur.value:
+            return cls.lecteur
+        elif value == cls.contributeur.value:
+            return cls.contributeur
+        elif value == cls.editeur.value:
+            return cls.editeur
+        elif value == cls.gestionnaire.value:
+            return cls.gestionnaire
+        elif value == cls.administrateur.value:
+            return cls.administrateur
+
     def __str__(self):
         if self == UserRight.lecteur:
             return "lecteur"
