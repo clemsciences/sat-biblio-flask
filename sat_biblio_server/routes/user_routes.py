@@ -12,7 +12,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from data.models import User
+from sat_biblio_server.data.models import User
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
 import sat_biblio_server.data.validation as dv
