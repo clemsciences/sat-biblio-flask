@@ -102,7 +102,8 @@ def author_(id_):
         if author_db:
             db.session.delete(author_db)
             db.session.commit()
-        return json_result(True), 204
+            return json_result(True), 204
+        return json_result(False), 400
 
 
 @sat_biblio.route("/authors/count/", methods=["GET"])
