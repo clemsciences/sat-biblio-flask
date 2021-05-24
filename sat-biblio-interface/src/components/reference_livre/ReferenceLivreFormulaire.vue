@@ -1,6 +1,6 @@
 <template>
   <b-form @submit.prevent="onSubmit">
-    <SuggestionAuteur v-model="reference.selectedAuthors" class="my-3" :disabled="disabled"/>
+    <SuggestionAuteur v-if="reference.selectedAuthors" v-model="reference.selectedAuthors" class="my-3" :disabled="disabled"/>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre" :disabled="disabled"/>
     </b-form-group>
@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     isIncorrect: function () {
-      return this.reference.selectedAuthors.length === 0 ||
+      return (this.reference.selectedAuthors && this.reference.selectedAuthors.length === 0) ||
           this.reference.titre.length === 0 ||
           this.reference.editeur.length === 0;
     }

@@ -35,6 +35,7 @@ import localStorageManager from "@/services/localstorageManager";
 import {rights} from "@/services/rights";
 import store from "@/store";
 import Utilisateur from "@/components/utilisateur/Utilisateur";
+import ImportTester from "@/components/import/ImportTester";
 
 Vue.use(VueRouter);
 
@@ -135,6 +136,12 @@ let router = new VueRouter({
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
+        {
+            name: 'import-csv',
+            path: "/importation",
+            component: ImportTester,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
         // region auteur
         {
             name: "auteur-creer",

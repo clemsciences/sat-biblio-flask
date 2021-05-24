@@ -52,5 +52,6 @@ def process_row(n_row):
     # print(reste)
     # authors = icu.extraire_auteurs(auteur)
     ref = icu.extraire_ref_biblio(description)
+    record = icu.extraire_enregistrements(processed_row)
     # return json_result(True, data=processed_row, ref=ref, authors=authors), 200
-    return json_result(True, data=processed_row, ref=ref), 200
+    return json_result(True, data=processed_row, ref=ref, record=record), 200

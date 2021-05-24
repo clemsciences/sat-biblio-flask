@@ -1,6 +1,6 @@
 <template>
   <b-form @submit.prevent="onSubmit">
-      <SuggestionReference v-model="record.selectedReference" :disabled="disabled"/>
+      <SuggestionReference v-if="record.selectedReference" v-model="record.selectedReference" :disabled="disabled"/>
       <!-- Recherche assisté de la référence -->
       <b-form-group label="Description">
         <b-form-textarea v-model="record.description" :disabled="disabled"/>
@@ -43,7 +43,7 @@ export default {
   computed: {
     isIncorrect: function () {
       return this.record.cote.length === 0 ||
-          this.record.selectedReference.value < 0;
+          (this.record.selectedReference && this.record.selectedReference.value < 0);
     }
   }
 }

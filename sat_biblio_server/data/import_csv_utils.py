@@ -26,7 +26,7 @@ def extraire_auteurs(description):
         else:
             break
         limite_auteur += 1
-        auteurs.append(dict(prenom=prenom, nom=nom))
+        auteurs.append(dict(first_name=prenom, family_name=nom))
 
     return auteurs, description[limite_auteur:]
 
@@ -97,10 +97,13 @@ def extraire_ref_biblio(description):
         return None
 
 
-# def extraire_enregistrements(record):
-#     # print(record.keys())
-#     mots_clef = f"{record.get('theme1', '')} {record.get('theme2', '')}"
-#     record = dict(cote=record["cote"], nb_exemplaire_supp=record["nb_supp"],
-#                   annee=record["annee"], provenance=record["provenance"],
-#                   mots_clef=mots_clef, valide=True, id_reference=record["reference_id"])
-#     return record
+def extraire_enregistrements(record):
+    # print(record.keys())
+    mots_clef = f"{record.get('theme1', '')} " \
+                f"{record.get('theme2', '')} " \
+                f"{record.get('theme3', '')}".strip()
+    record = dict(description=record["description"], cote=record["cote"],
+                  nb_exemplaire_supp=record["nb_supp"],
+                  annee=record["annee"], provenance=record["provenance"],
+                  mots_clef=mots_clef, valide=True, id_reference=record["index"])
+    return record

@@ -39,6 +39,7 @@
               </b-dropdown-group>
               <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
                 <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
+                <b-dropdown-item to="/importation">Importation</b-dropdown-item>
               </b-dropdown-group>
             </b-nav-item-dropdown>
           </b-nav-item>
