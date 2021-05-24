@@ -243,6 +243,15 @@ let router = new VueRouter({
 router.beforeEach(function (to, from, next) {
     if(to.meta.needAuth) {
         const sessionInfo = localStorageManager.getSessionInfo();
+        if(!store.state.connectionInfo.token) {
+            next({
+                name: 'accueil',
+                query: {
+                    redirect: to.fullPath
+                }
+            });
+            return;
+        }
         console.log(sessionInfo);
         const isValid = isValidJwt(sessionInfo.token);
         console.log(isValid);

@@ -3,45 +3,34 @@
     <Title title="Nouvel auteur"
            info="Un auteur est un individu qui a participé à la rédaction d'au moins un ouvrage."
            id="id-auteur"/>
-    <b-form @submit.prevent="onSubmit">
-      <b-form-group label="Prénom">
-        <b-form-input type="text" v-model="first_name"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Nom">
-        <b-form-input type="text" v-model="family_name"></b-form-input>
-      </b-form-group>
-      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
-      <span class="mx-3">{{ message }}</span>
-    </b-form>
+    <AuteurFormulaire
+        :auteur="auteur"
+        :on-submit="onSubmit"
+        :message="message"/>
   </b-container>
 </template>
 
 <script>
-import {createAuthor} from "../../services/api";
+import {createAuthor} from "@/services/api";
 import Title from "../visuel/Title";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
 
 export default {
   name: "Auteur",
-  components: {Title},
+  components: {AuteurFormulaire, Title},
   data: function () {
     return {
-      first_name: '',
-      family_name: '',
+      auteur: {first_name: '', family_name: ''},
       message: ''
     };
   },
   methods: {
     onSubmit: function() {
-      if (this.first_name.length > 0 && this.family_name.length > 0) {
-        const form_data = {
-          first_name: this.first_name.trim(),
-          family_name: this.family_name.trim()
-        };
-
-        createAuthor(form_data, this.$store.state.connectionInfo.token).then(
+      if (this.auteur.first_name.length > 0 && this.auteur.family_name.length > 0) {
+        createAuthor(this.auteur, this.$store.state.connectionInfo.token).then(
             (response) => {
               if (response.data.success) {
-                this.message = "L'auteur " + this.first_name + " " + this.family_name + " a été correctement créé.";
+                this.message = "L'auteur " + this.auteur.first_name + " " + this.auteur.family_name + " a été correctement créé.";
                 this.first_name = "";
                 this.family_name = "";
               } else {
@@ -57,18 +46,13 @@ export default {
               }
             })
         );
-      } else if(this.first_name.length === 0) {
+      } else if(this.auteur.first_name.length === 0) {
         this.message = "Le prénom ne peut être vide.";
-      } else if (this.family_name.length === 0) {
+      } else if (this.auteur.family_name.length === 0) {
         this.message = "Le nom de famille ne peut être vide.";
       }
     }
   },
-  computed: {
-    isIncorrect: function () {
-      return this.first_name.length === 0 || this.family_name.length === 0;
-    }
-  }
 }
 </script>
 

@@ -11,7 +11,7 @@ export const rights = {
     contributeur: {index: 2, string: "contributeur"},
     editeur: {index: 3, string: "éditeur"},
     gestionnaire: {index: 4, string: "gestionnaire"},
-    administrateur: {index: 5, string: "adminstrateur"}
+    administrateur: {index: 5, string: "administrateur"}
 }
 
 function canDo(right, rightIndex) {

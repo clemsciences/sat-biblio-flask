@@ -3,18 +3,14 @@
     <Title id="id-lecture-auteur"
            info=""
            title="Auteur"/>
-    <b-form @submit.prevent="updateAuthor">
-      <b-form-group label="Prénom">
-        <b-form-input type="text" v-model="first_name"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Nom">
-        <b-form-input type="text" v-model="family_name"></b-form-input>
-      </b-form-group>
-      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
-      <span class="mx-3">{{ message }}</span>
-    </b-form>
+    <AuteurFormulaire
+        :on-submit="updateAuthor"
+        :auteur="auteur"
+        :message="message"
+        :disabled="!canModify"
+    />
 
-    <b-button class="my-3" v-b-modal.suppression>Supprimer</b-button>
+    <b-button class="my-3" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
 
     <b-modal id="suppression" title="Suppression de l'auteur"
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">
@@ -27,14 +23,17 @@
 <script>
 import {deleteAuthor, retrieveAuthor, updateAuthor} from "@/services/api";
 import Title from "@/components/visuel/Title";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
+import {mapState} from "vuex";
+import {canEdit} from "@/services/rights";
+
 export default {
   name: "LireAuteur",
-  components: {Title},
+  components: {AuteurFormulaire, Title},
   data: function () {
     return {
-    first_name: '',
-    family_name: '',
-    message: ''
+      auteur: {first_name: "", family_name: ""},
+      message: ''
 
     }
   },
@@ -43,8 +42,8 @@ export default {
       retrieveAuthor(this.$route.params.id).then(
         (response) => {
           if(response.data.success) {
-            this.first_name = response.data.author.first_name;
-            this.family_name = response.data.author.family_name;
+            this.auteur.first_name = response.data.author.first_name;
+            this.auteur.family_name = response.data.author.family_name;
           } else {
             console.log("erreur de récupération de l'auteur");
           }
@@ -52,8 +51,8 @@ export default {
       );
     },
     updateAuthor: function() {
-      const formData = {first_name: this.first_name, family_name: this.family_name};
-      updateAuthor(this.$route.params.id, formData, this.$store.state.connectionInfo.token).then(
+      // const formData = {first_name: this.first_name, family_name: this.family_name};
+      updateAuthor(this.$route.params.id, this.auteur, this.$store.state.connectionInfo.token).then(
         (response) => {
           if(response.data.success) {
             console.log("modifications enregistrées");
@@ -73,16 +72,15 @@ export default {
           }
         }
       );
-
     }
-
   },
   mounted() {
     this.getAuthor();
   },
   computed: {
-    isIncorrect: function () {
-      return this.first_name.length === 0 || this.family_name.length === 0;
+    ...mapState(["connected", "connectionInfo"]),
+    canModify: function() {
+      return this.connected && canEdit(this.connectionInfo.right);
     }
   }
 }

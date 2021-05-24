@@ -12,11 +12,29 @@
   <!--        <b-form-input readonly v-if="selectedAuthor" v-model="selectedAuthor"/> &lt;!&ndash; pour chercher l'auteur &ndash;&gt;-->
     </b-form-group>
     <b-form-group :label="selectedAuthorsMessage">
-      <b-form-select :options="value" :select-size="5" size="sm"></b-form-select>
+      <b-form-select
+          v-model="selectedAuthorId"
+          :options="value"
+          :select-size="5"
+          size="sm"/>
     </b-form-group>
-    <b-button :disabled="selectedAuthors.length === 0" @click="removeLastAuthor()">
-      Retirer le dernier auteur ajouté
+    <b-button class="mx-3" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
+      Enlever auteur
     </b-button>
+    <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>
+<!--    <b-form-group :label="selectedAuthorsMessage">-->
+<!--      <b-form-select v-model="selectedAuthorId" -->
+<!--                     :options="selectedAuthors" -->
+<!--                     :select-size="5" size="sm"/>-->
+<!--    </b-form-group>-->
+<!--    <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>-->
+<!--    <b-button class="mx-3"-->
+<!--              v-if="selectedAuthorId > 0"-->
+<!--              @click="removeSelectedAuthor">Enlever auteur</b-button>-->
+
+<!--    <b-form-group label="Titre">-->
+<!--      <b-form-input class="mx-3" v-if="selectedAuthorId >= 0" v-model="titre"></b-form-input>-->
+<!--    </b-form-group>-->
   </b-container>
 </template>
 
@@ -36,7 +54,7 @@ name: "SuggestionAuteur",
     return {
       author_query: '',
       suggestedAuthors: [],
-      selectedAuthor: '',
+      selectedAuthorId: -1,
       selectedAuthors: [],
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
     }
@@ -54,20 +72,34 @@ name: "SuggestionAuteur",
     },
     addAuthor: function(event) {
       // TODO check that chosen Author is not already in selectedAuthors
-      this.selectedAuthor = event;
+      this.selectedAuthorId = event;
       this.selectedAuthors.push(event);
       this.author_query = "";
       this.$emit("input", this.selectedAuthors);
     },
+    goToAuthor: function() {
+      console.log(this.selectedAuthorId);
+      let routeData = this.$router.resolve(`/auteur/lire/${this.selectedAuthorId}`);
+      window.open(routeData.href, '_blank');
+    },
     removeLastAuthor: function() {
       // const indexOfAuthor = this.selectedAuthors.indexOf(event);
-      this.selectedAuthors.pop()  // splice(indexOfAuthor, 1);
+      // this.selectedAuthors.pop()  // splice(indexOfAuthor, 1);
+      this.selectedAuthors = this.selectedAuthors.filter(
+          (author) => {
+            return author.value !== this.selectedAuthorId;
+          }
+      );
+      this.selectedAuthorId = -1;
       this.$emit("input", this.selectedAuthors);
     }
   },
   watch: {
     author_query: function (newValue) {
       this.getSuggestedAuthors(newValue);
+    },
+    value: function(newValue) {
+      Object.assign(this.selectedAuthors, newValue);
     },
     selectedAuthors: function (newValue) {
       if(newValue.length > 1) {
@@ -76,7 +108,7 @@ name: "SuggestionAuteur",
         this.selectedAuthorsMessage = "Auteur sélectionné"
       }
     }
-  }
+  },
 }
 </script>
 
