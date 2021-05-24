@@ -5,6 +5,7 @@
         v-model="author_query"
         :data="suggestedAuthors"
         :serializer="s => s.text"
+        :disabled="disabled"
         placeholder="Tapez le prénom ou le nom de l'auteur"
         @hit="addAuthor($event)"
       />
@@ -26,6 +27,10 @@ export default {
 name: "SuggestionAuteur",
   props: {
     value: Array,  // selectedAuthors
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     return {

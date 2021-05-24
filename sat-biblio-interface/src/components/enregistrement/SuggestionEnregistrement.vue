@@ -6,6 +6,7 @@
       :serializer="s => s.text"
       placeholder="Tapez la cote ou le titre de l'enregistrement"
       @hit="addRecord($event)"
+      :disabled="disabled"
     />
     <b-form-input v-model="value.text" readonly/>
   </b-form-group>
@@ -13,12 +14,16 @@
 </template>
 
 <script>
-import {searchNearBookRecords} from "../../services/api";
+import {searchNearBookRecords} from "@/services/api";
 
 export default {
   name: "SuggestionEnregistrement",
   props: {
-    value: Object // selectedReference
+    value: Object, // selectedReference
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     return {

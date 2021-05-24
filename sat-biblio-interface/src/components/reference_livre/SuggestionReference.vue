@@ -6,6 +6,7 @@
       :serializer="s => s.text"
       placeholder="Tapez le titre d'un ouvrage"
       @hit="addReference($event)"
+      :disabled="disabled"
     />
     <b-form-input v-model="value.text" readonly/>
   </b-form-group>
@@ -17,7 +18,11 @@ import {searchNearBookReferences} from "@/services/api";
 export default {
   name: "SuggestionReference",
   props: {
-    value: Object // selectedReference
+    value: Object, // selectedReference
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     return {
