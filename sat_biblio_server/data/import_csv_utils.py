@@ -35,53 +35,118 @@ def extraire_ref_biblio(description):
     if len(description) > 0:
         # auteur
         auteurs, reste = extraire_auteurs(description.split(","))
-
+        i = 0
+        print("reste", reste)
         if len(reste) > 0:
-            # titre
-            m = re.match(r"\"\"(?P<titre>\w+)\"\"", reste[0])
-            if m is not None:
-                titre = m.group("titre")
-            else:
-                if len(reste) >= 1:
-                    titre = reste[0]
+            # is first element a year or a title?
+            m_year = re.match(r"^(?P<annee>[0-9 \-]+)$", reste[i])
+            if m_year:
+                print("year first")
+                annee = m_year.group("annee")
+                i += 1
+                # region title
+                m = re.match(r"\"(?P<titre>[0-9\w '\-.?!]+)\"", reste[i])
+                if m:
+                    titre = m.group("titre").strip()
+                    print("titre: ", titre)
                 else:
-                    titre = ""
+                    if len(reste) >= i+1:
+                        titre = reste[i].strip()
+                        print("titre not matched", titre)
+                    else:
+                        titre = ""
+                i += 1
+                # endregion
 
-            # lieu d'édition
-            if len(reste) >= 2:
-                if reste[1] == "":
-                    lieu_edition = "s.l."
+                # region lieu d'édition
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        lieu_edition = "s.l."
+                    else:
+                        lieu_edition = reste[i]
                 else:
-                    lieu_edition = reste[1]
-            else:
-                lieu_edition = ""
+                    lieu_edition = ""
+                i += 1
+                # endregion
 
-            # éditeur
-            if len(reste) >= 3:
-                if reste[2] == "":
-                    editeur = "s.n."
+                # region éditeur
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        editeur = "s.n."
+                    else:
+                        editeur = reste[i]
                 else:
-                    editeur = reste[2]
-            else:
-                editeur = ""
+                    editeur = ""
+                # endregion
 
-            # année
-            if len(reste) >= 4:
-                if reste[3] == "":
-                    annee = "s.d."
+                # region nombre de pages
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        nb_page = "x.p."
+                    else:
+                        nb_page = reste[i]
                 else:
-                    annee = reste[3]
+                    nb_page = ""
+                # endregion
             else:
-                annee = ""
+                # region titre
+                print(i, reste[i])
+                m = re.match(r"\"(?P<titre>[0-9\w '\-.!?]+)\"", reste[i])
+                if m:
+                    titre = m.group("titre").strip()
+                    print("titre: ", titre)
+                else:
+                    if len(reste) >= i+1:
+                        titre = reste[i].strip()
+                        print("titre not matched", titre)
+                    else:
+                        titre = ""
+                i += 1
+                # endregion
 
-            # nombre de pages
-            if len(reste) >= 5:
-                if reste[4] == "":
-                    nb_page = "x.p."
+                # region lieu d'édition
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        lieu_edition = "s.l."
+                    else:
+                        lieu_edition = reste[i]
                 else:
-                    nb_page = reste[4]
-            else:
-                nb_page = ""
+                    lieu_edition = ""
+                i += 1
+                # endregion
+
+                # region éditeur
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        editeur = "s.n."
+                    else:
+                        editeur = reste[i]
+                else:
+                    editeur = ""
+                i += 1
+                # endregion
+
+                # region année
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        annee = "s.d."
+                    else:
+                        annee = reste[i]
+                else:
+                    annee = ""
+                i += 1
+                # endregion
+
+                # region nombre de pages
+                if len(reste) >= i+1:
+                    if reste[i] == "":
+                        nb_page = "x.p."
+                    else:
+                        nb_page = reste[i]
+                else:
+                    nb_page = ""
+                i += 1
+                # endregion
 
             ref = dict(
                 authors=auteurs,
