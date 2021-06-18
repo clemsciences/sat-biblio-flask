@@ -50,7 +50,7 @@ def send_email_new_password(recipient: str, nouveau_mot_de_passe: str):
     :param nouveau_mot_de_passe:
     :return:
     """
-    msg = Message("Réinitialisation du mot de passe de SatBiblio",
+    msg = Message("Réinitialisation du mot de passe de SAT biblio",
                   sender=Config.MAIL_DEFAULT_SENDER,
                   html=render_template("mails/nouveau_mot_de_passe.html", recipient=recipient,
                                        nouveau_mot_de_passe=nouveau_mot_de_passe,
@@ -73,14 +73,14 @@ def envoyer_mail_demande_inscription_utilisateur(user: Union[UserDB], link):
 def envoyer_message_contact(user_email_address: str, message: str):
     # Send to contact
 
-    msg1 = Message(subject="Message envoyé à SAT biblio", sender=SENDER,
+    msg1 = Message(subject="Copie du message envoyé à SAT biblio", sender=SENDER,
                    html=render_template("mails/message_contact.html", message=message))
     msg1.add_recipient(user_email_address)
     # mail.send(msg1)
     send_email(msg1, user_email_address)
 
     # Send to admin of the website
-    msg2 = Message(subject="Message reçu d'un curieux", sender=SENDER,
+    msg2 = Message(subject="Message reçu d'un utilisateur de SAT biblio", sender=SENDER,
                    html=render_template("mails/message_contact.html", destinataire=user_email_address, message=message))
     msg2.add_recipient(SENDER)
     send_email(msg2, user_email_address)
