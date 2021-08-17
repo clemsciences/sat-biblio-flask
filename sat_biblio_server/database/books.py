@@ -167,6 +167,7 @@ class EnregistrementDB(db.Model):
     id_reference = db.Column(db.Integer, db.ForeignKey('ReferenceBibliographiqueLivre.id'))
     reference = db.relationship(ReferenceBibliographiqueLivreDB)  # , on_delete=models.CASCADE)
     description = db.Column(db.String(500), default="")
+    commentaire = db.Column(db.String(500), default="")
     cote = db.Column(db.String(100), nullable=True, default="")
     # annee = models.IntegerField(verbose_name="année", null=True, default=2018)
     annee = db.Column(db.String(20), nullable=True, default="")
