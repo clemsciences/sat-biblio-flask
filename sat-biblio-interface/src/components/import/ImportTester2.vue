@@ -1,29 +1,55 @@
 <template>
   <b-container>
-    <b-row>
-      <b-form-input readonly v-model="currentRow"/>
-    </b-row>
-    <b-row>
+    <h2>Importation</h2>
+    <b-row class="m-2">
       <b-col>
         <b-button @click="goToPreviousRow">Précédent</b-button>
       </b-col>
       <b-col>
+        <b-form-input style="width: 100px" readonly v-model="currentRow"/>
+      </b-col>
+      <b-col>
         <b-button @click="goToNextRow">Suivant</b-button>
       </b-col>
+      <b-col><b-button class="m-2" @click="saveRow">Sauvegarder la ligne</b-button></b-col>
 
     </b-row>
     <b-row>
+      <b-col cols="2">
+        <p :style="colorAlreadyStored" class="m-2">{{ textAlreadyStored }}</p>
+      </b-col>
+      <b-col cols="4">
+        <b-button @click="markAsNotProcessed">Marquer comme non traité</b-button>
+      </b-col>
+    </b-row>
+    <b-row>
 
-      <b-col cols="10">
-        <AuteurFormulaire v-for="author in authors"
-                          :key="`${author.first_name}_${author.family_name}`"
-                          :auteur="author"
-                          :on-submit="saveAuthor"/>
+      <b-col cols="4">
+        <b-row>
+        <h4>Auteurs</h4>
+        </b-row>
+        <b-row>
+          <b-button @click="saveAuthors">Enregistrer les auteurs</b-button>
+        </b-row>
+        <b-row>
+
+          <AuteurFormulaire v-for="author in authors"
+                            :key="`${author.first_name}_${author.family_name}`"
+                            :auteur="author"
+                            :on-submit="saveAuthor"/>
+        </b-row>
+      </b-col>
+      <b-col cols="4">
+        <h4>Références</h4>
+        <!-- Saved authors -->
+        <b-button @click="saveReference"></b-button>
         <ReferenceLivreFormulaire :on-submit="saveReference" :reference="reference"/>
+      </b-col>
+      <b-col cols="4">
+        <h4>Enregistrements</h4>
         <EnregistrementFormulaire :on-submit="saveRecord" :record="record"/>
       </b-col>
     </b-row>
-    <b-row><b-button @click="saveRow">Sauvegarder la ligne</b-button></b-row>
   </b-container>
 </template>
 
@@ -33,6 +59,13 @@ import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
 import {Author, BookReference, Record} from "@/services/objectManager";
+import {
+  createAuthor,
+  createBookRecord,
+  createBookReference,
+  markRowAsNotProcessed,
+  markRowAsProcessed
+} from "@/services/api";
 
 export default {
   name: "ImportTester2",
@@ -43,11 +76,13 @@ export default {
   },
   data: function() {
     return {
-      rows: [],
+      // region rows
+      numberRows: 0,
       currentRow: 0,
       rowsAlreadySaved: [],
-
-      result: '',
+      textAlreadyStored: '',
+      colorAlreadyStored: {backgroundColor: 'red'},
+      // endregion
       authorsResult: '',
       refResult: '',
       authors: [new Author()],
@@ -56,23 +91,43 @@ export default {
     }
   },
   methods: {
-    loadRows: function (ctx, callback) {
-      let params = `page=${ctx.currentPage}&size=${ctx.perPage}&sortBy=${ctx.sortBy}`;
-      axios.get(`/import-csv/?${params}`).then(
+    loadRow: function(index) {
+      axios.get(`/import-csv/rows/${index}`).then(
           response => {
-            this.rows = response.data.rows;
-            callback(this.rows);
+            this.refResult = response.data.ref;
+            this.authorsResult = response.data.authors;
+            this.authors = response.data.ref.authors;
+            this.reference = response.data.ref;
+            this.record = response.data.record;
 
-          }
-      ).catch(
-          () => {
-            callback([]);
+            if(response.data.already_stored) {
+              this.textAlreadyStored = "Déjà enregistré";
+              this.colorAlreadyStored = {backgroundColor: 'green'};
+            } else {
+              this.textAlreadyStored = "Pas enregistré";
+              this.colorAlreadyStored = {backgroundColor: 'red'};
+            }
+            // console.log(response.data.record);
           }
       );
-      return null;
     },
+    // loadRows: function (callback) {
+    //   let params = `page=${this.currentRow}&size=1`;
+    //   axios.get(`/import-csv/?${params}`).then(
+    //       response => {
+    //         this.rows = response.data.rows;
+    //         callback(this.rows);
+    //
+    //       }
+    //   ).catch(
+    //       () => {
+    //         callback([]);
+    //       }
+    //   );
+    //   return null;
+    // },
     goToNextRow: function() {
-      if(this.currentRow < this.rows.length -1) {
+      if(this.currentRow < this.numberRows -1) {
         this.currentRow += 1;
       }
     },
@@ -82,28 +137,22 @@ export default {
       }
     },
     saveRow: function() {
+      this.saveAuthors();
+      this.saveReference();
+      this.saveRecord();
+      markRowAsProcessed(this.currentRow).then(
+          () => {
+            console.log("marked row as processed");
+          }
+      );
 
     },
     getRowTotalNumber: function() {
       axios.get("/import-csv/count/").then(
           response => {
             if(response.data.success) {
-              this.rowTotalNumber = response.data.total;
+              this.numberRows = response.data.total;
             }
-          }
-      );
-    },
-    showRowProcessing: function (event) {
-      // console.log(event);
-      axios.get(`/import-csv/rows/${event.index}`).then(
-          response => {
-            this.result = response.data.data;
-            this.refResult = response.data.ref;
-            this.authorsResult = response.data.authors;
-            this.authors = response.data.ref.authors;
-            this.reference = response.data.ref;
-            this.record = response.data.record;
-            console.log(response.data.record);
           }
       );
     },
@@ -121,17 +170,93 @@ export default {
     },
 
     saveAuthor: function() {
+      // nothing
+    },
+    saveAuthors: function() {
+      const that = this;
+      this.authors.forEach(function(value) {
+        console.log(value)
+        createAuthor(value, that.$store.state.connectionInfo.token).then(
+            (response) => {
+              if (response.data.success) {
+                if(typeof that.reference.auteurs === "undefined") {
+                  that.reference.auteurs = [];
+                }
+                that.reference.auteurs.push({value: response.data.id});
+                console.log("auteur sauvegardé");
+              } else {
+                console.log("Impossible de sauvegarder l'auteur.");
+              }
+            }
+        ).catch(
+            (reason => {
+              if(reason.response.data && reason.response.data.message) {
+                console.log(reason.response.data.message);
+              } else {
+                console.log("Il y a une erreur réseau.");
+              }
+            })
+        );
+      });
 
     },
     saveReference: function() {
-
+      console.group("reference");
+      console.log(this.reference);
+      console.groupEnd();
+      createBookReference(this.reference, this.$store.state.connectionInfo.token)
+        .then(
+            (response) => {
+              if(response.data.success) {
+                this.record.id_reference = response.data.id;
+                console.group("La référence a été créée.");
+                console.log("créer une référence livresque");
+                console.groupEnd();
+              } else {
+                console.log("La création de la référence a échoué.");
+              }
+            }
+        ).catch(
+          (reason) => {
+            console.group("La création de la référence a échoué.");
+            console.log(reason);
+            console.groupEnd();
+          }
+      );
     },
     saveRecord: function () {
-
+      createBookRecord(this.record, this.$store.state.connectionInfo.token)
+          .then((response) => {
+            if(response.data.success) {
+              console.group("record saved");
+              console.log("L'enregistrement a été sauvegardé.");
+              console.groupEnd();
+            } else {
+              console.group("bizarre");
+              console.log("Echec de la sauvegarde de l'enregistrement.");
+              console.groupEnd();
+            }
+          })
+          .catch(
+            (reason) => {
+              console.group("save record failed");
+              console.log(reason);
+              console.groupEnd();
+            }
+          );
     },
     updateLastCurrentRow: function (value) {
       console.log(value);
+      this.loadRow(value);
+
     },
+    markAsNotProcessed: function() {
+      markRowAsNotProcessed(this.currentRow).then(
+          () => {
+            console.log("mak row as not processed");
+          }
+      );
+    }
   },
   mounted() {
     this.getRowTotalNumber();

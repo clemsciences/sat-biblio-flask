@@ -3,7 +3,7 @@
       <SuggestionReference v-if="record.selectedReference" v-model="record.selectedReference" :disabled="disabled"/>
       <!-- Recherche assisté de la référence -->
       <b-form-group label="Description">
-        <b-form-textarea v-model="record.description" :disabled="disabled"/>
+        <b-form-textarea v-model="record.description" :disabled="disabled" :rows="5" size="sm"/>
       </b-form-group>
       <b-form-group label="Cote">
         <b-form-input v-model="record.cote" :disabled="disabled"/>
