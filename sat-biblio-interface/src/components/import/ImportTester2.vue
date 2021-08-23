@@ -42,11 +42,12 @@
       <b-col cols="4">
         <h4>Références</h4>
         <!-- Saved authors -->
-        <b-button @click="saveReference"></b-button>
+        <b-button @click="saveReference" :disabled="!refSaved">Sauvegarder référence</b-button>
         <ReferenceLivreFormulaire :on-submit="saveReference" :reference="reference"/>
       </b-col>
       <b-col cols="4">
         <h4>Enregistrements</h4>
+        <b-button @click="saveRecord" :disabled="!recordSaved">Sauvegarder enregistrement</b-button>
         <EnregistrementFormulaire :on-submit="saveRecord" :record="record"/>
       </b-col>
     </b-row>
@@ -83,11 +84,20 @@ export default {
       textAlreadyStored: '',
       colorAlreadyStored: {backgroundColor: 'red'},
       // endregion
+      // region authors
       authorsResult: '',
-      refResult: '',
       authors: [new Author()],
+      // endregion
+      // region reference
+      refResult: '',
       reference: new BookReference(),
+      refSaved: false,
+
+      // endregion
+      // region record
       record: new Record(),
+      recordSaved: false,
+      // endregion
     }
   },
   methods: {
@@ -137,9 +147,9 @@ export default {
       }
     },
     saveRow: function() {
-      this.saveAuthors();
-      this.saveReference();
-      this.saveRecord();
+      // this.saveAuthors();
+      // this.saveReference();
+      // this.saveRecord();
       markRowAsProcessed(this.currentRow).then(
           () => {
             console.log("marked row as processed");
@@ -182,6 +192,7 @@ export default {
                 if(typeof that.reference.auteurs === "undefined") {
                   that.reference.auteurs = [];
                 }
+                that.refSaved = true;
                 that.reference.auteurs.push({value: response.data.id});
                 console.log("auteur sauvegardé");
               } else {
@@ -209,6 +220,7 @@ export default {
             (response) => {
               if(response.data.success) {
                 this.record.id_reference = response.data.id;
+                this.recordSaved = true;
                 console.group("La référence a été créée.");
                 console.log("créer une référence livresque");
                 console.groupEnd();
@@ -231,6 +243,13 @@ export default {
               console.group("record saved");
               console.log("L'enregistrement a été sauvegardé.");
               console.groupEnd();
+              markRowAsProcessed(this.currentRow).then(
+                  () => {
+                    this.textAlreadyStored = "Déjà enregistré";
+                    this.colorAlreadyStored = {backgroundColor: 'green'};
+                    console.log("marked row as processed");
+                  }
+              );
             } else {
               console.group("bizarre");
               console.log("Echec de la sauvegarde de l'enregistrement.");
