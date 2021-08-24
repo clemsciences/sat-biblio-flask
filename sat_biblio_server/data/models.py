@@ -112,6 +112,10 @@ class Enregistrement:
             enregistrement_db.provenance = enregistrement["provenance"]
         if "mots_clef" in enregistrement:
             enregistrement_db.mots_clef = enregistrement["mots_clef"]
+        if "commentaire" in enregistrement:
+            enregistrement_db.commentaire = enregistrement["commentaire"]
+        if "description" in enregistrement:
+            enregistrement_db.description = enregistrement["description"]
         return enregistrement_db
 
     @staticmethod
@@ -121,6 +125,7 @@ class Enregistrement:
             reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
             annee=enregistrement_db.annee,  # année d'obtention
             description=enregistrement_db.description,
+            commentaire=enregistrement_db.commentaire,
             cote=enregistrement_db.cote,
             nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
             provenance=enregistrement_db.provenance,
