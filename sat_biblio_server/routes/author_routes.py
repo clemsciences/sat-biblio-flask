@@ -60,10 +60,13 @@ def authors_():
         data = request.get_json()
 
         if dv.check_author(data):
-            author_db = Author.from_data_to_db(data)
-            db.session.add(author_db)
-            db.session.commit()
-            return json_result(True), 201
+            author_exists = AuthorDB.query.filter_by(first_name=data["first_name"], family_name=data["family_name"]).first()
+            if not author_exists:
+                author_db = Author.from_data_to_db(data)
+                db.session.add(author_db)
+                db.session.commit()
+                return json_result(True, id=author_db.id), 201
+            return json_result(True, id=author_exists.id), 200
         else:
             return json_result(False), 304
 
