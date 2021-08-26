@@ -7,7 +7,38 @@ from flask import request
 from sat_biblio_server import sat_biblio, json_result, PACKDIR
 import sat_biblio_server.data.import_csv_utils as icu
 
-SCRIPT_PATH = os.path.join(PACKDIR, "scripts", "inven.csv")
+
+SCRIPT_PATH = os.path.join(PACKDIR, "scripts", "inventaire-21-07-23.csv")
+
+# region
+ALREADY_STORED_ROW_PATH = os.path.join(PACKDIR, "scripts", "already_stored_row.pickle")
+
+
+def get_already_stored_rows():
+    if os.path.exists(ALREADY_STORED_ROW_PATH):
+        with open(ALREADY_STORED_ROW_PATH, "rb") as f:
+            return pickle.load(f)
+    return set()
+
+
+def store_new_stored_row(new_row):
+    already_stored_rows.add(new_row)
+    with open(ALREADY_STORED_ROW_PATH, "wb") as f:
+        pickle.dump(already_stored_rows, f)
+
+
+def remove_row_from_stored(n_row):
+    if n_row in already_stored_rows:
+        already_stored_rows.remove(n_row)
+    with open(ALREADY_STORED_ROW_PATH, "wb") as f:
+        pickle.dump(already_stored_rows, f)
+
+
+already_stored_rows = get_already_stored_rows()
+
+# endregion
+
+
 rows = []
 if os.path.exists(SCRIPT_PATH):
     i = 0
@@ -41,9 +72,21 @@ def get_import_csv_count():
     return json_result(True, total=len(rows)), 200
 
 
-@sat_biblio.route("/import-csv/rows/<int:n_row>")
-def process_row(n_row):
-    processed_row = rows[n_row-1]
+@sat_biblio.route("/import-csv/rows/<int:n_row>/add-store", methods=["GET", "POST"])
+def add_to_store(n_row):
+    store_new_stored_row(n_row)
+    return json_result(True), 200
+
+
+@sat_biblio.route("/import-csv/rows/<int:n_row>/remove-store", methods=["GET", "POST"])
+def remove_from_store(n_row):
+    remove_row_from_stored(n_row)
+    return json_result(True, message="pas bon"), 200
+
+
+@sat_biblio.route("/import-csv/rows/<int:n_row>", methods=["GET", "POST"])
+def load_row(n_row):
+    processed_row = rows[n_row]
     print(processed_row)
     description = processed_row["description"]
     print(description)

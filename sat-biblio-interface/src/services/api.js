@@ -193,3 +193,15 @@ export function sendMessageToAdmin(message) {
   return axios.post('/contact/send-message/', {message});
 }
 // endregion
+
+
+// region import
+export function markRowAsProcessed(nRow) {
+  return axios.get(`/import-csv/rows/${nRow}/add-store`)
+}
+
+export function markRowAsNotProcessed(nRow) {
+  return axios.get(`/import-csv/rows/${nRow}/remove-store`)
+
+}
+// endregion
