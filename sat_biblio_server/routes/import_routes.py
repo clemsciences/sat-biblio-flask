@@ -1,6 +1,7 @@
 import codecs
 import csv
 import os
+import pickle
 
 from flask import request
 
@@ -42,7 +43,7 @@ already_stored_rows = get_already_stored_rows()
 rows = []
 if os.path.exists(SCRIPT_PATH):
     i = 0
-    with codecs.open(SCRIPT_PATH, "r", encoding="utf-8") as f:
+    with codecs.open(SCRIPT_PATH, "r", encoding="windows-1252") as f:
         for row in csv.reader(f, delimiter=";"):
             if i > 0:
                 description = row[0]
