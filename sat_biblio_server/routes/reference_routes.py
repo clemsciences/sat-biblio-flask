@@ -27,7 +27,7 @@ def book_references():
             reference_db = ReferenceBibliographiqueLivre.from_data_to_db(data)
             db.session.add(reference_db)
             db.session.commit()
-            return json_result(True, message="La référence a été sauvegardée"), 201
+            return json_result(True, id=reference_db.id, message="La référence a été sauvegardée"), 201
         return json_result(False, message="La sauvegarde de la référence a échoué."), 400
     elif request.method == "GET":
         n_page = int(request.args.get("page"))

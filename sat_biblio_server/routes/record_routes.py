@@ -30,7 +30,7 @@ def book_records():
             enregistrement_db = Enregistrement.from_data_to_db(data)
             db.session.add(enregistrement_db)
             db.session.commit()
-            return json_result(True, message="L'enregistrement a correctement été sauvegardé."), 201
+            return json_result(True, id=enregistrement_db.id, message="L'enregistrement a correctement été sauvegardé."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
     elif request.method == "GET":
         n_page = int(request.args.get("page"))

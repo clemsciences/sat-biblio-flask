@@ -29,7 +29,7 @@ def borrowings():
 
         borrowings_db = EmpruntLivreDB.query.order_by(sort_by).paginate(page=n_page, per_page=size).items
         borrowings_data = [EmpruntLivre.from_db_to_data(borrowing_db) for borrowing_db in borrowings_db]
-        json_result(True, borrowings=borrowings_data), 200
+        return json_result(True, borrowings=borrowings_data), 200
     elif request.method == "POST":
         data = request.get_json()
         logging.log(logging.DEBUG, data)
@@ -43,8 +43,9 @@ def borrowings():
                                      rendu=False)
             db.session.add(emprunt)
             db.session.commit()
-            return json_result(True), 201
+            return json_result(True, id=emprunt.id), 201
         return json_result(False), 400
+    return json_result(False), 400
 
 
 @sat_biblio.route("/borrowings/<int:id_>/", methods=["GET", "DELETE", "PUT"])
@@ -69,7 +70,7 @@ def borrowing(id_: int):
             db.session.commit()
             return json_result(True), 204
         else:
-            json_result(True), 404
+            return json_result(True), 404
 
     elif request.method == "PUT":
         data = request.get_json()
