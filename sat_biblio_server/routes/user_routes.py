@@ -57,10 +57,10 @@ def connect_user(data):
         token = create_access_token(identity=user.email,
                                     fresh=True,
                                     expires_delta=expires_duration)
-        print("created_token", token)
+        # print("created_token", token)
         connect_user_login(user, token)
 
-        print("bien connecté")
+        # print("bien connecté")
         return json_result(True,
                            message="Vous êtes bien connecté.",
                            connected=True,
