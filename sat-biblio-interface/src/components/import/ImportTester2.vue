@@ -139,11 +139,15 @@ export default {
     goToNextRow: function() {
       if(this.currentRow < this.numberRows -1) {
         this.currentRow += 1;
+        this.refSaved = false;
+        this.recordSaved = false;
       }
     },
     goToPreviousRow: function() {
       if(this.currentRow > 0) {
         this.currentRow -= 1;
+        this.refSaved = false;
+        this.recordSaved = false;
       }
     },
     saveRow: function() {
