@@ -66,7 +66,7 @@ export default {
     deleteAuthor: function() {
       deleteAuthor(this.$route.params.id, this.$store.state.connectionInfo.token).then(
         (response) => {
-          if(response.data.success) {
+          if(response.status === 204) {
             console.log("la suppression a fonctionné");
             this.$router.replace("/auteur/liste");
           }

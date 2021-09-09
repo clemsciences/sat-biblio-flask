@@ -94,11 +94,11 @@ export default {
       deleteBookRecord(this.$route.params.id, this.$store.state.connectionInfo.token)
           .then(
               (response) => {
-                if(response.data.success) {
+                if(response.status === 204) {
                   console.log("référence livresque supprimée");
                   this.$router.push("/auteur/liste")
                 } else {
-                  this.message = "La référence n'a pas pu être supprimée."
+                  this.message = "L'enregistrement n'a pas pu être supprimé."
                 }
               }
           )

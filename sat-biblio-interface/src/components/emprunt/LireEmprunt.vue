@@ -78,7 +78,11 @@ export default {
       deleteBorrowing(this.$route.params.id, this.$store.state.connectionInfo.token).then(
           (response) => {
             console.log(response);
-            this.$router.replace("/emprunts");
+            if(response.status === 204) {
+              this.$router.replace("/emprunts");
+            } else {
+              this.message = "Impossible de supprimer l'emprunt.";
+            }
           }
       ).catch(
 
