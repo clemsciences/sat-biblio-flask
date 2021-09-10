@@ -92,8 +92,10 @@ export default {
     deleteUser() {
       deleteUser(this.$route.params.id, this.$store.state.connectionInfo.token).then(
           response => {
-            if(response.data.success) {
+            if(response.status === 204) {
               this.$router.replace("/");
+            } else {
+              this.message = "Impossible de supprimer l'utilisateur";
             }
           }
       );

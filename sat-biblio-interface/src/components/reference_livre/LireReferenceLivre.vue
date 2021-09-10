@@ -93,7 +93,8 @@ name: "LireReferenceLivre",
         deleteBookReference(this.$route.params.id, this.$store.state.connectionInfo.token)
           .then(
               (response) => {
-                if(response.data.success) {
+
+                if(response.status === 204) {
                   console.log("référence livresque supprimée");
                   this.$router.push("/reference-livre/liste");
                 } else {
