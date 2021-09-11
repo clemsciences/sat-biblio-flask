@@ -40,13 +40,13 @@ def check_enregistrement(enregistrement):
            "provenance" in enregistrement and \
            "mots_clef" in enregistrement and \
            enregistrement["id_reference"] > 0 and \
-           enregistrement["provenance"] and \
-           ((type(enregistrement["nb_exemplaire_supp"]) == str and enregistrement["nb_exemplaire_supp"].isdigit()) or
+           len(enregistrement["nb_exemplaire_supp"]) == 0 or \
+           ((type(enregistrement["nb_exemplaire_supp"]) == str and
+             enregistrement["nb_exemplaire_supp"].isdigit()) or
             (type(enregistrement["nb_exemplaire_supp"]) == int))
 
 
 def check_reference_bibliographique_livre(reference):
-
     return "auteurs" in reference and \
            "titre" in reference and \
            "lieu_edition" in reference and \
