@@ -8,7 +8,17 @@
       @hit="addReference($event)"
       :disabled="disabled"
     />
-    <b-form-input v-model="value.text" readonly/>
+    <b-form-input v-model="selectedReference.text" readonly/>
+
+    <b-button class="mx-3"
+              :disabled="disabled || Object.keys(selectedReference).length === 0"
+              @click="removeReference">
+      Enlever référence
+    </b-button>
+    <b-button v-if="selectedReference.value && selectedReference.value > 0"
+              @click="goToReference">
+      Voir référence
+    </b-button>
   </b-form-group>
 </template>
 
@@ -30,16 +40,26 @@ export default {
       // reference: {value: -1, text: ""},
       // selectedReference: {text: "", value: -1},
       suggestedReferences: [],
+      selectedReference: {},
     }
   },
   methods: {
     addReference: function (event) {
       this.reference_query = "";
+      this.selectedReference = event;
+      console.log(event);
       this.$emit('input', event);      // this.selectedReference = event;
+    },
+    goToReference: function() {
+      if(this.selectedReference.value) {
+        let routeData = this.$router.resolve(`/reference-livre/lire/${this.selectedReference.value}`);
+        window.open(routeData.href, '_blank');
+      }
     },
     getSuggestedReferences: function (query) {
       if(query.length >= 2) {
-        searchNearBookReferences(`titre=${encodeURIComponent(query)}`).then((response) => {
+        searchNearBookReferences(`titre=${encodeURIComponent(query)}`)
+            .then((response) => {
               if (response.data.success) {
                 console.log("suggestedReferences", response.data)
                 this.suggestedReferences = response.data.suggestedReferences;
@@ -47,6 +67,9 @@ export default {
             }).catch();
       }
     },
+    removeReference: function() {
+      this.selectedReference = {};
+    }
   },
   watch: {
     reference_query: function (newValue) {
