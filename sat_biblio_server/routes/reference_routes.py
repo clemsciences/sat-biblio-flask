@@ -63,11 +63,14 @@ def book_reference(id_):
         ref_livre_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)
         if ref_livre_db:
             ref_livre = ReferenceBibliographiqueLivre.from_db_to_data(ref_livre_db)
-
-            ref_livre["authors"] = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
-                                    for author_db in ref_livre_db.authors]
-            logging.debug(ref_livre)
-            return json_result(True, reference=ref_livre), 200
+            if ref_livre:
+                ref_livre["authors"] = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
+                                        for author_db in ref_livre_db.authors]
+                logging.debug(ref_livre)
+                return json_result(True, reference=ref_livre), 200
+            else:
+                logging.error("reference void")
+                return json_result(False), 404
         return json_result(False), 404
     elif request.method == "PUT":
         data = request.get_json()
