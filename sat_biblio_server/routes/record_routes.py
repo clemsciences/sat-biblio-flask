@@ -56,8 +56,12 @@ def book_records():
         for record_db in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items:
             record = Enregistrement.from_db_to_data(record_db)
             # print(record)
-            record["reference"] = record['reference']['titre']
-            enregistrements.append(record)
+            if record and record['reference']:
+                record["reference"] = record['reference']['titre']
+                enregistrements.append(record)
+            else:
+                logging.error(f"record id = {record_db.id} record found "
+                              f"but no bound reference")
         return json_result(True, enregistrements=enregistrements), 200
 
 
