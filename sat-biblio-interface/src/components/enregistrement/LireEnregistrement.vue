@@ -53,6 +53,7 @@ export default {
           (value) => {
             if(value.data.success && value.data.enregistrement) {
               this.record.selectedReference = value.data.enregistrement.reference;
+              this.record.reference = value.data.enregistrement.reference;
               this.record.description = value.data.enregistrement.description;
               this.record.cote = value.data.enregistrement.cote;
               this.record.annee = value.data.enregistrement.annee;
