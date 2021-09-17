@@ -75,6 +75,9 @@ export default {
     reference_query: function (newValue) {
       this.getSuggestedReferences(newValue);
     },
+    value: function (newValue) {
+      this.selectedReference = newValue;
+    }
   }
 }
 </script>
