@@ -11,7 +11,10 @@
       <b-col>
         <b-button @click="goToNextRow">Suivant</b-button>
       </b-col>
-      <b-col><b-button class="m-2" @click="saveRow">Sauvegarder la ligne</b-button></b-col>
+      <b-btn @click="goToNextNotMarkedRow">Aller au prochain<br/>non marqué</b-btn>
+      <b-col>
+        <b-button class="m-2" @click="saveRow">Sauvegarder la ligne</b-button>
+      </b-col>
 
     </b-row>
     <b-row>
@@ -149,6 +152,15 @@ export default {
         this.refSaved = false;
         this.recordSaved = false;
       }
+    },
+    goToNextNotMarkedRow: function() {
+      goToNextNotMarkedRow(this.currentRow).then(
+          (response) => {
+            this.currentRow = response.data.n;
+            this.refSaved = false;
+            this.recordSaved = false;
+          }
+      );
     },
     saveRow: function() {
       // this.saveAuthors();
