@@ -204,4 +204,8 @@ export function markRowAsNotProcessed(nRow) {
   return axios.get(`/import-csv/rows/${nRow}/remove-store`)
 
 }
+
+export function goToNextNotMarkedRow(nRow) {
+  return axios.get(`/import-csv/rows/${nRow}/go-to-next-not-marked-row`)
+}
 // endregion

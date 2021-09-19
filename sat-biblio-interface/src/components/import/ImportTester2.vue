@@ -22,7 +22,10 @@
         <p :style="colorAlreadyStored" class="m-2">{{ textAlreadyStored }}</p>
       </b-col>
       <b-col cols="4">
-        <b-button @click="markAsNotProcessed">Marquer comme non traité</b-button>
+        <b-row>
+          <b-button @click="markAsNotProcessed">Marquer comme non traité</b-button>
+          <b-button @click="markAsProcessed">Marquer comme traité</b-button>
+        </b-row>
       </b-col>
     </b-row>
     <b-row>
@@ -67,6 +70,7 @@ import {
   createAuthor,
   createBookRecord,
   createBookReference,
+  goToNextNotMarkedRow,
   markRowAsNotProcessed,
   markRowAsProcessed
 } from "@/services/api";
@@ -194,7 +198,22 @@ export default {
     getLastCurrentRow: function() {
       // this.currentRow = ;
     },
-
+    markAsNotProcessed: function() {
+      markRowAsNotProcessed(this.currentRow).then(
+          () => {
+            this.textAlreadyStored = "Pas enregistré";
+            this.colorAlreadyStored = {backgroundColor: 'red'};
+          }
+      );
+    },
+    markAsProcessed: function() {
+      markRowAsProcessed(this.currentRow).then(
+          () => {
+              this.textAlreadyStored = "Déjà enregistré";
+              this.colorAlreadyStored = {backgroundColor: 'green'};
+          }
+      )
+    },
     saveAuthor: function() {
       // nothing
     },
