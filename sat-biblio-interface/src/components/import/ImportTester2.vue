@@ -35,12 +35,17 @@
         <h4>Auteurs</h4>
         </b-row>
         <b-row>
-          <b-button @click="saveAuthors">Enregistrer les auteurs</b-button>
+          <b-col>
+            <b-button @click="saveAuthors">Enregistrer</b-button>
+          </b-col>
+          <b-col>
+            <b-button @click="addAuthor">Ajouter</b-button>
+          </b-col>
+          <b-button @click="removeAuthor">Supprimer</b-button>
         </b-row>
         <b-row>
-
           <AuteurFormulaire v-for="author in authors"
-                            :key="`${author.first_name}_${author.family_name}`"
+                            :key="`author-${authors.indexOf(author)}`"
                             :auteur="author"
                             :on-submit="saveAuthor"/>
         </b-row>
@@ -304,13 +309,12 @@ export default {
       this.loadRow(value);
 
     },
-    markAsNotProcessed: function() {
-      markRowAsNotProcessed(this.currentRow).then(
-          () => {
-            console.log("mak row as not processed");
-          }
-      );
-    }
+    addAuthor: function() {
+      this.authors.push(new Author());
+    },
+    removeAuthor: function () {
+      this.authors.pop();
+    },
   },
   mounted() {
     this.getRowTotalNumber();
