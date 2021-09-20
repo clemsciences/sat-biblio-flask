@@ -23,11 +23,14 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def borrowings():
     if request.method == "GET":
-        n_page = int(request.args.get("page"))
-        size = int(request.args.get("size"))
-        sort_by = request.args.get("sortBy")
-
-        borrowings_db = EmpruntLivreDB.query.order_by(sort_by).paginate(page=n_page, per_page=size).items
+        n_page = int(request.args.get("page", "0"))
+        size = int(request.args.get("size", "0"))
+        sort_by = request.args.get("sortBy", "")
+        query = EmpruntLivreDB.query
+        if sort_by:
+            query = query.order_by(sort_by)
+        query = query.paginate(page=n_page, per_page=size)
+        borrowings_db = query.items
         borrowings_data = [EmpruntLivre.from_db_to_data(borrowing_db) for borrowing_db in borrowings_db]
         return json_result(True, borrowings=borrowings_data), 200
     elif request.method == "POST":
