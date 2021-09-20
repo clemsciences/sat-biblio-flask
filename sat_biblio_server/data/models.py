@@ -14,11 +14,14 @@ class Author:
 
     @staticmethod
     def from_db_to_data(author_db: AuthorDB):
-        return dict(
-            first_name=author_db.first_name,
-            family_name=author_db.family_name,
-            id=author_db.id
-        )
+        if author_db:
+            return dict(
+                first_name=author_db.first_name,
+                family_name=author_db.family_name,
+                id=author_db.id
+            )
+        else:
+            return {}
 
     @staticmethod
     def from_data_to_db(author):
@@ -67,15 +70,18 @@ class ReferenceBibliographiqueLivre:
 
     @staticmethod
     def from_db_to_data(reference: ReferenceBibliographiqueLivreDB):
-        return dict(
-            id=reference.id,
-            authors=[Author.from_db_to_data(author_db) for author_db in reference.authors],
-            titre=reference.titre,
-            lieu_edition=reference.lieu_edition,
-            editeur=reference.editeur,
-            annee=reference.annee,
-            nb_page=reference.nb_page
-        )
+        if reference:
+            return dict(
+                id=reference.id,
+                authors=[Author.from_db_to_data(author_db) for author_db in reference.authors],
+                titre=reference.titre,
+                lieu_edition=reference.lieu_edition,
+                editeur=reference.editeur,
+                annee=reference.annee,
+                nb_page=reference.nb_page
+            )
+        else:
+            return {}
 
     @staticmethod
     def from_id_to_db(id_):
@@ -120,18 +126,21 @@ class Enregistrement:
 
     @staticmethod
     def from_db_to_data(enregistrement_db: EnregistrementDB) -> dict:
-        return dict(
-            id=enregistrement_db.id,
-            reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
-            annee=enregistrement_db.annee,  # année d'obtention
-            description=enregistrement_db.description,
-            commentaire=enregistrement_db.commentaire,
-            cote=enregistrement_db.cote,
-            nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
-            provenance=enregistrement_db.provenance,
-            mots_clef=enregistrement_db.mots_clef,
-            date_modification=enregistrement_db.date_modification,
-            valide=enregistrement_db.valide)
+        if enregistrement_db:
+            return dict(
+                id=enregistrement_db.id,
+                reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
+                annee=enregistrement_db.annee,  # année d'obtention
+                description=enregistrement_db.description,
+                commentaire=enregistrement_db.commentaire,
+                cote=enregistrement_db.cote,
+                nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
+                provenance=enregistrement_db.provenance,
+                mots_clef=enregistrement_db.mots_clef,
+                date_modification=enregistrement_db.date_modification,
+                valide=enregistrement_db.valide)
+        else:
+            return {}
 
 
 class EmpruntLivre:
