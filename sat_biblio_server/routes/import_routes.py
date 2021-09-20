@@ -109,12 +109,27 @@ def load_row(n_row):
     print(processed_row)
     description = processed_row["description"]
     print(description)
-    # auteur = description.split(",")
-    # print(auteur[0])
-    # reste = "".join(auteur[1:])
-    # print(reste)
-    # authors = icu.extraire_auteurs(auteur)
-    ref = icu.extraire_ref_biblio(description)
-    record = icu.extraire_enregistrements(processed_row)
-    # return json_result(True, data=processed_row, ref=ref, authors=authors), 200
-    return json_result(True, data=processed_row, ref=ref, record=record), 200
+    if request.method == "GET":
+        ref = icu.extraire_ref_biblio(description)
+        record = icu.extraire_enregistrements(processed_row)
+        already_stored = n_row in already_stored_rows
+        return json_result(True, data=processed_row, ref=ref, record=record, already_stored=already_stored), 200
+    elif request.method == "POST":
+        store_new_stored_row(n_row)
+        return json_result(True), 200
+    return json_result(True, message="pas bon"), 400
+
+
+# @sat_biblio.route("/import-csv/all")
+# def import_all():
+#     for row in rows:
+#         description = row["description"]
+#         ref = icu.extraire_ref_biblio(description)
+#         authors = ref["authors"]
+#         Author.from_data_to_db()
+#
+#         record = icu.extraire_enregistrements(row)
+#         author_db = Author.from_data_to_db(data)
+#
+#         db.session.add(author_db)
+#         db.session.commit()
