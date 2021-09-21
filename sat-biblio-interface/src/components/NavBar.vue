@@ -46,6 +46,12 @@
 
           <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
 
+          <b-nav-item class="active" active>
+            <b-nav-item-dropdown text="Liens" class="titre-nav-item">
+              <b-dropdown-item @click="goToMainSite">Consulter le site de la SAT</b-dropdown-item>
+              <b-dropdown-item @click="goToGallicaSAT">Consulter les bulletins de la SAT en ligne</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item id="connection-tooltip" class="nav-link space-around titre-nav-item ml-auto">
@@ -104,6 +110,14 @@ export default {
         return "Se déconnecter";
       }
     },
+  },
+  methods: {
+    goToGallicaSAT: function() {
+      window.open('https://gallica.bnf.fr/ark:/12148/cb34429572f/date.item','_blank');
+    },
+    goToMainSite() {
+      window.open('https://www.societearcheotouraine.eu/','_blank');
+    }
   }
 
 }
