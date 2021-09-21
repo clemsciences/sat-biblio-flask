@@ -1,32 +1,37 @@
 <template>
   <b-container>
     <h2>Importation</h2>
-    <b-row class="m-2">
-      <b-col>
-        <b-button @click="goToPreviousRow">Précédent</b-button>
+    <b-row class="m-1">
+      <b-col cols="3">
+        <b-button-toolbar>
+          <b-button-group>
+            <b-button @click="goToPreviousRow">&lsaquo;</b-button>
+          </b-button-group>
+          <b-input-group>
+            <b-form-input style="width: 100px" readonly v-model="currentRow"
+            class="text-center"/>
+          </b-input-group>
+          <b-button-group>
+            <b-button @click="goToNextRow">&rsaquo;</b-button>
+          </b-button-group>
+        </b-button-toolbar>
       </b-col>
-      <b-col>
-        <b-form-input style="width: 100px" readonly v-model="currentRow"/>
-      </b-col>
-      <b-col>
-        <b-button @click="goToNextRow">Suivant</b-button>
-      </b-col>
-      <b-btn @click="goToNextNotMarkedRow">Aller au prochain<br/>non marqué</b-btn>
-      <b-col>
-        <b-button class="m-2" @click="saveRow">Sauvegarder la ligne</b-button>
-      </b-col>
-
-    </b-row>
-    <b-row>
       <b-col cols="2">
-        <p :style="colorAlreadyStored" class="m-2">{{ textAlreadyStored }}</p>
+        <b-btn @click="goToNextNotMarkedRow" size="sm">Aller au prochain<br/>non marqué</b-btn>
+      </b-col>
+      <b-col cols="2">
+        <b-button class="m-2" size="sm" @click="saveRow">Sauvegarder la ligne</b-button>
+      </b-col>
+      <b-col cols="1">
+        <p :style="colorAlreadyStored" class="m-1" >{{ textAlreadyStored }}</p>
       </b-col>
       <b-col cols="4">
         <b-row>
-          <b-button @click="markAsNotProcessed">Marquer comme non traité</b-button>
-          <b-button @click="markAsProcessed">Marquer comme traité</b-button>
+          <b-button class="m-1" @click="markAsNotProcessed" size="sm">Marquer comme non traité</b-button>
+          <b-button class="m-1" @click="markAsProcessed" size="sm">Marquer comme traité</b-button>
         </b-row>
       </b-col>
+
     </b-row>
     <b-row>
 
@@ -36,12 +41,12 @@
         </b-row>
         <b-row>
           <b-col>
-            <b-button @click="saveAuthors">Enregistrer</b-button>
+            <b-button @click="saveAuthors" size="sm">Enregistrer</b-button>
           </b-col>
           <b-col>
-            <b-button @click="addAuthor">Ajouter</b-button>
+            <b-button @click="addAuthor" size="sm">Ajouter</b-button>
           </b-col>
-          <b-button @click="removeAuthor">Supprimer</b-button>
+          <b-button @click="removeAuthor" size="sm">Supprimer</b-button>
         </b-row>
         <b-row>
           <AuteurFormulaire v-for="author in authors"
