@@ -1,7 +1,6 @@
 """
 
 """
-
 from datetime import timedelta
 import json
 import random
@@ -309,8 +308,8 @@ def users_():
         return json_result(True, users=users), 200
 
 
-@sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT"])
-@validation_connexion_et_retour_defaut("email", ["GET",  "PUT"])
+@sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT", "DELETE"])
+@validation_connexion_et_retour_defaut("email", ["GET",  "PUT", "DELETE"])
 def user_(id_):
     user_db = UserDB.query.filter_by(id=id_).first()
     if request.method == "GET":
