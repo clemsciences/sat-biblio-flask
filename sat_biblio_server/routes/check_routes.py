@@ -45,12 +45,13 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_reque
                     verify_jwt_in_request()
                 except FreshTokenRequired:
                     disconnect_user()
+                    logging.log(logging.ERROR, "disconnected")
                 if pseudo in session:
                     return methode(*args, **kwargs)
-                logging.log(logging.DEBUG, "not connected")
+                logging.log(logging.ERROR, "not connected")
                 return json_result(False, "Vous n'êtes pas connecté"), 401
             else:
-                logging.log(logging.DEBUG, "not connected")
+                logging.log(logging.ERROR, "not connected")
                 return json_result(False, "Vous n'êtes pas conencté"), 401
         return fonction_modifiee
     return deco
