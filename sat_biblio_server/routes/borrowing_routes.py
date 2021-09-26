@@ -2,6 +2,7 @@
 
 """
 
+import datetime
 from flask import redirect, session, request
 
 import logging
@@ -26,7 +27,13 @@ def borrowings():
         n_page = int(request.args.get("page", "0"))
         size = int(request.args.get("size", "0"))
         sort_by = request.args.get("sortBy", "")
+        borrowing_date_before_today = request.args.get("borrowing-date-before-today", None)
         query = EmpruntLivreDB.query
+        if borrowing_date_before_today:
+            borrowing_date_before_today = int(borrowing_date_before_today)
+            date = datetime.date.fromtimestamp(borrowing_date_before_today)
+            logging.warning(borrowing_date_before_today)
+            query = query.filter_by(date_retour_prevu=date)
         if sort_by:
             query = query.order_by(sort_by)
         query = query.paginate(page=n_page, per_page=size)
