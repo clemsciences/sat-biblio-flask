@@ -11,11 +11,9 @@ import logging
 def check_user(user):
     return "first_name" in user and \
            "family_name" in user and \
-           "password" in user and \
            "email" in user and \
            user["first_name"] and \
            user["family_name"] and \
-           user["password"] and \
            user["email"]
 
 
