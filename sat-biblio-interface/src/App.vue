@@ -8,7 +8,6 @@
 <script>
 
 import NavBar from "./components/NavBar";
-import localStorageManager from './services/localstorageManager';
 import {checkUserLogin} from "./services/api";
 export default {
   name: 'App',
@@ -35,27 +34,6 @@ export default {
           );
     }
   },
-  mounted() {
-    // this.checkLogin();
-
-    // router.beforeEach((to, from, next) => {
-    //   this.checkLogin();
-    //   next();
-    // });
-
-    // axios.interceptors.response.use(function(response) {
-    //   response.connected = this.connected;
-    //   return response;
-    // });
-  },
-  watch: {
-    connectionInfo: {
-      deep: true,
-      handler(newValue) {
-        localStorageManager.updateSessionInfo(newValue)
-      }
-    }
-  }
 }
 </script>
 
