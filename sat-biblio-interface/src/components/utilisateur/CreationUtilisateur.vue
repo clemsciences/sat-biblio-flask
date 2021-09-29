@@ -2,7 +2,7 @@
   <b-container>
     <Title info="Un utilisateur"
            id="id-user">Création d'un compte utilisateur</Title>
-    <b-form @submit.prevent="sendUserCreation">
+    <b-form @submit.prevent="sendUserCreation" v-if="inForm">
       <b-form-group label="Prénom">
         <b-form-input v-model="first_name"/>
       </b-form-group>
@@ -18,8 +18,18 @@
       <b-form-group label="Confirmation du mot de passe">
         <b-form-input type="password" v-model="password2"/>
       </b-form-group>
-      <b-button type="submit">Enregistrer</b-button> <span class="mx-3">{{ message }}</span>
+      <b-button type="submit">Enregistrer</b-button>
+      <span class="mx-3">{{ message }}</span>
+
     </b-form>
+    <div v-else>
+      <p>
+        Le compte de <i>{{ first_name }} {{ family_name }}</i> a été créé.
+        Un courriel a été envoyé à <b>{{ email }}</b>.
+        Il faudra valider le compte en cliquant sur le lien donné.
+      </p>
+      <b-button @click="resetForm">Créer un nouveau compte utilisateur</b-button>
+    </div>
   </b-container>
 </template>
 
@@ -37,7 +47,8 @@ export default {
       email: "",
       password1: "",
       password2: "",
-      message: ""
+      message: "",
+      inForm: true
     }
   },
   methods: {
@@ -67,6 +78,7 @@ export default {
             (response) => {
               if(response.data.success) {
                 this.message = response.data.message;
+                this.inForm = false;
               } else {
                 if(response.data.message) {
                   this.message = response.data.message;
@@ -82,6 +94,15 @@ export default {
             }
         );
       }
+    },
+    resetForm() {
+      this.inForm = true;
+      this.first_name = "";
+      this.family_name = "";
+      this.email = "";
+      this.password1 = "";
+      this.password2 = "";
+      this.message = "";
     }
   }
 }
