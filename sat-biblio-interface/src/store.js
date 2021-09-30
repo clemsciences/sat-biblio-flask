@@ -1,35 +1,26 @@
 import Vuex from "vuex";
 import Vue from "vue";
+import createPersistedState from "vuex-persistedstate";
 import {isValidJwt} from "@/services/authentication";
-import localStorageManager from "@/services/localstorageManager";
+import {rights} from "@/services/rights";
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
+    plugins: [createPersistedState()],
     state: {
         connected: false,
         connectionInfo: {}
     },
     mutations: {
         initialiseStore(state) {
-            console.log("initialiseStore");
-            const sessionInfo = localStorageManager.getSessionInfo();
-            console.log("token");
-            console.log(isValidJwt(sessionInfo.token));
-            if(sessionInfo &&
-                sessionInfo.token
-                && isValidJwt(sessionInfo.token)) {
+            if(state.connectionInfo &&
+                state.connectionInfo.token &&
+                isValidJwt(state.connectionInfo.token)) {
                 state.connected = true;
-                // state.right = sessionInfo.right;
-                state.connectionInfo = sessionInfo;
-                // state.token = sessionInfo.token;
-
             } else {
-                console.log("disconnected");
                 state.connected = false;
-                // state.right = 1;
                 state.connectionInfo = {};
-                // state.token = '';
             }
         },
         connect(state, payload) {
@@ -39,15 +30,25 @@ const store = new Vuex.Store({
         disconnect(state) {
             state.connected = false;
             state.connectionInfo = {};
-            localStorageManager.removeSessionInfo();
         },
     },
     getters: {
         isAuthenticated(state) {
-            return isValidJwt(state.token);
+            if(state.connectionInfo) {
+                return isValidJwt(state.connectionInfo.token);
+            } else {
+                return false;
+            }
         },
         getUserRight(state) {
-            return state.connectionInfo.right;
+            if(state.connectionInfo) {
+                return state.connectionInfo.right;
+            } else {
+                return rights.lecteur;
+            }
+        },
+        isAdmin(state, getters) {
+          return getters.getUserRight === rights.administrateur.index;
         },
         getConnectionInfo(state) {
             return state.connectionInfo;

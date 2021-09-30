@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import localStorageManager from "@/services/localstorageManager";
 import {connectUser} from "@/services/api";
 import Title from "@/components/visuel/Title";
 
@@ -41,7 +40,6 @@ export default {
       connectUser(args).then(
           (value) => {
             if (value.data.success && value.data.connectionInfo) {
-              localStorageManager.updateSessionInfo(value.data.connectionInfo);
               const connectionInfo = value.data.connectionInfo;
               const right = value.data.right;
               if(value.data.connected) {

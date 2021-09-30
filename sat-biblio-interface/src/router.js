@@ -31,7 +31,6 @@ import Admin from "./components/admin/Admin";
 import Gestionnaire from "./components/admin/Gestionnaire";
 import PageNotFound from "@/components/PageNotFound";
 import {isValidJwt} from "@/services/authentication";
-import localStorageManager from "@/services/localstorageManager";
 import {rights} from "@/services/rights";
 import store from "@/store";
 import Utilisateur from "@/components/utilisateur/Utilisateur";
@@ -250,7 +249,6 @@ let router = new VueRouter({
 
 router.beforeEach(function (to, from, next) {
     if(to.meta.needAuth) {
-        const sessionInfo = localStorageManager.getSessionInfo();
         if(!store.state.connectionInfo.token) {
             next({
                 name: 'accueil',
@@ -260,10 +258,8 @@ router.beforeEach(function (to, from, next) {
             });
             return;
         }
-        console.log(sessionInfo);
-        const isValid = isValidJwt(sessionInfo.token);
-        console.log(isValid);
-        if(isValid) { // sessionInfo.connected &&
+        const isValid = isValidJwt(store.state.connectionInfo.token);
+        if(isValid) {
             if(to.meta.reachableFrom.index <= store.getters.getUserRight) {
                 next();
             } else {
@@ -272,7 +268,6 @@ router.beforeEach(function (to, from, next) {
                 });
             }
         } else {
-            console.log("needAuth");
             store.commit("disconnect");
             next({
                 name: 'accueil',
