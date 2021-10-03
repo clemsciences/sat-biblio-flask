@@ -82,7 +82,7 @@ export default {
         right: this.right,
         email: this.emailAddress
       };
-      updateUser(this.$route.params.id, this.$store.state.connectionInfo.token).then(
+      updateUser(this.$route.params.id, formData, this.$store.state.connectionInfo.token).then(
           response => {
             console.log(formData);
             console.log(response);
