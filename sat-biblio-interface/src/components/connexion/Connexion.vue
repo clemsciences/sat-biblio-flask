@@ -50,7 +50,7 @@ export default {
               console.log("connected");
             } else {
               this.message = value.data.message;
-              console.log("not connected")
+              console.log("not connected");
             }
           }
       ).catch(
