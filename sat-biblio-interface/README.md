@@ -22,3 +22,8 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+See if 
+"jspdf": "^2.3.1",
+"pdfvuer": "^1.8.3"
