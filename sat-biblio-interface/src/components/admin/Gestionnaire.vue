@@ -8,9 +8,6 @@
     <b-collapse id="collapse-users">
       <liste-utilisateur/>
     </b-collapse>
-    <b-button>
-
-    </b-button>
 
   </b-container>
 </template>

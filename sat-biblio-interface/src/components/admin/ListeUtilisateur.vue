@@ -35,7 +35,7 @@
              :sort-by="sortBy" @row-dblclicked="goToUser" :filter="onFilter"
              ref="userTable">
       <template #table-caption>La liste des utilisateurs dans la base.</template>
-      <template #cell(actions)="user" >
+      <template #cell(actions)="user">
         <b-button size="sm" @click="deleteUser(user)" class="mr-1" v-if="isAdmin">
           Supprimer
         </b-button>
@@ -157,14 +157,13 @@ export default {
       this.$router.push(`/utilisateur/lire/${item.id}`);
     },
     deleteUser: function(userId) {
-      console.log(userId);
       deleteUser(userId, this.$store.state.connectionInfo.token).then(
           response => {
             if(response.status === 204) {
               this.$refs.userTable.refresh();
               console.log("user deleted");
             } else {
-              console.log('user deletion failed')
+              console.log('user deletion failed');
             }
           }
       );
