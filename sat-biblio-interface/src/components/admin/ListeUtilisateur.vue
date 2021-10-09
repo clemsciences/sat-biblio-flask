@@ -36,12 +36,17 @@
              ref="userTable">
       <template #table-caption>La liste des utilisateurs dans la base.</template>
       <template #cell(actions)="user">
-        <b-button size="sm" @click="deleteUser(user)" class="mr-1" v-if="isAdmin">
+        <b-button size="sm" @click="openDeletionUserModal(user)" class="mr-1" v-if="isAdmin">
           Supprimer
         </b-button>
       </template>
 
     </b-table>
+
+    <b-modal ref="userDeletionModal" title="Suppression d'un utilisateur"
+      cancel-title="Annuler" ok-title="Supprimer" @ok="deleteUser(selectedUser)">
+      <p>Êtes-vous sûr de supprimer l'utilisateur {{ deletionMessage }} ?</p>
+    </b-modal>
   </b-container>
 </template>
 
@@ -87,7 +92,11 @@ export default {
       ],
       firstNameFiltre: '',
       familyNameFiltre: '',
-      rightFiltre: ''
+      rightFiltre: '',
+      // region deletion
+      selectedUser: {},
+      deletionMessage: "",
+      // endregion
     }
   },
   methods: {
@@ -156,7 +165,13 @@ export default {
     goToUser: function(item) {
       this.$router.push(`/utilisateur/lire/${item.id}`);
     },
-    deleteUser: function(userId) {
+    openDeletionUserModal: function(user) {
+      this.selectedUser = user;
+      this.deletionMessage = `${this.selectedUser.item.first_name} ${this.selectedUser.item.family_name}`
+      this.$refs.userDeletionModal.show();
+    },
+    deleteUser: function(user) {
+      const userId = user.item.id;
       deleteUser(userId, this.$store.state.connectionInfo.token).then(
           response => {
             if(response.status === 204) {
@@ -171,6 +186,7 @@ export default {
   },
   mounted() {
     this.getUserTotalNumber();
+    this.$refs.userDeletionModal.hide();
   },
   watch: {
     firstNameFiltre: function (newValue, oldValue) {
