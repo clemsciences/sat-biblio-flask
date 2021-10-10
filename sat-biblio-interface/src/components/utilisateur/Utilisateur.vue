@@ -30,7 +30,7 @@
     </b-form>
     </b-row>
     <b-row>
-      <b-button class="my-3" :disabled="!isMyProfile" v-b-modal.suppression>Supprimer</b-button>
+      <b-button class="my-3" :disabled="!isMyProfile || !isAdmin" v-b-modal.suppression>Supprimer</b-button>
       <b-modal id="suppression" title="Suppression de l'enregistrement"
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteUser">
           <p>Êtes-vous sûr de supprimer votre compte ?</p>
@@ -107,6 +107,9 @@ export default {
   computed: {
     isMyProfile() {
       return this.emailAddress === this.$store.getters.getConnectionInfo.email;
+    },
+    isAdmin() {
+      return this.$store.getters.isAdmin;
     },
     managerCanUse() {
       console.log(this.$store.getters.getUserRight);
