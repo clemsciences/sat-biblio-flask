@@ -35,6 +35,7 @@ class AuthorDB(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(50))
     family_name = db.Column(db.String(50))
+    valide = db.Column(db.Boolean, default=False)
     reference_biblio_livres = db.relationship("ReferenceBibliographiqueLivreDB", secondary=HelperAuthorBook,
                                               back_populates="authors")
 
@@ -74,6 +75,7 @@ class ReferenceBibliographiqueLivreDB(db.Model):
     editeur = db.Column(db.String(50), default="s.n.")
     annee = db.Column(db.String(10))
     nb_page = db.Column(db.String(10))
+    valide = db.Column(db.Boolean, default=False)
 
     def __str__(self):
         return " ".join([auteur.__str__() for auteur in self.authors]) + \

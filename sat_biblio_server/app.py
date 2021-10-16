@@ -5,6 +5,7 @@
 from flask import jsonify
 import os
 
+from data.models import ReferenceBibliographiqueLivre
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server import create_app, sat_biblio
 from sat_biblio_server.config.development import Config

@@ -7,6 +7,7 @@ from flask import redirect, session, request
 
 import logging
 
+from routes import get_pagination
 from sat_biblio_server.data.models import EmpruntLivre
 from sat_biblio_server.sessions import UserSess
 
@@ -24,9 +25,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def borrowings():
     if request.method == "GET":
-        n_page = int(request.args.get("page", "0"))
-        size = int(request.args.get("size", "0"))
-        sort_by = request.args.get("sortBy", "")
+        n_page, size, sort_by = get_pagination(request)
         borrowing_date_before_today = request.args.get("borrowing-date-before-today", None)
         query = EmpruntLivreDB.query
         if borrowing_date_before_today:

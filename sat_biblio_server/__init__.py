@@ -52,6 +52,7 @@ class SatAdminModelView(ModelView):
             return False
 
         if hasattr(current_user, "is_admin"):
+            # if current_user.is_admin or current_user.email == "clem@clementbesnier.fr":
             if current_user.is_admin:
                 return True
         return False
@@ -210,4 +211,6 @@ def create_app(config):
     app.register_blueprint(sat_biblio)
     # print("application lancée")
     # app.secret_key = "Essai"
+    for i in app.url_map.iter_rules():
+        print(i)
     return app

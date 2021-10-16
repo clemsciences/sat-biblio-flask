@@ -2,12 +2,13 @@
 
 """
 
-
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 import datetime
+import logging
 
-from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, UserDB
+from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, UserDB, db
+from sqlalchemy import and_, join
 
 
 class Author:
@@ -18,7 +19,8 @@ class Author:
             return dict(
                 first_name=author_db.first_name,
                 family_name=author_db.family_name,
-                id=author_db.id
+                id=author_db.id,
+                valide=author_db.valide
             )
         else:
             return {}
@@ -32,6 +34,10 @@ class Author:
             author_db.id = author["id"]
         if "family_name" in author:
             author_db.family_name = author["family_name"]
+        if "valide" in author:
+            author_db.valide = author["valide"]
+        else:
+            author_db.valide = False
         return author_db
 
     @staticmethod
@@ -41,6 +47,98 @@ class Author:
     @staticmethod
     def from_ids_to_db(ids):
         return [Author.from_id_to_db(id_) for id_ in ids]
+
+    @staticmethod
+    def get_authors_by_ref(id_ref, n_page, size, sort_by):
+        """
+        select * from authors where
+
+
+        :param id_ref:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        the_query = AuthorDB.query
+        the_query = the_query.join(ReferenceBibliographiqueLivreDB.authors)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.id == id_ref)
+        return [dict(type="author", description=str(author), id=author.id)
+                for author in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_authors_by_ref_count(id_ref):
+        """
+        select * from authors where
+
+        :param id_ref:
+        :return:
+        """
+        the_query = AuthorDB.query
+        the_query = the_query.join(ReferenceBibliographiqueLivreDB.authors)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.id == id_ref)
+        return the_query.count()
+
+    @staticmethod
+    def get_authors_by_record(id_record, n_page, size, sort_by):
+        """
+        select * from authors where
+
+
+        :param id_record:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        logging.warning(id_record)
+        refs_db = ReferenceBibliographiqueLivreDB.query.filter(
+            and_(EnregistrementDB.reference,
+                 EnregistrementDB.id == id_record)).all()
+        logging.warning(refs_db)
+        refs = [ReferenceBibliographiqueLivre.from_db_to_data(ref) for ref in refs_db]
+        logging.warning(refs)
+        if refs:
+            the_query = AuthorDB.query.filter(
+                and_(ReferenceBibliographiqueLivreDB.authors,
+                     ReferenceBibliographiqueLivreDB.id == refs[0]["id"]))
+            return [dict(type="author", description=str(author), id=author.id)
+                    for author in the_query.paginate(page=n_page, per_page=size).items]
+        else:
+            return []
+        # the_query = AuthorDB.query
+        # the_query = the_query.join(ReferenceBibliographiqueLivreDB.authors)
+        # the_query = the_query.join(EnregistrementDB.reference)
+        # the_query = the_query.filter(EnregistrementDB.id == id_record)
+
+    @staticmethod
+    def get_authors_by_record_count(id_record):
+        """
+        select * from authors where
+
+
+        :param id_record:
+        :return:
+        """
+        refs_db = ReferenceBibliographiqueLivreDB.query.filter(
+            and_(EnregistrementDB.reference,
+                 EnregistrementDB.id == id_record)).all()
+        logging.warning(refs_db)
+        refs = [ReferenceBibliographiqueLivre.from_db_to_data(ref) for ref in refs_db]
+        logging.warning(refs)
+        if refs:
+            the_query = AuthorDB.query.filter(
+                and_(ReferenceBibliographiqueLivreDB.authors,
+                     ReferenceBibliographiqueLivreDB.id == refs[0]["id"]))
+            return the_query.count()
+        else:
+            return 0
+
+        # the_query = AuthorDB.query
+        # the_query = the_query.join(ReferenceBibliographiqueLivreDB.authors)
+        # the_query = the_query.join(EnregistrementDB.reference)
+        # the_query = the_query.filter(EnregistrementDB.id == id_record)
+        # return the_query.count()
 
 
 class ReferenceBibliographiqueLivre:
@@ -66,6 +164,11 @@ class ReferenceBibliographiqueLivre:
             reference_db.annee = reference["annee"]
         if "nb_page" in reference:
             reference_db.nb_page = reference["nb_page"]
+        if "valide" in reference:
+            reference_db.valide = reference["valide"]
+        else:
+            reference_db.valide = False
+
         return reference_db
 
     @staticmethod
@@ -78,7 +181,8 @@ class ReferenceBibliographiqueLivre:
                 lieu_edition=reference.lieu_edition,
                 editeur=reference.editeur,
                 annee=reference.annee,
-                nb_page=reference.nb_page
+                nb_page=reference.nb_page,
+                valide=reference.valide
             )
         else:
             return {}
@@ -90,6 +194,62 @@ class ReferenceBibliographiqueLivre:
     @staticmethod
     def from_ids_to_db(ids):
         return [ReferenceBibliographiqueLivre.from_id_to_db(id_) for id_ in ids]
+
+    @staticmethod
+    def get_references_by_author(id_author, n_page, size, sort_by):
+        """
+        >>> ReferenceBibliographiqueLivre.get_references_by_author(12, 0, 0, 0)
+
+        :param id_author:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        the_query = ReferenceBibliographiqueLivreDB.query
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        return [dict(type="reference", description=str(ref_db), id=ref_db.id)
+                for ref_db in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_references_by_author_count(id_author):
+        """
+        >>> ReferenceBibliographiqueLivre.get_references_by_author(12, 0, 0, 0)
+
+        :param id_author:
+        :return:
+        """
+        the_query = ReferenceBibliographiqueLivreDB.query
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        return the_query.count()
+
+    @staticmethod
+    def get_references_by_record(id_record, n_page, size, sort_by):
+        """
+
+        :param id_record:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        the_query = ReferenceBibliographiqueLivreDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(EnregistrementDB.id == id_record)
+        return [dict(type="reference", description=str(ref_db), id=ref_db.id)
+                for ref_db in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_references_by_record_count(id_record):
+        """
+
+        :param id_record:
+        :return:
+        """
+        the_query = ReferenceBibliographiqueLivreDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(EnregistrementDB.id == id_record)
+        return the_query.count()
 
 
 class Enregistrement:
@@ -141,6 +301,49 @@ class Enregistrement:
                 valide=enregistrement_db.valide)
         else:
             return {}
+
+    @staticmethod
+    def get_records_by_author(id_author, n_page, size, sort_by):
+        """
+
+        :param id_author:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        the_query = EnregistrementDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        return [dict(type="record", description=str(rec_db), id=rec_db.id)
+                for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_records_by_author_count(id_author):
+        """
+
+        :param id_author:
+        :return:
+        """
+        the_query = EnregistrementDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        return the_query.count()
+
+    @staticmethod
+    def get_records_by_ref(id_ref, n_page, size, sort_by):
+        the_query = EnregistrementDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.id == id_ref)
+        return [dict(type="record", description=str(rec_db), id=rec_db.id)
+                for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_records_by_ref_count(id_ref):
+        the_query = EnregistrementDB.query
+        the_query = the_query.join(EnregistrementDB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.id == id_ref)
+        return the_query.count()
 
 
 class EmpruntLivre:

@@ -7,7 +7,8 @@ from flask import redirect, request
 
 import logging
 
-from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author
+from routes.utils import get_pagination, int_to_bool
+from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author, Enregistrement
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
@@ -30,15 +31,20 @@ def book_references():
             return json_result(True, id=reference_db.id, message="La référence a été sauvegardée"), 201
         return json_result(False, message="La sauvegarde de la référence a échoué."), 400
     elif request.method == "GET":
-        n_page = int(request.args.get("page"))
-        size = int(request.args.get("size"))
-        sort_by = request.args.get("sortBy")
+        n_page, size, sort_by = get_pagination(request)
         titre = request.args.get("titre", "")
         # print("titre", titre)
 
         the_query = ReferenceBibliographiqueLivreDB.query
         if titre:
             the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
+        valid = request.args.get("valid", "1")
+        print(type(valid), valid)
+        if valid in ["1", "0"]:
+            print("HERE")
+            the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
+        else:
+            the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
 
         # sort_desc = request.args.get("sortDesc")
         # references = [{"first_name": author.first_name,
@@ -46,8 +52,11 @@ def book_references():
         #             "id": author.id}
         #            for author in ReferenceBibliographiqueLivreDB
         #            .query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
+        if sort_by:
+            the_query = the_query.order_by(sort_by)
+
         references = []
-        for reference_db in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items:
+        for reference_db in the_query.paginate(page=n_page, per_page=size).items:
             reference = ReferenceBibliographiqueLivre.from_db_to_data(reference_db)
             reference["authors"] = " ".join(
                 [f"{author['first_name']} {author['family_name']}" for author in reference['authors']])
@@ -62,6 +71,8 @@ def book_reference(id_):
     if request.method == "GET":
         ref_livre_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)
         if ref_livre_db:
+            logging.warning(Author.get_authors_by_ref(id_, 1, 10, ""))
+            logging.warning(Enregistrement.get_records_by_ref(id_, 1, 10, ""))
             ref_livre = ReferenceBibliographiqueLivre.from_db_to_data(ref_livre_db)
             if ref_livre:
                 ref_livre["authors"] = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
@@ -108,6 +119,13 @@ def book_references_count():
     the_query = ReferenceBibliographiqueLivreDB.query
     if titre:
         the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
+
+    valid = request.args.get("valid", "1")
+    if valid in ["1", "0"]:
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
+    else:
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
+
     count = the_query.count()
     logging.debug(count)
     return json_result(True, total=count), 200
@@ -139,4 +157,25 @@ def chercher_reference_livre():
                    for ref_livre_db in ref_livres_db]
         return json_result(True, results=results)
     return json_result(True, results=[]), 200
+# endregion
+
+
+# region entries
+@sat_biblio.route("/book-references/<int:id_>/entries/", methods=["GET"])
+def get_reference_entries(id_):
+    n_page, size, sort_by = get_pagination(request)
+    entries = []
+    authors = Author.get_authors_by_ref(id_, n_page, size, sort_by)
+    records = Enregistrement.get_records_by_author(id_, n_page, size, sort_by)
+    entries.extend(authors)
+    entries.extend(records)
+    return json_result(True, entries=entries), 200
+
+
+@sat_biblio.route("/book-references/<int:id_>/entries/count/", methods=["GET"])
+def get_reference_count_entries(id_):
+    author_count = Author.get_authors_by_ref_count(id_)
+    record_count = Enregistrement.get_records_by_author_count(id_)
+    total = author_count + record_count
+    return json_result(True, total=total)
 # endregion

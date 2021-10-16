@@ -4,17 +4,18 @@ Manages authors.
 Authors have only a first name and family name.
 """
 
-
 import logging
 from urllib.parse import urlparse
 
 from flask import redirect, request
 from sqlalchemy import or_
 
+from routes import get_pagination
+from routes.utils import int_to_bool
 from sat_biblio_server.data import validation
-from sat_biblio_server.data.models import Author
+from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server.database import db, AuthorDB
-from sat_biblio_server import sat_biblio
+from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
@@ -34,9 +35,7 @@ def authors_():
     :return:
     """
     if request.method == "GET":
-        n_page = int(request.args.get("page"))
-        size = int(request.args.get("size"))
-        sort_by = request.args.get("sortBy")
+        n_page, size, sort_by = get_pagination(request)
 
         the_query = AuthorDB.query
         # sort_desc = request.args.get("sortDesc")
@@ -49,18 +48,25 @@ def authors_():
         if family_name:
             the_query = the_query.filter(AuthorDB.family_name.like(f"%{family_name}%"))
             logging.error(f"{family_name}")
-        # endregion
-        authors = [{"first_name": author.first_name,
-                    "family_name": author.family_name,
-                    "id": author.id}
-                   for author in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
+        valid = request.args.get("valid", "1")
+        if valid in ["1", "0"]:
+            the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
+        else:
+            the_query = the_query.filter(AuthorDB.valide == True)
+
+        if sort_by:
+            the_query = the_query.order_by(sort_by)
+
+        authors = [Author.from_db_to_data(author)
+                   for author in the_query.paginate(page=n_page, per_page=size).items]
         logging.error(len(authors))
         return json_result(True, authors=authors), 200
     elif request.method == "POST":
         data = request.get_json()
 
         if dv.check_author(data):
-            author_exists = AuthorDB.query.filter_by(first_name=data["first_name"], family_name=data["family_name"]).first()
+            author_exists = AuthorDB.query.filter_by(first_name=data["first_name"],
+                                                     family_name=data["family_name"]).first()
             if not author_exists:
                 author_db = Author.from_data_to_db(data)
                 db.session.add(author_db)
@@ -86,6 +92,11 @@ def author_(id_):
     if request.method == "GET":
         author_db = AuthorDB.query.filter_by(id=id_).first()
         author = Author.from_db_to_data(author_db)
+        logging.warning("ref")
+        logging.warning(ReferenceBibliographiqueLivre.get_references_by_author(id_, 1, 10, ""))
+        logging.warning("enregistrement")
+        logging.warning(Enregistrement.get_records_by_author(id_, 1, 10, ""))
+
         return json_result(True, author=author), 200
     elif request.method == "PUT":
         data = request.get_json()
@@ -123,6 +134,14 @@ def authors_count():
     if "family_name" in request.args:
         the_query = the_query.filter(AuthorDB.family_name.like(f"%{request.args.get('family_name')}%"))
     # endregion
+
+    valid = request.args.get("valid", "1")
+    if valid in ["1", "0"]:
+        print("HERE")
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
+    else:
+        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
+
     number = the_query.count()
     logging.debug(number)
     return json_result(True, total=number), 200
@@ -130,7 +149,7 @@ def authors_count():
 
 @sat_biblio.route("/authors/search-near/", methods=["GET"])
 def chercher_auteurs_plus_proches():
-    query_result = request.args.get("auteur")
+    query_result = request.args.get("auteur", "")
     queries_string = query_result.split(" ")
     # print(queries_string)
 
@@ -167,4 +186,27 @@ def chercher_auteurs():
     return json_result(True, results=results), 200
 
 
+# endregion
+
+# region entries
+@sat_biblio.route("/authors/<int:id_>/entries/", methods=["GET"])
+def author_entries_routes(id_):
+    n_page, size, sort_by = get_pagination(request)
+    entries = []
+    records = Enregistrement.get_records_by_author(id_, n_page, size, sort_by)
+    references = ReferenceBibliographiqueLivre.get_references_by_author(id_, n_page, size, sort_by)
+
+    entries.extend(records)
+    entries.extend(references)
+    return json_result(True, entries=entries), 200
+
+
+@sat_biblio.route("/authors/<int:id_>/entries/count/", methods=["GET"])
+def author_entries_count_routes(id_):
+    logging.warning("bizarre")
+    record_count = Enregistrement.get_records_by_author_count(id_)
+    reference_count = ReferenceBibliographiqueLivre.get_references_by_author_count(id_)
+    total = record_count + reference_count
+
+    return json_result(True, total=total), 200
 # endregion
