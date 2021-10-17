@@ -29,7 +29,15 @@ import {mapState} from "vuex";
 
 export default {
   name: "ReinitialisationMotDePasse",
-  props: ["username"],
+  props: {
+    username: {
+      type: String,
+      default: ''
+    },
+    connectionInfo: {
+      type: Object,
+    }
+  },
   data: function () {
     return {
       currentPassword: "",
