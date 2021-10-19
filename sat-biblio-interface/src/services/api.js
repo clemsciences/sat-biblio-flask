@@ -64,6 +64,10 @@ export function retrieveAuthors(params) {
   return axios.get(`/authors/${params}`);
 }
 
+export function retrieveNotValidatedAuthors(params) {
+  return retrieveAuthors(`?valid=0&${params}`);
+}
+
 export function retrieveAuthor(authorId) {
   return axios.get(`/authors/${authorId}/`);
 }
@@ -80,12 +84,25 @@ export function getAuthorsCount(params) {
   return axios.get(`/authors/count/${params}`);
 }
 
+export function getNotValidatedAuthorsCount(params) {
+  return getAuthorsCount(`?valid=0&${params}`);
+}
+
 export function searchAuthors(params) {
   return axios.post("/authors/search/", params);
 }
 
 export function searchNearAuthors(params) {
   return axios.get(`/authors/search-near/?${params}`);
+}
+
+
+export function getEntryListAssociatedToAuthor(authorId, params) {
+  return axios.get(`/authors/${authorId}/entries/?${params}`)
+}
+
+export function getEntryListAssociatedToAuthorCount(authorId, params) {
+  return axios.get(`/authors/${authorId}/entries/count/?${params}`)
 }
 
 // endregion
@@ -98,6 +115,10 @@ export function createBookReference(bookReference, token) {
 
 export function retrieveBookReferences(params) {
   return axios.get(`/book-references/${params}`);
+}
+
+export function retrieveNotValidatedBookReferences(params) {
+  return retrieveBookReferences(`?valid=0&${params}`);
 }
 
 export function retrieveBookReference(bookReferenceId) {
@@ -116,12 +137,24 @@ export function getBookReferencesCount(params) {
   return axios.get(`/book-references/count/${params}`);
 }
 
+export function getNotValidatedBookReferencesCount(params) {
+  return getBookReferencesCount(`?valid=0&${params}`);
+}
+
 export function searchBookReferences(params) {
   return axios.post("/book-references/search/", params)
 }
 
 export function searchNearBookReferences(params) {
   return axios.get(`/book-references/search-near/?${params}`)
+}
+
+export function getEntryListAssociatedToReference(bookReference, params) {
+  return axios.get(`/book-references/${bookReference}/entries/?${params}`)
+}
+
+export function getEntryListAssociatedToReferenceCount(bookReference, params) {
+  return axios.get(`/book-references/${bookReference}/entries/count/?${params}`)
 }
 
 // endregion
@@ -134,6 +167,10 @@ export function createBookRecord(bookRecord, token) {
 
 export function retrieveBookRecords(params) {
   return axios.get(`/book-records/${params}`);
+}
+
+export function retrieveNotValidatedBookRecords(params) {
+  return retrieveBookRecords(`?valid=0&${params}`);
 }
 
 export function retrieveBookRecord(bookRecordId) {
@@ -152,12 +189,24 @@ export function getBookRecordsCount(params) {
   return axios.get(`/book-records/count/${params}`);
 }
 
+export function getNotValidatedBookRecordsCount(params) {
+  return getBookRecordsCount(`?valid=0&${params}`);
+}
+
 export function searchBookRecords(params) {
   return axios.post("/book-records/search/", params);
 }
 
 export function searchNearBookRecords(params) {
   return axios.get(`/book-records/search-near/?${params}`);
+}
+
+export function getEntryListAssociatedToBookRecords(bookRecordId, params) {
+  return axios.get(`/book-records/${bookRecordId}/entries/?${params}`);
+}
+
+export function getEntryListAssociatedToBookRecordsCount(bookRecordId, params) {
+  return axios.get(`/book-records/${bookRecordId}/entries/count/?${params}`);
 }
 
 // endregion
