@@ -2,7 +2,7 @@ import Vuex from "vuex";
 import Vue from "vue";
 import createPersistedState from "vuex-persistedstate";
 import {isValidJwt} from "@/services/authentication";
-import {rights} from "@/services/rights";
+import {canContribute, canManage, rights} from "@/services/rights";
 
 Vue.use(Vuex)
 
@@ -49,6 +49,12 @@ const store = new Vuex.Store({
         },
         isAdmin(state, getters) {
           return getters.getUserRight === rights.administrateur.index;
+        },
+        canManage(state, getters) {
+            return canManage(getters.getUserRight);
+        },
+        canContribute(state, getters) {
+            return canContribute(getters.getUserRight);
         },
         getConnectionInfo(state) {
             return state.connectionInfo;
