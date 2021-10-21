@@ -14,6 +14,7 @@
 import {createBookRecord} from "@/services/api";
 import Title from "../visuel/Title";
 import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
+import {canManage} from "@/services/rights";
 
 export default {
   name: "Enregistrement",
@@ -42,7 +43,8 @@ export default {
           annee: this.record.annee,
           nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
-          mots_clef: this.record.mots_clef
+          mots_clef: this.record.mots_clef,
+          valide: this.isManager
       };
       createBookRecord(formData, this.$store.state.connectionInfo.token)
           .then((response) => {
@@ -68,6 +70,11 @@ export default {
           );
     }
   },
+  computed: {
+    isManager: function() {
+      return canManage(this.$store.getters.getUserRight);
+    }
+  }
 }
 </script>
 

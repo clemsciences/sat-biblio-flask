@@ -14,13 +14,14 @@
 import {createAuthor} from "@/services/api";
 import Title from "../visuel/Title";
 import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
+import {canManage} from "@/services/rights";
 
 export default {
   name: "Auteur",
   components: {AuteurFormulaire, Title},
   data: function () {
     return {
-      auteur: {first_name: '', family_name: ''},
+      auteur: {first_name: '', family_name: '', valide: this.isManager},
       message: ''
     };
   },
@@ -53,6 +54,11 @@ export default {
       }
     }
   },
+  computed: {
+    isManager: function() {
+      return canManage(this.$store.getters.getUserRight);
+    }
+  }
 }
 </script>
 

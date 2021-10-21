@@ -16,6 +16,7 @@
 import {createBookReference} from "@/services/api";
 import Title from "../visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
+import {canManage} from "@/services/rights";
 
 export default {
   name: "ReferenceLivre",
@@ -41,7 +42,8 @@ export default {
         lieu_edition: this.reference.lieu_edition,
         editeur: this.reference.editeur,
         annee: this.reference.annee,
-        nb_page: this.reference.nb_page
+        nb_page: this.reference.nb_page,
+        valide: this.isManager
       };
 
       createBookReference(formData, this.$store.state.connectionInfo.token)
@@ -61,6 +63,11 @@ export default {
               }
             }
         )
+    }
+  },
+  computed: {
+    isManager: function() {
+      return canManage(this.$store.getters.getUserRight);
     }
   }
 }
