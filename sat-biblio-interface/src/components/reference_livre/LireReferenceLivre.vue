@@ -4,6 +4,7 @@
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
+    <ValidEntry v-if="canManage" :approved="reference.valide"/>
     <ReferenceLivreFormulaire
         :message="message"
         :on-submit="updateReference"
@@ -15,6 +16,7 @@
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
       <p>Êtes-vous sûr de supprimer cette référence ?</p>
     </b-modal>
+    <liste-entrees-reference :reference-id="referenceId"/>
   </b-container>
 </template>
 
@@ -25,10 +27,12 @@ import Title from "@/components/visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canEdit} from "@/services/rights";
 import {mapState} from "vuex";
+import ValidEntry from "@/components/visuel/ValidEntry";
+import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 
 export default {
 name: "LireReferenceLivre",
-  components: {ReferenceLivreFormulaire, Title},
+  components: {ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
       suggestedAuthors: [],
@@ -40,9 +44,11 @@ name: "LireReferenceLivre",
         editeur: "",
         annee: "",
         nb_page: "",
+        valide: false
       },
       message: "",
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
+      referenceId: parseInt(this.$route.params.id),
     }
   },
   methods: {
@@ -53,14 +59,15 @@ name: "LireReferenceLivre",
                 if(response.data.success) {
                   // console.log("authors");
                   // console.log(response.data.reference);
-                  this.reference.selectedAuthors = response.data.reference.authors,
+                  this.reference.selectedAuthors = response.data.reference.authors;
 
-                  this.reference.titre = response.data.reference.titre,
-                  this.reference.lieu_edition = response.data.reference.lieu_edition,
-                  this.reference.editeur = response.data.reference.editeur,
-                  this.reference.annee = response.data.reference.annee,
-                  this.reference.nb_page = response.data.reference.nb_page,
-                  this.message = ""
+                  this.reference.titre = response.data.reference.titre;
+                  this.reference.lieu_edition = response.data.reference.lieu_edition;
+                  this.reference.editeur = response.data.reference.editeur;
+                  this.reference.annee = response.data.reference.annee;
+                  this.reference.nb_page = response.data.reference.nb_page;
+                  this.reference.valide = response.data.reference.valide;
+                  this.message = "";
                 } else {
                   this.message = "Impossible de récupérer la référence."
                 }
@@ -146,6 +153,9 @@ name: "LireReferenceLivre",
   },
   computed: {
     ...mapState(["connected", "connectionInfo"]),
+    canManage() {
+      return this.$store.getters.canManage;
+    },
     canModify: function() {
       return this.connected && canEdit(this.connectionInfo.right);
     }

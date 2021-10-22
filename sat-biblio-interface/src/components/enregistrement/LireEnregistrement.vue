@@ -3,6 +3,7 @@
     <Title title="Enregistrement"
            info=""
            id=""/>
+    <ValidEntry v-if="canManage" :approved="record.valide"/>
     <EnregistrementFormulaire
         :message="message"
         :on-submit="updateRecord"
@@ -13,7 +14,12 @@
     <b-modal id="suppression" title="Suppression de l'enregistrement"
         cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
         <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
-      </b-modal>
+    </b-modal>
+
+    <liste-entrees-enregistrement :record-id="recordId"
+    />
+
+
   </b-container>
 </template>
 
@@ -23,10 +29,12 @@ import Title from "../visuel/Title";
 import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
+import ValidEntry from "@/components/visuel/ValidEntry";
+import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
 
 export default {
   name: "LireEnregistrement",
-  components: {EnregistrementFormulaire, Title},
+  components: {ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire, Title},
   data: function () {
     return {
       record: {
@@ -39,9 +47,10 @@ export default {
         nb_exemplaire_supp: 0,
         provenance: "",
         mots_clef: "",
-        validated: false,
+        valide: false,
       },
       message: "",
+      recordId: parseInt(this.$route.params.id),
     }
   },
   methods: {
@@ -60,7 +69,7 @@ export default {
               this.record.nb_exemplaire_supp = value.data.enregistrement.nb_exemplaire_supp;
               this.record.provenance = value.data.enregistrement.provenance;
               this.record.mots_clef = value.data.enregistrement.mots_clef;
-              this.record.validated = value.data.enregistrement.validated;
+              this.record.valide = value.data.enregistrement.valide;
             }
           }
       )
@@ -107,7 +116,7 @@ export default {
     goToRef: function() {
       let routeData = this.$router.resolve(`/reference-livre/lire/${this.selectedReference.value}`);
       window.open(routeData.href, '_blank');
-    }
+    },
   },
   mounted() {
     this.getBookRecord();
@@ -116,7 +125,10 @@ export default {
     ...mapState(["connected", "connectionInfo"]),
     canModify: function() {
       return this.connected && canEdit(this.connectionInfo.right);
-    }
+    },
+    canManage() {
+      return this.$store.getters.canManage;
+    },
   }
 }
 </script>

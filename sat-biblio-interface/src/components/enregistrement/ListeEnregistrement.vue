@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import {getBookRecordsCount, retrieveBookRecords} from "../../services/api";
+import {getBookRecordsCount, retrieveBookRecords} from "@/services/api";
 import Title from "../visuel/Title";
 
 export default {

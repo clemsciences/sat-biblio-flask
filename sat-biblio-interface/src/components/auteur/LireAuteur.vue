@@ -1,21 +1,36 @@
 <template>
   <b-container>
     <Title id="id-lecture-auteur"
-           info=""
+           info="Fiche d'un auteur. Attention, les homonymes ne sont pas gérés."
            title="Auteur"/>
-    <AuteurFormulaire
-        :on-submit="updateAuthor"
-        :auteur="auteur"
-        :message="message"
-        :disabled="!canModify"
-    />
 
-    <b-button class="my-3" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
+    <b-card>
+      <b-card-title title="Fiche"/>
+      <b-card-body>
+        <ValidEntry v-if="canManage" :approved="auteur.valide"/>
 
-    <b-modal id="suppression" title="Suppression de l'auteur"
-      cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">
-      <p>Êtes-vous sûr de supprimer cet auteur ?</p>
-    </b-modal>
+        <AuteurFormulaire
+            :on-submit="updateAuthor"
+            :auteur="auteur"
+            :message="message"
+            :disabled="!canModify"
+        />
+
+      <b-button class="my-3" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
+
+      <b-modal id="suppression" title="Suppression de l'auteur"
+        cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">
+        <p>Êtes-vous sûr de supprimer cet auteur ?</p>
+      </b-modal>
+      </b-card-body>
+    </b-card>
+
+    <b-card>
+      <b-card-title title="Entrées liées"/>
+      <b-card-body>
+        <ListeEntreesAuteur :author-id="authorId"/>
+      </b-card-body>
+    </b-card>
 
   </b-container>
 </template>
@@ -26,15 +41,17 @@ import Title from "@/components/visuel/Title";
 import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
+import ValidEntry from "@/components/visuel/ValidEntry";
+import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
 
 export default {
   name: "LireAuteur",
-  components: {AuteurFormulaire, Title},
+  components: {ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
   data: function () {
     return {
-      auteur: {first_name: "", family_name: ""},
-      message: ''
-
+      auteur: {first_name: "", family_name: "", valide: false},
+      message: '',
+      authorId: parseInt(this.$route.params.id),
     }
   },
   methods: {
@@ -44,6 +61,7 @@ export default {
           if(response.data.success) {
             this.auteur.first_name = response.data.author.first_name;
             this.auteur.family_name = response.data.author.family_name;
+            this.auteur.valide = response.data.author.valide;
           } else {
             console.log("erreur de récupération de l'auteur");
           }
@@ -79,6 +97,9 @@ export default {
   },
   computed: {
     ...mapState(["connected", "connectionInfo"]),
+    canManage() {
+      return this.$store.getters.canManage;
+    },
     canModify: function() {
       return this.connected && canEdit(this.connectionInfo.right);
     }

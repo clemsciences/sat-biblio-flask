@@ -10,13 +10,13 @@
     />
     <b-form-input v-model="selectedReference.text" readonly/>
 
-    <b-button class="mx-3"
+    <b-button class="m-3"
               :disabled="disabled || Object.keys(selectedReference).length === 0"
               @click="removeReference">
       Enlever référence
     </b-button>
     <b-button v-if="selectedReference.value && selectedReference.value > 0"
-              @click="goToReference">
+              @click="goToReference" class="m-3">
       Voir référence
     </b-button>
   </b-form-group>
