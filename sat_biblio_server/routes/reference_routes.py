@@ -7,7 +7,7 @@ from flask import redirect, request
 
 import logging
 
-from routes.utils import get_pagination, int_to_bool
+from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author, Enregistrement
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivreDB

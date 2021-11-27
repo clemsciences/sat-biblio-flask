@@ -9,13 +9,12 @@ import re
 
 from flask import redirect, request
 
-from routes import get_pagination, int_to_bool
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.data.models import Enregistrement, ReferenceBibliographiqueLivre, Author
 import sat_biblio_server.data.validation as dv
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivreDB, \
     EnregistrementDB
-from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.routes import get_pagination, int_to_bool, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]

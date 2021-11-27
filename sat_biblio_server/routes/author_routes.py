@@ -10,8 +10,7 @@ from urllib.parse import urlparse
 from flask import redirect, request
 from sqlalchemy import or_
 
-from routes import get_pagination
-from routes.utils import int_to_bool
+from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server.database import db, AuthorDB

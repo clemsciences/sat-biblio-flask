@@ -7,13 +7,12 @@ from flask import redirect, session, request
 
 import logging
 
-from routes import get_pagination
 from sat_biblio_server.data.models import EmpruntLivre
 from sat_biblio_server.sessions import UserSess
 
 from sat_biblio_server.database import db, EmpruntLivreDB
 from sat_biblio_server import sat_biblio
-from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
 
