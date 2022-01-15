@@ -9,21 +9,21 @@
       <b-col lg="4">
         <b-form-group label="Cote" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="coteFiltre"
+          <b-input v-model="coteFiltre" size="sm"
                    placeholder="Filtrer en fonction de la cote"/>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="Mots-clef" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="motClefFiltre"
+          <b-input v-model="motClefFiltre" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titreFiltre"
+          <b-input v-model="titreFiltre" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
         </b-form-group>
       </b-col>

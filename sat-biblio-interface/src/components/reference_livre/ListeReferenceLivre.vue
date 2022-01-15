@@ -8,7 +8,8 @@
       <b-col lg="4">
         <b-form-group label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titreFiltre" placeholder="Filtrer en fonction du titre"/>
+          <b-input v-model="titreFiltre" size="sm"
+                   placeholder="Filtrer en fonction du titre"/>
         </b-form-group>
       </b-col>
     </b-row>

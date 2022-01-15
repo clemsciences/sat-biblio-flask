@@ -8,14 +8,14 @@
       <b-col lg="4">
         <b-form-group label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="firstNameFiltre"
+          <b-input type="search" v-model="firstNameFiltre" size="sm"
                    placeholder="Filtrer en fonction du prénom"/>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="familyNameFiltre"
+          <b-input type="search" v-model="familyNameFiltre" size="sm"
                    placeholder="Filtrer en fonction du nom de famille"/>
         </b-form-group>
       </b-col>
