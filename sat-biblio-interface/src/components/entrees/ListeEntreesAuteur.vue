@@ -16,6 +16,7 @@
 <script>
 import ListeEntrees from "@/components/entrees/ListeEntrees";
 import {getEntryListAssociatedToAuthor, getEntryListAssociatedToAuthorCount} from "@/services/api";
+import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesAuteur",
@@ -36,9 +37,8 @@ export default {
   methods: {
     getEntryListAssociatedToAuthor: getEntryListAssociatedToAuthor,
     getEntryListAssociatedToAuthorCount: getEntryListAssociatedToAuthorCount,
-    goTo: function(item) {
-      console.log(item);
-      this.$router.push(`/auteur/lire/${item.id}`);
+    goTo: function(row) {
+      this.$router.push(goToEntryView(row.id, row.type_string));
     },
   }
 }

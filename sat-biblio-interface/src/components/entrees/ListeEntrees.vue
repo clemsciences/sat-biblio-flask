@@ -19,6 +19,8 @@
 
 <script>
 
+import {entries} from "@/services/entries";
+
 export default {
   name: "ListeEntrees",
 
@@ -52,7 +54,7 @@ export default {
       entries: [],
       fields: [
         {
-          key: "type",
+          key: "type_string",
           label: "Type d'entrée",
           sortable: true
         },
@@ -81,6 +83,11 @@ export default {
               // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
               //   this.currentPage = 1;
               // }
+              this.entries.map((value) => {
+                // console.log(value);
+                value.type_string = entries[value.type].string;
+                return value;
+              });
               callback(this.entries);
             }
           }

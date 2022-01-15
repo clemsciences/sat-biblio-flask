@@ -12,6 +12,7 @@
 
 import ListeEntrees from "@/components/entrees/ListeEntrees";
 import {getEntryListAssociatedToBookRecords, getEntryListAssociatedToBookRecordsCount} from "@/services/api";
+import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesEnregistrement",
@@ -31,7 +32,8 @@ export default {
   methods: {
     getEntryListAssociatedToBookRecords: getEntryListAssociatedToBookRecords,
     getEntryListAssociatedToBookRecordsCount: getEntryListAssociatedToBookRecordsCount,
-    goTo() {
+    goTo(row) {
+      this.$router.push(goToEntryView(row.id, row.type_string));
 
     }
   }

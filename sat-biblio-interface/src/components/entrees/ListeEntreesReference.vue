@@ -14,6 +14,7 @@ import {
   getEntryListAssociatedToReference,
   getEntryListAssociatedToReferenceCount
 } from "@/services/api";
+import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesReference",
@@ -33,8 +34,8 @@ export default {
   methods: {
     getEntryListAssociatedToReference: getEntryListAssociatedToReference,
     getEntryListAssociatedToReferenceCount: getEntryListAssociatedToReferenceCount,
-    goTo(item) {
-      console.log(item);
+    goTo(row) {
+      this.$router.push(goToEntryView(row.id, row.type_string));
     }
   }
 }

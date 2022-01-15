@@ -155,7 +155,7 @@ export default {
       );
     },
     goToEnregistrement: function(item) {
-      this.$router.push('/enregistrement/lire/'+item.id);
+      this.$router.push(`/enregistrement/lire/${item.id}`);
     },
   },
   mounted() {
