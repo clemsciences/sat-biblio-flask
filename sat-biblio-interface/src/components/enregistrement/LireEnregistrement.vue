@@ -16,8 +16,16 @@
         <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
     </b-modal>
 
-    <liste-entrees-enregistrement :record-id="recordId"
-    />
+
+    <b-card>
+        <b-card-title title="Entrées liées"/>
+        <b-card-body>
+          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
+          <b-collapse id="collapse-bound" class="my-2">
+            <liste-entrees-enregistrement :record-id="recordId"/>
+          </b-collapse>
+        </b-card-body>
+      </b-card>
 
 
   </b-container>

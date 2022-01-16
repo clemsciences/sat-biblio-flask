@@ -25,12 +25,15 @@
       </b-card-body>
     </b-card>
 
-    <b-card>
-      <b-card-title title="Entrées liées"/>
-      <b-card-body>
-        <ListeEntreesAuteur :author-id="authorId"/>
-      </b-card-body>
-    </b-card>
+      <b-card>
+        <b-card-title title="Entrées liées"/>
+        <b-card-body>
+          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
+          <b-collapse id="collapse-bound" class="my-2">
+            <ListeEntreesAuteur :author-id="authorId"/>
+          </b-collapse>
+        </b-card-body>
+      </b-card>
 
   </b-container>
 </template>

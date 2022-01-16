@@ -16,7 +16,18 @@
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
       <p>Êtes-vous sûr de supprimer cette référence ?</p>
     </b-modal>
-    <liste-entrees-reference :reference-id="referenceId"/>
+
+    <b-card>
+        <b-card-title title="Entrées liées"/>
+        <b-card-body>
+          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
+          <b-collapse id="collapse-bound" class="my-2">
+            <liste-entrees-reference :reference-id="referenceId"/>
+          </b-collapse>
+        </b-card-body>
+      </b-card>
+
+
   </b-container>
 </template>
 
