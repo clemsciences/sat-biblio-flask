@@ -18,7 +18,7 @@
           :select-size="5"
           size="sm"/>
     </b-form-group>
-    <b-button class="mx-3" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
+    <b-button class="mx-3" v-if="!disabled" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
       Enlever auteur
     </b-button>
     <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>

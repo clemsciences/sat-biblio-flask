@@ -10,7 +10,7 @@
     />
     <b-form-input v-model="selectedReference.text" readonly/>
 
-    <b-button class="m-3"
+    <b-button class="m-3" v-if="!disabled"
               :disabled="disabled || Object.keys(selectedReference).length === 0"
               @click="removeReference">
       Enlever référence

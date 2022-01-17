@@ -15,8 +15,7 @@
             :message="message"
             :disabled="!canModify"
         />
-
-      <b-button class="my-3" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
+      <b-button class="my-3" v-if="canModify" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
 
       <b-modal id="suppression" title="Suppression de l'auteur"
         cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">

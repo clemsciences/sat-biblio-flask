@@ -3,18 +3,23 @@
     <Title title="Enregistrement"
            info=""
            id=""/>
-    <ValidEntry v-if="canManage" :approved="record.valide"/>
-    <EnregistrementFormulaire
-        :message="message"
-        :on-submit="updateRecord"
-        :record="record"
-        :disabled="!canModify"
-    />
-    <b-button v-b-modal.suppression class="my-3" :disabled="!canModify">Supprimer</b-button>
-    <b-modal id="suppression" title="Suppression de l'enregistrement"
-        cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
-        <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
-    </b-modal>
+    <b-card>
+      <b-card-title title="Fiche"/>
+      <b-card-body>
+      <ValidEntry v-if="canManage" :approved="record.valide"/>
+      <EnregistrementFormulaire
+          :message="message"
+          :on-submit="updateRecord"
+          :record="record"
+          :disabled="!canModify"
+      />
+      <b-button v-b-modal.suppression class="my-3" v-if="canModify" :disabled="!canModify">Supprimer</b-button>
+      <b-modal id="suppression" title="Suppression de l'enregistrement"
+          cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
+          <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
+      </b-modal>
+      </b-card-body>
+    </b-card>
 
 
     <b-card>

@@ -20,7 +20,7 @@
       <b-form-group label="Mots-clef">
         <b-form-input v-model="record.mots_clef" :disabled="disabled"/>
       </b-form-group>
-      <b-button type="submit" :disabled="isIncorrect || disabled">Enregistrer</b-button>
+      <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
 </template>

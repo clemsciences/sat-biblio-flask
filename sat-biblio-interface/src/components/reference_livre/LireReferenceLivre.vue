@@ -4,18 +4,23 @@
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
-    <ValidEntry v-if="canManage" :approved="reference.valide"/>
-    <ReferenceLivreFormulaire
-        :message="message"
-        :on-submit="updateReference"
-        :reference="reference"
-        :disabled="!canModify"
-    />
-    <b-button class="my-3" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
-    <b-modal id="suppression" title="Suppression de la référence"
-      cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
-      <p>Êtes-vous sûr de supprimer cette référence ?</p>
-    </b-modal>
+    <b-card>
+      <b-card-title title="Fiche"/>
+      <b-card-body>
+        <ValidEntry v-if="canManage" :approved="reference.valide"/>
+        <ReferenceLivreFormulaire
+            :message="message"
+            :on-submit="updateReference"
+            :reference="reference"
+            :disabled="!canModify"
+        />
+        <b-button class="my-3" v-b-modal.suppression v-if="canModify" :disabled="!canModify">Supprimer</b-button>
+        <b-modal id="suppression" title="Suppression de la référence"
+          cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
+          <p>Êtes-vous sûr de supprimer cette référence ?</p>
+        </b-modal>
+      </b-card-body>
+    </b-card>
 
     <b-card>
         <b-card-title title="Entrées liées"/>
@@ -26,8 +31,6 @@
           </b-collapse>
         </b-card-body>
       </b-card>
-
-
   </b-container>
 </template>
 
