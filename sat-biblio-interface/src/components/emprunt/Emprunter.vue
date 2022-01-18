@@ -8,7 +8,24 @@
       <SuggestionEnregistrement v-model="record"/>
       <SuggestionUtilisateur label="Emprunteur" v-model="borrower"/>
       <b-form-group label="Date de retour prévue">
-        <b-form-datepicker v-model="dateComebackExpected"/>
+        <b-form-datepicker v-model="dateComebackExpected"
+                           placeholder="Choisissez une date"
+                           label-close-button="Fermer"
+                           label-no-date-selected="Aucune date sélectionnée"
+                           label-help="Utilisez les flèches du clavier pour naviguer dans les dates du calendrier"
+                           label-calendar="Calendrier"
+                           label-nav="Navigation dans le calendrier"
+                           label-today="Aujourd'hui"
+                           label-prev-month="Mois précédent"
+                           label-next-month="Mois suivant"
+                           label-current-month="Mois courant"
+                           locale="fr"
+                           start-weekday="1"
+                           size="sm"
+                           :min="minDate"
+                           :max="maxDate"
+                           style="z-index: 9999"
+        />
       </b-form-group>
       <b-form-group label="Commentaire">
         <b-form-textarea size="3" v-model="comment"/>
@@ -30,13 +47,22 @@ export default {
   name: "Emprunter",
   components: {Title, SuggestionUtilisateur, SuggestionEnregistrement},
   data: function () {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // 15th two months prior
+    const minDate = new Date(today)
+    // 15th in two months
+    const maxDate = new Date(today)
+    maxDate.setMonth(maxDate.getMonth() + 3)
     return {
       record: {value: -1, text: ""},
       comment: "",
       borrower: {value: -1, text: ""},
       isBorrowed: true,
       dateComebackExpected: null,
-      message: ""
+      message: "",
+      minDate: minDate,
+      maxDate: maxDate
     }
   },
   methods: {
