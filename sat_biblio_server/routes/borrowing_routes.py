@@ -43,8 +43,8 @@ def borrowings():
         logging.log(logging.DEBUG, data)
         if dv.check_emprunt(data):
             user = UserSess(session["email"])
-            emprunt = EmpruntLivreDB(id_emprunteur=data["id_borrower"],
-                                     id_enregistrement=data["id_record"],
+            emprunt = EmpruntLivreDB(id_emprunteur=data["borrower"]["value"],
+                                     id_enregistrement=data["record"],
                                      id_gestionnaire=user.user_db.id,
                                      commentaire=data["comment"],
                                      emprunte=True,
@@ -52,7 +52,7 @@ def borrowings():
             db.session.add(emprunt)
             db.session.commit()
             return json_result(True, id=emprunt.id), 201
-        return json_result(False), 400
+        return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
 
 
