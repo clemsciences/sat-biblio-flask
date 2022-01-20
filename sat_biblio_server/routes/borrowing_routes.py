@@ -43,10 +43,12 @@ def borrowings():
         logging.log(logging.DEBUG, data)
         if dv.check_emprunt(data):
             user = UserSess(session["email"])
+            date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])
             emprunt = EmpruntLivreDB(id_emprunteur=data["borrower"]["value"],
                                      id_enregistrement=data["record"],
                                      id_gestionnaire=user.user_db.id,
                                      commentaire=data["comment"],
+                                     date_retour_prevu=date_retour_prevu,  # TODO string to date
                                      emprunte=True,
                                      rendu=False)
             db.session.add(emprunt)
