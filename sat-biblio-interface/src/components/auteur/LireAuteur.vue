@@ -89,6 +89,8 @@ export default {
           if(response.status === 204) {
             console.log("la suppression a fonctionné");
             this.$router.replace("/auteur/liste");
+          } else {
+            this.message = "Impossible de supprimer l'auteur";
           }
         }
       );
