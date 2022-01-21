@@ -6,9 +6,16 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 import datetime
 import logging
+from typing import Union
 
 from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, UserDB, db
 from sqlalchemy import and_, join
+
+
+def date_to_str(date: Union[None, datetime.date]) -> str:
+    if date:
+        return date.strftime("%d/%m/%Y")
+    return ""
 
 
 class Author:
@@ -362,17 +369,18 @@ class EmpruntLivre:
     @staticmethod
     def from_db_to_data(emprunt_db: EmpruntLivreDB):
         return dict(
+            id=emprunt_db.id,
             id_gestionnaire=emprunt_db.id_gestionnaire,
             gestionnaire=User.from_db_to_data(emprunt_db.gestionnaire),
             id_enregistrement=emprunt_db.id_enregistrement,
             enregistrement=Enregistrement.from_db_to_data(emprunt_db.enregistrement),
             id_emprunteur=emprunt_db.id_emprunteur,
-            emprunteur=emprunt_db.emprunteur,
+            emprunteur=User.from_db_to_data(emprunt_db.emprunteur),
             commentaire=emprunt_db.commentaire,
             emprunte=emprunt_db.emprunte,
-            date_emprunt=emprunt_db.date_emprunt,
-            date_retour_prevu=emprunt_db.date_retour_prevu,
-            date_retour_reel=emprunt_db.date_retour_reel,
+            date_emprunt=date_to_str(emprunt_db.date_emprunt),
+            date_retour_prevu=date_to_str(emprunt_db.date_retour_prevu),
+            date_retour_reel=date_to_str(emprunt_db.date_retour_reel),
             rendu=emprunt_db.rendu
         )
 
