@@ -44,7 +44,7 @@ def borrowings():
         if dv.check_emprunt(data):
             user = UserSess(session["email"])
             date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])
-            emprunt = EmpruntLivreDB(id_emprunteur=data["borrower"]["value"],
+            emprunt = EmpruntLivreDB(id_emprunteur=data["borrower"],
                                      id_enregistrement=data["record"],
                                      id_gestionnaire=user.user_db.id,
                                      commentaire=data["comment"],

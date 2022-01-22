@@ -122,13 +122,14 @@ export default {
       getBorrowingsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.authorTotalNumber = response.data.total;
+              this.borrowingTotalNumber = response.data.total;
             }
           }
       )
     },
     goToBorrowing: function(item) {
-      this.$router.push(`/emprunt/lire/${item.id}`)
+      console.log(item);
+      this.$router.push(`/emprunt/${item.id}`)
     }
   },
   mounted() {

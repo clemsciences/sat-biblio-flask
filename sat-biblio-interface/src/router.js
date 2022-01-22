@@ -36,6 +36,7 @@ import store from "@/store";
 import Utilisateur from "@/components/utilisateur/Utilisateur";
 // import ImportTester from "@/components/import/ImportTester";
 import ImportTester2 from "@/components/import/ImportTester2";
+import LireEmprunt from "@/components/emprunt/LireEmprunt";
 
 Vue.use(VueRouter);
 
@@ -221,8 +222,14 @@ let router = new VueRouter({
             component: ListeEmprunt,
             meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
+        {
+            name: "emprunt-voir",
+            path: '/emprunt/:id',
+            component:  LireEmprunt,
+            meta: {needAuth: true, reachableFrom: rights.lecteur}
+        },
         // endregion
-        // region
+        // region admin
         {
             name: "administrateur",
             path: "/administrateur",
