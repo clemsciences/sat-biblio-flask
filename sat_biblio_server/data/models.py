@@ -376,7 +376,7 @@ class EmpruntLivre:
             enregistrement=Enregistrement.from_db_to_data(emprunt_db.enregistrement),
             id_emprunteur=emprunt_db.id_emprunteur,
             emprunteur=User.from_db_to_data(emprunt_db.emprunteur),
-            commentaire=emprunt_db.commentaire,
+            comment=emprunt_db.commentaire,
             emprunte=emprunt_db.emprunte,
             date_emprunt=date_to_str(emprunt_db.date_emprunt),
             date_retour_prevu=date_to_str(emprunt_db.date_retour_prevu),

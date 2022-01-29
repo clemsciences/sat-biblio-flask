@@ -270,7 +270,7 @@ def confirmer_inscription_utilisateur(inscription_token):
                                           "Veuillez contacter l'administrateur si vous pensez qu'il y a un problème.")
 
 
-@sat_biblio.route("/users/validation_inscription_patient/<string:link>/", methods=["GET"])
+@sat_biblio.route("/users/validation_inscription/<string:link>/", methods=["GET"])
 def valider_inscription(link):
     user = sm.Users.load_user_by_validation_link(link)
     if user is None:

@@ -137,9 +137,9 @@ def authors_count():
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
         print("HERE")
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
+        the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
     else:
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
+        the_query = the_query.filter(AuthorDB.valide == True)
 
     number = the_query.count()
     logging.debug(number)

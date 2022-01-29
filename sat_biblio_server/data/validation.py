@@ -72,7 +72,6 @@ def check_user_connection(user_connection):
 
 def check_emprunt(emprunt):
     return "borrower" in emprunt and \
-           "value" in emprunt["borrower"] and \
            "record" in emprunt and \
            "comment" in emprunt and \
            "dateComebackExpected" in emprunt
