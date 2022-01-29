@@ -34,9 +34,6 @@ export default {
       type: String,
       default: ''
     },
-    connectionInfo: {
-      type: Object,
-    }
   },
   data: function () {
     return {
