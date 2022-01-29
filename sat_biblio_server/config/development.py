@@ -4,6 +4,7 @@ import os
 
 from sat_biblio_server.config import PACKDIR
 from sat_biblio_server.config.constants import *
+from sat_biblio_server.utils import UserRight
 
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
@@ -29,12 +30,28 @@ class Config:
     DEBUG = True
     TESTING = False
     SECRET_KEY = secret_key
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-        os.path.dirname(__file__), '../data-dev.sqlite3')
+
+    UPLOAD_FOLDER = "uploads"
+    ALLOWED_IMPORT_EXTENSIONS = {"csv", "xslx"}
+
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
     # SERVER_NAME = ""
+
+    # region sqlalchemy
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+        os.path.dirname(__file__), '../data-dev.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    # endregion
+
+    # region authentication
+    USERS = [
+        dict(email="reader@gmail.com", password="reader", confirmed=True, is_admin=False, right=UserRight.lecteur),
+        dict(email="contributor@gmail.com", password="contributor", confirmed=True, is_admin=False, right=UserRight.contributeur),
+        dict(email="editor@gmail.com", password="editor", confirmed=True, is_admin=False, right=UserRight.editeur),
+        dict(email="manager@gmail.com", password="manager", confirmed=True, is_admin=False, right=UserRight.gestionnaire),
+        dict(email="admin@gmail.com", password="admin", confirmed=True, is_admin=True, right=UserRight.administrateur),
+    ]
 
     WTF_CSRF_CHECK_DEFAULT = False
     JWT_SECRET_KEY = jwt_secret_key
@@ -45,7 +62,9 @@ class Config:
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
     JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
+    # endregion
 
+    # region email
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
     MAIL_USE_TLS = True
@@ -56,6 +75,7 @@ class Config:
     # MAIL_MAX_EMAILS
     # MAIL_SUPPRESS_SEND : default app.testing
     # MAIL_ASCII_ATTACHMENTS : default False
+    # endregion
 
     LANGUAGES = {
         "en": "English",
@@ -63,6 +83,7 @@ class Config:
         "de": "Deutsch"
     }
 
+    # region cors
     CORS_ALLOW_HEADERS = "*"
     CORS_ALWAYS_SEND = True
     CORS_AUTOMATIC_OPTIONS = True
@@ -75,5 +96,4 @@ class Config:
     CORS_SEND_WILDCARD = True
     CORS_SUPPORTS_CREDENTIALS = True
     CORS_VARY_HEADER = True
-
-
+    # endregion

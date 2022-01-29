@@ -29,13 +29,22 @@ class Config:
     DEBUG = False
     TESTING = False
     SECRET_KEY = secret_key
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
+
+    UPLOAD_FOLDER = "uploads"
+    ALLOWED_IMPORT_EXTENSIONS = {"csv", "xslx"}
+
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
+
     SERVER_NAME = "api.satbiblio.clementbesnier.eu"
     VUE_SERVER_NAME = "satbiblio.clementbesnier.eu"
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+    # region sqlalchemy
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    # endregion
+
+    # region authentication
     WTF_CSRF_CHECK_DEFAULT = False
     JWT_SECRET_KEY = jwt_secret_key
     JWT_TOKEN_LOCATION = ['headers', 'cookies', "json", "query_string"]
@@ -45,7 +54,9 @@ class Config:
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
     JWT_REFRESH_CSRF_HEADER_NAME = "X-CSRF-TOKEN-REFRESH"
+    # endregion
 
+    # region email
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
     MAIL_USE_TLS = True
@@ -56,6 +67,7 @@ class Config:
     # MAIL_MAX_EMAILS
     # MAIL_SUPPRESS_SEND : default app.testing
     # MAIL_ASCII_ATTACHMENTS : default False
+    # endregion
 
     LANGUAGES = {
         "en": "English",
@@ -63,6 +75,7 @@ class Config:
         "de": "Deutsch"
     }
 
+    # region cors
     CORS_ALLOW_HEADERS = "*"
     CORS_ALWAYS_SEND = True
     CORS_AUTOMATIC_OPTIONS = True
@@ -75,3 +88,4 @@ class Config:
     CORS_SEND_WILDCARD = True
     CORS_SUPPORTS_CREDENTIALS = True
     CORS_VARY_HEADER = True
+    # endregion
