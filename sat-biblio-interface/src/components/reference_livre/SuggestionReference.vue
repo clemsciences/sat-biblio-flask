@@ -1,6 +1,7 @@
 <template>
   <b-form-group label="Référence">
     <vue-typeahead-bootstrap
+      v-if="!disabled"
       v-model="reference_query"
       :data="suggestedReferences"
       :serializer="s => s.text"

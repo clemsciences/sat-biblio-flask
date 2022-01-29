@@ -1,6 +1,8 @@
 <template>
+
   <b-form-group label="Enregistrement">
     <vue-typeahead-bootstrap
+      v-if="!disabled"
       v-model="recordQuery"
       :data="suggestedRecords"
       :serializer="s => s.text"

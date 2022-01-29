@@ -1,6 +1,7 @@
 <template>
   <b-form-group :label="label">
     <vue-typeahead-bootstrap
+        v-if="!disabled"
       v-model="userQuery"
       :data="suggestedUsers"
       :serializer="s => s.text"
@@ -12,13 +13,17 @@
 </template>
 
 <script>
-import {searchNearUsers} from "../../services/api";
+import {searchNearUsers} from "@/services/api";
 
 export default {
   name: "SuggestionUtilisateur",
   props: {
     value: Object, // selectedReference
-    label: String
+    label: String,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
   },
   data: function () {
     return {

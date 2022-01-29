@@ -1,6 +1,9 @@
 <template>
   <b-form @submit.prevent="onSubmit">
-    <SuggestionAuteur v-if="reference.selectedAuthors" v-model="reference.selectedAuthors" class="my-3" :disabled="disabled"/>
+    <SuggestionAuteur
+        v-if="reference.selectedAuthors"
+        v-model="reference.selectedAuthors" class="my-3"
+        :disabled="disabled"/>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre" :disabled="disabled"/>
     </b-form-group>

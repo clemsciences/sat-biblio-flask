@@ -42,9 +42,11 @@
 <script>
 import {rights} from "@/services/rights";
 import {deleteUser, retrieveUser, updateUser} from "@/services/api";
+import Title from "@/components/visuel/Title";
 
 export default {
   name: "Utilisateur",
+  components: {Title},
   data: function() {
     return {
       first_name: '',
