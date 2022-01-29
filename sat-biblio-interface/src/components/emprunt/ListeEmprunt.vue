@@ -29,20 +29,26 @@
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToBorrowing" :filter="onFilter">
       <template #table-caption>La liste des emprunts dans la base.</template>
+
+Object { comment: "Oui", date_emprunt: "2022-01-19", emprunte: true, … }
+
+      <template #cell(emprunteur)="data">
+        {{ data.item.emprunteur.first_name }} {{ data.item.emprunteur.family_name }}
+      </template>
+
+      <template #cell(enregistrement)="data">
+        {{ data.item.enregistrement.reference.titre }} ({{ data.item.enregistrement.cote}})
+      </template>
+      <template #cell(gestionnaire)="data">
+        {{ data.item.gestionnaire.first_name }} {{ data.item.gestionnaire.family_name}}
+      </template>
+      <template #cell(rendu)="data">
+        <div v-if="data.item.rendu">Oui</div><div v-else>Non</div>
+      </template>
+      <template #cell(emprunte)="data">
+        <div v-if="data.item.emprunte">Oui</div><div v-else>Non</div>
+      </template>
     </b-table>
-<!--    <b-list-group>-->
-<!--      <b-list-group-item :key="borrow.id" v-for="borrow in borrows">-->
-<!--        <router-link :to="">Voir</router-link>-->
-<!--        {{ borrow.emprunteur }}-->
-<!--        {{ borrow.enregistrement }}-->
-<!--        {{ borrow.commentaire }}-->
-<!--        {{ borrow.gestionnaire }}-->
-<!--        {{ borrow.emprunte }}-->
-<!--        {{ borrow.date_retour_prevu }}-->
-<!--        {{ borrow.date_retour_reel }}-->
-<!--        {{ borrow.rendu }}-->
-<!--      </b-list-group-item>-->
-<!--    </b-list-group>-->
   </b-container>
 </template>
 
@@ -63,8 +69,44 @@ export default {
       familyNameFiltre: "",
       fields: [
         {
-          key: "",
-          label: "",
+          key: "enregistrement",
+          label: "Livre",
+          sortable: false
+        },
+        {
+          key: "date_emprunt",
+          label: "Date d'emprunt",
+          sortable: false
+        },{
+          key: "emprunte",
+          label: "Emprunté ?",
+          sortable: false
+        },{
+          key: "rendu",
+          label: "Rendu ?",
+          sortable: false
+        },
+          {
+          key: "date_retour_prevu",
+          label: "Date de retour prévu",
+          sortable: false
+        },{
+          key: "date_retour_reel",
+          label: "Date de retour réel",
+          sortable: false
+        },
+        {
+          key: "emprunteur",
+          label: "Emprunteur",
+          sortable: false
+        },{
+          key: "gestionnaire",
+          label: "Gestionnaire",
+          sortable: false
+        },
+        {
+          key: "comment",
+          label: "Commentaire",
           sortable: false
         },
       ]
