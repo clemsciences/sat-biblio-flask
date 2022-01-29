@@ -238,8 +238,8 @@ export function getBorrowingsCount(params) {
 // endregion
 
 // region contact
-export function sendMessageToAdmin(message) {
-  return axios.post('/contact/send-message/', {message});
+export function sendMessageToAdmin(message, theSum) {
+  return axios.post('/contact/send-message/', {message, theSum});
 }
 // endregion
 
