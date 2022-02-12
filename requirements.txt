@@ -30,3 +30,5 @@ pdfkit
 wkhtmltopdf
 xlrd
 pylatex
+
+rdflib
