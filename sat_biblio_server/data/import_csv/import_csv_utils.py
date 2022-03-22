@@ -36,23 +36,23 @@ def extraire_ref_biblio(description):
         # auteur
         auteurs, reste = extraire_auteurs(description.split(","))
         i = 0
-        print("reste", reste)
+        # print("reste", reste)
         if len(reste) > 0:
             # is first element a year or a title?
             m_year = re.match(r"^(?P<annee>[0-9 \-]+)$", reste[i])
             if m_year:
-                print("year first")
+                # print("year first")
                 annee = m_year.group("annee")
                 i += 1
                 # region title
                 m = re.match(r"\"(?P<titre>[0-9\w '\-.?!]+)\"", reste[i])
                 if m:
                     titre = m.group("titre").strip()
-                    print("titre: ", titre)
+                    # print("titre: ", titre)
                 else:
                     if len(reste) >= i+1:
                         titre = reste[i].strip()
-                        print("titre not matched", titre)
+                        # print("titre not matched", titre)
                     else:
                         titre = ""
                 i += 1
@@ -90,15 +90,15 @@ def extraire_ref_biblio(description):
                 # endregion
             else:
                 # region titre
-                print(i, reste[i])
+                # print(i, reste[i])
                 m = re.match(r"\"(?P<titre>[0-9\w '\-.!?]+)\"", reste[i])
                 if m:
                     titre = m.group("titre").strip()
-                    print("titre: ", titre)
+                    # print("titre: ", titre)
                 else:
                     if len(reste) >= i+1:
                         titre = reste[i].strip()
-                        print("titre not matched", titre)
+                        # print("titre not matched", titre)
                     else:
                         titre = ""
                 i += 1

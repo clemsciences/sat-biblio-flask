@@ -5,8 +5,9 @@ import pickle
 
 from flask import request
 
-from sat_biblio_server import sat_biblio, json_result, PACKDIR
-import sat_biblio_server.data.import_csv_utils as icu
+from data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
+from sat_biblio_server import sat_biblio, json_result, PACKDIR, app, AuthorDB, db
+import sat_biblio_server.data.import_csv.import_csv_utils as icu
 
 
 INVENTORY_PATH = os.path.join(PACKDIR, "scripts", "inventaire-21-07-23.csv")
@@ -133,3 +134,55 @@ def load_row(n_row):
 #
 #         db.session.add(author_db)
 #         db.session.commit()
+
+
+@sat_biblio.route("/import/", methods=["GET", "POST"])
+def import_catalogue_from_file():
+    print(app.config)
+
+    # if request.method == "POST":
+    #     if "file" in request.files:
+    #         file = request.files["file"]
+    #         filename = secure_filename(file.filename)
+    #         sat_biblio.config
+    #         file.save()
+
+
+@sat_biblio.route("/import/all/", methods=["GET", "POST"])
+def import_complete_catalogue_from_file():
+    for number, processed_row in enumerate(rows[1:]):
+        if number % 10:
+            print(number)
+        # print(processed_row)
+        description = processed_row["description"]
+        # print(description)
+        ref = icu.extraire_ref_biblio(description)
+        if ref:
+            print(number, )
+        if "authors" not in ref:
+            print(number, "failed because authors not in ref")
+            continue
+        for author in ref["authors"]:
+            # print(author)
+            author_exists = AuthorDB.query.filter_by(first_name=author["first_name"],
+                                                     family_name=author["family_name"]).first()
+            if not author_exists:
+                author_db = Author.from_data_to_db(author)
+                db.session.add(author_db)
+                db.session.commit()
+        # if dv.check_reference_bibliographique_livre(ref):
+        ref["auteurs"] = ref["authors"]
+        # print(ref)
+        reference_db = ReferenceBibliographiqueLivre.from_data_to_db(ref)
+        # print(reference_db)
+        db.session.add(reference_db)
+        db.session.commit()
+        record = icu.extraire_enregistrements(processed_row)
+        # print(record)
+        enregistrement_db = Enregistrement.from_data_to_db(record)
+        # print(enregistrement_db)
+        db.session.add(enregistrement_db)
+        db.session.commit()
+        # store_new_stored_row(processed_row)
+        # return json_result(True, data=processed_row, ref=ref, record=record, already_stored=already_stored), 200
+    return json_result(True), 200
