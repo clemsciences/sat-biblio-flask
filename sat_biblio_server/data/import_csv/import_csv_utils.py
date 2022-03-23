@@ -8,9 +8,9 @@ def extraire_auteurs(description):
     auteurs = []
     while limite_auteur < len(description):
         field = description[limite_auteur]
-        print("field", repr(field))
+        # print("field", repr(field))
         m = re.match(r"(?P<nom>[\w\- '.]+) \((?P<prenom>[ \-'\w.]+)\)", field)
-        print(m)
+        # print(m)
         if m is not None:
             prenom = m.group("prenom")
             nom = m.group("nom")
@@ -26,7 +26,7 @@ def extraire_auteurs(description):
         else:
             break
         limite_auteur += 1
-        auteurs.append(dict(first_name=prenom, family_name=nom))
+        auteurs.append(dict(first_name=prenom, family_name=nom, valide=True))
 
     return auteurs, description[limite_auteur:]
 
@@ -40,7 +40,7 @@ def extraire_ref_biblio(description):
         if len(reste) > 0:
             # is first element a year or a title?
             m_year = re.match(r"^(?P<annee>[0-9 \-]+)$", reste[i])
-            if m_year:
+            if m_year and len(reste) > 1:
                 # print("year first")
                 annee = m_year.group("annee")
                 i += 1
@@ -154,7 +154,7 @@ def extraire_ref_biblio(description):
                 lieu_edition=lieu_edition.strip(),
                 editeur=editeur.strip(),
                 annee=annee.strip(),
-                nb_page=nb_page.strip())
+                nb_page=nb_page.strip(), valide=True)
             return ref
         else:
             return None

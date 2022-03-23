@@ -11,9 +11,9 @@ from sat_biblio_server import create_app, sat_biblio
 from sat_biblio_server.config.development import Config
 
 
-@sat_biblio.route("/test")
-def test():
-    return jsonify({"success": True, "message": "Test succeeded"})
+# @sat_biblio.route("/test")
+# def api_test():
+#     return jsonify({"success": True, "message": "Test succeeded"})
 
 
 @sat_biblio.route("/")

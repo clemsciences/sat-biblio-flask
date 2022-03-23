@@ -151,17 +151,19 @@ def import_catalogue_from_file():
 @sat_biblio.route("/import/all/", methods=["GET", "POST"])
 def import_complete_catalogue_from_file():
     for number, processed_row in enumerate(rows[1:]):
-        if number % 10:
+        if number % 10 == 0:
             print(number)
         # print(processed_row)
         description = processed_row["description"]
         # print(description)
         ref = icu.extraire_ref_biblio(description)
-        if ref:
-            print(number, )
+        if ref is None:
+            print(number, "ref is None")
+            continue
         if "authors" not in ref:
             print(number, "failed because authors not in ref")
             continue
+        auteurs = []
         for author in ref["authors"]:
             # print(author)
             author_exists = AuthorDB.query.filter_by(first_name=author["first_name"],
@@ -170,14 +172,19 @@ def import_complete_catalogue_from_file():
                 author_db = Author.from_data_to_db(author)
                 db.session.add(author_db)
                 db.session.commit()
+                author_exists = author_db
+            auteurs.append(dict(value=author_exists.id))
         # if dv.check_reference_bibliographique_livre(ref):
-        ref["auteurs"] = ref["authors"]
+        ref["auteurs"] = auteurs
         # print(ref)
         reference_db = ReferenceBibliographiqueLivre.from_data_to_db(ref)
         # print(reference_db)
         db.session.add(reference_db)
         db.session.commit()
         record = icu.extraire_enregistrements(processed_row)
+        if record is None:
+            print("record is None")
+            continue
         # print(record)
         enregistrement_db = Enregistrement.from_data_to_db(record)
         # print(enregistrement_db)
