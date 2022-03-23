@@ -2,6 +2,9 @@
 
 """
 
+
+import csv
+
 from flask import request, session, send_file
 
 from data.models import Enregistrement
@@ -15,6 +18,10 @@ def export_catalogue():
     :return:
     """
 
-    records = EnregistrementDB.query.all()
-    [Enregistrement.from_db_to_data(record_db) for record_db in records]
+    records_db = EnregistrementDB.query.all()
+    records = [Enregistrement.from_db_to_data(record_db) for record_db in records_db]
+    for record in records:
+        print(record)
+    return json_result(True, records=records)
+
 

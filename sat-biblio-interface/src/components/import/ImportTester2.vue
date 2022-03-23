@@ -226,6 +226,7 @@ export default {
     },
     saveAuthor: function() {
       // nothing
+      console.log("nothing is done when saving 1 author.")
     },
     saveAuthors: function() {
       const that = this;

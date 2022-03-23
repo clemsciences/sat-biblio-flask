@@ -9,6 +9,8 @@
 </template>
 
 <script>
+// import { jsPDF } from "jspdf";
+
 export default {
   name: "Export",
   data: function() {
@@ -21,6 +23,10 @@ export default {
 
     },
     exporterPDF: function() {
+      // const doc = new jsPDF();
+      // doc.text("Catalogue", 10, 10);
+      // doc.save("catalogue.pdf");
+
 
     }
   }
