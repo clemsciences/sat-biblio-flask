@@ -5,7 +5,7 @@ import pickle
 
 from flask import request
 
-from data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
+from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server import sat_biblio, json_result, PACKDIR, app, AuthorDB, db
 import sat_biblio_server.data.import_csv.import_csv_utils as icu
 
