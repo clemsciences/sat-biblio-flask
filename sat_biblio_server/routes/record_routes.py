@@ -57,6 +57,8 @@ def book_records():
 
         if sort_by:
             the_query = the_query.order_by(sort_by)
+        else:
+            the_query = the_query.order_by("cote")
 
         enregistrements = []
         for record_db in the_query.paginate(page=n_page, per_page=size).items:

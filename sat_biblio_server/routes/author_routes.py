@@ -55,6 +55,8 @@ def authors_():
 
         if sort_by:
             the_query = the_query.order_by(sort_by)
+        else:
+            the_query = the_query.order_by("family_name")
 
         authors = [Author.from_db_to_data(author)
                    for author in the_query.paginate(page=n_page, per_page=size).items]
@@ -133,6 +135,15 @@ def authors_count():
     if "family_name" in request.args:
         the_query = the_query.filter(AuthorDB.family_name.like(f"%{request.args.get('family_name')}%"))
     # endregion
+    query = """
+    SELECT *
+    FROM Author AS A
+    WHERE A.first_name LIKE '%s' AND A.family_name LIKE '%s' AND 1 = (
+        SELECT valid
+        FROM ReferenceBibliographiqueLivre AS RBL
+        WHERE A.id = RBL.
+    )  
+    """
 
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:

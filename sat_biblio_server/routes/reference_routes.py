@@ -54,6 +54,8 @@ def book_references():
         #            .query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         if sort_by:
             the_query = the_query.order_by(sort_by)
+        else:
+            the_query = the_query.order_by("title")
 
         references = []
         for reference_db in the_query.paginate(page=n_page, per_page=size).items:
