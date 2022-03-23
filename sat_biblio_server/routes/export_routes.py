@@ -7,7 +7,7 @@ import csv
 
 from flask import request, session, send_file
 
-from data.models import Enregistrement
+from sat_biblio_server.data.models import Enregistrement
 from sat_biblio_server import sat_biblio, UserDB, json_result, EnregistrementDB
 
 
