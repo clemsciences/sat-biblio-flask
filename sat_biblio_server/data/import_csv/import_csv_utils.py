@@ -162,12 +162,16 @@ def extraire_ref_biblio(description):
         return None
 
 
+def clean_cote(cote):
+    return " ".join([c.strip() for c in cote.strip().split(" ") if c])
+
+
 def extraire_enregistrements(record):
     # print(record.keys())
     mots_clef = f"{record.get('theme1', '')} " \
                 f"{record.get('theme2', '')} " \
                 f"{record.get('theme3', '')}".strip()
-    record = dict(description=record["description"], cote=record["cote"],
+    record = dict(description=record["description"], cote=clean_cote(record["cote"]),
                   nb_exemplaire_supp=record["nb_supp"],
                   annee=record["annee"], provenance=record["provenance"],
                   mots_clef=mots_clef, valide=True, id_reference=record["index"])
