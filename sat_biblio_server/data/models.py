@@ -6,7 +6,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 import datetime
 import logging
-from typing import Union
+from typing import Union, List
 
 from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, UserDB, db
 from sqlalchemy import and_, join
@@ -46,6 +46,10 @@ class Author:
         else:
             author_db.valide = False
         return author_db
+
+    @staticmethod
+    def from_data_to_csv_row(data: dict):
+        return f"{data.get('family_name', '')} ({data.get('first_name', '')})"
 
     @staticmethod
     def from_id_to_db(id_):
@@ -195,6 +199,17 @@ class ReferenceBibliographiqueLivre:
             return {}
 
     @staticmethod
+    def from_data_to_csv_row(data: dict) -> List:
+        return [
+            " ; ".join([Author.from_data_to_csv_row(author_data) for author_data in data.get("authors", [])]),
+            data.get("titre", ""),
+            data.get("lieu_edition", "s. l."),
+            data.get("editeur", "s. e."),
+            data.get("annee", "s. a."),
+            data.get("nb_page", ""),
+        ]
+
+    @staticmethod
     def from_id_to_db(id_):
         return ReferenceBibliographiqueLivreDB.query.filter_by(id=id_).first()
 
@@ -308,6 +323,20 @@ class Enregistrement:
                 valide=enregistrement_db.valide)
         else:
             return {}
+
+    @staticmethod
+    def from_data_to_csv_row(data: dict):
+        return ReferenceBibliographiqueLivre.from_data_to_csv_row(data.get("reference")) + \
+            [
+                data.get("annee", ""),
+                data.get("description", ""),
+                data.get("commentaire", ""),
+                data.get("cote", ""),
+                data.get("nb_exemplaire_supp", ""),
+                data.get("provenance", ""),
+                data.get("mots_clef", ""),
+                # data.get("date_modification", ""),
+               ]
 
     @staticmethod
     def get_records_by_author(id_author, n_page, size, sort_by):
