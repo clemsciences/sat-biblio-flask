@@ -40,7 +40,7 @@ def borrowings():
         return json_result(True, borrowings=borrowings_data), 200
     elif request.method == "POST":
         data = request.get_json()
-        logging.log(logging.DEBUG, data)
+        # logging.log(logging.DEBUG, data)
         if dv.check_emprunt(data):
             user = UserSess(session["email"])
             date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])

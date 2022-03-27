@@ -39,9 +39,9 @@ def book_references():
         if titre:
             the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
         valid = request.args.get("valid", "1")
-        print(type(valid), valid)
+        # print(type(valid), valid)
         if valid in ["1", "0"]:
-            print("HERE")
+            # print("HERE")
             the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
         else:
             the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)

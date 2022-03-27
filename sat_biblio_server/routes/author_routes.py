@@ -93,10 +93,10 @@ def author_(id_):
     if request.method == "GET":
         author_db = AuthorDB.query.filter_by(id=id_).first()
         author = Author.from_db_to_data(author_db)
-        logging.warning("ref")
-        logging.warning(ReferenceBibliographiqueLivre.get_references_by_author(id_, 1, 10, ""))
-        logging.warning("enregistrement")
-        logging.warning(Enregistrement.get_records_by_author(id_, 1, 10, ""))
+        # logging.warning("ref")
+        # logging.warning(ReferenceBibliographiqueLivre.get_references_by_author(id_, 1, 10, ""))
+        # logging.warning("enregistrement")
+        # logging.warning(Enregistrement.get_records_by_author(id_, 1, 10, ""))
 
         return json_result(True, author=author), 200
     elif request.method == "PUT":
@@ -147,7 +147,7 @@ def authors_count():
 
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
-        print("HERE")
+        # print("HERE")
         the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
     else:
         the_query = the_query.filter(AuthorDB.valide == True)
@@ -213,7 +213,7 @@ def author_entries_routes(id_):
 
 @sat_biblio.route("/authors/<int:id_>/entries/count/", methods=["GET"])
 def author_entries_count_routes(id_):
-    logging.warning("bizarre")
+    # logging.warning("bizarre")
     record_count = Enregistrement.get_records_by_author_count(id_)
     reference_count = ReferenceBibliographiqueLivre.get_references_by_author_count(id_)
     total = record_count + reference_count
