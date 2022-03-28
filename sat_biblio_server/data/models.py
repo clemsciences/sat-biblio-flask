@@ -15,6 +15,7 @@ from sqlalchemy import and_, join
 def date_to_str(date: Union[None, datetime.date]) -> str:
     if date:
         return date.strftime("%d/%m/%Y")
+        # return date.isoformat()  # strftime("%d/%m/%Y")
     return ""
 
 
