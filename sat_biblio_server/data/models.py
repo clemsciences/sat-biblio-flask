@@ -229,10 +229,21 @@ class ReferenceBibliographiqueLivre:
         :param sort_by:
         :return:
         """
-        the_query = ReferenceBibliographiqueLivreDB.query
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        return [dict(type="reference", description=str(ref_db), id=ref_db.id)
-                for ref_db in the_query.paginate(page=n_page, per_page=size).items]
+
+        res = db.engine.execute(f"SELECT * FROM {ReferenceBibliographiqueLivreDB.__tablename__} "
+                                f"WHERE id IN "
+                                f"(SELECT id_reference_biblio_livre FROM helperauthorbook "
+                                f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}")
+        # print([i.values() for i in res])
+        # return res.first().values()[0]
+        return [dict(type="reference", description=str(ref_db["titre"])+" "+ref_db["editeur"], id=ref_db["id"])
+                for ref_db in res.fetchall()]
+
+        # the_query = ReferenceBibliographiqueLivreDB.query
+        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        # the_query = ReferenceBibliographiqueLivreDB.authors.any(id=id_author)
+        # return [dict(type="reference", description=str(ref_db), id=ref_db.id)
+        #         for ref_db in the_query.paginate(page=n_page, per_page=size).items]
 
     @staticmethod
     def get_references_by_author_count(id_author):
@@ -242,9 +253,15 @@ class ReferenceBibliographiqueLivre:
         :param id_author:
         :return:
         """
-        the_query = ReferenceBibliographiqueLivreDB.query
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        return the_query.count()
+        res = db.engine.execute(f"SELECT COUNT(*) FROM {ReferenceBibliographiqueLivreDB.__tablename__} "
+                                f"WHERE id IN "
+                                f"(SELECT id_reference_biblio_livre FROM helperauthorbook "
+                                f"WHERE id_author = {id_author} )")
+        # print([i.values() for i in res])
+        return res.first().values()[0]
+        # the_query = ReferenceBibliographiqueLivreDB.query
+        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        # return the_query.count()
 
     @staticmethod
     def get_references_by_record(id_record, n_page, size, sort_by):
@@ -349,11 +366,20 @@ class Enregistrement:
         :param sort_by:
         :return:
         """
-        the_query = EnregistrementDB.query
-        the_query = the_query.join(EnregistrementDB.reference)
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        return [dict(type="record", description=str(rec_db), id=rec_db.id)
-                for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+        request = f"SELECT * FROM {EnregistrementDB.__tablename__} " \
+                  f"WHERE id_reference IN " \
+                  f"(SELECT id_reference_biblio_livre FROM helperauthorbook " \
+                  f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
+        res = db.engine.execute(request)
+        print(request)
+        return [dict(type="record", description=str(rec_db["description"]), id=rec_db["id"])
+                for rec_db in res.fetchall()]
+
+        # the_query = EnregistrementDB.query
+        # the_query = the_query.join(EnregistrementDB.reference)
+        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        # return [dict(type="record", description=str(rec_db), id=rec_db.id)
+        #         for rec_db in the_query.paginate(page=n_page, per_page=size).items]
 
     @staticmethod
     def get_records_by_author_count(id_author):
@@ -362,10 +388,19 @@ class Enregistrement:
         :param id_author:
         :return:
         """
-        the_query = EnregistrementDB.query
-        the_query = the_query.join(EnregistrementDB.reference)
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        return the_query.count()
+        res = db.engine.execute(f"SELECT COUNT(*) FROM {EnregistrementDB.__tablename__} "
+                          f"WHERE id_reference IN "
+                          f"(SELECT id_reference_biblio_livre FROM helperauthorbook "
+                          f"WHERE id_author = {id_author} )")
+        # print(help(res))
+        # b = RowProxy()
+
+        return res.first().values()[0]
+        # the_query = EnregistrementDB.query
+        # the_query = the_query.join(EnregistrementDB.reference)
+        # the_query = EnregistrementDB.reference
+        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
+        # return the_query.count()
 
     @staticmethod
     def get_records_by_ref(id_ref, n_page, size, sort_by):

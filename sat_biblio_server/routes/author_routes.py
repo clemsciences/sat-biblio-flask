@@ -199,7 +199,7 @@ def chercher_auteurs():
 # endregion
 
 # region entries
-@sat_biblio.route("/authors/<int:id_>/entries/", methods=["GET"])
+@sat_biblio.route("/authors/<int:id_>/entries/")
 def author_entries_routes(id_):
     n_page, size, sort_by = get_pagination(request)
     entries = []
