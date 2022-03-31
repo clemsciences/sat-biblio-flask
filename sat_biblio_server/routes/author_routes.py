@@ -219,4 +219,11 @@ def author_entries_count_routes(id_):
     total = record_count + reference_count
 
     return json_result(True, total=total), 200
+
+
+@sat_biblio.route("/authors/without-reference")
+def authors_without_reference_route():
+    authors = []
+    # TODO
+    return json_result(True, authors=authors), 200
 # endregion
