@@ -152,6 +152,12 @@ class Author:
         # the_query = the_query.filter(EnregistrementDB.id == id_record)
         # return the_query.count()
 
+    @staticmethod
+    def get_authors_without_ref(n_page, size, sort_by):
+        the_query = AuthorDB.query.filter(AuthorDB.id.not_in(ReferenceBibliographiqueLivreDB.authors))
+        return [dict(type="author", description=str(author), id=author.id)
+                for author in the_query.paginate(page=n_page, per_page=size).items]
+
 
 class ReferenceBibliographiqueLivre:
 

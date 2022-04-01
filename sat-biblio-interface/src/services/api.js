@@ -102,7 +102,11 @@ export function getEntryListAssociatedToAuthor(authorId, params) {
 }
 
 export function getEntryListAssociatedToAuthorCount(authorId, params) {
-  return axios.get(`/authors/${authorId}/entries/count/?${params}`)
+  if(params) {
+      return axios.get(`/authors/${authorId}/entries/count/?${params}`);
+  } else {
+    return axios.get(`/authors/${authorId}/entries/count/`);
+  }
 }
 
 // endregion
@@ -154,7 +158,11 @@ export function getEntryListAssociatedToReference(bookReference, params) {
 }
 
 export function getEntryListAssociatedToReferenceCount(bookReference, params) {
-  return axios.get(`/book-references/${bookReference}/entries/count/?${params}`)
+  if(params) {
+    return axios.get(`/book-references/${bookReference}/entries/count/?${params}`);
+  } else {
+    return axios.get(`/book-references/${bookReference}/entries/count/`);
+  }
 }
 
 // endregion
@@ -206,7 +214,11 @@ export function getEntryListAssociatedToBookRecords(bookRecordId, params) {
 }
 
 export function getEntryListAssociatedToBookRecordsCount(bookRecordId, params) {
-  return axios.get(`/book-records/${bookRecordId}/entries/count/?${params}`);
+  if(params) {
+    return axios.get(`/book-records/${bookRecordId}/entries/count/?${params}`);
+  } else {
+    return axios.get(`/book-records/${bookRecordId}/entries/count/`);
+  }
 }
 
 // endregion
@@ -256,5 +268,12 @@ export function markRowAsNotProcessed(nRow) {
 
 export function goToNextNotMarkedRow(nRow) {
   return axios.get(`/import-csv/rows/${nRow}/go-to-next-not-marked-row`)
+}
+
+export function importAllCatalogue() {
+  return axios.get("/import/all/")
+}
+export function deleteAllCatalogue() {
+  return axios.delete("/import/catalogue/");
 }
 // endregion

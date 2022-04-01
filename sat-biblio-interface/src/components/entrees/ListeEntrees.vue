@@ -100,7 +100,7 @@ export default {
       return null;
     },
     getTotalNumber() {
-      this.getTotalNumberRequest(this.entryId).then(
+      this.getTotalNumberRequest(this.entryId, "").then(
           (response) => {
             if(response.data.success) {
               this.totalNumber = response.data.total;
