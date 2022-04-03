@@ -2,6 +2,19 @@
   <div id="app">
     <NavBar/>
     <router-view/>
+    <b-modal id="modal-session"
+             ref="modalSession"
+             centered
+             title="Session expirée"
+             size="xl">
+      <b-button block @click="goToLoginPage">Compris</b-button>
+      <p class="my-4">
+      Vous êtes déconnecté.
+      Veuillez vous reconnecter pour continuer
+      à travailler sur vos données.
+      </p>
+<!--      <b-button v-b-modal.modal-session></b-button>-->
+    </b-modal>
   </div>
 </template>
 
@@ -24,14 +37,20 @@ export default {
                   const right = response.data.right;
                   if(response.data.connected) {
                     this.$store.commit("connect", {connectionInfo, right});
+                    this.$refs.modalSession.hide();
                   } else {
                     this.$store.commit("disconnect");
+                    this.$refs.modalSession.show();
                   }
                 } else {
                   this.$store.commit("disconnect");
+                  this.$refs.modalSession.show();
                 }
               }
           );
+    },
+    goToLoginPage() {
+      
     }
   },
 }
