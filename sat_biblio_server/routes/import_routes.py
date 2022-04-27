@@ -6,7 +6,8 @@ import pickle
 from flask import request
 
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
-from sat_biblio_server import sat_biblio, json_result, PACKDIR, app, AuthorDB, db
+from sat_biblio_server import sat_biblio, json_result, PACKDIR, app, AuthorDB, db, EnregistrementDB, \
+    ReferenceBibliographiqueLivreDB
 import sat_biblio_server.data.import_csv.import_csv_utils as icu
 
 
@@ -70,6 +71,37 @@ if os.path.exists(INVENTORY_PATH):
                              "theme3": row[7],
                              "index": i})
             i += 1
+
+
+@sat_biblio.route("/import-csv/check/")
+def check_row_coherence():
+    l = []
+    for number, processed_row in enumerate(rows[1:]):
+        if number % 10 == 0:
+            print(number)
+        # print(processed_row)
+        description = processed_row["description"]
+        # print(description)
+        ref = icu.extraire_ref_biblio(description)
+        if ref is None:
+            print(number, "ref is None", description)
+            continue
+        if "authors" not in ref:
+            print(number, "failed because authors not in ref")
+            continue
+
+        record = icu.extraire_enregistrements(processed_row)
+        if record is None:
+            print("record is None", processed_row)
+            continue
+        # print(record)
+        enregistrement_db = Enregistrement.from_data_to_db(record)
+        is_valid = enregistrement_db.cote in description
+        if not is_valid:
+            l.append(dict(valid=is_valid, description=description, cote=enregistrement_db.cote))
+        # store_new_stored_row(processed_row)
+        # return json_result(True, data=processed_row, ref=ref, record=record, already_stored=already_stored), 200
+    return json_result(True, valids=l), 200
 
 
 @sat_biblio.route("/import-csv/")
@@ -148,10 +180,19 @@ def import_catalogue_from_file():
     #         file.save()
 
 
+@sat_biblio.route("/import/catalogue/", methods=["DELETE"])
+def delete_catalogue():
+    EnregistrementDB.query.delete()
+    ReferenceBibliographiqueLivreDB.query.delete()
+    AuthorDB.query.delete()
+    db.session.commit()
+    return json_result(True), 200
+
+
 @sat_biblio.route("/import/all/", methods=["GET", "POST"])
 def import_complete_catalogue_from_file():
     for number, processed_row in enumerate(rows[1:]):
-        if number % 10 == 0:
+        if number % 100 == 0:
             print(number)
         # print(processed_row)
         description = processed_row["description"]
@@ -179,17 +220,23 @@ def import_complete_catalogue_from_file():
         # print(ref)
         reference_db = ReferenceBibliographiqueLivre.from_data_to_db(ref)
         # print(reference_db)
-        db.session.add(reference_db)
-        db.session.commit()
+
         record = icu.extraire_enregistrements(processed_row)
         if record is None:
             print("record is None")
             continue
         # print(record)
+        # region reference
+        db.session.add(reference_db)
+        db.session.commit()
+        # endregion
+        # region record
         enregistrement_db = Enregistrement.from_data_to_db(record)
         # print(enregistrement_db)
+        enregistrement_db.reference = reference_db
         db.session.add(enregistrement_db)
         db.session.commit()
+        # endregion
         # store_new_stored_row(processed_row)
         # return json_result(True, data=processed_row, ref=ref, record=record, already_stored=already_stored), 200
     return json_result(True), 200

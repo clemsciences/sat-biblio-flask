@@ -37,6 +37,7 @@ import Utilisateur from "@/components/utilisateur/Utilisateur";
 // import ImportTester from "@/components/import/ImportTester";
 import ImportTester2 from "@/components/import/ImportTester2";
 import LireEmprunt from "@/components/emprunt/LireEmprunt";
+import GlobalImport from "@/components/import/GlobalImport";
 
 Vue.use(VueRouter);
 
@@ -141,6 +142,12 @@ let router = new VueRouter({
             name: 'import-csv',
             path: "/importation",
             component: ImportTester2,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: 'import-csv-globale',
+            path: "/importation-globale",
+            component: GlobalImport,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // region auteur

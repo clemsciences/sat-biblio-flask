@@ -29,6 +29,16 @@
       </b-collapse>
     </b-row>
 
+    <b-row>
+      <b-button @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV</b-button>
+      <p>{{ importMessage }}</p>
+    </b-row>
+
+    <b-row>
+      <b-button @click="deleteAllRows" class="m-2">Supprimer le catalogue (pour les tests d'import)</b-button>
+      <p>{{ message }}</p>
+    </b-row>
+
   </b-container>
 </template>
 
@@ -36,14 +46,37 @@
 import Title from "../visuel/Title";
 import CreationUtilisateur from '../utilisateur/CreationUtilisateur'
 import ListeUtilisateur from './ListeUtilisateur'
+import {deleteAllCatalogue, importAllCatalogue} from "@/services/api";
 export default {
   name: "Admin",
   components: {Title, CreationUtilisateur, ListeUtilisateur},
+  data: function() {
+    return {
+      message: '',
+      importMessage: '',
+    }
+  },
   methods: {
     forceUsersReload() {
       this.$refs.userList.getUserTotalNumber();
       this.$refs.userList.$refs.userTable.refresh();
     },
+    deleteAllRows() {
+      this.message = "En cours de suppression"
+      deleteAllCatalogue().then(
+          () => {
+            this.message = "C'est supprimé";
+          }
+      )
+    },
+    importAllRows() {
+      this.importMessage = "En cours d'import";
+      importAllCatalogue().then(
+          () => {
+            this.importMessage = "C'est importé";
+          }
+      )
+    }
 
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h2>Importation</h2>
+    <h2>Importation fine</h2>
     <b-row class="m-1">
       <b-col cols="3">
         <b-button-toolbar>
