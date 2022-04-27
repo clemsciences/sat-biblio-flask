@@ -23,12 +23,12 @@ export default {
     return {
       record: {
         selectedReference: {value: -1, text: ""},
-        description: "",
         cote: "",
         annee: "",
         nb_exemplaire_supp: 0,
         provenance: "",
         mots_clef: "",
+        row: ""
       },
       // validated: false,
       message: ""
@@ -38,13 +38,13 @@ export default {
     saveRecord: function () {
       const formData = {
           id_reference: this.record.selectedReference.value,
-          description: this.record.description,
           cote: this.record.cote,
           annee: this.record.annee,
           nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
           mots_clef: this.record.mots_clef,
-          valide: this.isManager
+          valide: this.isManager,
+          row: this.row
       };
       createBookRecord(formData, this.$store.state.connectionInfo.token)
           .then((response) => {
@@ -52,12 +52,12 @@ export default {
               console.log("record saved");
               this.message = "L'enregistrement a été sauvegardé.";
               this.record.selectedReference = {value: -1, text: ""};
-              this.record.description = "";
               this.record.cote = "";
               this.record.annee = "";
               this.record.nb_exemplaire_supp = "";
               this.record.provenance = "";
               this.record.mots_clef = "";
+              this.record.row = "";
             } else {
               console.log("bizarre");
               this.message = "Echec de la sauvegarde de l'enregistrement.";

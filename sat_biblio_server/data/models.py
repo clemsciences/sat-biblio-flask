@@ -186,6 +186,8 @@ class ReferenceBibliographiqueLivre:
             reference_db.valide = reference["valide"]
         else:
             reference_db.valide = False
+        if "description" in reference:
+            reference_db.description = reference["description"]
 
         return reference_db
 
@@ -200,7 +202,8 @@ class ReferenceBibliographiqueLivre:
                 editeur=reference.editeur,
                 annee=reference.annee,
                 nb_page=reference.nb_page,
-                valide=reference.valide
+                valide=reference.valide,
+                description=reference.description
             )
         else:
             return {}
@@ -214,6 +217,7 @@ class ReferenceBibliographiqueLivre:
             data.get("editeur", "s. e."),
             data.get("annee", "s. a."),
             data.get("nb_page", ""),
+            data.get("description", "")
         ]
 
     @staticmethod
@@ -312,8 +316,6 @@ class Enregistrement:
             enregistrement_db.id = enregistrement["id"]
         if "id_reference" in enregistrement:
             enregistrement_db.id_reference = enregistrement["id_reference"]
-        if "description" in enregistrement:
-            enregistrement_db.description = enregistrement["description"]
         if "cote" in enregistrement:
             enregistrement_db.cote = enregistrement["cote"]
         if "annnee" in enregistrement:
@@ -326,8 +328,8 @@ class Enregistrement:
             enregistrement_db.mots_clef = enregistrement["mots_clef"]
         if "commentaire" in enregistrement:
             enregistrement_db.commentaire = enregistrement["commentaire"]
-        if "description" in enregistrement:
-            enregistrement_db.description = enregistrement["description"]
+        if "row" in enregistrement:
+            enregistrement_db.row = enregistrement["row"]
         return enregistrement_db
 
     @staticmethod
@@ -337,14 +339,14 @@ class Enregistrement:
                 id=enregistrement_db.id,
                 reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),
                 annee=enregistrement_db.annee,  # année d'obtention
-                description=enregistrement_db.description,
                 commentaire=enregistrement_db.commentaire,
                 cote=enregistrement_db.cote,
                 nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
                 provenance=enregistrement_db.provenance,
                 mots_clef=enregistrement_db.mots_clef,
                 date_modification=enregistrement_db.date_modification,
-                valide=enregistrement_db.valide)
+                valide=enregistrement_db.valide,
+                row=enregistrement_db.row)
         else:
             return {}
 
@@ -353,13 +355,13 @@ class Enregistrement:
         return ReferenceBibliographiqueLivre.from_data_to_csv_row(data.get("reference")) + \
             [
                 data.get("annee", ""),
-                data.get("description", ""),
                 data.get("commentaire", ""),
                 data.get("cote", ""),
                 data.get("nb_exemplaire_supp", ""),
                 data.get("provenance", ""),
                 data.get("mots_clef", ""),
                 # data.get("date_modification", ""),
+                data.get("row", "")
                ]
 
     @staticmethod

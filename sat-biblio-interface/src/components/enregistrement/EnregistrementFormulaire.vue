@@ -4,11 +4,6 @@
                            v-model="record.selectedReference"
                            :disabled="disabled"/>
       <!-- Recherche assisté de la référence -->
-      <b-form-group label="Description">
-        <b-form-textarea v-model="record.description"
-                         :disabled="disabled"
-                         :rows="5" size="sm"/>
-      </b-form-group>
       <b-form-group label="Cote">
         <b-form-input v-model="record.cote"
                       :disabled="disabled"/>
@@ -29,6 +24,12 @@
         <b-form-input v-model="record.mots_clef"
                       :disabled="disabled"/>
       </b-form-group>
+    <b-form-group label="Ligne">
+        <b-form-textarea v-model="record.row"
+                         :disabled="disabled"
+                         :rows="5" size="sm"/>
+      </b-form-group>
+
       <b-button type="submit" v-if="!disabled"
                 :disabled="isIncorrect || disabled">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>

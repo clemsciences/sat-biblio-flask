@@ -30,6 +30,7 @@ export default {
         editeur: "",
         annee: "",
         nb_page: "",
+        description: "",
       },
       message: ""
     }
@@ -43,7 +44,8 @@ export default {
         editeur: this.reference.editeur,
         annee: this.reference.annee,
         nb_page: this.reference.nb_page,
-        valide: this.isManager
+        valide: this.isManager,
+        description: this.description
       };
 
       createBookReference(formData, this.$store.state.connectionInfo.token)
@@ -58,6 +60,7 @@ export default {
                 this.reference.editeur = "";
                 this.reference.annee = "";
                 this.reference.nb_page = "";
+                this.reference.description = "";
               } else {
                 this.message = "La création de la référence a échoué."
               }

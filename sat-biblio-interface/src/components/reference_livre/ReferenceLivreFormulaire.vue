@@ -19,6 +19,11 @@
     <b-form-group label="Nombre de pages">
       <b-form-input v-model="reference.nb_page" :disabled="disabled"/>
     </b-form-group>
+    <b-form-group label="Description">
+      <b-form-textarea v-model="reference.description"
+                       :disabled="disabled"
+                       :rows="5" size="sm"/>
+    </b-form-group>
     <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
     <span class="mx-3">{{ message }}</span>
   </b-form>

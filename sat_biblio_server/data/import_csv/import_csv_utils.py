@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 
 
 def extraire_auteurs(description):
@@ -26,7 +27,7 @@ def extraire_auteurs(description):
         else:
             break
         limite_auteur += 1
-        auteurs.append(dict(first_name=prenom, family_name=nom, valide=True))
+        auteurs.append(dict(first_name=prenom.strip(), family_name=nom.strip(), valide=True))
 
     return auteurs, description[limite_auteur:]
 
@@ -154,7 +155,8 @@ def extraire_ref_biblio(description):
                 lieu_edition=lieu_edition.strip(),
                 editeur=editeur.strip(),
                 annee=annee.strip(),
-                nb_page=nb_page.strip(), valide=True)
+                nb_page=nb_page.strip(), valide=True,
+                description=description)
             return ref
         else:
             return None
@@ -163,16 +165,20 @@ def extraire_ref_biblio(description):
 
 
 def clean_cote(cote):
-    return " ".join([c.strip() for c in cote.strip().split(" ") if c])
+    return "-".join([c.strip()
+                     for c in " ".join([c.strip()
+                                        for c in cote.strip().split(" ")
+                                        if c]).split("-")])
 
 
-def extraire_enregistrements(record):
+def extraire_enregistrements(record) -> Dict[str, str]:
     # print(record.keys())
     mots_clef = f"{record.get('theme1', '')} " \
                 f"{record.get('theme2', '')} " \
                 f"{record.get('theme3', '')}".strip()
-    record = dict(description=record["description"], cote=clean_cote(record["cote"]),
+    record = dict(cote=clean_cote(record["cote"]),
                   nb_exemplaire_supp=record["nb_supp"],
                   annee=record["annee"], provenance=record["provenance"],
-                  mots_clef=mots_clef, valide=True, id_reference=record["index"])
+                  mots_clef=mots_clef, valide=True, id_reference=record["index"],
+                  row=" ; ".join([f"{i} -> {j}" for i, j in record.items()]))
     return record

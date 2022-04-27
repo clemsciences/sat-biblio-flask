@@ -72,6 +72,11 @@ export default {
           label: "N° pages",
           sortable: false
         },
+        {
+          key: "description",
+          label: "Description",
+          sortable: false
+        },
       ],
       titreFiltre: ""
     }

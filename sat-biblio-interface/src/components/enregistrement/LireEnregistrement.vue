@@ -54,13 +54,14 @@ export default {
         reference: {value: -1, text: ""},
         selectedReference: {text: "", value: -1},
         suggestedReferences: [],
-        description: "",
+        // description: "",
         cote: "",
         annee: "",
         nb_exemplaire_supp: 0,
         provenance: "",
         mots_clef: "",
         valide: false,
+        row: ""
       },
       message: "",
       recordId: parseInt(this.$route.params.id),
@@ -76,13 +77,15 @@ export default {
             if(value.data.success && value.data.enregistrement) {
               this.record.selectedReference = value.data.enregistrement.reference;
               this.record.reference = value.data.enregistrement.reference;
-              this.record.description = value.data.enregistrement.description;
+              // this.record.description = value.data.enregistrement.description;
               this.record.cote = value.data.enregistrement.cote;
               this.record.annee = value.data.enregistrement.annee;
               this.record.nb_exemplaire_supp = value.data.enregistrement.nb_exemplaire_supp;
               this.record.provenance = value.data.enregistrement.provenance;
               this.record.mots_clef = value.data.enregistrement.mots_clef;
               this.record.valide = value.data.enregistrement.valide;
+              this.record.row = value.data.enregistrement.row;
+
             }
           }
       )
@@ -90,12 +93,13 @@ export default {
     updateRecord: function() {
       const formData = {
           id_reference: this.record.selectedReference.value,
-          description: this.record.description,
+          // description: this.record.description,
           cote: this.record.cote,
           annee: this.record.annee,
           nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
-          mots_clef: this.record.mots_clef
+          mots_clef: this.record.mots_clef,
+          row: this.record.row
       };
       updateBookRecord(this.$route.params.id, formData, this.$store.state.connectionInfo.token)
           .then((response) => {

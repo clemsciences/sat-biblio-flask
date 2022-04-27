@@ -31,7 +31,6 @@ def check_borrow(borrow):
 
 def check_enregistrement(enregistrement):
     return "id_reference" in enregistrement and \
-           "description" in enregistrement and \
            "cote" in enregistrement and \
            "annee" in enregistrement and \
            "nb_exemplaire_supp" in enregistrement and \
@@ -51,10 +50,12 @@ def check_reference_bibliographique_livre(reference):
            "editeur" in reference and \
            "annee" in reference and \
            "nb_page" in reference and \
+           "description" in reference and \
            reference["auteurs"] and \
            reference["titre"] and \
            reference["lieu_edition"] and \
-           reference["editeur"]
+           reference["editeur"] and \
+           reference["description"]
     # and \
     # (type(reference["annee"]) == int or
     #  type(reference["annee"]) == str and
@@ -63,7 +64,7 @@ def check_reference_bibliographique_livre(reference):
 
 
 def check_user_connection(user_connection):
-    logging.log(logging.DEBUG, user_connection)
+    # logging.log(logging.DEBUG, user_connection)
     return "email" in user_connection and \
            "password" in user_connection and \
            user_connection["email"] and \

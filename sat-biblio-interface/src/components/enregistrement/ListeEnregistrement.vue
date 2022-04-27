@@ -67,11 +67,11 @@ export default {
           label: "Titre",
           sortable: false
         },
-        {
+        /*{
           key: "description",
           label: "Description",
           sortable: false
-        },
+        },*/
         {
           key: "annee",
           label: "Année d'obtention",

@@ -76,6 +76,7 @@ class ReferenceBibliographiqueLivreDB(db.Model):
     annee = db.Column(db.String(10))
     nb_page = db.Column(db.String(10))
     valide = db.Column(db.Boolean, default=False)
+    description = db.Column(db.String(500), default="")
 
     def __str__(self):
         return " ".join([auteur.__str__() for auteur in self.authors]) + \
@@ -98,7 +99,7 @@ class ReferenceBibliographiqueLivreDB(db.Model):
         :return: str
         """
         return "\t".join([", ".join([auteur.export_to_csv_line() for auteur in self.authors.all()]), self.titre,
-                          self.lieu_edition, self.editeur, str(self.annee), self.nb_page])
+                          self.lieu_edition, self.editeur, str(self.annee), self.nb_page, self.description.__str__()])
 
     @staticmethod
     def get_csv_fieldnames():
@@ -106,7 +107,8 @@ class ReferenceBibliographiqueLivreDB(db.Model):
         Les champs d'une ligne CSV.
         :return:
         """
-        return "\t".join(["Auteur", "Titre", "Lieu d'édition", "Editeur", "Année d'édition", "N° de pages"])
+        return "\t".join(["Auteur", "Titre", "Lieu d'édition", "Editeur", "Année d'édition", "N° de pages",
+                          "Description"])
 
 
 # class ReferenceBibliographiqueArticleDB(db.Model):
@@ -168,7 +170,6 @@ class EnregistrementDB(db.Model):
     # description = models.CharField(max_length=1000, verbose_name="description", null=True, default="")
     id_reference = db.Column(db.Integer, db.ForeignKey('ReferenceBibliographiqueLivre.id'))
     reference = db.relationship(ReferenceBibliographiqueLivreDB)  # , on_delete=models.CASCADE)
-    description = db.Column(db.String(500), default="")
     commentaire = db.Column(db.String(500), default="")
     cote = db.Column(db.String(100), nullable=True, default="")
     # annee = models.IntegerField(verbose_name="année", null=True, default=2018)
@@ -183,25 +184,26 @@ class EnregistrementDB(db.Model):
     date_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
     # proprietaire = models.ForeignKey(to=Compte, on_delete=models.SET_NULL)
     valide = db.Column(db.Boolean, default=False)
+    row = db.Column(db.String(500), default="")
 
     def __str__(self):
-        return self.description.__str__() + " " + self.cote + " " + self.annee + self.nb_exemplaire_supp + \
+        return self.cote + " " + self.annee + self.nb_exemplaire_supp + \
                self.provenance + " " + self.mots_clef
 
     def afficher_tooltip(self):
-        return """{}\nCote : {}\nAnnée : {}\nNombre d'exemplaires : {}\nProvenance : {}""".format(
-            self.description.afficher_tooltip(), self.cote, self.annee, self.nb_exemplaire_supp, self.provenance)
+        return """Cote : {}\nAnnée : {}\nNombre d'exemplaires : {}\nProvenance : {}""".format(
+            self.cote, self.annee, self.nb_exemplaire_supp, self.provenance)
 
     def export_to_csv_line(self):
-        line = [self.description.export_to_csv_line(), self.cote, self.annee, self.nb_exemplaire_supp, self.provenance,
-                self.mots_clef]
+        line = [self.cote, self.annee, self.nb_exemplaire_supp, self.provenance,
+                self.mots_clef, self.row]
         return "\t".join(line)
 
     @staticmethod
     def get_csv_fieldnames():
         return "\t".join(
             [ReferenceBibliographiqueLivreDB.get_csv_fieldnames(), "Cote", "Année", "N° d'exemplaires", "Provenance",
-             "Mots-clef"])
+             "Mots-clef", "Ligne"])
 
 
 class EmpruntLivreDB(db.Model):

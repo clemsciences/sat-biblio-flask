@@ -58,7 +58,8 @@ name: "LireReferenceLivre",
         editeur: "",
         annee: "",
         nb_page: "",
-        valide: false
+        valide: false,
+        description: ""
       },
       message: "",
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
@@ -81,6 +82,7 @@ name: "LireReferenceLivre",
                   this.reference.annee = response.data.reference.annee;
                   this.reference.nb_page = response.data.reference.nb_page;
                   this.reference.valide = response.data.reference.valide;
+                  this.reference.description = response.data.reference.description;
                   this.message = "";
                 } else {
                   this.message = "Impossible de récupérer la référence."
@@ -95,7 +97,8 @@ name: "LireReferenceLivre",
         lieu_edition: this.reference.lieu_edition,
         editeur: this.reference.editeur,
         annee: this.reference.annee,
-        nb_page: this.reference.nb_page
+        nb_page: this.reference.nb_page,
+        description: this.reference.description,
       };
       console.log(this.$store.state.connectionInfo.token);
       updateBookReference(this.$route.params.id, formData, this.$store.state.connectionInfo.token)
