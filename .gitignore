@@ -6,3 +6,4 @@ flask_session/
 venv
 .idea
 /sat_biblio_server/config/jwt_secret_key
+/sat_biblio_server/create_admin_user.py
