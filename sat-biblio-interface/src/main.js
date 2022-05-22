@@ -17,6 +17,12 @@ axios.defaults.baseURL = process.env.VUE_APP_SITE_API_URL;
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'https://satbiblio.clementbesnier.eu';
 
+import VueMeta from 'vue-meta';
+Vue.use(VueMeta);
+
+import VueJsonPretty from 'vue-json-pretty';
+Vue.component("vue-json-pretty", VueJsonPretty);
+
 new Vue({
   render: h => h(App),
   router,
