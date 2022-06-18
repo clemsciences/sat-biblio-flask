@@ -8,7 +8,8 @@ import datetime
 import logging
 from typing import Union, List
 
-from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, UserDB, db
+from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, \
+    UserDB, LogEventDB, db
 from sqlalchemy import and_, join
 
 
@@ -476,3 +477,27 @@ class User:
                       email=user["email"],
                       right=user["right"],
                       id=user["id"])
+
+
+class LogEvent:
+    @staticmethod
+    def from_db_to_data(event_db: LogEventDB):
+        return dict(
+            id=event_db.id,
+            event_type=event_db.event_type.value,
+            object_id=event_db.object_id,
+            event_datetime=datetime_to_str(event_db.event_datetime),
+            event_owner_id=event_db.event_owner_id,
+            table_name=event_db.table_name,
+            values=event_db.values
+        )
+
+    @staticmethod
+    def from_data_to_db(event: dict):
+        return LogEventDB(id=event.get("id"),
+                          event_type=event.get("event"),
+                          object_id=event.get("object_id"),
+                          event_datetime=datetime.datetime.fromisoformat(event.get("event_datetime")),
+                          event_owner_id=event.get("event_owner_id"),
+                          table_name=event.get("table_name"),
+                          values=event.get("values"))

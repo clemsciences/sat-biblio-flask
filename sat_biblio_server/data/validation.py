@@ -76,3 +76,12 @@ def check_emprunt(emprunt):
            "record" in emprunt and \
            "comment" in emprunt and \
            "dateComebackExpected" in emprunt
+
+
+def check_log_event(log_event):
+    return "id" in log_event and \
+           "event_type" in log_event and \
+           "object_id" in log_event and \
+           "event_datetime" in log_event and \
+           "event_owner" in log_event and \
+           "table_name" in log_event
