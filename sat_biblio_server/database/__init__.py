@@ -5,3 +5,5 @@ from .books import AuthorDB, EmpruntLivreDB, EnregistrementDB, \
     ReferenceBibliographiqueLivreDB, HelperAuthorBook
 
 from .users import UserDB
+
+from .events import LogEventDB, EventEnum
