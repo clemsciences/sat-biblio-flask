@@ -22,6 +22,7 @@ from flask_migrate import Migrate
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB, AuthorDB, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.database.users import UserDB
+from sat_biblio_server.database.events import LogEventDB
 from sat_biblio_server.utils import json_result
 
 PACKDIR = os.path.abspath(os.path.dirname(__file__))
@@ -211,6 +212,6 @@ def create_app(config):
     app.register_blueprint(sat_biblio)
     # print("application lancée")
     # app.secret_key = "Essai"
-    for i in app.url_map.iter_rules():
-        print(i)
+    # for i in app.url_map.iter_rules():
+    #     print(i)
     return app

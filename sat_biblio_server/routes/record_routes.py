@@ -3,12 +3,13 @@ Manages records in library.
 
 Records are hints fto manage books in the library.
 """
-
+import json
 import logging
 import re
 
-from flask import redirect, request
+from flask import redirect, request, session
 
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.data.models import Enregistrement, ReferenceBibliographiqueLivre, Author
 import sat_biblio_server.data.validation as dv
@@ -30,7 +31,12 @@ def book_records():
             enregistrement_db = Enregistrement.from_data_to_db(data)
             db.session.add(enregistrement_db)
             db.session.commit()
-            return json_result(True, id=enregistrement_db.id, message="L'enregistrement a correctement été sauvegardé."), 201
+            LogEventManager(db).add_create_event(enregistrement_db.id, session.get("id", -1),
+                                                 EnregistrementDB.__tablename__,
+                                                 values=json.dumps(
+                                                     EnregistrementDB.from_db_to_data(enregistrement_db)))
+            return json_result(True, id=enregistrement_db.id,
+                               message="L'enregistrement a correctement été sauvegardé."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
     elif request.method == "GET":
         n_page, size, sort_by = get_pagination(request)
@@ -92,6 +98,10 @@ def book_record(id_):
         if enregistrement_db:
             db.session.delete(enregistrement_db)
             db.session.commit()
+            LogEventManager(db).add_delete_event(enregistrement_db.id, session.get("id", -1),
+                                                 EnregistrementDB.__tablename__,
+                                                 values=json.dumps(
+                                                     Enregistrement.from_db_to_data(enregistrement_db)))
             return json_result(True), 204
         else:
             return json_result(False), 404
@@ -99,6 +109,7 @@ def book_record(id_):
         data = request.get_json()
         enregistrement_db = EnregistrementDB.query.filter_by(id=id_).first()
         if enregistrement_db:
+            previous_value = Enregistrement.from_db_to_data(enregistrement_db)
             if "id_reference" in data:
                 enregistrement_db.id_reference = data["id_reference"]
             if "description" in data:
@@ -114,6 +125,13 @@ def book_record(id_):
             if "mots_clef" in data:
                 enregistrement_db.mots_clef = data["mots_clef"]
             db.session.commit()
+
+            LogEventManager(db).add_update_event(id_,
+                                                 session.get("id", -1),
+                                                 EnregistrementDB.__tablename__,
+                                                 values=json.dumps(dict(previous=previous_value,
+                                                                        new=Enregistrement.from_db_to_data(
+                                                                            enregistrement_db))))
             return json_result(True), 200
         return json_result(False), 404
 
@@ -189,9 +207,9 @@ def chercher_enregistrements_proches():
                 res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",
                                 value=book_record_db.id))
     else:
-        book_records_db = db.session\
-            .query(EnregistrementDB, ReferenceBibliographiqueLivreDB)\
-            .filter(EnregistrementDB.id_reference == ReferenceBibliographiqueLivreDB.id)\
+        book_records_db = db.session \
+            .query(EnregistrementDB, ReferenceBibliographiqueLivreDB) \
+            .filter(EnregistrementDB.id_reference == ReferenceBibliographiqueLivreDB.id) \
             .filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{query_result}%"))
         for book_record_db, ref_biblio_db in book_records_db:
             res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",

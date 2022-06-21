@@ -2,11 +2,13 @@
 Manages book references.
 Book references are here
 """
+import json
 
-from flask import redirect, request
+from flask import redirect, request, session
 
 import logging
 
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author, Enregistrement
 from sat_biblio_server import sat_biblio
@@ -28,6 +30,9 @@ def book_references():
             reference_db = ReferenceBibliographiqueLivre.from_data_to_db(data)
             db.session.add(reference_db)
             db.session.commit()
+            LogEventManager(db).add_create_event(reference_db.id, session.get("id", -1),
+                                                 ReferenceBibliographiqueLivreDB.__tablename__,
+                                                 values=json.dumps(data))
             return json_result(True, id=reference_db.id, message="La référence a été sauvegardée"), 201
         return json_result(False, message="La sauvegarde de la référence a échoué."), 400
     elif request.method == "GET":
@@ -77,8 +82,9 @@ def book_reference(id_):
             logging.warning(Enregistrement.get_records_by_ref(id_, 1, 10, ""))
             ref_livre = ReferenceBibliographiqueLivre.from_db_to_data(ref_livre_db)
             if ref_livre:
-                ref_livre["authors"] = [{"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
-                                        for author_db in ref_livre_db.authors]
+                ref_livre["authors"] = [
+                    {"text": f"{author_db.first_name} {author_db.family_name}", "value": author_db.id}
+                    for author_db in ref_livre_db.authors]
                 logging.debug(ref_livre)
                 return json_result(True, reference=ref_livre), 200
             else:
@@ -89,6 +95,8 @@ def book_reference(id_):
         data = request.get_json()
         ref_biblio_db = ReferenceBibliographiqueLivre.from_id_to_db(id_)
         if ref_biblio_db:
+            previous_value = ReferenceBibliographiqueLivre.from_db_to_data(ref_biblio_db)
+
             auteurs_db = []
             for auteur in data["auteurs"]:
                 if "value" in auteur:
@@ -103,6 +111,11 @@ def book_reference(id_):
             ref_biblio_db.nd_page = data["nb_page"]
 
             db.session.commit()
+            LogEventManager(db).add_update_event(ref_biblio_db.id, session.get("id", -1),
+                                                 ReferenceBibliographiqueLivreDB.__tablename__,
+                                                 values=json.dumps(dict(
+                                                     previous=previous_value,
+                                                     new=ReferenceBibliographiqueLivre.from_db_to_data(ref_biblio_db))))
 
             return json_result(True), 200
         return json_result(False), 404
@@ -111,6 +124,10 @@ def book_reference(id_):
         if ref_biblio_db:
             db.session.delete(ref_biblio_db)
             db.session.commit()
+            LogEventManager.add_delete_event(ref_biblio_db.id, session.get("id", -1),
+                                             ReferenceBibliographiqueLivreDB.__tablename__,
+                                             values=json.dumps(
+                                                 ReferenceBibliographiqueLivre.from_db_to_data(ref_biblio_db)))
             return json_result(True), 204
         return json_result(False), 404
 
@@ -136,7 +153,7 @@ def book_references_count():
 @sat_biblio.route("/book-references/search-near/", methods=["GET"])
 def chercher_reference_livre_plus_proches():
     titre = request.args.get("titre")
-    references_db = ReferenceBibliographiqueLivreDB.query\
+    references_db = ReferenceBibliographiqueLivreDB.query \
         .filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%")).all()
     references = []
     for reference_db in references_db:

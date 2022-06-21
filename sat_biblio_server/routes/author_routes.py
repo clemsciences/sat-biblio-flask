@@ -3,13 +3,14 @@ Manages authors.
 
 Authors have only a first name and family name.
 """
-
+import json
 import logging
 from urllib.parse import urlparse
 
-from flask import redirect, request
+from flask import redirect, request, session
 from sqlalchemy import or_
 
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
@@ -72,6 +73,8 @@ def authors_():
                 author_db = Author.from_data_to_db(data)
                 db.session.add(author_db)
                 db.session.commit()
+                LogEventManager(db).add_create_event(author_db.id, session.get("id", -1), AuthorDB.__tablename__,
+                                                 values=json.dumps(data))
                 return json_result(True, id=author_db.id), 201
             return json_result(True, id=author_exists.id), 200
         else:
@@ -102,10 +105,14 @@ def author_(id_):
     elif request.method == "PUT":
         data = request.get_json()
         author = AuthorDB.query.filter_by(id=id_).first()
+        previous_value =Author.from_db_to_data(author)
         if validation.check_author(data):
+
             author.first_name = data["first_name"]
             author.family_name = data["family_name"]
             db.session.commit()
+            LogEventManager(db).add_update_event(id_, session.get("id", -1), AuthorDB.__tablename__,
+                                                 values=json.dumps(dict(previous=previous_value, new=data)))
             return json_result(True), 200
         else:
             return json_result(False), 400
@@ -117,6 +124,8 @@ def author_(id_):
         if author_db:
             db.session.delete(author_db)
             db.session.commit()
+            LogEventManager(db).add_delete_event(author_db.id, session.get("id", -1), AuthorDB.__tablename__,
+                                             values=json.dumps(Author.from_db_to_data(author_db)))
             return json_result(True), 204
         return json_result(False), 400
 
