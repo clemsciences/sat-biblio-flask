@@ -37,6 +37,7 @@ import Utilisateur from "@/components/utilisateur/Utilisateur";
 // import ImportTester from "@/components/import/ImportTester";
 import ImportTester2 from "@/components/import/ImportTester2";
 import LireEmprunt from "@/components/emprunt/LireEmprunt";
+import LogEventList from "@/components/log/LogEventList";
 import GlobalImport from "@/components/import/GlobalImport";
 
 Vue.use(VueRouter);
@@ -241,6 +242,12 @@ let router = new VueRouter({
             name: "administrateur",
             path: "/administrateur",
             component: Admin,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
+        {
+            name: "log-events",
+            path: "/evenements",
+            component: LogEventList,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         {
