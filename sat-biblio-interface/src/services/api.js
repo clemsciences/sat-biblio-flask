@@ -255,6 +255,19 @@ export function sendMessageToAdmin(message, theSum) {
 }
 // endregion
 
+// region log events
+
+export function retrieveLogEvents(params, token) {
+  return axios.get(`/log-events/${params}`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+
+export function getLogEventsCount(params, token) {
+  return axios.get(`/log-events/count/${params}`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+// endregion
+
 
 // region import
 export function markRowAsProcessed(nRow) {
