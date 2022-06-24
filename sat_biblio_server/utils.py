@@ -60,6 +60,12 @@ class UserRight(enum.Enum):
         return other.__lt__(self)
 
 
+class EventEnum(enum.Enum):
+    create = "create"
+    delete = "delete"
+    update = "update"
+
+
 # region TEMPS
 class Date:
     def __init__(self, jour, mois, annee):
