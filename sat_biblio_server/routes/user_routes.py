@@ -31,6 +31,7 @@ def connect_user_login(user: UserDB, token: str):
         session["family_name"] = user.family_name
         session["right"] = user.right.value
         session["token"] = token
+        session["id"] = user.id
 
 
 @sat_biblio.route("/users/connect/", methods=["POST"])
@@ -70,18 +71,6 @@ def connect_user(data):
                                "family_name": session["family_name"],
                                "right": session["right"]
                            }), 200
-
-
-# @sat_biblio.route("/user/confirmed", methods=["GET"])
-# def est_utilisateur_confirme():
-#     email = request.args.get("email")
-#     return jsonify({"success": True})
-#     return render_template("patient/connexion/pas_confirme_patient.html", link=email)
-#
-#
-# @sat_biblio.route("/pas_connecte_patient")
-# def pas_connecte_patient():
-#     return render_template("patient/connexion/pas_connecte_patient.html")
 
 
 def disconnect_user():
