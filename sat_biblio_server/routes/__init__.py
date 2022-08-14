@@ -26,3 +26,4 @@ from sat_biblio_server.routes.import_routes import *
 from sat_biblio_server.routes.export_routes import *
 from sat_biblio_server.routes.event_routes import *
 from sat_biblio_server.routes.borrowing_routes import *
+from sat_biblio_server.routes.bnf_routes import *
