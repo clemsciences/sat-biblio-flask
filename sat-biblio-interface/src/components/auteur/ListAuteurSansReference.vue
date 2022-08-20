@@ -1,17 +1,17 @@
 <template>
   <b-container>
-    <ListeEntrees>
+    <ListEntriesOfEntry>
 
-    </ListeEntrees>
+    </ListEntriesOfEntry>
 
   </b-container>
 </template>
 
 <script>
-import ListeEntrees from "@/components/entrees/ListeEntrees";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
 export default {
   name: "ListAuteurSansReference",
-  components: {ListeEntrees},
+  components: {ListEntriesOfEntry},
   methods: {
 
   }
