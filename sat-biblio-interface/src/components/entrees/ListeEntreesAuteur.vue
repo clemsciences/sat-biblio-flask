@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <ListeEntrees
+    <ListEntriesOfEntry
         :retrieve-list-request="getEntryListAssociatedToAuthor"
         :perPage="perPage"
         :caption="caption"
@@ -8,19 +8,19 @@
         :go-to="goTo"
     :entry-id="authorId">
 
-    </ListeEntrees >
+    </ListEntriesOfEntry >
   </b-container>
 
 </template>
 
 <script>
-import ListeEntrees from "@/components/entrees/ListeEntrees";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
 import {getEntryListAssociatedToAuthor, getEntryListAssociatedToAuthorCount} from "@/services/api";
 import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesAuteur",
-  components: {ListeEntrees},
+  components: {ListEntriesOfEntry},
   props: {
     authorId: {
       type: Number,

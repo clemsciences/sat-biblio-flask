@@ -1,5 +1,5 @@
 <template>
-  <ListeEntrees :retrieve-list-request="getEntryListAssociatedToBookRecords"
+  <ListEntriesOfEntry :retrieve-list-request="getEntryListAssociatedToBookRecords"
                 :go-to="goTo"
                 caption="Enregistrement"
                 :per-page="perPage"
@@ -10,13 +10,13 @@
 
 <script>
 
-import ListeEntrees from "@/components/entrees/ListeEntrees";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
 import {getEntryListAssociatedToBookRecords, getEntryListAssociatedToBookRecordsCount} from "@/services/api";
 import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesEnregistrement",
-  components: {ListeEntrees},
+  components: {ListEntriesOfEntry},
   props: {
     recordId: {
       type: Number,

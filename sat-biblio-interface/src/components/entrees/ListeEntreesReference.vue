@@ -1,5 +1,5 @@
 <template>
-  <ListeEntrees :retrieve-list-request="getEntryListAssociatedToReference"
+  <ListEntriesOfEntry :retrieve-list-request="getEntryListAssociatedToReference"
                 :go-to="goTo"
                 caption="Enregistrement"
                 :per-page="perPage"
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import ListeEntrees from "@/components/entrees/ListeEntrees";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
 import {
   getEntryListAssociatedToReference,
   getEntryListAssociatedToReferenceCount
@@ -18,7 +18,7 @@ import {goToEntryView} from "@/services/entries";
 
 export default {
   name: "ListeEntreesReference",
-  components: {ListeEntrees},
+  components: {ListEntriesOfEntry},
   props: {
     referenceId: {
       type: Number,
