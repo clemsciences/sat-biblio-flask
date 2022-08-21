@@ -11,6 +11,9 @@
       :disabled="disabled"
     />
     <b-form-input v-model="value.text" readonly/>
+
+    <b-button v-if="value.value > 0" @click="removeRecord" class="m-1">Enlever enregistrement</b-button>
+    <b-button v-if="value.value > 0" @click="goToRecord" class="m-1">Voir enregistrement</b-button>
   </b-form-group>
 
 </template>
@@ -36,6 +39,13 @@ export default {
     }
   },
   methods: {
+    removeRecord: function() {
+      this.$emit('input', {});
+    },
+    goToRecord: function() {
+      let routeData = this.$router.resolve(`/enregistrement/lire/${this.value.value}`);
+      window.open(routeData.href, '_blank');
+    },
     addRecord: function (event) {
       this.recordQuery = "";
       this.$emit('input', event);
@@ -56,6 +66,9 @@ export default {
     recordQuery: function (newValue) {
       this.getSuggestedRecords(newValue);
     },
+    value: function(newValue) {
+      console.log(newValue);
+    }
   }
 }
 </script>
