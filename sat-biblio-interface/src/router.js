@@ -39,6 +39,7 @@ import ImportTester2 from "@/components/import/ImportTester2";
 import LireEmprunt from "@/components/emprunt/LireEmprunt";
 import LogEventList from "@/components/log/LogEventList";
 import GlobalImport from "@/components/import/GlobalImport";
+import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
 
 Vue.use(VueRouter);
 
@@ -255,6 +256,21 @@ let router = new VueRouter({
             path: "/gestionnaire",
             component: Gestionnaire,
             meta: {needAuth: true, reachableFrom: rights.gestionnaire}
+        },
+        // {
+        //     name: "log-events",
+        //     path: "/evenements/lire/:id",
+        // },
+        // endregion
+        // region dublin core
+        {
+            name: "dublin-core",
+            path: "/dublin-core",
+            component: ListDublinCoreEntries
+        },
+        {
+            name: "dublin-core-entry",
+            path: "/dublin-core/:id",
         },
         // endregion
         // region page not found

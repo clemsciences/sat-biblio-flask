@@ -290,3 +290,18 @@ export function deleteAllCatalogue() {
   return axios.delete("/import/catalogue/");
 }
 // endregion
+
+// region dublin core
+export function getDublinCoreEntries(query, params) {
+  // params: {
+  //    query: String,
+  //    count: 0 or 1
+  //    ...
+  // }
+  return axios.get(`/dublin-core/?${query}`, params);
+}
+
+export function getDublinCoreEntry(id, params) {
+  return axios.get(`/dublin-core/${id}`, params);
+}
+// endregion
