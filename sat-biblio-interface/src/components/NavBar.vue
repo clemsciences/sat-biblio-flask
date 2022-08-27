@@ -34,6 +34,7 @@
                 <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
                 <b-dropdown-item to="/gestionnaire">Gestionnaire</b-dropdown-item>
                 <b-dropdown-item v-if="isAdmin" to="/evenements">Logs</b-dropdown-item>
+                <b-dropdown-item v-if="isAdmin" to="/dublin-core">Dublin Core</b-dropdown-item>
               </b-dropdown-group>
               <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
                 <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
