@@ -6,6 +6,7 @@
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
+<!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
       <ValidEntry v-if="canManage" :approved="record.valide"/>
       <EnregistrementFormulaire
           :message="message"

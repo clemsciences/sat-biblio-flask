@@ -20,7 +20,27 @@ def date_to_str(date: Union[None, datetime.date]) -> str:
     return ""
 
 
+def date_to_vue_str(date: Union[None, datetime.date]) -> str:
+    if date:
+        return date.strftime("%Y-%m-%d")
+        # return date.isoformat()  # strftime("%d/%m/%Y")
+    return ""
+
+
+def datetime_to_str(moment: Union[None, datetime.datetime]) -> str:
+    if moment:
+        return moment.isoformat()
+    return ""
+
+
 class Author:
+
+    def __init__(self, **kwargs):
+        self.first_name = kwargs.get("first_name", "")
+        self.family_name = kwargs.get("family_name", "")
+
+    def __str__(self):
+        return f"{self.first_name} {self.family_name}"
 
     @staticmethod
     def from_db_to_data(author_db: AuthorDB):
@@ -49,9 +69,15 @@ class Author:
             author_db.valide = False
         return author_db
 
+    # region CSV & Excel
     @staticmethod
     def from_data_to_csv_row(data: dict):
         return f"{data.get('family_name', '')} ({data.get('first_name', '')})"
+
+    @staticmethod
+    def get_column_names():
+        return ["Auteurs"]
+    # endregion
 
     @staticmethod
     def from_id_to_db(id_):
@@ -162,6 +188,12 @@ class Author:
 
 class ReferenceBibliographiqueLivre:
 
+    def __init__(self, title):
+        self.title = title
+
+    def __str__(self):
+        return f"{self.title}"
+
     @staticmethod
     def from_data_to_db(reference: dict):
         auteurs_db = []
@@ -209,6 +241,7 @@ class ReferenceBibliographiqueLivre:
         else:
             return {}
 
+    # region CSV & Excel
     @staticmethod
     def from_data_to_csv_row(data: dict) -> List:
         return [
@@ -220,6 +253,13 @@ class ReferenceBibliographiqueLivre:
             data.get("nb_page", ""),
             data.get("description", "")
         ]
+
+    @staticmethod
+    def get_column_names():
+        return Author.get_column_names() + \
+            ["Titre", "Lieu d'édition", "Editeur", "Année d'édition",
+             "Nombre de pages", "Description"]
+    # endregion
 
     @staticmethod
     def from_id_to_db(id_):
@@ -351,6 +391,7 @@ class Enregistrement:
         else:
             return {}
 
+    # region CSV & Excel
     @staticmethod
     def from_data_to_csv_row(data: dict):
         return ReferenceBibliographiqueLivre.from_data_to_csv_row(data.get("reference")) + \
@@ -364,6 +405,13 @@ class Enregistrement:
                 # data.get("date_modification", ""),
                 data.get("row", "")
                ]
+
+    @staticmethod
+    def get_column_names():
+        return ReferenceBibliographiqueLivre.get_column_names() + \
+            ["Année", "Commentaire", "Cote", "Nombre d'exemplaire supplémentaire",
+             "Provenance", "Mots-clefs", "Ligne"]
+    # endregion
 
     @staticmethod
     def get_records_by_author(id_author, n_page, size, sort_by):
@@ -381,7 +429,7 @@ class Enregistrement:
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
         res = db.engine.execute(request)
         print(request)
-        return [dict(type="record", description=str(rec_db["description"]), id=rec_db["id"])
+        return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
                 for rec_db in res.fetchall()]
 
         # the_query = EnregistrementDB.query
@@ -442,6 +490,15 @@ class EmpruntLivre:
 
     @staticmethod
     def from_db_to_data(emprunt_db: EmpruntLivreDB):
+        date_retour_reel_string = ""
+        date_emprunt_string = ""
+        date_retour_prevu_string = ""
+        if emprunt_db.date_retour_reel:
+            date_retour_reel_string = date_to_vue_str(emprunt_db.date_retour_reel)
+        if emprunt_db.date_emprunt:
+            date_emprunt_string = date_to_vue_str(emprunt_db.date_emprunt)
+        if emprunt_db.date_retour_prevu:
+            date_retour_prevu_string = date_to_vue_str(emprunt_db.date_retour_prevu)
         return dict(
             id=emprunt_db.id,
             id_gestionnaire=emprunt_db.id_gestionnaire,
@@ -452,9 +509,9 @@ class EmpruntLivre:
             emprunteur=User.from_db_to_data(emprunt_db.emprunteur),
             comment=emprunt_db.commentaire,
             emprunte=emprunt_db.emprunte,
-            date_emprunt=date_to_str(emprunt_db.date_emprunt),
-            date_retour_prevu=date_to_str(emprunt_db.date_retour_prevu),
-            date_retour_reel=date_to_str(emprunt_db.date_retour_reel),
+            date_emprunt=date_emprunt_string,
+            date_retour_prevu=date_retour_prevu_string,
+            date_retour_reel=date_retour_reel_string,
             rendu=emprunt_db.rendu
         )
 
