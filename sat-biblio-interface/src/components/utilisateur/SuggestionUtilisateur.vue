@@ -9,6 +9,9 @@
       @hit="addUser($event)"
     />
     <b-form-input v-model="value.text" readonly/>
+    <b-button v-if="value.value > 0" @click="removeUser" class="m-1">Enlever utilisateur</b-button>
+    <b-button v-if="value.value > 0" @click="goToUser" class="m-1">Voir utilisateur</b-button>
+
   </b-form-group>
 </template>
 
@@ -37,6 +40,13 @@ export default {
     addUser: function (event) {
       this.userQuery = "";
       this.$emit('input', event);      // this.selectedReference = event;
+    },
+    removeUser: function () {
+      this.$emit('input', {});
+    },
+    goToUser: function() {
+      let routeData = this.$router.resolve(`/utilisateur/lire/${this.value.value}`);
+      window.open(routeData.href, '_blank');
     },
     getSuggestedUsers: function (query) {
       if(query.length >= 1) {
