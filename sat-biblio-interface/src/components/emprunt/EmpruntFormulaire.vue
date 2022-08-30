@@ -23,12 +23,34 @@
                            size="sm"
                            :min="minDate"
                            :max="maxDate"
-                           style="z-index: 9999"
+                           style="z-index: 900"
         />
       </b-form-group>
       <b-form-group label="Commentaire">
         <b-form-textarea size="3" v-model="borrowing.comment" :disabled="disabled"/>
       </b-form-group>
+      <div v-if="isUpdate">
+        <b-form-group label="Date de retour réel">
+        <b-form-datepicker v-model="borrowing.actualComebackDate"
+                           placeholder="Choisissez une date"
+                           label-close-button="Fermer"
+                           label-no-date-selected="Aucune date sélectionnée"
+                           label-help="Utilisez les flèches du clavier pour naviguer dans les dates du calendrier"
+                           label-calendar="Calendrier"
+                           label-nav="Navigation dans le calendrier"
+                           label-today="Aujourd'hui"
+                           label-prev-month="Mois précédent"
+                           label-next-month="Mois suivant"
+                           label-current-month="Mois courant"
+                           locale="fr"
+                           start-weekday="1"
+                           size="sm"
+                           :min="minDate"
+                           :max="maxDate"
+                           style="z-index: 900"
+        />
+      </b-form-group>
+      </div>
       <b-button type="submit" :disabled="isIncorrect || disabled">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
@@ -52,6 +74,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    isUpdate: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -67,11 +93,19 @@ export default {
   },
   methods: {
 
+
+
   },
   computed: {
     isIncorrect: function () {
       return this.borrowing.record.value < 0 || this.borrowing.borrower.length === 0;
+    },
+  },
+  watch: {
+    borrowing: function(newValue) {
+      console.log(newValue);
     }
+
   }
 }
 </script>

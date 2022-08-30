@@ -7,6 +7,7 @@
         :borrowing="borrowing"
         :on-submit="saveBorrowing"
         :message="message"
+        :is-update="false"
     />
 
   </b-container>
@@ -41,7 +42,7 @@ export default {
         comment: this.borrowing.comment,
         borrowed: this.borrowing.isBorrowed,
         borrower: this.borrowing.borrower.value,
-        dateComebackExpected: this.borrowing.dateComebackExpected
+        dateComebackExpected: this.borrowing.dateComebackExpected,
       };
       createBorrowing(formData, this.$store.state.connectionInfo.token).then(
         (response) => {

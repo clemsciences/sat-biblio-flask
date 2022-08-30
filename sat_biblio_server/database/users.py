@@ -20,7 +20,7 @@ class UserDB(db.Model):
 
     Un gestionnaire est un resp
 
-    Un bibliothécaire est une personne auqui est responsable des collections
+    Un bibliothécaire est une personne qui est responsable des collections
 
     Un éditeur est une personne qui peut exporter les données dans un format utilisable.
     """
@@ -124,3 +124,6 @@ class UserDB(db.Model):
         self.confirmed_on = datetime.datetime.utcnow()
         db.session.add(self)
         return True
+
+    def pretty_string(self):
+        return f"{self.first_name} {self.family_name} ({self.email})"

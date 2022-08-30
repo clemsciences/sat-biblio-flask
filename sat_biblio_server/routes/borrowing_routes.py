@@ -84,24 +84,22 @@ def borrowing(id_: int):
 
     elif request.method == "PUT":
         data = request.get_json()
-        borrowing_data = None
         if "borrowing" in data:
             borrowing_data = data["borrowing"]
-            borrowing_db_from_request = EmpruntLivre.from_data_to_db(borrowing_data)
+            # borrowing_db_from_request = EmpruntLivre.from_data_to_db(borrowing_data)
 
             borrowing_db = EmpruntLivreDB.query.filter_by(id=id_).first()
             if borrowing_db:
-
                 id_emprunteur = borrowing_data.get("id_emprunteur", -1)
-                if id_emprunteur < 0:
+                if id_emprunteur > 0:
                     borrowing_db.id_emprunteur = id_emprunteur
 
                 id_enregistrement = borrowing_data.get("id_enregistrement", -1)
-                if id_enregistrement < 0:
+                if id_enregistrement > 0:
                     borrowing_db.id_enregistrement = id_enregistrement
 
                 id_gestionnaire = borrowing_data.get("id_gestionnaire", -1)
-                if id_gestionnaire < 0:
+                if id_gestionnaire > 0:
                     borrowing_db.id_gestionnaire = id_gestionnaire
 
                 if "commentaire" in borrowing_data:
@@ -111,16 +109,16 @@ def borrowing(id_: int):
                     borrowing_db.emprunte = borrowing_data["emprunte"]
 
                 if "date_emprunt" in borrowing_data:
-                    borrowing_db.date_emprunt = borrowing_db_from_request.date_emprunt  # borrowing_data["date_emprunt"]
+                    borrowing_db.date_emprunt = datetime.date.fromisoformat(borrowing_data["date_emprunt"])  # borrowing_data["date_emprunt"]
 
                 if "date_retour_prevu" in borrowing_data:
-                    borrowing_db.date_retour_prevu = borrowing_db_from_request.date_retour_prevu
+                    borrowing_db.date_retour_prevu = datetime.date.fromisoformat(borrowing_data["date_retour_prevu"])
 
                 if "date_retour_reel" in borrowing_data:
-                    borrowing_db.date_retour_reel = borrowing_db_from_request.date_retour_reel
+                    borrowing_db.date_retour_reel = datetime.date.fromisoformat(borrowing_data["date_retour_reel"])
 
                 if "rendu" in borrowing_data:
-                    borrowing_db.rendu = borrowing_db_from_request.rendu
+                    borrowing_db.rendu = borrowing_data["rendu"]
 
                 db.session.commit()
                 borrowing_data = EmpruntLivre.from_db_to_data(borrowing_db)

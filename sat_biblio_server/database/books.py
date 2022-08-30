@@ -230,3 +230,15 @@ class EmpruntLivreDB(db.Model):
     date_retour_prevu = db.Column(db.Date)
     date_retour_reel = db.Column(db.Date)
     rendu = db.Column(db.Boolean)
+
+    def __repr__(self):
+        date_string = ""
+        if self.date_retour_reel:
+            date_string = self.date_retour_reel.isoformat()
+        if self.date_emprunt:
+            date_string += f"|{self.date_emprunt.isoformat()}|"
+        if self.date_retour_prevu:
+            date_string += f"|{self.date_retour_prevu.isoformat()}|"
+
+        return f"Emprunteur: {self.emprunteur}, enregistrement: {self.enregistrement}, emprunte: {self.emprunte}, " \
+               f"dates {date_string}, commentaire: {self.commentaire}, (gestionnaire: {self.gestionnaire})"

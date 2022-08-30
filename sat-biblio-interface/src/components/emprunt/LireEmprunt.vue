@@ -9,6 +9,7 @@
       :borrowing="borrowing"
       :message="message"
       :disabled="!canModify"
+      :is-update="true"
     />
     <b-button class="my-3" v-if="canModify" :disabled="!canModify"
               @click="deleteBorrowing"
@@ -39,7 +40,7 @@ export default {
         record: {value: -1, text: ""},
         comment: "",
         borrower: {value: -1, text: ""},
-        borrowed: true,
+        isBorrowed: true,
         dateComebackExpected: null,
         borrowingDate: null,
         actualComebackDate: null,
@@ -55,20 +56,22 @@ export default {
       retrieveBorrowing(this.$route.params.id).then(
           (response) => {
             if(response.data.success) {
-              console.log(response);
-              this.borrowing.record.value = response.data.borrowing.id_enregistrement;
-              this.borrowing.record.text = response.data.borrowing.enregistrement.reference.titre+" "+response.data.borrowing.enregistrement.cote;
-              this.borrowing.manager.value = response.data.borrowing.gestionnaire.first_name+" "+response.data.borrowing.gestionnaire.family_name;
-              this.borrowing.manager.text = response.data.borrowing.gestionnaire;
-              this.borrowing.comment = response.data.borrowing.comment;
-              this.borrowing.borrower.value = response.data.borrowing.id_emprunteur;
-              // this.borrowing.borrower.text = response.data.borrowing.emprunteur;
-              this.borrowing.borrower.text = response.data.borrowing.emprunteur.first_name+" "+response.data.borrowing.emprunteur.family_name;
-              this.borrowing.borrowed = response.data.borrowing.emprunte;
-              this.borrowing.dateComebackExpected = response.data.borrowing.date_retour_prevu;
-              this.borrowing.borrowingDate = response.data.borrowing.date_emprunt;
-              this.borrowing.actualComebackDate = response.data.borrowing.date_retour_reel;
-              this.borrowing.givenBack = response.data.borrowing.rendu;
+              console.log(response.data.borrowing);
+
+              let receivedBorrowing = response.data.borrowing;
+              this.borrowing.record.value = receivedBorrowing.id_enregistrement;
+              this.borrowing.record.text = receivedBorrowing.enregistrement.reference.titre+" "+response.data.borrowing.enregistrement.cote;
+              this.borrowing.manager.value = receivedBorrowing.gestionnaire.first_name+" "+response.data.borrowing.gestionnaire.family_name;
+              this.borrowing.manager.text = receivedBorrowing.gestionnaire;
+              this.borrowing.comment = receivedBorrowing.comment;
+              this.borrowing.borrower.value = receivedBorrowing.id_emprunteur;
+              // this.borrowing.borrower.text = receivedBorrowing.emprunteur;
+              this.borrowing.borrower.text = receivedBorrowing.emprunteur.first_name+" "+response.data.borrowing.emprunteur.family_name;
+              this.borrowing.isBorrowed = receivedBorrowing.emprunte;
+              this.borrowing.dateComebackExpected = receivedBorrowing.date_retour_prevu;
+              this.borrowing.borrowingDate = receivedBorrowing.date_emprunt;
+              this.borrowing.actualComebackDate = receivedBorrowing.date_retour_reel;
+              this.borrowing.givenBack = receivedBorrowing.rendu;
             }
           }
       ).catch(
@@ -79,13 +82,16 @@ export default {
     },
     updateBorrowing: function () {
       const formData = {
-        record: this.borrowing.record,
-        comment: this.borrowing.comment,
-        borrowed: this.borrowing.borrowed,
-        borrower: this.borrowing.borrower,
-        dateComebackExpected: this.borrowing.dateComebackExpected
+        id_enregistrement: this.borrowing.record.value,
+        commentaire: this.borrowing.comment,
+        emprunte: this.borrowing.isBorrowed,
+        id_emprunteur: this.borrowing.borrower.value,
+        date_retour_prevu: this.borrowing.dateComebackExpected,
+        date_retour_reel: this.borrowing.actualComebackDate,
+        rendu: this.borrowing.givenBack
+
       };
-      updateBorrowing(this.$route.params.id, formData, this.$store.state.connectionInfo.token).then(
+      updateBorrowing(this.$route.params.id, {borrowing: formData}, this.$store.state.connectionInfo.token).then(
           (response) => {
             if(response.data.success) {
               console.log("borrowing updated");
