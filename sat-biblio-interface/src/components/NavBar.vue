@@ -53,6 +53,7 @@
             <b-nav-item-dropdown text="Liens" class="titre-nav-item">
               <b-dropdown-item @click="goToMainSite">Consulter le site de la SAT</b-dropdown-item>
               <b-dropdown-item @click="goToGallicaSAT">Consulter les bulletins de la SAT en ligne</b-dropdown-item>
+              <b-dropdown-item @click="getSatBiblioDoc">Consulter la documentation de </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
@@ -120,6 +121,9 @@ export default {
     },
     goToMainSite() {
       window.open('https://www.societearcheotouraine.eu/','_blank');
+    },
+    getSatBiblioDoc() {
+      window.open(`${process.env.VUE_APP_SITE_API_URL}/static/sat_biblio_documentation-1.pdf`, '_blank');
     }
   }
 
