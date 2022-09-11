@@ -12,7 +12,7 @@ import openpyxl
 from openpyxl.styles import Font, colors, PatternFill, Border, Side, Protection, Alignment
 from openpyxl.utils import get_column_letter
 
-from data.models import Enregistrement
+from sat_biblio_server.data.models import Enregistrement
 
 
 class ExportCatalogueManager:

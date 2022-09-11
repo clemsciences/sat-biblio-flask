@@ -4,8 +4,8 @@ import logging
 
 from flask import request
 
-from managers.bnf_sru_manager import BnfSruManager, RequestResult
-from managers.log_manager import LogEventManager
+from sat_biblio_server.managers.bnf_sru_manager import BnfSruManager, RequestResult
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement

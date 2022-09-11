@@ -1,7 +1,7 @@
 import datetime
 
 from sat_biblio_server import LogEventDB
-from utils import EventEnum
+from sat_biblio_server.utils import EventEnum
 
 
 class LogEventManager:

@@ -1,7 +1,11 @@
+"""
+
+"""
+
 from lxml import etree
 import requests
 
-from data.models import Author, ReferenceBibliographiqueLivre
+from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre
 
 
 class BnfSruManager:
