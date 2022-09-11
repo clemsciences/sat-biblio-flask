@@ -15,6 +15,7 @@ Flask-WTF
 itsdangerous
 Jinja2
 kiwisolver
+lxml
 Mako
 MarkupSafe
 pyparsing
@@ -32,3 +33,4 @@ xlrd
 pylatex
 
 rdflib
+openpyxl
