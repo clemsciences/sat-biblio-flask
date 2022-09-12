@@ -24,7 +24,7 @@ except ImportError:
 # @sat_biblio.route("/")
 # def api_redirect():
 #     return jsonify({"success": False, "message": "Vous n'êtes pas connecté. Veuillez vous connecter pour continuer."})
-from utils import UserRight
+from sat_biblio_server.utils import UserRight
 
 app = create_app(Config)
 
