@@ -55,7 +55,7 @@ def send_email_new_password(recipient: str, nouveau_mot_de_passe: str):
                   html=render_template("mails/nouveau_mot_de_passe.html", recipient=recipient,
                                        nouveau_mot_de_passe=nouveau_mot_de_passe,
                                        expediteur=Config.MAIL_DEFAULT_SENDER))
-    send_email(msg, recipient)
+    return send_email(msg, recipient)
 
 
 def generer_lien_inscription():
@@ -70,19 +70,21 @@ def envoyer_mail_demande_inscription_utilisateur(user: Union[UserDB], link):
     return send_email(msg, user.email)
 
 
-def envoyer_message_contact(user_email_address: str, message: str):
+def envoyer_message_contact(user_email_address: str, message: str) -> bool:
     # Send to contact
-
-    msg1 = Message(subject="Copie du message envoyé à SAT biblio", sender=SENDER,
-                   html=render_template("mails/message_contact.html", message=message))
-    msg1.add_recipient(user_email_address)
-    # mail.send(msg1)
-    send_email(msg1, user_email_address)
+    if user_email_address:
+        msg1 = Message(subject="Copie du message envoyé à SAT biblio", sender=SENDER,
+                       html=render_template("mails/message_contact.html", message=message))
+        msg1.add_recipient(user_email_address)
+        # mail.send(msg1)
+        res = send_email(msg1, user_email_address)
+        if not res:
+            return False
 
     # Send to admin of the website
     msg2 = Message(subject="Message reçu d'un utilisateur de SAT biblio", sender=SENDER,
                    html=render_template("mails/message_contact.html", destinataire=user_email_address, message=message))
     msg2.add_recipient(SENDER)
-    send_email(msg2, user_email_address)
+    return send_email(msg2, user_email_address)
 
 

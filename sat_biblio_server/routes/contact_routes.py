@@ -15,11 +15,22 @@ def send_email_to_admin():
     :return:
     """
     if request.method == "POST":
-        message = request.get_json()["message"]
-        if "10" != request.get_json()["theSum"]:
+        data = request.get_json()
+        message = data["message"]
+        if "10" != data["theSum"]:
             return json_result(False, mistake=True, message="")
-        current_user = UserDB.query.filter_by(email=session["email"]).first()
-        envoyer_message_contact(current_user.email, message)
-        return json_result(True, mistake=False, message="Mail correctly sent")
-    else:
-        return json_result(False, mistake=False, message="Wrong method")
+        if "email" in session:
+            current_user = UserDB.query.filter_by(email=session["email"]).first()
+            success = envoyer_message_contact(current_user.email, message)
+        else:
+            if "emailAddress" in data:
+                success = envoyer_message_contact(data["emailAddress"], message)
+            else:
+                success = envoyer_message_contact("", message)
+
+        if success:
+            message = "Mail correctly sent"
+        else:
+            message = "Error while sending email"
+        return json_result(success, mistake=False, message=message)
+    return json_result(False, mistake=False, message="Wrong method")

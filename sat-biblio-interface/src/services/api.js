@@ -250,8 +250,8 @@ export function getBorrowingsCount(params) {
 // endregion
 
 // region contact
-export function sendMessageToAdmin(message, theSum) {
-  return axios.post('/contact/send-message/', {message, theSum});
+export function sendMessageToAdmin(message, theSum, emailAddress) {
+  return axios.post('/contact/send-message/', {message, theSum, emailAddress});
 }
 // endregion
 
@@ -288,6 +288,16 @@ export function importAllCatalogue() {
 }
 export function deleteAllCatalogue() {
   return axios.delete("/import/catalogue/");
+}
+// endregion
+
+// region export
+export function exportXLSXRequest(params) {
+  return axios.get(`/export/xlsx/${params}`);
+}
+
+export function exportCSVRequest(params) {
+  return axios.get(`/export/csv/${params}`);
 }
 // endregion
 
