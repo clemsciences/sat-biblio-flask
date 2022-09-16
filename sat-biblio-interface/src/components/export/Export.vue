@@ -37,7 +37,7 @@
 <script>
 // import { jsPDF } from "jspdf";
 
-import axios from "axios";
+import {exportCSVRequest, exportXLSXRequest} from "@/services/api";
 
 export default {
   name: "Export",
@@ -54,7 +54,7 @@ export default {
     exporterCSV: function() {
       this.generating = true;
       this.message = "Génération du fichier CSV en cours...";
-      axios.get(`/export/csv/${params}`).then(response => {
+      exportCSVRequest(this.params).then(response => {
         if(response.data.success) {
           this.linkToDownload = response.data.filename;
         } else {
@@ -76,7 +76,7 @@ export default {
       // setTimeout(() => {
       //   this.downloading = false;
       // }, 10000);
-      axios.get(`/export/xlsx/${params}`, ).then(response => {
+      exportXLSXRequest(this.params).then(response => {
         if(response.data.success) {
           this.linkToDownload = response.data.filename;
         } else {
