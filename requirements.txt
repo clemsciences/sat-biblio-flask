@@ -31,6 +31,6 @@ pdfkit
 wkhtmltopdf
 xlrd
 pylatex
-
+requests
 rdflib
 openpyxl
