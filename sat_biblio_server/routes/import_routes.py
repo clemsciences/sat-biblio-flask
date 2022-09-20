@@ -6,8 +6,8 @@ import pickle
 from flask import request
 
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
-from sat_biblio_server import sat_biblio, json_result, PACKDIR, app, AuthorDB, db, EnregistrementDB, \
-    ReferenceBibliographiqueLivreDB
+from sat_biblio_server.database import db, AuthorDB, EnregistrementDB, ReferenceBibliographiqueLivreDB
+from sat_biblio_server import sat_biblio, json_result, PACKDIR
 import sat_biblio_server.data.import_csv.import_csv_utils as icu
 
 
@@ -166,19 +166,6 @@ def load_row(n_row):
 #
 #         db.session.add(author_db)
 #         db.session.commit()
-
-
-@sat_biblio.route("/import/", methods=["GET", "POST"])
-def import_catalogue_from_file():
-    print(app.config)
-
-    # if request.method == "POST":
-    #     if "file" in request.files:
-    #         file = request.files["file"]
-    #         filename = secure_filename(file.filename)
-    #         sat_biblio.config
-    #         file.save()
-
 
 @sat_biblio.route("/import/catalogue/", methods=["DELETE"])
 def delete_catalogue():
