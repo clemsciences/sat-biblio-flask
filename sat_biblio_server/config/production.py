@@ -32,6 +32,7 @@ class Config:
 
     UPLOAD_FOLDER = "uploads"
     ALLOWED_IMPORT_EXTENSIONS = {"csv", "xslx"}
+    MAX_CONTENT_LENGTH = 64_000_000
 
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
