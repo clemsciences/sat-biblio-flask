@@ -5,9 +5,7 @@ import datetime
 import logging
 import os
 
-from flask import request, session, send_file
-
-from sat_biblio_server.data.export.export_manager import ExportCatalogueManager
+from sat_biblio_server.managers.export_manager import ExportCatalogueManager
 from sat_biblio_server import sat_biblio, json_result, EnregistrementDB, PACKDIR
 
 
