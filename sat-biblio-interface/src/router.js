@@ -296,7 +296,7 @@ router.beforeEach(function (to, from, next) {
     if(to.meta.needAuth) {
         if(!store.state.connectionInfo.token) {
             next({
-                name: 'accueil',
+                name: 'utilisateur-connexion',
                 query: {
                     redirect: to.fullPath
                 }
@@ -309,7 +309,7 @@ router.beforeEach(function (to, from, next) {
                 next();
             } else {
                 next({
-                    name: 'accueil',
+                    name: 'utilisateur-connexion',
                 });
             }
         } else {
