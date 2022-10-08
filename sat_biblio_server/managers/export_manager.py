@@ -12,6 +12,7 @@ import openpyxl
 from openpyxl.styles import Font, colors, PatternFill, Border, Side, Protection, Alignment
 from openpyxl.utils import get_column_letter
 
+from managers.catalogue_manager import CatalogueHamelain1
 from sat_biblio_server.data.models import Enregistrement
 
 
@@ -78,3 +79,48 @@ class ExportCatalogueManager:
 
         excel_catalogue.save(complete_path)
         return complete_path
+
+    @staticmethod
+    def export_hamelain_1(path: str, catalogue: CatalogueHamelain1):
+        complete_path = os.path.join(path, f"catalogue-exporte-hamelain-1.xlsx")
+        excel_catalogue = openpyxl.Workbook()
+        current_sheet = excel_catalogue.active
+        current_sheet.title = "Catalogue"
+        font = Font(bold=True)
+        fill = PatternFill(start_color='FFFFFFFF', end_color='FF000000')
+        border = Border(left=Side(color="FF000000"),
+                        right=Side(color="FF000000"),
+                        bottom=Side(color="FF000000"),
+                        top=Side(color="FF000000"))
+        protection = Protection(locked=True)
+        column_names = CatalogueHamelain1.COLUMNS
+        column_widths = [30, 30, 30, 30, 30, 30, 30, 30, 30, 30]
+        for i, width in enumerate(column_widths, 1):
+            column_letter = get_column_letter(i)
+            current_sheet.column_dimensions[column_letter].width = width
+            # current_sheet.column_dimensions[column_letter].height = 10
+        current_sheet.auto_filter.ref = f"A1:N{len(catalogue.rows) + 1}"
+        current_sheet.auto_filter.add_sort_condition(
+            f"{get_column_letter(10)}1:{get_column_letter(10)}{len(catalogue.rows) + 1}")
+
+        # endregion
+        for i in range(len(column_names)):
+            c = current_sheet.cell(row=1, column=i + 1, value=column_names[i])
+            c.font = font
+            c.fill = fill
+            c.border = border
+
+        for i, row_hamelain in enumerate(catalogue.rows):
+            row = row_hamelain.to_csv_row()
+            current_sheet.row_dimensions[i].height = 30
+            print(row)
+            if i % 1000 == 0:
+                logging.error(row)
+            for j in range(len(row)):
+                c = current_sheet.cell(row=i + 2, column=j + 1, value=row[j])
+                c.alignment = Alignment(wrap_text=True)
+        current_sheet.protection = protection
+
+        excel_catalogue.save(complete_path)
+        return complete_path
+
