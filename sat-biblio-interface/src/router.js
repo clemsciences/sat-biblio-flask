@@ -40,6 +40,8 @@ import LireEmprunt from "@/components/emprunt/LireEmprunt";
 import LogEventList from "@/components/log/LogEventList";
 import GlobalImport from "@/components/import/GlobalImport";
 import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
+// import ImageManager from "@/components/images/ImageManager";
+import ImportExport from "@/components/import_export/ImportExport";
 
 Vue.use(VueRouter);
 
@@ -140,6 +142,12 @@ let router = new VueRouter({
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
+        {
+            name: "import-export",
+            path: "/gestionnaire-importation",
+            component: ImportExport,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
         {
             name: 'import-csv',
             path: "/importation",

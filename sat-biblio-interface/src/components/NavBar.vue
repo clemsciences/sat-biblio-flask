@@ -41,8 +41,7 @@
               </b-dropdown-group>
               <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
                 <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
-                <b-dropdown-item to="/importation-globale">Importation globale</b-dropdown-item>
-                <b-dropdown-item to="/importation">Importation fine</b-dropdown-item>
+                <b-dropdown-item to="/gestionnaire-importation">Gestionnaire d'importation</b-dropdown-item>
               </b-dropdown-group>
             </b-nav-item-dropdown>
           </b-nav-item>
