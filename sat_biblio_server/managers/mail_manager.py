@@ -55,6 +55,7 @@ def send_email_new_password(recipient: str, nouveau_mot_de_passe: str):
                   html=render_template("mails/nouveau_mot_de_passe.html", recipient=recipient,
                                        nouveau_mot_de_passe=nouveau_mot_de_passe,
                                        expediteur=Config.MAIL_DEFAULT_SENDER))
+    msg.add_recipient(recipient)
     return send_email(msg, recipient)
 
 

@@ -167,14 +167,15 @@ def send_forgotten_password_email():
     """
     data = request.get_json()
     if "email_address" in data:
-        user_db = UserDB.query.filter_by(email=session["email"]).first()
+        email_address = data["email_address"]
+        user_db = UserDB.query.filter_by(email=email_address).first()
         if not user_db:
             return json_result(False, "L'adresse email donné est inconnu"), 200
         new_password = generate_new_password()
         new_password_hash = generate_password_hash(new_password)
         user_db.mdp_hash = new_password_hash
         db.session.commit()
-        mail_manager.send_email_new_password(session["email"], new_password)
+        mail_manager.send_email_new_password(email_address, new_password)
         return json_result(True, "Un courriel vous a été envoyé"), 200
     return json_result(False, "Il manque l'adresse email dans la requête"), 401
 
