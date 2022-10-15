@@ -144,12 +144,18 @@ def search_near_users():
 
 def generate_new_password(password_length=10):
     """
+    >>> import random
+    >>> random.seed(1994)
+    >>> generate_new_password()
+    '53l2vqzxmj'
+
     Generate a new password.
     :return: new password
     """
     password = []
+    alphabet = [c for c in "azertyuiopqsdfghjklmwxcvbn1234567890"]
     for i in range(password_length):
-        password.append(random.choice(["azertyuiopqsdfghjklmwxcvbn1234567890"]))
+        password.append(random.choice(alphabet))
     return "".join(password)
 
 
