@@ -12,10 +12,24 @@
         <b-form-input type="password" name="current_password" v-model="currentPassword"/>
       </b-form-group>
       <b-form-group label="Le nouveau mot de passe">
-        <b-form-input type="password" name="password1" v-model="password1"/>
+        <b-row>
+        <b-col cols="9">
+        <b-form-input :type="passwordType1" name="password1" v-model="password1"/>
+          </b-col>
+        <b-col cols="3">
+          <b-button @click="togglePasswordType1">{{ this.passwordAction(this.passwordType1) }}</b-button>
+        </b-col>
+        </b-row>
       </b-form-group>
       <b-form-group label="Le même nouveau mot de passe">
-        <b-form-input type="password" name="password2" v-model="password2"/>
+        <b-row>
+        <b-col cols="9">
+        <b-form-input :type="passwordType2" name="password2" v-model="password2"/>
+        </b-col>
+        <b-col cols="3">
+          <b-button @click="togglePasswordType2">{{ this.passwordAction(this.passwordType2) }}</b-button>
+        </b-col>
+        </b-row>
       </b-form-group>
       <b-button type="submit" :disabled="areNotEqualAndCorrect">Valider</b-button>
     </b-form>
@@ -41,6 +55,8 @@ export default {
       password1: "",
       password2: "",
       message: "",
+      passwordType1: "password",
+      passwordType2: "password",
     }
   },
   methods: {
@@ -60,13 +76,35 @@ export default {
             }
         );
       }
+    },
+    togglePasswordType: function(passwordType) {
+      if(passwordType === "password") {
+        passwordType = "text";
+      } else {
+        passwordType = "password";
+      }
+      return passwordType;
+
+    },
+    togglePasswordType1: function() {
+      this.passwordType1 = this.togglePasswordType(this.passwordType1);
+    },
+    togglePasswordType2: function() {
+      this.passwordType2 = this.togglePasswordType(this.password2);
+    },
+    passwordAction: function(passwordType) {
+      if(passwordType === "password") {
+        return "Afficher le mot de passe";
+      } else {
+        return "Cacher le mot de passe";
+      }
     }
   },
   computed: {
     ...mapState(["connectionInfo"]),
     areNotEqualAndCorrect: function () {
       return this.password1 === this.password2 && this.password1.length < 6;
-    }
+    },
   }
 }
 </script>

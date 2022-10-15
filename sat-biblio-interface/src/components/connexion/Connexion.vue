@@ -8,7 +8,14 @@
         <b-form-input v-model="email"></b-form-input>
       </b-form-group>
       <b-form-group label="Mot de passe">
-        <b-form-input type="password" v-model="password"></b-form-input>
+        <b-row>
+          <b-col cols="9">
+            <b-form-input :type="passwordType" v-model="password"></b-form-input>
+          </b-col>
+          <b-col cols="3">
+            <b-button @click="togglePasswordType">{{ passwordAction }}</b-button>
+          </b-col>
+        </b-row>
       </b-form-group>
       <b-button type="submit" :disabled="isIncorrect">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
     </b-form>
@@ -28,7 +35,8 @@ export default {
     return {
       email: "",
       password: "",
-      message: ""
+      message: "",
+      passwordType: "password"
     }
   },
   methods: {
@@ -62,11 +70,26 @@ export default {
             }
           }
       );
+    },
+
+    togglePasswordType: function() {
+      if(this.passwordType === "password") {
+        this.passwordType = "text";
+      } else {
+        this.passwordType = "password";
+      }
     }
   },
   computed: {
     isIncorrect: function () {
       return this.email.length === 0 || this.password.length === 0;
+    },
+    passwordAction: function() {
+      if(this.passwordType === "password") {
+        return "Afficher le mot de passe";
+      } else {
+        return "Cacher le mot de passe";
+      }
     }
   }
 }

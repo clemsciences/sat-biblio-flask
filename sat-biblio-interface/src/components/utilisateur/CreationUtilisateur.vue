@@ -13,10 +13,24 @@
         <b-form-input v-model="email"/>
       </b-form-group>
       <b-form-group label="Mot de passe">
-        <b-form-input type="password" v-model="password1"/>
+        <b-row>
+          <b-col cols="9">
+            <b-form-input :type="passwordType1" v-model="password1"/>
+          </b-col>
+          <b-col cols="3">
+            <b-button @click="togglePasswordType1">{{ this.passwordAction(this.passwordType1) }}</b-button>
+          </b-col>
+        </b-row>
       </b-form-group>
       <b-form-group label="Confirmation du mot de passe">
-        <b-form-input type="password" v-model="password2"/>
+        <b-row>
+          <b-col cols="9">
+            <b-form-input :type="passwordType2" v-model="password2"/>
+          </b-col>
+          <b-col cols="3">
+            <b-button @click="togglePasswordType2">{{ this.passwordAction(this.passwordType2) }}</b-button>
+          </b-col>
+        </b-row>
       </b-form-group>
       <b-button type="submit">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>
@@ -48,7 +62,9 @@ export default {
       password1: "",
       password2: "",
       message: "",
-      inForm: true
+      inForm: true,
+      passwordType1: "password",
+      passwordType2: "password",
     }
   },
   methods: {
@@ -103,8 +119,31 @@ export default {
       this.password1 = "";
       this.password2 = "";
       this.message = "";
+      this.passwordType1 = "password";
+      this.passwordType2 = "password";
+    },
+    togglePasswordType: function(passwordType) {
+      if(passwordType === "password") {
+        passwordType = "text";
+      } else {
+        passwordType = "password";
+      }
+      return passwordType;
+    },
+    togglePasswordType1: function() {
+      this.passwordType1 = this.togglePasswordType(this.passwordType1);
+    },
+    togglePasswordType2: function() {
+      this.passwordType2 = this.togglePasswordType(this.passwordType2)
+    },
+    passwordAction: function(passwordType) {
+      if(passwordType === "password") {
+        return "Afficher le mot de passe";
+      } else {
+        return "Cacher le mot de passe";
+      }
     }
-  }
+  },
 }
 </script>
 
