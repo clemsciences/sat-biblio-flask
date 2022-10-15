@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     passwordForgotten: function () {
-      haveForgottenPassword().then(
+      haveForgottenPassword(this.emailAddress).then(
           (response) => {
             this.message = response.data.message;
           }

@@ -153,8 +153,7 @@ def generate_new_password(password_length=10):
     return "".join(password)
 
 
-@sat_biblio.route("/users/forgotten-password/")
-@validation_connexion_et_retour_defaut("email", ["GET"])
+@sat_biblio.route("/users/forgotten-password/", methods=["POST"])
 def send_forgotten_password_email():
     """
     Send an email to a user with a new password.
