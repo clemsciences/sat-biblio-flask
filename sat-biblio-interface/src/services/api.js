@@ -13,8 +13,8 @@ export function disconnectUser() {
   return axios.get("/users/disconnect/");
 }
 
-export function haveForgottenPassword() {
-  return axios.get("/users/forgotten-password/");
+export function haveForgottenPassword(formData) {
+  return axios.post("/users/forgotten-password/", formData);
 }
 
 export function recreatePassword(currentPassword, newPassword) {
