@@ -19,7 +19,7 @@
       </b-form-group>
       <b-form-group label="Droit">
         <b-form-select :disabled="!managerCanUse || (isMyProfile && managerCanUse)"
-                       v-model="right" :options="rightsForSelect"
+                       v-model="right" :options="limitedRightsForSelect()"
                        :select-size="1" size="sm"/>
       </b-form-group>
       <b-form-group label="Adresse email">
@@ -116,12 +116,16 @@ export default {
     managerCanUse() {
       console.log(this.$store.getters.getUserRight);
       console.log(rights.gestionnaire.index);
-      return this.$store.getters.getUserRight >= rights.gestionnaire.index;
+      console.log(this.right);
+      return this.$store.getters.getUserRight >= this.right && this.$store.getters.getUserRight >= rights.gestionnaire.index;
     },
     isIncorrect() {
       return this.first_name.length === 0 ||
           this.family_name.length === 0 ||
           !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.emailAddress);
+    },
+    limitedRightsForSelect() {
+      return this.rightsForSelect.filter((item) => item.value <= this.$store.getters.getUserRight );
     }
   }
 }
