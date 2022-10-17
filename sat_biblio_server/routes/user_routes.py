@@ -162,7 +162,7 @@ def generate_new_password(password_length=10):
 @sat_biblio.route("/users/forgotten-password/", methods=["POST"])
 def send_forgotten_password_email():
     """
-    Send an email to a user with a new password.
+    Email a user with a new password.
     :return:
     """
     data = request.get_json()
@@ -307,6 +307,8 @@ def users_():
 @validation_connexion_et_retour_defaut("email", ["GET",  "PUT", "DELETE"])
 def user_(id_):
     user_db = UserDB.query.filter_by(id=id_).first()
+    # connected_user_email_address = session["email"]
+    # connected_user_right = session["right"]
     if request.method == "GET":
         user_db = UserDB.query.filter_by(id=id_).first()
         user = User.from_db_to_data(user_db)
@@ -323,6 +325,7 @@ def user_(id_):
             return json_result(False), 400
     elif request.method == "DELETE":
         if user_db:
+            # user_db.right.value
             db.session.delete(user_db)
             db.session.commit()
             return json_result(True), 204
