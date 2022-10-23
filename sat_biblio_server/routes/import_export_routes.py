@@ -38,6 +38,9 @@ def process_import_export():
                     imported_model = ImportManager.import_schweitz_format(path_to_file)
                     exported_model = CatalogueConverter.from_schweitz_to_hamelain_1(imported_model)
                     path_to_new_catalogue = ExportCatalogueManager.export_hamelain_1(Config.UPLOAD_FOLDER, exported_model)
+                # elif chosen_method == "2":
+                #     imported_model_1 = ImportManager.import_hamelain_1()
+                #     imported_model_2 = ImportManager.import_hamelain_2()
                 # endregion
                 return json_result(True, filename=path_to_new_catalogue)
             else:

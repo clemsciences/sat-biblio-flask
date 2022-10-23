@@ -1,6 +1,7 @@
 """
 
 """
+from collections import defaultdict
 import re
 from typing import List
 
@@ -200,6 +201,58 @@ class CatalogueSchweitzRow:
         ]
 
 
+def normalize_cote(cote: str):
+    """
+    >>> normalize_cote()
+    :param cote:
+    :return:
+    """
+    l = f"{cote}".strip().upper().split(" ")
+
+    i_res = 0
+    for i, item in enumerate(l):
+        if re.match(r"[0-9./]+", item):
+            i_res = i
+            break
+    if i_res > 0:
+        first = " ".join(l[:i_res])
+        second = l[i_res]
+        rest = l[i_res+1:]
+        normalized_second = ""
+        point_index = second.find(".")
+        slash_index = second.find("/")
+        index = -1
+        if point_index == -1 and slash_index == -1:
+            index = len(second)
+        elif point_index != -1:
+            index = point_index
+        elif slash_index != -1:
+            index = slash_index
+
+        if len(second[:index]) >= 1:
+            if len(second[:index]) >= 4:
+                normalized_second = second
+            elif len(second[:index]) == 3:
+                normalized_second = f"0{second}"
+            elif len(second[:index]) == 2:
+                normalized_second = f"00{second}"
+            elif len(second[:index]) == 1:
+                normalized_second = f"000{second}"
+        if rest:
+            return f"{first} {normalized_second} {' '.join(rest)}"
+        else:
+            return f"{first} {normalized_second}"
+    else:
+        return f"{cote}".strip().upper()
+
+
+def void_if_none(a):
+    if a:
+        return a
+    else:
+        return ""
+
+
 class CatalogueHamelain1:
     COLUMNS = ["Cote SAT de l'ouvrage", "Titre de l'ouvrage", "Auteur", "Année de publication", "Editeur",
                "Nombre de pages", "Entrée dans la bibliothèque", "Observations",
@@ -207,12 +260,19 @@ class CatalogueHamelain1:
 
     def __init__(self):
         self.rows: List[CatalogueHamelain1Row] = []
+        self.d = defaultdict(list)
 
-    def parse_rows(self, rows):
-        for row in rows:
-            hamelain_1_row = CatalogueHamelain1Row()
-            hamelain_1_row.parse_row(row)
-            self.rows.append(hamelain_1_row)
+    def parse_rows(self, rows, ignore_n_first_rows=0):
+        for i, row in enumerate(rows):
+            if i >= ignore_n_first_rows:
+                hamelain_1_row = CatalogueHamelain1Row()
+                hamelain_1_row.parse_row(row)
+                self.rows.append(hamelain_1_row)
+        for i, row in enumerate(self.rows):
+            self.d[row.cote].append(i)
+
+    def keys(self):
+        return self.d.keys()
 
 
 class CatalogueHamelain1Row:
@@ -220,7 +280,7 @@ class CatalogueHamelain1Row:
     def __init__(self):
         self.cote = ""
         self.titre = ""
-        self.auteurs = 0
+        self.auteurs = ""
         self.annee_publication = ""
         self.editeur = ""
         self.nb_pages = ""
@@ -229,15 +289,15 @@ class CatalogueHamelain1Row:
         self.aide_a_la_recherche = ""
 
     def parse_row(self, row):
-        self.cote = row[0]
-        self.titre = row[1]
-        self.auteurs = row[2]
-        self.annee_publication = row[3]
-        self.editeur = row[4]
-        self.nb_pages = row[5]
-        self.entree_bibliotheque = row[6]
-        self.observations = row[7]
-        self.aide_a_la_recherche = row[8]
+        self.cote = normalize_cote(row[0])
+        self.titre = void_if_none(row[1])
+        self.auteurs = void_if_none(row[2])
+        self.annee_publication = void_if_none(row[3])
+        self.editeur = void_if_none(row[4])
+        self.nb_pages = void_if_none(row[5])
+        self.entree_bibliotheque = void_if_none(row[6])
+        self.observations = void_if_none(row[7])
+        self.aide_a_la_recherche = void_if_none(row[8])
 
     def to_csv_row(self):
         return [
@@ -250,6 +310,148 @@ class CatalogueHamelain1Row:
             self.entree_bibliotheque,
             self.observations,
             self.aide_a_la_recherche
+        ]
+
+
+class CatalogueHamelain2:
+    COLUMNS = ["Cote", "Titre", "Auteur", "Lieu d'édition", "Editeur",
+               "Année d'édition", "Nombre de pages", "Description",
+               "Nombre d'exemplaire supplémentaire", "Provenance",
+               "Mots-clefs", "Contenu colonne Schweitz", "Ouvrages supprimés (désherbage 2022)"]
+
+    def __init__(self):
+        self.rows: List[CatalogueHamelain2Row] = []
+        self.d = defaultdict(list)
+
+    def parse_rows(self, rows, ignore_n_first_rows=2):
+        for i, row in enumerate(rows):
+            if i >= ignore_n_first_rows:
+                hamelain_2_row = CatalogueHamelain2Row()
+                hamelain_2_row.parse_row(row)
+                self.rows.append(hamelain_2_row)
+        for i, row in enumerate(self.rows):
+            self.d[row.cote].append(i)
+
+    def keys(self):
+        return self.d.keys()
+
+
+class CatalogueHamelain2Row:
+    def __init__(self):
+        self.cote = ""
+        self.auteurs = ""
+        self.titre = ""
+        self.lieu_edition = ""
+        self.editeur = ""
+        self.annee_publication = ""
+        self.nb_pages = ""
+        self.description = ""
+        self.nb_exemplaire_suppl = ""
+        self.entree_bibliotheque = ""
+        self.provenance = ""
+        self.mots_clefs = ""
+        self.contenu_schweitz = ""
+        self.ouvrages_desherbes_2022 = ""
+
+    def parse_row(self, row):
+        self.cote = normalize_cote(row[0])
+        self.auteurs = void_if_none(row[1])
+        self.titre = void_if_none(row[2])
+        self.lieu_edition = void_if_none(row[3])
+        self.editeur = void_if_none(row[4])
+        self.annee_publication = void_if_none(row[5])
+        self.nb_pages = void_if_none(row[6])
+        self.description = void_if_none(row[7])
+        self.nb_exemplaire_suppl = void_if_none(row[8])
+        self.provenance = void_if_none(row[9])
+        self.mots_clefs = void_if_none(row[10])
+        self.contenu_schweitz = void_if_none(row[11])
+        self.ouvrages_desherbes_2022 = void_if_none(row[12])
+
+    def to_csv_row(self):
+        return [
+            self.cote,
+            self.auteurs,
+            self.titre,
+            self.lieu_edition,
+            self.editeur,
+            self.annee_publication,
+            self.nb_pages,
+            self.description,
+            self.nb_exemplaire_suppl,
+            self.provenance,
+            self.mots_clefs,
+            self.contenu_schweitz,
+            self.ouvrages_desherbes_2022
+        ]
+
+
+class CatalogueHamelain3:
+    COLUMNS = ["Cote", "Titre", "Auteur", "Année d'édition", "Editeur (lieu d'édition)",
+               "Provenance", "Description", "Entrée bibliothèque",
+               "Aide à la recherche", "Observations", "Contenu colonne Schweitz", "Ouvrages supprimés"]
+
+    def __init__(self):
+        self.rows: List[CatalogueHamelain3Row] = []
+        self.d = defaultdict(list)
+
+    def parse_rows(self, rows, ignore_n_first_rows=2):
+        for i, row in enumerate(rows):
+            if i > ignore_n_first_rows:
+                hamelain_3_row = CatalogueHamelain3Row()
+                hamelain_3_row.parse_row(row)
+
+                self.rows.append(hamelain_3_row)
+        for i, row in enumerate(self.rows):
+            self.d[row.cote].append(i)
+
+    def keys(self):
+        return self.d.keys()
+
+
+class CatalogueHamelain3Row:
+    def __init__(self):
+        self.cote = ""
+        self.titre = ""
+        self.auteurs = ""
+        self.annee_edition = ""
+        self.editeur_lieu_edition = ""
+        self.provenance = ""
+        self.entree_bibliotheque = ""
+        self.description = ""
+        self.aide_a_la_recherche = ""
+        self.observations = ""
+        self.contenu_schweitz = ""
+        self.ouvrages_desherbes = ""
+
+    def parse_row(self, row):
+        self.cote = normalize_cote(row[0])
+        self.titre = void_if_none(row[1])
+        self.auteurs = void_if_none(row[2])
+        self.annee_edition = void_if_none(row[3])
+        self.editeur_lieu_edition = void_if_none(row[4])
+        self.provenance = void_if_none(row[5])
+        self.description = void_if_none(row[6])
+        self.entree_bibliotheque = void_if_none(row[7])
+        self.aide_a_la_recherche = void_if_none(row[8])
+        self.observations = void_if_none(row[9])
+        self.contenu_schweitz = void_if_none(row[10])
+        self.ouvrages_desherbes = void_if_none(row[11])
+
+    def to_csv_row(self):
+        return [
+            self.cote,
+            self.titre,
+            self.auteurs,
+            self.annee_edition,
+            self.editeur_lieu_edition,
+            self.provenance,
+            self.description,
+            self.entree_bibliotheque,
+            self.aide_a_la_recherche,
+            self.observations,
+            self.contenu_schweitz,
+            self.ouvrages_desherbes
         ]
 
 
@@ -279,3 +481,123 @@ class CatalogueConverter:
             export_catalogue.rows.append(new_row)
 
         return export_catalogue
+
+    @staticmethod
+    def from_h1_and_h2_to_h3(ch1: CatalogueHamelain1, ch2: CatalogueHamelain2) -> CatalogueHamelain3:
+        # to_check_later = []
+        ch3 = CatalogueHamelain3()
+
+        print(len(set(ch1.keys())), len(set(ch2.keys())))
+        common_cotes = sorted(list(set(ch1.keys()).intersection(ch2.keys())))
+        only_ch1_cotes = sorted(list(set(ch1.keys()).difference(ch2.keys())))
+        only_ch2_cotes = sorted(list(set(ch2.keys()).difference(ch1.keys())))
+        # print("ch1")
+        # print(only_ch1_cotes)
+        # print("ch2")
+        # print(only_ch2_cotes)
+        for cote in common_cotes:
+            if len(ch1.d[cote]) == 1 and len(ch2.d[cote]) == 1:
+                row_3 = CatalogueHamelain3Row()
+                row_1 = ch1.rows[ch1.d[cote][0]]
+                row_2 = ch2.rows[ch2.d[cote][0]]
+
+                row_3.cote = row_1.cote
+                row_3.titre = row_1.titre
+                row_3.auteurs = row_1.auteurs
+                row_3.annee_edition = row_1.annee_publication
+                row_3.editeur_lieu_edition = f"{row_1.editeur} ({row_2.lieu_edition})"
+                row_3.provenance = row_2.provenance
+                row_3.description = row_2.description
+                row_3.entree_bibliotheque = row_2.entree_bibliotheque
+                row_3.aide_a_la_recherche = row_1.aide_a_la_recherche
+                row_3.observations = row_1.observations
+                row_3.contenu_schweitz = row_2.contenu_schweitz
+                row_3.ouvrages_desherbes = row_2.ouvrages_desherbes_2022
+
+                ch3.rows.append(row_3)
+            else:
+                # from row 1
+                for j in ch1.d[cote]:
+                    row_1 = ch1.rows[j]
+                    if row_1.cote.startswith("MM"):
+                        print("oohhh")
+
+                    row_3 = CatalogueHamelain3Row()
+                    row_3.cote = f"{row_1.cote}-ATTENTION"
+                    row_3.titre = row_1.titre
+                    row_3.auteurs = row_1.auteurs
+                    row_3.annee_edition = row_1.annee_publication
+                    row_3.editeur_lieu_edition = f"{row_1.editeur}(manquant dans cette ligne)"
+                    row_3.provenance = "manquant dans cette ligne"
+                    row_3.description = "manquant dans cette ligne"
+                    row_3.entree_bibliotheque = "manquant dans cette ligne"
+                    row_3.aide_a_la_recherche = row_1.aide_a_la_recherche
+                    row_3.observations = row_1.observations
+                    row_3.contenu_schweitz = "manquant dans cette ligne"
+                    row_3.ouvrages_desherbes = "manquant dans cette ligne"
+
+                    ch3.rows.append(row_3)
+
+                # from row 2
+                for j in ch2.d[cote]:
+                    row_2 = ch2.rows[j]
+
+                    row_3 = CatalogueHamelain3Row()
+                    row_3.cote = f"{row_2.cote}-ATTENTION"
+                    row_3.titre = row_2.titre
+                    row_3.auteurs = row_2.auteurs
+                    row_3.annee_edition = row_2.annee_publication
+                    row_3.editeur_lieu_edition = f"{row_2.editeur} ({row_2.lieu_edition})"
+                    row_3.provenance = row_2.provenance
+                    row_3.description = row_2.description
+                    row_3.entree_bibliotheque = row_2.entree_bibliotheque
+                    row_3.aide_a_la_recherche = "manquant dans cette ligne"
+                    row_3.observations = "manquant dans cette ligne"
+                    row_3.contenu_schweitz = row_2.contenu_schweitz
+                    row_3.ouvrages_desherbes = row_2.ouvrages_desherbes_2022
+
+                    ch3.rows.append(row_3)
+        for cote in only_ch1_cotes:
+            for j in ch1.d[cote]:
+                row_1 = ch1.rows[j]
+
+                row_3 = CatalogueHamelain3Row()
+                row_3.cote = f"{row_1.cote}-ATTENTION"
+                row_3.titre = row_1.titre
+                row_3.auteurs = row_1.auteurs
+                row_3.annee_edition = row_1.annee_publication
+                row_3.editeur_lieu_edition = f"{row_1.editeur}(manquant dans cette ligne)"
+                row_3.provenance = "manquant dans cette ligne"
+                row_3.description = "manquant dans cette ligne"
+                row_3.entree_bibliotheque = "manquant dans cette ligne"
+                row_3.aide_a_la_recherche = row_1.aide_a_la_recherche
+                row_3.observations = row_1.observations
+                row_3.contenu_schweitz = "manquant dans cette ligne"
+                row_3.ouvrages_desherbes = "manquant dans cette ligne"
+
+                ch3.rows.append(row_3)
+        for cote in only_ch2_cotes:
+            for j in ch2.d[cote]:
+                row_2 = ch2.rows[j]
+
+                row_3 = CatalogueHamelain3Row()
+                row_3.cote = f"{row_2.cote}-ATTENTION"
+                row_3.titre = row_2.titre
+                row_3.auteurs = row_2.auteurs
+                row_3.annee_edition = row_2.annee_publication
+                row_3.editeur_lieu_edition = f"{row_2.editeur} ({row_2.lieu_edition})"
+                row_3.provenance = row_2.provenance
+                row_3.description = row_2.description
+                row_3.entree_bibliotheque = row_2.entree_bibliotheque
+                row_3.aide_a_la_recherche = "manquant dans cette ligne"
+                row_3.observations = "manquant dans cette ligne"
+                row_3.contenu_schweitz = row_2.contenu_schweitz
+                row_3.ouvrages_desherbes = row_2.ouvrages_desherbes_2022
+
+                ch3.rows.append(row_3)
+        # print(f"1-cote {cote}", ch1.d[cote], [ch1.rows[j].titre for j in ch1.d[cote]])
+        # print(f"2-cote {cote}", ch2.d[cote], [ch2.rows[j].titre for j in ch2.d[cote]])
+        # to_check_later.append(cote)
+        return ch3
+
+
