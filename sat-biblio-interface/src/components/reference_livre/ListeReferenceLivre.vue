@@ -13,12 +13,15 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <b-row>
     <b-pagination
       v-model="currentPage"
       :total-rows="refTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"
       class="my-3"/>
+      <filter-count :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
+    </b-row>
     <b-table striped bordered hover :items="retrieveRef" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
@@ -30,16 +33,18 @@
 <script>
 import {getBookReferencesCount, retrieveBookReferences} from "@/services/api";
 import Title from "@/components/visuel/Title";
+import FilterCount from "@/components/visuel/FilterCount";
 
 export default {
   name: "ListeReferenceLivre",
-  components: {Title},
+  components: {Title, FilterCount},
   data: function () {
     return {
       references: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "titre",
+      refFilteredNumber: 0,
       refTotalNumber: 0,
       fields: [
         {
@@ -115,6 +120,7 @@ export default {
       getBookReferencesCount(filterParams).then(
           (response) => {
             if(response.data.success) {
+              this.refFilteredNumber = response.data.filtered_total;
               this.refTotalNumber = response.data.total;
             }
           }

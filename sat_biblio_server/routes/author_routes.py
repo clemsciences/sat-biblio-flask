@@ -144,26 +144,32 @@ def authors_count():
     if "family_name" in request.args:
         the_query = the_query.filter(AuthorDB.family_name.like(f"%{request.args.get('family_name')}%"))
     # endregion
-    query = """
-    SELECT *
-    FROM Author AS A
-    WHERE A.first_name LIKE '%s' AND A.family_name LIKE '%s' AND 1 = (
-        SELECT valid
-        FROM ReferenceBibliographiqueLivre AS RBL
-        WHERE A.id = RBL.
-    )  
-    """
+    # query = """
+    # SELECT *
+    # FROM Author AS A
+    # WHERE A.first_name LIKE '%s' AND A.family_name LIKE '%s' AND 1 = (
+    #     SELECT valid
+    #     FROM ReferenceBibliographiqueLivre AS RBL
+    #     WHERE A.id = RBL.
+    # )
+    # """
+
+    the_total_query = AuthorDB.query.filter()
+
 
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
         # print("HERE")
         the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
+        the_total_query = the_total_query.filter(AuthorDB.valide == int_to_bool(valid))
     else:
         the_query = the_query.filter(AuthorDB.valide == True)
+        the_total_query = the_total_query.filter(AuthorDB.valide == True)
 
-    number = the_query.count()
-    logging.debug(number)
-    return json_result(True, total=number), 200
+    filtered_total = the_query.count()
+    total = the_total_query.count()
+    # logging.debug(f"{filtered_total}/{total}")
+    return json_result(True, total=total, filtered_total=filtered_total), 200
 
 
 @sat_biblio.route("/authors/search-near/", methods=["GET"])

@@ -19,11 +19,15 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <b-row>
 
     <b-pagination v-model="currentPage"
       :total-rows="borrowingTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
+      <filter-count :filtered-item-count="borrowingFilteredNumber" :total-item-count="borrowingTotalNumber"/>
+    </b-row>
+
 
     <b-table striped bordered hover :items="retrieveBorrowings" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
@@ -55,15 +59,18 @@ Object { comment: "Oui", date_emprunt: "2022-01-19", emprunte: true, … }
 <script>
 
 import {getBorrowingsCount, retrieveBorrowings} from "@/services/api";
+import FilterCount from "@/components/visuel/FilterCount";
 
 export default {
   name: "ListeEmprunt",
+  components: {FilterCount},
   data: function () {
     return {
       borrowings: [],
       currentPage: 1,
       perPage: 10,
       sortBy: "",
+      borrowingFilteredNumber: 0,
       borrowingTotalNumber: 0,
       firstNameFiltre: "",
       familyNameFiltre: "",
@@ -164,6 +171,7 @@ export default {
       getBorrowingsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
+              this.borrowingFilteredNumber = response.data.filtered_number;
               this.borrowingTotalNumber = response.data.total;
             }
           }

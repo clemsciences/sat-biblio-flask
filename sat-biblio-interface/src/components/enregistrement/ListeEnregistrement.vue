@@ -28,12 +28,16 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <b-row>
     <b-pagination
         v-model="currentPage"
         :total-rows="recordTotalNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
+      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+      </b-row>
+
     <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
@@ -45,16 +49,18 @@
 <script>
 import {getBookRecordsCount, retrieveBookRecords} from "@/services/api";
 import Title from "../visuel/Title";
+import FilterCount from "@/components/visuel/FilterCount";
 
 export default {
   name: "ListeEnregistrement",
-  components: {Title},
+  components: {Title, FilterCount},
   data: function () {
     return {
       enregistrements: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "cote",
+      recordFilteredNumber: 0,
       recordTotalNumber: 0,
       fields: [
         {
@@ -149,6 +155,7 @@ export default {
       getBookRecordsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
+              this.recordFilteredNumber = response.data.filtered_number;
               this.recordTotalNumber = response.data.total;
             }
           }

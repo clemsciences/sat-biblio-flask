@@ -20,11 +20,14 @@
         </b-form-group>
       </b-col>
     </b-row>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="authorTotalNumber"
-      :per-page="perPage"
-      aria-controls="my-table"/>
+    <b-row>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="authorTotalNumber"
+        :per-page="perPage"
+        aria-controls="my-table" />
+      <filter-count :filtered-item-count="authorFilteredNumber" total-item-count="authorTotalNumber"/>
+    </b-row>
     <b-table striped bordered hover :items="retrieveAuthors" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToAuthor" :filter="onFilter">
@@ -37,16 +40,18 @@
 
 import {getAuthorsCount, retrieveAuthors} from "@/services/api";
 import Title from "@/components/visuel/Title";
+import FilterCount from "@/components/visuel/FilterCount";
 
 export default {
   name: "ListeAuteur",
-  components: {Title},
+  components: {Title, FilterCount},
   data: function () {
     return {
       authors: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "family_name",
+      authorFilteredNumber: 0,
       authorTotalNumber: 0,
       fields: [
         {
@@ -117,6 +122,7 @@ export default {
       getAuthorsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
+              this.authorFilteredNumber = response.data.filtered_total;
               this.authorTotalNumber = response.data.total;
             }
           }
