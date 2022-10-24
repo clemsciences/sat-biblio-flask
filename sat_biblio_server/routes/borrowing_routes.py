@@ -27,6 +27,50 @@ def borrowings():
         n_page, size, sort_by = get_pagination(request)
         borrowing_date_before_today = request.args.get("borrowing-date-before-today", None)
         query = EmpruntLivreDB.query
+
+        id_emprunteur = request.args.get("id_emprunteur", -1)
+        if id_emprunteur > 0:
+            query = query.filter(EmpruntLivreDB.id_emprunteur == id_emprunteur)
+
+        id_enregistrement = request.args.get("id_enregistrement", -1)
+        if id_enregistrement > 0:
+            query = query.filter(EmpruntLivreDB.id_enregistrement == id_enregistrement)
+
+        id_gestionnaire = request.args.get("id_gestionnaire", -1)
+        if id_gestionnaire > 0:
+            query = query.filter(EmpruntLivreDB.id_enregistrement == id_gestionnaire)
+
+        commentaire = request.args.get("commentaire")
+        if commentaire:
+            query = query.filter(EmpruntLivreDB.commentaire.like(commentaire))
+
+        in_commantaire = request.args.get("in_commentaire")
+        if in_commantaire:
+            query = query.filter(EmpruntLivreDB.commentaire.like(f"%{commentaire}%"))
+
+        emprunte = request.args.get("emprunte")
+        if emprunte:
+            query = query.filter(EmpruntLivreDB.emprunte == emprunte)
+
+        # date_emprunt = request.args.get("date_emprunt")
+        # if date_emprunt:
+        #     query = query.filter(EmpruntLivreDB.date_emprunt == date_emprunt)
+        #
+        # date_retour_prevu = request.args.get("date_retour_prevu")
+        # if date_retour_prevu:
+        #     query = query.filter(EmpruntLivreDB.date_retour_prevu == date_retour_prevu)
+        #
+        # date_retour_reel = request.args.get("date_retour_reel")
+        # if date_retour_reel:
+        #     query = query.filter(EmpruntLivreDB.date_retour_reel == date_retour_reel)
+
+        rendu = request.args.get("rendu")
+        if rendu:
+            if rendu == "true":
+                rendu = True
+            else:
+                rendu = False
+            query = query.filter(EmpruntLivreDB.rendu == rendu)
         if borrowing_date_before_today:
             borrowing_date_before_today = int(borrowing_date_before_today)
             date = datetime.date.fromtimestamp(borrowing_date_before_today)
@@ -135,17 +179,18 @@ def borrowings_count():
     :return:
     """
     the_query = EmpruntLivreDB.query
+    the_total_query = EmpruntLivreDB.query
 
     id_emprunteur = request.args.get("id_emprunteur", -1)
-    if id_emprunteur < 0:
+    if id_emprunteur > 0:
         the_query = the_query.filter(EmpruntLivreDB.id_emprunteur == id_emprunteur)
 
     id_enregistrement = request.args.get("id_enregistrement", -1)
-    if id_enregistrement < 0:
+    if id_enregistrement > 0:
         the_query = the_query.filter(EmpruntLivreDB.id_enregistrement == id_enregistrement)
 
     id_gestionnaire = request.args.get("id_gestionnaire", -1)
-    if id_gestionnaire < 0:
+    if id_gestionnaire > 0:
         the_query = the_query.filter(EmpruntLivreDB.id_enregistrement == id_gestionnaire)
 
     commentaire = request.args.get("commentaire")
@@ -180,9 +225,10 @@ def borrowings_count():
             rendu = False
         the_query = the_query.filter(EmpruntLivreDB.rendu == rendu)
 
-    total = the_query.count()
+    filtered_count = the_query.count()
+    total_count = the_total_query.count()
 
     # borrowing_db.id_emprunteur =
 
-    return json_result(True, total=total), 200
+    return json_result(True, total=total_count, filtered_number=filtered_count), 200
 # endregion
