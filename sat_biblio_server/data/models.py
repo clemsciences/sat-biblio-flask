@@ -515,6 +515,10 @@ class EmpruntLivre:
             rendu=emprunt_db.rendu
         )
 
+    @staticmethod
+    def is_book_being_borrowed(id_ref: int):
+        EmpruntLivreDB.query.filter_by(id_enregistrement=id_ref).first()
+
 
 class User:
     @staticmethod
