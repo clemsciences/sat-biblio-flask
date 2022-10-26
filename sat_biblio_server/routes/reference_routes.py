@@ -201,4 +201,17 @@ def get_reference_count_entries(id_):
     record_count = Enregistrement.get_records_by_author_count(id_)
     total = author_count + record_count
     return json_result(True, total=total)
+
+
+@sat_biblio.route("/book-references/<int:id_>/borrowings/current/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def get_current_borrowing_state_of_book_reference(id_):
+
+    return json_result(True)
+
+
+@sat_biblio.route("/book-references/<int:id_>/borrowings/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def get_all_borrowing_state_of_book_reference(id_):
+    return json_result(True)
 # endregion
