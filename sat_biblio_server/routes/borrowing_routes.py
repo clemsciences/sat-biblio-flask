@@ -15,6 +15,7 @@ from sat_biblio_server import sat_biblio
 from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
+from sqlalchemy import or_
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
@@ -63,6 +64,18 @@ def borrowings():
         # date_retour_reel = request.args.get("date_retour_reel")
         # if date_retour_reel:
         #     query = query.filter(EmpruntLivreDB.date_retour_reel == date_retour_reel)
+
+        on_time = request.args.get("on_time")
+        late = request.args.get("late")
+        all_about_late = request.args.get("all")
+        if all_about_late == "all":
+            pass
+        elif on_time == "true":
+            query = query.filter(
+                or_(EmpruntLivreDB.date_retour_prevu > datetime.date.today(),
+                    EmpruntLivreDB.rendu == True))
+        elif late == "true":
+            query = query.filter(EmpruntLivreDB.date_retour_prevu <= datetime.date.today())
 
         rendu = request.args.get("rendu")
         if rendu:
@@ -216,6 +229,18 @@ def borrowings_count():
     date_retour_reel = request.args.get("date_retour_reel")
     if date_retour_reel:
         the_query = the_query.filter(EmpruntLivreDB.date_retour_reel == date_retour_reel)
+
+    on_time = request.args.get("on_time")
+    late = request.args.get("late")
+    _all_about_late = request.args.get("all")
+    if _all_about_late == "true":
+        pass
+    elif on_time == "true":
+        the_query = the_query.filter(
+            or_(EmpruntLivreDB.date_retour_prevu > datetime.date.today(),
+                EmpruntLivreDB.rendu == True))
+    elif late == "true":
+        the_query = the_query.filter(EmpruntLivreDB.date_retour_prevu <= datetime.date.today())
 
     rendu = request.args.get("rendu")
     if rendu:

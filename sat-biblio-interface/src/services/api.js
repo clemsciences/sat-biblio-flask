@@ -247,6 +247,14 @@ export function deleteBorrowing(borrowingId, token) {
 export function getBorrowingsCount(params) {
   return axios.get(`/borrowings/count/${params}`);
 }
+
+export function getCurrentBorrowingStateOfRecord(recordId) {
+  return axios.get(`/book-references/${recordId}/borrowings/current/`);
+}
+
+export function getBorrowingStateOfRecord(recordId) {
+  return axios.get(`/book-references/${recordId}/borrowings/`);
+}
 // endregion
 
 // region contact

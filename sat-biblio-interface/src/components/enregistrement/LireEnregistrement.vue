@@ -8,7 +8,8 @@
       <b-card-title title="Fiche"/>
       <b-card-body>
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
-      <ValidEntry v-if="canManage" :approved="record.valide"/>
+      <ValidEntry v-if="false" :approved="record.valide"/>
+      <BorrowingState v-if="isConnected" :recordId="recordId"/>
 
       <EnregistrementFormulaire
           :message="message"
@@ -31,6 +32,7 @@
           <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
           <b-collapse id="collapse-bound" class="my-2">
             <liste-entrees-enregistrement :record-id="recordId"/>
+            <list-borrowings-of-record :record-id="recordId"/>
           </b-collapse>
         </b-card-body>
       </b-card>
@@ -47,10 +49,13 @@ import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
 import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
+import BorrowingState from "@/components/emprunt/BorrowingState";
+import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
 
 export default {
   name: "LireEnregistrement",
-  components: {ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire, Title},
+  components: {ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
+    Title, BorrowingState, ListBorrowingsOfRecord},
   data: function () {
     return {
       record: {
@@ -149,6 +154,9 @@ export default {
     canManage() {
       return this.$store.getters.canManage;
     },
+    isConnected() {
+      return this.connected;
+    }
   }
 }
 </script>
