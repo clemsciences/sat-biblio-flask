@@ -239,11 +239,11 @@ def normalize_cote(cote: str):
             elif len(second[:index]) == 1:
                 normalized_second = f"000{second}"
         if rest:
-            return f"{first} {normalized_second} {' '.join(rest)}"
+            return f"{first} {normalized_second} {' '.join(rest)}".replace("  ", " ")
         else:
-            return f"{first} {normalized_second}"
+            return f"{first} {normalized_second}".replace("  ", " ")
     else:
-        return f"{cote}".strip().upper()
+        return f"{cote}".strip().upper().replace("  ", " ")
 
 
 def void_if_none(a):
@@ -389,7 +389,9 @@ class CatalogueHamelain2Row:
 class CatalogueHamelain3:
     COLUMNS = ["Cote", "Titre", "Auteur", "Année d'édition", "Editeur (lieu d'édition)",
                "Provenance", "Description", "Entrée bibliothèque",
-               "Aide à la recherche", "Observations", "Contenu colonne Schweitz", "Ouvrages supprimés"]
+               "Aide à la recherche", "Observations", "Contenu colonne Schweitz",
+               "Ouvrages supprimés en 2022", "Vérification effectuée en 2022"]
+    COLUMNS_WIDTHS = [12.55, 22, 19.36, 8, 25.55, 17.55, 29.36, 11, 16.55, 13, 62.73, 8.82, 10.36]
 
     def __init__(self):
         self.rows: List[CatalogueHamelain3Row] = []
@@ -407,6 +409,16 @@ class CatalogueHamelain3:
 
     def keys(self):
         return self.d.keys()
+
+    def sort_by_cote(self):
+        cotes = sorted(list(set(self.keys())))
+        new_rows = []
+        for cote in cotes:
+            for i_line in self.d[cote]:
+                new_rows.append(self.rows[i_line])
+
+        self.rows = new_rows
+
 
 
 class CatalogueHamelain3Row:
