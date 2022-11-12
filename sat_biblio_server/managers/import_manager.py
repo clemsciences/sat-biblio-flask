@@ -1,7 +1,8 @@
 
 import openpyxl
 
-from managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, CatalogueHamelain2
+from managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, \
+    CatalogueHamelain2, CatalogueHamelain3
 
 
 class ImportManager:
@@ -38,6 +39,13 @@ class ImportManager:
         # excel_catalogue = openpyxl.load_workbook(filename)
         rows = _cls.read_xslx(filename)
         catalogue = CatalogueHamelain2()
+        catalogue.parse_rows(rows, ignore_n_first_lines)
+        return catalogue
+
+    @classmethod
+    def import_hamelain_3(_cls, filename: str, ignore_n_first_lines=0):
+        rows = _cls.read_xslx(filename)
+        catalogue = CatalogueHamelain3()
         catalogue.parse_rows(rows, ignore_n_first_lines)
         return catalogue
 
