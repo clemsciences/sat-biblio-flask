@@ -516,8 +516,17 @@ class EmpruntLivre:
         )
 
     @staticmethod
-    def is_book_being_borrowed(id_ref: int):
-        EmpruntLivreDB.query.filter_by(id_enregistrement=id_ref).first()
+    def is_book_being_borrowed(id_enregistrement: int):
+        borrowings_db = EmpruntLivreDB.query.filter_by(
+            id_enregistrement=id_enregistrement,
+            emprunte=True,
+            rendu=False).all()
+        return len(borrowings_db) > 0
+
+    @staticmethod
+    def get_all_book_borrowings(id_enregistrement: int):
+        return [EmpruntLivre.from_db_to_data(borrowing_db)
+                for borrowing_db in EmpruntLivreDB.query.filter_by(id_enregistrement=id_enregistrement).all()]
 
 
 class User:

@@ -10,7 +10,7 @@ import logging
 
 from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
-from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author, Enregistrement
+from sat_biblio_server.data.models import ReferenceBibliographiqueLivre, Author, Enregistrement, EmpruntLivre
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
@@ -204,14 +204,15 @@ def get_reference_count_entries(id_):
 
 
 @sat_biblio.route("/book-references/<int:id_>/borrowings/current/", methods=["GET"])
-@validation_connexion_et_retour_defaut("email", ["GET"])
+# @validation_connexion_et_retour_defaut("email", ["GET"])
 def get_current_borrowing_state_of_book_reference(id_):
-
-    return json_result(True)
+    is_being_borrowed = EmpruntLivre.is_book_being_borrowed(id_)
+    return json_result(True, is_being_borrowed=is_being_borrowed)
 
 
 @sat_biblio.route("/book-references/<int:id_>/borrowings/", methods=["GET"])
-@validation_connexion_et_retour_defaut("email", ["GET"])
+# @validation_connexion_et_retour_defaut("email", ["GET"])
 def get_all_borrowing_state_of_book_reference(id_):
-    return json_result(True)
+    borrowings = EmpruntLivre.get_all_book_borrowings(id_)
+    return json_result(True, borrowings=borrowings)
 # endregion
