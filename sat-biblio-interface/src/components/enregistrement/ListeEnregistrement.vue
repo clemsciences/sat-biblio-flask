@@ -155,7 +155,7 @@ export default {
       getBookRecordsCount(filterParams).then(
           (response) => {
             if(response.data.success) {
-              this.recordFilteredNumber = response.data.filtered_number;
+              this.recordFilteredNumber = response.data.filtered_total;
               this.recordTotalNumber = response.data.total;
             }
           }

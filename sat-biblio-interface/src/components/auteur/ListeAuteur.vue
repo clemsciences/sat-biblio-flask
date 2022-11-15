@@ -26,7 +26,7 @@
         :total-rows="authorTotalNumber"
         :per-page="perPage"
         aria-controls="my-table" />
-      <filter-count :filtered-item-count="authorFilteredNumber" total-item-count="authorTotalNumber"/>
+      <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
     </b-row>
     <b-table striped bordered hover :items="retrieveAuthors" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
