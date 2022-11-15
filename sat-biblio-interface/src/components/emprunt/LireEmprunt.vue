@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import {deleteBorrowing, retrieveBorrowing, updateBorrowing} from "../../services/api";
+import {deleteBorrowing, retrieveBorrowing, updateBorrowing} from "@/services/api";
 import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire";
 import Title from "@/components/visuel/Title";
 import {mapState} from "vuex";
@@ -95,6 +95,7 @@ export default {
           (response) => {
             if(response.data.success) {
               console.log("borrowing updated");
+              this.message = response.data.message;
             }
           }
       ).catch(

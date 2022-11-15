@@ -76,7 +76,7 @@ export default {
         (response) => {
           if(response.data.success) {
             console.log("modifications enregistrées");
-            this.$router.push("/auteur/liste")
+            this.$router.push("/auteur/liste");
           } else {
             console.log("échec de la modification");
           }

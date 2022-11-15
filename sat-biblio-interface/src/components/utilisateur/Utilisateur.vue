@@ -88,6 +88,7 @@ export default {
           response => {
             console.log(formData);
             console.log(response);
+            this.message = response.data.message;
           }
       );
     },
