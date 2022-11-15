@@ -173,20 +173,30 @@ def borrowing(id_: int):
                     borrowing_db.emprunte = borrowing_data["emprunte"]
 
                 if "date_emprunt" in borrowing_data:
-                    borrowing_db.date_emprunt = datetime.date.fromisoformat(borrowing_data["date_emprunt"])  # borrowing_data["date_emprunt"]
+                    try:
+                        borrowing_db.date_emprunt = datetime.date.fromisoformat(borrowing_data["date_emprunt"])  # borrowing_data["date_emprunt"]
+                    except ValueError:
+                        borrowing_db.date_emprunt = None
 
                 if "date_retour_prevu" in borrowing_data:
-                    borrowing_db.date_retour_prevu = datetime.date.fromisoformat(borrowing_data["date_retour_prevu"])
+                    try:
+                        borrowing_db.date_retour_prevu = datetime.date.fromisoformat(borrowing_data["date_retour_prevu"])
+                    except ValueError:
+                        borrowing_db.date_retour_prevu = None
 
                 if "date_retour_reel" in borrowing_data:
-                    borrowing_db.date_retour_reel = datetime.date.fromisoformat(borrowing_data["date_retour_reel"])
+                    try:
+                        borrowing_db.date_retour_reel = datetime.date.fromisoformat(borrowing_data["date_retour_reel"])
+                    except ValueError:
+                        borrowing_db.date_retour_reel = None
 
                 if "rendu" in borrowing_data:
                     borrowing_db.rendu = borrowing_data["rendu"]
 
                 db.session.commit()
                 borrowing_data = EmpruntLivre.from_db_to_data(borrowing_db)
-                return json_result(True, borrowing=borrowing_data), 200
+                return json_result(True, borrowing=borrowing_data,
+                                   message="La fiche de l'emprunt vient d'être mise à jour."), 200
             else:
                 return json_result(False), 404
         return json_result(False), 400

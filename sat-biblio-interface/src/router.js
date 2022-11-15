@@ -315,7 +315,7 @@ router.beforeEach(function (to, from, next) {
         } else {
             store.commit("disconnect");
             next({
-                name: 'accueil',
+                name: 'utilisateur-connexion',
                 query: {
                     redirect: to.fullPath
                 }
