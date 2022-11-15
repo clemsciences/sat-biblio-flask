@@ -8,10 +8,11 @@ from flask import redirect, session, request
 import logging
 
 from sat_biblio_server.data.models import EmpruntLivre
+from sat_biblio_server.managers.mail_manager import send_new_borrowing_email
 from sat_biblio_server.sessions import UserSess
 
 from sat_biblio_server.database import db, EmpruntLivreDB
-from sat_biblio_server import sat_biblio
+from sat_biblio_server import sat_biblio, UserDB, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
@@ -110,7 +111,13 @@ def borrowings():
                                      rendu=False)
             db.session.add(emprunt)
             db.session.commit()
-            return json_result(True, id=emprunt.id), 201
+            current_user = UserDB.query.filter_by(email=session["email"]).first()
+            reference = ReferenceBibliographiqueLivreDB.query.filter_by(id=emprunt.enregistrement.id_reference).first()
+
+            success = send_new_borrowing_email(current_user, reference, emprunt)
+            if success:
+                return json_result(True, id=emprunt.id), 201
+            return json_result(False, id=emprunt.id, message="Echec de l'envoi de l'email."), 200
         return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
 

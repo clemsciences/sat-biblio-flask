@@ -42,7 +42,9 @@ export default {
       this.$emit('input', event);      // this.selectedReference = event;
     },
     removeUser: function () {
-      this.$emit('input', {});
+      this.value.value = -1;
+      this.value.text = "";
+      this.$emit('input', this.value);
     },
     goToUser: function() {
       let routeData = this.$router.resolve(`/utilisateur/lire/${this.value.value}`);

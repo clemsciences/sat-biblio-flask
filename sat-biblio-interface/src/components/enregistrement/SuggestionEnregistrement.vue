@@ -40,7 +40,9 @@ export default {
   },
   methods: {
     removeRecord: function() {
-      this.$emit('input', {});
+      this.value.value = -1;
+      this.value.text = "";
+      this.$emit('input', this.value);
     },
     goToRecord: function() {
       let routeData = this.$router.resolve(`/enregistrement/lire/${this.value.value}`);
