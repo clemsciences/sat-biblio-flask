@@ -90,9 +90,14 @@ def envoyer_message_contact(user_email_address: str, message: str) -> bool:
 
 
 def send_new_borrowing_email(user_email_address: Union[UserDB], reference: ReferenceBibliographiqueLivreDB, borrowing: EmpruntLivreDB):
-    msg = Message(lazy_gettext(""), sender=SENDER,
+    msg = Message(lazy_gettext(f"Nouvel emprunt à la BHT : \"{reference.titre}\""), sender=SENDER,
                   html=render_template("mails/new_borrowing.html", user=user_email_address,
-                                       reference=reference))
+                                       reference=reference,
+                                       first_name=user_email_address.first_name,
+                                       family_name=user_email_address.family_name,
+                                       title= reference.titre,
+                                       borrowing_date=borrowing.date_emprunt.strftime("%d/%m/%Y"),
+                                       end_borrowing_date=borrowing.date_retour_prevu.strftime("%d/%m/%Y")))
     msg.add_recipient((user_email_address.first_name + " " + user_email_address.family_name, user_email_address.email))
     return send_email(msg, user_email_address.email)
 

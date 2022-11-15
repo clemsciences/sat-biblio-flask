@@ -9,6 +9,7 @@
         :message="message"
         :is-update="false"
     />
+    <b-button class="my-3" v-if="message.length > 0 || !isIncorrect" @click="reinit">Réinitialiser</b-button>
 
   </b-container>
 </template>
@@ -35,7 +36,6 @@ export default {
     }
   },
   methods: {
-
     saveBorrowing: function () {
       const formData = {
         record: this.borrowing.record.value,
@@ -48,18 +48,43 @@ export default {
         (response) => {
           if(response.data.success) {
             console.log("borrowing registered");
-            this.message = "L'emprunt a correctement été enregistré. Un courriel a été envoyé à l'emprunteur."
+            this.reinitBorrowing()
+            this.message = "L'emprunt a correctement été enregistré. Un courriel a été envoyé à l'emprunteur.";
           } else {
-            this.message = "Echec de l'enregistrement de l'emprunt."
+            this.message = "Echec de l'enregistrement de l'emprunt.";
           }
         }
     )
+    },
+    reinitBorrowing() {
+      this.borrowing.record = {value: -1, text: ""};
+      this.borrowing.comment = "";
+      this.borrowing.borrower = {value: -1, text: ""};
+      this.borrowing.isBorrowed = true;
+      this.borrowing.dateComebackExpected = null;
+    },
+    reinit() {
+      this.reinitBorrowing();
+      this.message = "";
     }
   },
   computed: {
     isIncorrect: function () {
-      return this.record.value < 0 || this.borrower.length === 0;
+      return Object.keys(this.borrowing.record).length === 0 ||
+          this.borrowing.record.value < 0 ||
+          this.borrowing.borrower.value < 0 ||
+          Object.keys(this.borrowing.borrower).length === 0 ||
+          !this.borrowing.dateComebackExpected ;
     }
+  },
+  watch: {
+    borrowing: {
+      handler(newV) {
+        console.log("newV", newV);
+      },
+      deep: true
+    }
+
   }
 }
 </script>

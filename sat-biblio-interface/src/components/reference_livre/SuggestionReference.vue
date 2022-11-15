@@ -69,7 +69,9 @@ export default {
       }
     },
     removeReference: function() {
-      this.selectedReference = {};
+      this.selectedReference.value = -1;
+      this.selectedReference.text = "";
+      this.$emit('input', this.selectedReference)
     }
   },
   watch: {

@@ -98,7 +98,9 @@ export default {
   },
   computed: {
     isIncorrect: function () {
-      return this.borrowing.record.value < 0 || this.borrowing.borrower.length === 0;
+      return this.borrowing.record.value < 0 ||
+          this.borrowing.borrower.value < 0 ||
+          !this.borrowing.dateComebackExpected;
     },
   },
   watch: {
