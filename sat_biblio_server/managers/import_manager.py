@@ -1,7 +1,7 @@
 
 import openpyxl
 
-from managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, \
+from sat_biblio_server.managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, \
     CatalogueHamelain2, CatalogueHamelain3
 
 

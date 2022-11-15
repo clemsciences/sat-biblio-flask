@@ -8,7 +8,7 @@ import os
 from flask import request, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
-from managers.catalogue_manager import CatalogueConverter
+from sat_biblio_server.managers.catalogue_manager import CatalogueConverter
 from sat_biblio_server import sat_biblio, json_result
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.import_manager import ImportManager

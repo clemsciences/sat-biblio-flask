@@ -13,7 +13,7 @@ import openpyxl
 from openpyxl.styles import Font, colors, PatternFill, Border, Side, Protection, Alignment
 from openpyxl.utils import get_column_letter
 
-from managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3
+from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3
 from sat_biblio_server.data.models import Enregistrement
 
 
