@@ -142,28 +142,28 @@ def book_records_count():
     titre = request.args.get("titre", "")
     mot_clef = request.args.get("mot_clef", "")
 
-    the_query = EnregistrementDB.query
     the_filtered_query = EnregistrementDB.query
+    the_total_query = EnregistrementDB.query
     if cote:
-        the_query = the_query.filter(EnregistrementDB.cote.like(f"%{cote}%"))
+        the_filtered_query = the_filtered_query.filter(EnregistrementDB.cote.like(f"%{cote}%"))
     if titre:
-        the_query = the_query.join(ReferenceBibliographiqueLivreDB) \
+        the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivreDB) \
             .filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
     if mot_clef:
-        the_query = the_query.filter(EnregistrementDB.mots_clef.like(f"%{mot_clef}%"))
+        the_filtered_query = the_filtered_query.filter(EnregistrementDB.mots_clef.like(f"%{mot_clef}%"))
 
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
-        the_query = the_query.filter(EnregistrementDB.valide == int_to_bool(valid))
         the_filtered_query = the_filtered_query.filter(EnregistrementDB.valide == int_to_bool(valid))
+        the_total_query = the_total_query.filter(EnregistrementDB.valide == int_to_bool(valid))
     else:
-        the_query = the_query.filter(EnregistrementDB.valide == True)
         the_filtered_query = the_filtered_query.filter(EnregistrementDB.valide == True)
+        the_total_query = the_total_query.filter(EnregistrementDB.valide == True)
 
-    number = the_query.count()
     filtered_total = the_filtered_query.count()
-    logging.debug(number)
-    return json_result(True, total=number, filtered_total=filtered_total), 200
+    total = the_total_query.count()
+    logging.debug(filtered_total)
+    return json_result(True, total=total, filtered_total=filtered_total), 200
 
 
 @sat_biblio.route("/book-records/search/", methods=["POST"])
