@@ -135,23 +135,23 @@ def book_reference(id_):
 @sat_biblio.route("/book-references/count/", methods=["GET"])
 def book_references_count():
     titre = request.args.get("titre", "")
-    the_query = ReferenceBibliographiqueLivreDB.query
     the_filtered_query = ReferenceBibliographiqueLivreDB.query
+    the_total_query = ReferenceBibliographiqueLivreDB.query
     if titre:
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
+        the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivreDB.titre.like(f"%{titre}%"))
 
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
         the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
+        the_total_query = the_total_query.filter(ReferenceBibliographiqueLivreDB.valide == int_to_bool(valid))
     else:
-        the_query = the_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
         the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
+        the_total_query = the_total_query.filter(ReferenceBibliographiqueLivreDB.valide == True)
 
-    count = the_query.count()
-    filtered_total = the_filtered_query.count()
-    logging.debug(count)
-    return json_result(True, total=count, filtered_total=filtered_total), 200
+    filtered_count = the_filtered_query.count()
+    total = the_total_query.count()
+    logging.debug(filtered_count)
+    return json_result(True, total=total, filtered_total=filtered_count), 200
 
 
 @sat_biblio.route("/book-references/search-near/", methods=["GET"])

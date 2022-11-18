@@ -136,13 +136,13 @@ def authors_count():
 
     :return:
     """
-    the_query = AuthorDB.query
+    the_filtered_query = AuthorDB.query
     # region filtre
     if "first_name" in request.args:
-        the_query = the_query.filter(AuthorDB.first_name.like(f"%{request.args.get('first_name')}%"))
+        the_filtered_query = the_filtered_query.filter(AuthorDB.first_name.like(f"%{request.args.get('first_name')}%"))
 
     if "family_name" in request.args:
-        the_query = the_query.filter(AuthorDB.family_name.like(f"%{request.args.get('family_name')}%"))
+        the_filtered_query = the_filtered_query.filter(AuthorDB.family_name.like(f"%{request.args.get('family_name')}%"))
     # endregion
     # query = """
     # SELECT *
@@ -160,13 +160,13 @@ def authors_count():
     valid = request.args.get("valid", "1")
     if valid in ["1", "0"]:
         # print("HERE")
-        the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
+        the_filtered_query = the_filtered_query.filter(AuthorDB.valide == int_to_bool(valid))
         the_total_query = the_total_query.filter(AuthorDB.valide == int_to_bool(valid))
     else:
-        the_query = the_query.filter(AuthorDB.valide == True)
+        the_filtered_query = the_filtered_query.filter(AuthorDB.valide == True)
         the_total_query = the_total_query.filter(AuthorDB.valide == True)
 
-    filtered_total = the_query.count()
+    filtered_total = the_filtered_query.count()
     total = the_total_query.count()
     # logging.debug(f"{filtered_total}/{total}")
     return json_result(True, total=total, filtered_total=filtered_total), 200
