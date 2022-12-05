@@ -47,7 +47,7 @@ class CatalogueSchweitzRow:
 
     def extract_from_auteurs_titres_editeurs_annee(self):
         description = self.auteurs_titres_editeurs_annee.split(",")
-        print(description)
+        # print(description)
         # description_auteur = description.split(",")
         limite_auteur = 0
         auteurs = []
@@ -404,6 +404,9 @@ class CatalogueHamelain3:
                 hamelain_3_row.parse_row(row)
 
                 self.rows.append(hamelain_3_row)
+        self.update_d()
+
+    def update_d(self):
         for i, row in enumerate(self.rows):
             self.d[row.cote].append(i)
 
@@ -418,7 +421,6 @@ class CatalogueHamelain3:
                 new_rows.append(self.rows[i_line])
 
         self.rows = new_rows
-
 
 
 class CatalogueHamelain3Row:
