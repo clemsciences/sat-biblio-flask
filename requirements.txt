@@ -1,3 +1,5 @@
+-e git+https://github.com/clemsciences/sat-biblio-referencement.git#egg=sat-biblio-referencement
+
 alembic==1.4.3
 argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
