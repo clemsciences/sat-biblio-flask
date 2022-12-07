@@ -19,3 +19,9 @@ def search_works_route():
     suggestions = SearchManager.get_data_from_query(session, query)
     session.close()
     return json_result(True, suggestions=suggestions), 200
+
+
+@sat_biblio.route("/search/populate-publication-table-2004/", methods=["GET"])
+def populate_publication_table_2004_request():
+    generate_publication_table_2004(TABLE_PUBLICATION_2004_PATH)
+    return json_result(True)
