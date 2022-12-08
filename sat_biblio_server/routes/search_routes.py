@@ -25,3 +25,12 @@ def search_works_route():
 def populate_publication_table_2004_request():
     generate_publication_table_2004(TABLE_PUBLICATION_2004_PATH)
     return json_result(True)
+
+
+@sat_biblio.route("/search/named-entities/", methods=["GET"])
+def search_named_entities():
+    query = request.args.get("query")
+    session = Session(sbr_dbm.engine)
+    near_named_entities = SearchManager.search_near_named_entities(session, query)
+    session.close()
+    return json_result(True, suggestions=near_named_entities)
