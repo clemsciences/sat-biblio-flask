@@ -42,6 +42,7 @@ import GlobalImport from "@/components/import/GlobalImport";
 import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
 // import ImageManager from "@/components/images/ImageManager";
 import ImportExport from "@/components/import_export/ImportExport";
+import SearchBulletin from "@/components/recherche/SearchBulletin";
 
 Vue.use(VueRouter);
 
@@ -140,6 +141,12 @@ let router = new VueRouter({
             path: '/rechercher/resultats',
             component: ResultatsRecherche,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "recherche-bulletin",
+            path: "/rechercher/bulletins",
+            component: SearchBulletin,
+            meta: {needAuth: false, reachableFrom: rights.contributeur}
         },
         // endregion
         {
@@ -280,6 +287,13 @@ let router = new VueRouter({
             name: "dublin-core-entry",
             path: "/dublin-core/:id",
         },
+        // endregion
+        // region
+        // {
+        //     name: "image-manager",
+        //     path: "/gestionnaire-images",
+        //     component: ImageManager
+        // },
         // endregion
         // region page not found
         {

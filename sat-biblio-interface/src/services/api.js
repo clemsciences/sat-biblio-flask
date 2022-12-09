@@ -309,6 +309,16 @@ export function exportCSVRequest(params) {
 }
 // endregion
 
+// region search
+export function searchWorks(params) {
+  return axios.get(`/search/works/${params}`);
+}
+
+export function searchApproximateNamedEntities(params) {
+  return axios.get(`/search/named-entities/${params}`)
+}
+// endregion
+
 // region dublin core
 export function getDublinCoreEntries(query, params) {
   // params: {
