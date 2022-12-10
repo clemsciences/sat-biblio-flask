@@ -148,6 +148,18 @@ let router = new VueRouter({
             component: SearchBulletin,
             meta: {needAuth: false, reachableFrom: rights.contributeur}
         },
+        {
+            name: 'works',
+            path: '/works/published/',
+            component: WorkList,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
+        {
+            name: 'works-item',
+            path: '/works/published/:id',
+            component: WorkAnnotation,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
         // endregion
         {
             name: "import-export",

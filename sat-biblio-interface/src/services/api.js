@@ -317,6 +317,23 @@ export function searchWorks(params) {
 export function searchApproximateNamedEntities(params) {
   return axios.get(`/search/named-entities/${params}`)
 }
+
+export function getPublishedWorks(params) {
+  return axios.get(`/works/published/${params}`)
+}
+
+export function addPublishedWorks(publishedWork, token, params) {
+  return axios.post(`/works/published/${params}`, publishedWork, { headers: { Authorization: `Bearer ${token}` } })
+}
+
+export function updatePublishedWork(publishedWorkId, publishedWork, token, params) {
+  return axios.put(`/works/published/${publishedWorkId}/${params}`, publishedWork, { headers: { Authorization: `Bearer ${token}` } })
+}
+
+export function getPublishedWork(publishedWorkId, params) {
+  return axios.get(`/works/published/${publishedWorkId}/${params}`)
+}
+
 // endregion
 
 // region dublin core
