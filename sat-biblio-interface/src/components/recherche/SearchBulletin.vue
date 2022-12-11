@@ -1,6 +1,8 @@
 <template>
   <b-container>
 
+    <router-link :to="{ name: 'works'}">Liste des ouvrages</router-link>
+
     <SuggestionBulletin v-model="selectedNamedEntity" class="my-3"/>
 <!--    <h3>{{ selectedNamedEntity }}</h3>-->
     <b-list-group>
