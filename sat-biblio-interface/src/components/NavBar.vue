@@ -38,6 +38,7 @@
               </b-dropdown-group>
               <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
                 <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
+                <b-dropdown-item to="/rechercher/bulletins">Recherche bulletin</b-dropdown-item>
               </b-dropdown-group>
               <b-dropdown-group v-if="isAdmin" id="group-admin" header="Admin" class="my-nav-group">
                 <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
