@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import {getWorks, searchWorks} from "@/services/api";
+import {getPublishedWorks, searchWorks} from "@/services/api";
 import SuggestionBulletin from "@/components/recherche/SuggestionBulletin";
 
 export default {
@@ -89,7 +89,7 @@ export default {
       )
     },
     retrieveBulletinsAndMemoires() {
-      getWorks().then(
+      getPublishedWorks("").then(
           (response) => {
             this.works = response.data.result;
           }

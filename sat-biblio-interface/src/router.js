@@ -43,6 +43,8 @@ import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
 // import ImageManager from "@/components/images/ImageManager";
 import ImportExport from "@/components/import_export/ImportExport";
 import SearchBulletin from "@/components/recherche/SearchBulletin";
+import WorkList from "@/components/works/WorkList.vue";
+import WorkAnnotation from "@/components/works/WorkAnnotation.vue";
 
 Vue.use(VueRouter);
 
