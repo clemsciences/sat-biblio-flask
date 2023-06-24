@@ -9,6 +9,8 @@
       <b-card-body>
         <ValidEntry v-if="canManage" :approved="auteur.valide"/>
 
+        <AuteurPrettyView :author="auteur" :mode="sat"/>
+
         <AuteurFormulaire
             :on-submit="updateAuthor"
             :auteur="auteur"
@@ -45,10 +47,11 @@ import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
 import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
+import AuteurPrettyView from "@/components/auteur/AuteurPrettyView.vue";
 
 export default {
   name: "LireAuteur",
-  components: {ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
+  components: {AuteurPrettyView, ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
   data: function () {
     return {
       auteur: {first_name: "", family_name: "", valide: false},
