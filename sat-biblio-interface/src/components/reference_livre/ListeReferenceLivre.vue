@@ -105,7 +105,7 @@ export default {
           }
       ).catch(
           (reason) => {
-            console.log(reason);
+            console.error(reason);
             callback([]);
           }
       );

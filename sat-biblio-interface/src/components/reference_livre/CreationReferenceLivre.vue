@@ -4,6 +4,8 @@
            info="Une référence bibliographique désigne les informations propres à un livre"
            id="id-ref"/>
 
+    <ReferenceLivrePrettyView :reference="reference"/>
+
     <ReferenceLivreFormulaire
         :reference="reference"
         :on-submit="saveReference"
@@ -17,10 +19,11 @@ import {createBookReference} from "@/services/api";
 import Title from "../visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canManage} from "@/services/rights";
+import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 
 export default {
   name: "ReferenceLivre",
-  components: {ReferenceLivreFormulaire, Title},
+  components: {ReferenceLivrePrettyView, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
       reference: {

@@ -8,6 +8,7 @@
       <b-card-title title="Fiche"/>
       <b-card-body>
         <ValidEntry v-if="canManage" :approved="reference.valide"/>
+        <ReferenceLivrePrettyView :reference="reference"/>
         <ReferenceLivreFormulaire
             :message="message"
             :on-submit="updateReference"
@@ -43,10 +44,11 @@ import {canEdit} from "@/services/rights";
 import {mapState} from "vuex";
 import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
+import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 
 export default {
 name: "LireReferenceLivre",
-  components: {ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
+  components: {ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
       suggestedAuthors: [],
