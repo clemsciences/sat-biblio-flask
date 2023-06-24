@@ -10,7 +10,7 @@
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
       <ValidEntry v-if="false" :approved="record.valide"/>
       <BorrowingState v-if="isConnected" :recordId="recordId"/>
-
+      <EnregistrementPrettyView :record="record"/>
       <EnregistrementFormulaire
           :message="message"
           :on-submit="updateRecord"
@@ -35,9 +35,7 @@
             <list-borrowings-of-record :record-id="recordId"/>
           </b-collapse>
         </b-card-body>
-      </b-card>
-
-
+    </b-card>
   </b-container>
 </template>
 
@@ -54,8 +52,13 @@ import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord"
 
 export default {
   name: "LireEnregistrement",
-  components: {ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
+  components: {
+    EnregistrementPrettyView, ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
     Title, BorrowingState, ListBorrowingsOfRecord},
+  /**
+   *
+   * @returns {record: Record, message: string}}
+   */
   data: function () {
     return {
       record: {
