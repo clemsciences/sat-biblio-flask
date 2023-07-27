@@ -1,6 +1,7 @@
 """
 
 """
+import abc
 import datetime
 
 from sat_biblio_server.database.db_manager import db
@@ -8,18 +9,45 @@ from sat_biblio_server.database.users import UserDB
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
-HelperAuthorBook = db.Table('helperauthorbook',
-                            db.Column("id_author", db.Integer, db.ForeignKey("Author.id")),
-                            db.Column("id_reference_biblio_livre", db.Integer, db.ForeignKey("ReferenceBibliographiqueLivre.id")),
+HelperAuthorBook2023 = db.Table('helperauthorbook2023',
+                            db.Column("id_author", db.Integer, db.ForeignKey("Author2023.id")),
+                            db.Column("id_reference_biblio_livre", db.Integer, db.ForeignKey("ReferenceBibliographiqueLivre2023.id")),
                             extend_existing=True)
+HelperAuthorBook2023.__tablename__ = 'helperauthorbook2023'
 # HelperAuthorArticle = db.Table('helperauthorarticle',
 #                                db.Column("id_author", db.Integer, db.ForeignKey("author.id"), primary_key=True),
 #                                db.Column("id_reference_biblio_article", db.Integer,
 #                                          db.ForeignKey("reference_biblio_article.id"), primary_key=True)
 #                                )
 
+class CsvMeta(abc.ABC):
 
-class AuthorDB(db.Model):
+    @abc.abstractmethod
+    def export_to_csv_line(self) -> str:
+        pass
+
+    @abc.abstractmethod
+    def export_to_prettify_line(self) -> str:
+        pass
+
+    @abc.abstractmethod
+    def afficher_tooltip(self) -> str:
+        """
+
+        :return:
+        """
+        pass
+
+    @abc.abstractmethod
+    def get_csv_fieldnames(self) -> str:
+        """
+
+        :return:
+        """
+        pass
+
+
+class Author2023DB(db.Model):
     """
     Un auteur est une personne physique qui a écrit un livre ou qui a participé à l'élaboration du contenu d'un
     ouvrage.
@@ -30,15 +58,17 @@ class AuthorDB(db.Model):
     -
 
     """
-    __tablename__ = "Author"
+    __tablename__ = "Author2023"
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(50))
     family_name = db.Column(db.String(50))
     # region meta
     valide = db.Column(db.Boolean, default=False)
+    origin = db.Column(db.String(50), default="")
+    date_derniere_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
     # endregion
-    reference_biblio_livres = db.relationship("ReferenceBibliographiqueLivreDB", secondary=HelperAuthorBook,
+    reference_biblio_livres = db.relationship("ReferenceBibliographiqueLivre2023DB", secondary=HelperAuthorBook2023,
                                               back_populates="authors")
 
     def __str__(self):
@@ -55,10 +85,10 @@ class AuthorDB(db.Model):
 
     @staticmethod
     def get_csv_fieldnames():
-        return ["Auteurs"]
+        return ["Auteur"]
 
 
-class ReferenceBibliographiqueLivreDB(db.Model):
+class ReferenceBibliographiqueLivre2023DB(db.Model):
     """
     Un livre est caractérisé par
     - un ou plusieurs auteurs
@@ -70,17 +100,19 @@ class ReferenceBibliographiqueLivreDB(db.Model):
     On parle vraiment de ce qui est propre à un livre.
 
     """
-    __tablename__ = "ReferenceBibliographiqueLivre"
+    __tablename__ = "ReferenceBibliographiqueLivre2023"
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    authors = db.relationship(AuthorDB, secondary=HelperAuthorBook, back_populates="reference_biblio_livres")
+    authors = db.relationship(Author2023DB, secondary=HelperAuthorBook2023, back_populates="reference_biblio_livres")
     titre = db.Column(db.String(200), nullable=False)
     lieu_edition = db.Column(db.String(100), default="s.l.")
     editeur = db.Column(db.String(50), default="s.n.")
     annee = db.Column(db.String(10))
     nb_page = db.Column(db.String(10))
     # region meta
-    valide = db.Column(db.Boolean, default=False)
+    origin = db.Column(db.String(50), default="")
+    date_derniere_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
+    # valide = db.Column(db.Boolean, default=False)
     description = db.Column(db.String(500), default="")
     # endregion
 
@@ -113,8 +145,8 @@ class ReferenceBibliographiqueLivreDB(db.Model):
         Les champs d'une ligne CSV.
         :return:
         """
-        return "\t".join([AuthorDB.get_csv_fieldnames(), "Titre", "Lieu d'édition", "Editeur", "Année d'édition", "N° de pages",
-                          "Description"])
+        return "\t".join([Author2023DB.get_csv_fieldnames(), "Titre", "Editeur (lieu d'édition)",
+                          "Année d'édition", "Description"])
 
 
 # class ReferenceBibliographiqueArticleDB(db.Model):
@@ -152,7 +184,7 @@ class ReferenceBibliographiqueLivreDB(db.Model):
 #             self.nb_page)
 
 
-class EnregistrementDB(db.Model):
+class Enregistrement2023DB(db.Model):
     """
     Enregistrement tel que décrit dans le fichier principal qui est l'inventaire.
     C'est pour repérer un livre dans la bibliothèque.
@@ -170,52 +202,56 @@ class EnregistrementDB(db.Model):
         des copies de la base de données.
 
     """
-    __tablename__ = "Enregistrement"
+    __tablename__ = "Enregistrement2023"
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # description = models.CharField(max_length=1000, verbose_name="description", null=True, default="")
-    id_reference = db.Column(db.Integer, db.ForeignKey('ReferenceBibliographiqueLivre.id'))
-    reference = db.relationship(ReferenceBibliographiqueLivreDB)  # , on_delete=models.CASCADE)
+    id_reference = db.Column(db.Integer, db.ForeignKey('ReferenceBibliographiqueLivre2023.id'))
+    reference = db.relationship(ReferenceBibliographiqueLivre2023DB)  # , on_delete=models.CASCADE)
     commentaire = db.Column(db.String(500), default="")
     cote = db.Column(db.String(100), nullable=True, default="")
-    # annee = models.IntegerField(verbose_name="année", null=True, default=2018)
-    annee = db.Column(db.String(20), nullable=True, default="")
-    # nb_exemplaire_supp = models.IntegerField(verbose_name="Nombre d'exemplaires supplémantaires",
-    # null=True, default=0)
-    nb_exemplaire_supp = db.Column(db.String(50), nullable=True, default=0)
+    annee_obtention = db.Column(db.String(20), nullable=True, default="")
+    # nb_exemplaire_supp = db.Column(db.String(50), nullable=True, default=0)
     provenance = db.Column(db.String(100), nullable=True, default="")
-    mots_clef = db.Column(db.String(100), nullable=True, default="")
-    # models.ForeignKey(to=Theme, on_delete=models.SET_NULL, null=True)
-    # dernier_modifieur = models.ForeignKey(to=Compte, null=True, on_delete=models.SET_NULL)
-    date_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
-    # proprietaire = models.ForeignKey(to=Compte, on_delete=models.SET_NULL)
+    aide_a_la_recherche = db.Column(db.String(500), nullable=True, default="")
+    observations = db.Column(db.String(10000), default="")
+    # region meta
+    date_desherbe = db.Column(db.DateTime, default=None, nullable=True)
+    colonne_schweitz = db.Column(db.String(200), default="")
+    date_derniere_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
     valide = db.Column(db.Boolean, default=False)
+    origin = db.Column(db.String(50), default="")  # from "import"
     row = db.Column(db.String(500), default="")
+    # endregion
 
     def __str__(self):
-        return self.cote + " " + self.annee + self.nb_exemplaire_supp + \
-               self.provenance + " " + self.mots_clef
+        return f"cote={self.cote}, annee={self.annee_obtention} "\
+               f"provenance={self.provenance} observations={self.observations} "\
+               f"aide_a_la_recherche={self.aide_a_la_recherche}, commentaire={self.commentaire} "\
+               f"date_desherbe={self.date_desherbe}, date_derniere_modification={self.date_derniere_modification}"\
+               f"valide={self.valide}, origin={self.origin}"
 
     def afficher_tooltip(self):
-        return """Cote : {}\nAnnée : {}\nNombre d'exemplaires : {}\nProvenance : {}""".format(
-            self.cote, self.annee, self.nb_exemplaire_supp, self.provenance)
+        return """Cote : {}\nAnnée : {}\nObservations : {}\nProvenance : {}""".format(
+            self.cote, self.annee_obtention, self.observations, self.provenance)
 
     def export_to_csv_line(self):
-        line = [self.cote, self.annee, self.nb_exemplaire_supp, self.provenance,
-                self.mots_clef, self.row]
+        line = [self.cote, self.annee_obtention, self.observations, self.provenance,
+                self.aide_a_la_recherche, self.row]
+        print(line)
         return "\t".join(line)
 
     def export_to_prettify_line(self):
-        return ""
+        return f"{self.cote}"
 
     @staticmethod
     def get_csv_fieldnames() -> str:
         return "\t".join(
-            [ReferenceBibliographiqueLivreDB.get_csv_fieldnames(), "Cote", "Année", "N° d'exemplaires", "Provenance",
-             "Mots-clef", "Ligne"])
+            [ReferenceBibliographiqueLivre2023DB.get_csv_fieldnames(), "Cote", "Observations", "Provenance", "Entrée bibliothèque",
+             "Aide à la recherche"])
 
 
-class EmpruntLivreDB(db.Model):
+class EmpruntLivre2023DB(db.Model):
     """
     L'emprunt d'un livre est fait par un emprunteur.
     Un gestionnaire supervise un emprunt.
@@ -223,13 +259,13 @@ class EmpruntLivreDB(db.Model):
     Il y a une date de retour du livre prévu.
     Et on note quand il revient.
     """
-    __tablename__ = "EmpruntLivre"
+    __tablename__ = "EmpruntLivre2023"
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_emprunteur = db.Column(db.Integer, db.ForeignKey('User.id'))
     emprunteur = db.relationship(UserDB, primaryjoin=id_emprunteur == UserDB.id)  # , related_name="emprunteur", on_delete=models.SET_NULL, null=True)
-    id_enregistrement = db.Column(db.Integer, db.ForeignKey('Enregistrement.id'))
-    enregistrement = db.relationship(EnregistrementDB, primaryjoin=id_enregistrement == EnregistrementDB.id)  # , on_delete=models.SET_NULL, null=True)
+    id_enregistrement = db.Column(db.Integer, db.ForeignKey('Enregistrement2023.id'))
+    enregistrement = db.relationship(Enregistrement2023DB, primaryjoin=id_enregistrement == Enregistrement2023DB.id)  # , on_delete=models.SET_NULL, null=True)
     id_gestionnaire = db.Column(db.Integer, db.ForeignKey('User.id'))
     gestionnaire = db.relationship(UserDB, primaryjoin=id_gestionnaire == UserDB.id)  # , related_name="gestionnaire", on_delete=models.SET_NULL, null=True)
 
