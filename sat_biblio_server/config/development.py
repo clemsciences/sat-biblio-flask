@@ -32,6 +32,7 @@ class Config:
     SECRET_KEY = secret_key
 
     UPLOAD_FOLDER = "uploads"
+    UPLOAD_CATALOGUES_FOLDER = "catalogues"
     ALLOWED_IMPORT_EXTENSIONS = {"csv", "xslx"}
     MAX_CONTENT_LENGTH = 64_000_000
 
