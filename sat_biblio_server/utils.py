@@ -3,6 +3,7 @@
 """
 import datetime
 import enum
+from typing import Optional
 
 from flask import jsonify
 
@@ -309,6 +310,19 @@ class DateHeure(Date, Heure):
 
     def to_json(self):
         return [self.annee, self.mois, self.jour, self.heure, self.minute]
+
+    @staticmethod
+    def date_to_vue_str(date: Optional[datetime.date]) -> str:
+        if date:
+            return date.strftime("%Y-%m-%d")
+            # return date.isoformat()  # strftime("%d/%m/%Y")
+        return ""
+
+    @staticmethod
+    def datetime_to_str(moment: Optional[datetime.datetime]) -> str:
+        if moment:
+            return moment.isoformat()
+        return ""
 
 
 # endregion

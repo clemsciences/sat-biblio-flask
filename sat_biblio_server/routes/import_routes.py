@@ -11,66 +11,66 @@ from sat_biblio_server import sat_biblio, json_result, PACKDIR
 import sat_biblio_server.data.import_csv.import_csv_utils as icu
 
 
-INVENTORY_PATH = os.path.join(PACKDIR, "scripts", "inventaire-21-07-23.csv")
+# INVENTORY_PATH = os.path.join(PACKDIR, "scripts", "inventaire-21-07-23.csv")
 
 # region
-ALREADY_STORED_ROW_PATH = os.path.join(PACKDIR, "scripts", "already_stored_row.pickle")
+# ALREADY_STORED_ROW_PATH = os.path.join(PACKDIR, "scripts", "already_stored_row.pickle")
 
 
-def get_already_stored_rows():
-    if os.path.exists(ALREADY_STORED_ROW_PATH):
-        with open(ALREADY_STORED_ROW_PATH, "rb") as f:
-            return pickle.load(f)
-    return set()
+# def get_already_stored_rows():
+#     if os.path.exists(ALREADY_STORED_ROW_PATH):
+#         with open(ALREADY_STORED_ROW_PATH, "rb") as f:
+#             return pickle.load(f)
+#     return set()
+#
+#
+# def store_new_stored_row(new_row):
+#     already_stored_rows.add(new_row)
+#     with open(ALREADY_STORED_ROW_PATH, "wb") as f:
+#         pickle.dump(already_stored_rows, f)
+#
+#
+# def remove_row_from_stored(n_row):
+#     if n_row in already_stored_rows:
+#         already_stored_rows.remove(n_row)
+#     with open(ALREADY_STORED_ROW_PATH, "wb") as f:
+#         pickle.dump(already_stored_rows, f)
+#
+#
+# def get_next_not_marked_row(n_row):
+#     sorted_rows = sorted(list(already_stored_rows))
+#     if n_row == 0:
+#         n_row += 1
+#     if n_row in sorted_rows:
+#         index_row = sorted_rows.index(n_row)
+#         for j in range(index_row+1, len(rows)):
+#             if j not in sorted_rows:
+#                 return j
+#     return -1
+#
 
-
-def store_new_stored_row(new_row):
-    already_stored_rows.add(new_row)
-    with open(ALREADY_STORED_ROW_PATH, "wb") as f:
-        pickle.dump(already_stored_rows, f)
-
-
-def remove_row_from_stored(n_row):
-    if n_row in already_stored_rows:
-        already_stored_rows.remove(n_row)
-    with open(ALREADY_STORED_ROW_PATH, "wb") as f:
-        pickle.dump(already_stored_rows, f)
-
-
-def get_next_not_marked_row(n_row):
-    sorted_rows = sorted(list(already_stored_rows))
-    if n_row == 0:
-        n_row += 1
-    if n_row in sorted_rows:
-        index_row = sorted_rows.index(n_row)
-        for j in range(index_row+1, len(rows)):
-            if j not in sorted_rows:
-                return j
-    return -1
-
-
-already_stored_rows = get_already_stored_rows()
-
+# already_stored_rows = get_already_stored_rows()
+#
 # endregion
-
-
-rows = []
-if os.path.exists(INVENTORY_PATH):
-    i = 0
-    with codecs.open(INVENTORY_PATH, "r", encoding="windows-1252") as f:
-        for row in csv.reader(f, delimiter=";"):
-            if i > 0:
-                description = row[0]
-                rows.append({"description": description,
-                             "cote": row[1],
-                             "nb_supp": row[2],
-                             "annee": row[3],
-                             "provenance": row[4],
-                             "theme1": row[5],
-                             "theme2": row[6],
-                             "theme3": row[7],
-                             "index": i})
-            i += 1
+#
+#
+# rows = []
+# if os.path.exists(INVENTORY_PATH):
+#     i = 0
+#     with codecs.open(INVENTORY_PATH, "r", encoding="windows-1252") as f:
+#         for row in csv.reader(f, delimiter=";"):
+#             if i > 0:
+#                 description = row[0]
+#                 rows.append({"description": description,
+#                              "cote": row[1],
+#                              "nb_supp": row[2],
+#                              "annee": row[3],
+#                              "provenance": row[4],
+#                              "theme1": row[5],
+#                              "theme2": row[6],
+#                              "theme3": row[7],
+#                              "index": i})
+#             i += 1
 
 
 @sat_biblio.route("/import-csv/check/")

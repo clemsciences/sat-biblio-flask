@@ -21,9 +21,13 @@ from flask_migrate import Migrate
 
 from sat_biblio_server.database.db_manager import db
 from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB, AuthorDB, ReferenceBibliographiqueLivreDB
+from sat_biblio_server.database.books_2023 import EmpruntLivre2023DB, Enregistrement2023DB, \
+    Author2023DB, ReferenceBibliographiqueLivre2023DB, HelperAuthorBook2023
 from sat_biblio_server.database.users import UserDB
 from sat_biblio_server.database.events import LogEventDB
+from sat_biblio_server.database.imports import ImportDB, ImportedItemsDB
 from sat_biblio_server.utils import json_result
+
 
 PACKDIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -181,10 +185,15 @@ def create_app(config):
                   template_mode="bootstrap3")
     admin.add_view(SatAdminModelView(UserDB, db.session))
     admin.add_view(SatAdminModelView(AuthorDB, db.session))
+    admin.add_view(SatAdminModelView(Author2023DB, db.session))
     admin.add_view(SatAdminModelView(EnregistrementDB, db.session))
+    admin.add_view(SatAdminModelView(Enregistrement2023DB, db.session))
     # admin.add_view(SatAdminModelView(ReferenceBibliographiqueArticleDB, db.session))
     admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivreDB, db.session))
-    admin.add_view(SatAdminModelView(EmpruntLivreDB, db.session))
+    admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivre2023DB, db.session))
+    admin.add_view(SatAdminModelView(EmpruntLivre2023DB, db.session))
+    admin.add_view(SatAdminModelView(ImportDB, db.session))
+    admin.add_view(SatAdminModelView(ImportedItemsDB, db.session))
 
     # migration
     migrate.init_app(app, db)
@@ -195,6 +204,7 @@ def create_app(config):
 
     # import blueprints
     from sat_biblio_server.routes import sat_biblio
+    sat_biblio.config = config
 
     # @sat_biblio.after_request
     # def after_request(response):
