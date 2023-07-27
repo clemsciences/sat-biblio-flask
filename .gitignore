@@ -7,3 +7,10 @@ venv
 .idea
 /sat_biblio_server/config/jwt_secret_key
 /sat_biblio_server/create_admin_user.py
+/sat-biblio-interface/satbiblio-dist/
+/sat_biblio_server/config/testing.py
+/sat_biblio_server/config/key.txt
+/sat_biblio_server/config/credentials.json
+sat_biblio_server/static/catalogue-*
+/sat_biblio_server/scripts/
+/sat-biblio-interface/satbiblio.zip
