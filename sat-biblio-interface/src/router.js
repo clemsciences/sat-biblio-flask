@@ -45,6 +45,8 @@ import ImportExport from "@/components/import_export/ImportExport";
 import SearchBulletin from "@/components/recherche/SearchBulletin";
 import WorkList from "@/components/works/WorkList.vue";
 import WorkAnnotation from "@/components/works/WorkAnnotation.vue";
+import ImportList from "@/components/import/ImportList.vue";
+import ImportItem from "@/components/import/ImportItemView.vue";
 
 Vue.use(VueRouter);
 
@@ -163,6 +165,7 @@ let router = new VueRouter({
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         // endregion
+        // region import
         {
             name: "import-export",
             path: "/gestionnaire-importation",
@@ -181,6 +184,19 @@ let router = new VueRouter({
             component: GlobalImport,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
+        {
+            name: "import-lists",
+            path: "/administrateur/imports",
+            component: ImportList,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
+        {
+            name: "import-item",
+            path: "/administrateur/imports/:id",
+            component: ImportItem,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
+        // endregion
         // region auteur
         {
             name: "auteur-creer",
@@ -339,6 +355,14 @@ router.beforeEach(function (to, from, next) {
                 next({
                     name: 'utilisateur-connexion',
                 });
+                // if(from.query.redirect) {
+                //     console.log()
+                //     next(from.query.redirect);
+                // } else {
+                //     next({
+                //     name: 'utilisateur-connexion',
+                // });
+                // }
             }
         } else {
             store.commit("disconnect");
@@ -351,6 +375,12 @@ router.beforeEach(function (to, from, next) {
         }
     } else {
         next();
+        // if(from.query.redirect) {
+        //     console.log();
+        //     next(from.query.redirect);
+        // } else {
+        //     next();
+        // }
     }
-})
+});
 export default router;

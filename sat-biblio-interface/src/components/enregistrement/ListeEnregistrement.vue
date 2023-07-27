@@ -14,7 +14,7 @@
         </b-form-group>
       </b-col>
       <b-col lg="4">
-        <b-form-group label="Mots-clef" label-cols-sm="3"
+        <b-form-group label="Aide à la recherche" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <b-input v-model="motClefFiltre" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
@@ -79,25 +79,30 @@ export default {
           sortable: false
         },*/
         {
-          key: "annee",
+          key: "annee_obtention",
           label: "Année d'obtention",
           sortable: false
         },
-        {
-          key: "nb_exemplaire_supp",
-          label: "N° d'exemplaires supplémentaires",
-          sortable: false
-        },
+        // {
+        //   key: "nb_exemplaire_supp",
+        //   label: "N° d'exemplaires supplémentaires",
+        //   sortable: false
+        // },
         {
           key: "provenance",
           label: "Provenance",
           sortable: false
         },
         {
-          key: "mots_clef",
-          label: "Mots-clef",
+          key: "aide_a_la_recherche",
+          label: "Aide à la recherche",
           sortable: false
         },
+        {
+          key: "observations",
+          label: "Observations",
+          sortable: false
+        }
       ],
       coteFiltre: "",
       motClefFiltre: "",

@@ -30,14 +30,18 @@
     </b-row>
 
     <b-row>
-      <b-button @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV</b-button>
-      <p>{{ importMessage }}</p>
+      <b-button to="/administrateur/imports" class="m-2">Gestionnaire d'importation</b-button>
     </b-row>
 
-    <b-row>
-      <b-button @click="deleteAllRows" class="m-2">Supprimer le catalogue (pour les tests d'import)</b-button>
-      <p>{{ message }}</p>
-    </b-row>
+<!--    <b-row>-->
+<!--      <b-button @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV</b-button>-->
+<!--      <p>{{ importMessage }}</p>-->
+<!--    </b-row>-->
+
+<!--    <b-row>-->
+<!--      <b-button @click="deleteAllRows" class="m-2">Supprimer le catalogue (pour les tests d'import)</b-button>-->
+<!--      <p>{{ message }}</p>-->
+<!--    </b-row>-->
 
   </b-container>
 </template>

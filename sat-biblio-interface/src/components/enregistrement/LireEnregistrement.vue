@@ -49,6 +49,8 @@ import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
 import BorrowingState from "@/components/emprunt/BorrowingState";
 import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
+import EnregistrementPrettyView from "@/components/enregistrement/EnregistrementPrettyView.vue";
+import {Record} from "@/services/objectManager";
 
 export default {
   name: "LireEnregistrement",
@@ -61,19 +63,7 @@ export default {
    */
   data: function () {
     return {
-      record: {
-        reference: {value: -1, text: ""},
-        selectedReference: {text: "", value: -1},
-        suggestedReferences: [],
-        // description: "",
-        cote: "",
-        annee: "",
-        nb_exemplaire_supp: 0,
-        provenance: "",
-        mots_clef: "",
-        valide: false,
-        row: ""
-      },
+      record: new Record(),
       message: "",
       recordId: parseInt(this.$route.params.id),
     }
@@ -90,10 +80,11 @@ export default {
               this.record.reference = value.data.enregistrement.reference;
               // this.record.description = value.data.enregistrement.description;
               this.record.cote = value.data.enregistrement.cote;
-              this.record.annee = value.data.enregistrement.annee;
-              this.record.nb_exemplaire_supp = value.data.enregistrement.nb_exemplaire_supp;
+              this.record.annee_obtention = value.data.enregistrement.annee_obtention;
+              // this.record.nb_exemplaire_supp = value.data.enregistrement.nb_exemplaire_supp;
               this.record.provenance = value.data.enregistrement.provenance;
-              this.record.mots_clef = value.data.enregistrement.mots_clef;
+              this.record.aide_a_la_recherche = value.data.enregistrement.aide_a_la_recherche;
+              this.record.observations = value.data.enregistrement.observations;
               this.record.valide = value.data.enregistrement.valide;
               this.record.row = value.data.enregistrement.row;
 
@@ -107,9 +98,11 @@ export default {
           // description: this.record.description,
           cote: this.record.cote,
           annee: this.record.annee,
-          nb_exemplaire_supp: this.record.nb_exemplaire_supp,
+          // nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
-          mots_clef: this.record.mots_clef,
+          aide_a_la_recherche: this.record.aide_a_la_recherche,
+          observations: this.record.observations,
+          commentaire: this.record.commentaire,
           row: this.record.row
       };
       updateBookRecord(this.$route.params.id, formData, this.$store.state.connectionInfo.token)

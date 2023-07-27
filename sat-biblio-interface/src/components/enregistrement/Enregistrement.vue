@@ -24,11 +24,18 @@ export default {
       record: {
         selectedReference: {value: -1, text: ""},
         cote: "",
-        annee: "",
+        annee_obtention: "",
+        commentaire: "",
         nb_exemplaire_supp: 0,
         provenance: "",
-        mots_clef: "",
+        aide_a_la_recherche: "",
+        observations: "",
+        // region meta
+        date_desherbe: "",
+        date_derniere_modification: "",
+        origin: "",
         row: ""
+        // endregion
       },
       // validated: false,
       message: ""
@@ -39,7 +46,7 @@ export default {
       const formData = {
           id_reference: this.record.selectedReference.value,
           cote: this.record.cote,
-          annee: this.record.annee,
+          annee: this.record.annee_obtention,
           nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
           mots_clef: this.record.mots_clef,

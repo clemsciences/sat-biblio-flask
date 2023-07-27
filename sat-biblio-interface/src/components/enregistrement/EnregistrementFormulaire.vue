@@ -8,23 +8,32 @@
         <b-form-input v-model="record.cote"
                       :disabled="disabled"/>
       </b-form-group>
-      <b-form-group label="Année">
-        <b-form-input v-model="record.annee"
+      <b-form-group label="Année d'obtention">
+        <b-form-input v-model="record.annee_obtention"
                       :disabled="disabled"/>
       </b-form-group>
-      <b-form-group label="Nombre d'exemplaires supplémentaires">
-        <b-form-input v-model="record.nb_exemplaire_supp"
-                      :disabled="disabled"/>
-      </b-form-group>
+<!--      <b-form-group label="Nombre d'exemplaires supplémentaires">-->
+<!--        <b-form-input v-model="record.nb_exemplaire_supp"-->
+<!--                      :disabled="disabled"/>-->
+<!--      </b-form-group>-->
       <b-form-group label="Provenance">
         <b-form-input v-model="record.provenance"
                       :disabled="disabled"/>
       </b-form-group>
-      <b-form-group label="Mots-clef">
-        <b-form-input v-model="record.mots_clef"
+      <b-form-group label="Aide à la recherche">
+        <b-form-input v-model="record.aide_a_la_recherche"
                       :disabled="disabled"/>
       </b-form-group>
-    <b-form-group label="Ligne">
+      <b-form-group label="Observations">
+        <b-form-input v-model="record.observations"
+                      :disabled="disabled"/>
+      </b-form-group>
+<!--      </b-form-group><b-form-group label="Commentaire">-->
+<!--        <b-form-input v-model="record.commentaire"-->
+<!--                      :disabled="disabled"/>-->
+<!--      </b-form-group>-->
+
+      <b-form-group label="Ligne">
         <b-form-textarea v-model="record.row"
                          :disabled="disabled"
                          :rows="5" size="sm"/>

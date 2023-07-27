@@ -36,14 +36,14 @@
     </b-card>
         </b-col>
     </b-row>
-    <b-card title="Anciennces importation">
-      <b-row class="my-3">
-          <b-button to="/importation">Importation fine</b-button>
-      </b-row>
-      <b-row>
-          <b-button to="/importation-globale">Importation globale</b-button>
-      </b-row>
-    </b-card>
+<!--    <b-card title="Anciennces importation">-->
+<!--      <b-row class="my-3">-->
+<!--          <b-button to="/importation">Importation fine</b-button>-->
+<!--      </b-row>-->
+<!--      <b-row>-->
+<!--          <b-button to="/importation-globale">Importation globale</b-button>-->
+<!--      </b-row>-->
+<!--    </b-card>-->
 
     <div v-if="isProcessing">
       <b-spinner label="chargement"  class="m-2"/>
@@ -64,8 +64,8 @@ export default {
       exportFileUrl: "",
       selectedModel: "",
       options: [
-          {text: "1", value: "1"},
-          {text: "2", value: "2"},
+          {text: "1", value: "1", description: "Import format Hamelain"},
+          // {text: "2", value: "2", description: ""},
       ]
 
     };
@@ -73,6 +73,7 @@ export default {
   methods: {
     importExport() {
       if (this.file) {
+        console.log("file imported");
         this.isProcessing = true;
         let formData = new FormData();
         formData.append("file", this.file);
@@ -93,6 +94,8 @@ export default {
           console.error(reason);
         });
 
+      } else {
+        console.error("no file");
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-form-group label="Auteurs">
+    <b-form-group label="Auteurs" v-if="!disabled">
       <vue-typeahead-bootstrap
         v-model="author_query"
         :data="suggestedAuthors"
@@ -11,7 +11,7 @@
       />
   <!--        <b-form-input readonly v-if="selectedAuthor" v-model="selectedAuthor"/> &lt;!&ndash; pour chercher l'auteur &ndash;&gt;-->
     </b-form-group>
-    <b-form-group :label="selectedAuthorsMessage">
+    <b-form-group :label="disabled ? 'Auteurs' : selectedAuthorsMessage">
       <b-form-select
           v-model="selectedAuthorId"
           :options="value"

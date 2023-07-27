@@ -2,7 +2,7 @@
   <b-card>
     <b-card-body>
       <p v-if="rendering.length > 0" id="copy-btn">
-        <span>{{ renderReference(record.reference)}}</span>
+        <span>{{ renderRecord(record) }}</span>
 <!--        <span>{{ renderReference(record.se)}}</span>-->
 <!--        <span>{{ record. }}</span>-->
       </p>
@@ -15,7 +15,7 @@
 
 <script>
 import {Record} from "@/services/objectManager";
-import {renderRecord, renderReference} from "@/services/renderingManager";
+import {renderRecord} from "@/services/renderingManager";
 
 export default {
   name: "EnregistrementPrettyView",
@@ -30,7 +30,7 @@ export default {
     };
   },
   methods: {
-    renderReference,
+    renderRecord,
     copy() {
       let copiedTextInput = document.querySelector("#rendering");
       copiedTextInput.setAttribute("type", "text");

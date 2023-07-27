@@ -39,5 +39,24 @@ export class Record {
         this.nb_exemplaire_supp = 0;
         this.provenance =  "";
         this.mots_clef = "";
+
+        this.reference = {value: -1, text: ""};
+        this.suggestedReferences = [];
+        this.valid = false;
+        this.row = ""
+    }
+}
+
+export class ImportItem {
+    constructor() {
+        this.title = "";
+        this.description = "";
+        this.datetime = "";
+        this.file = "";
+        this.selectedMethod = "";
+        this.startDate = "";
+        this.endDate = "";
+        this.status = "";
+        this.idUser = -1;
     }
 }

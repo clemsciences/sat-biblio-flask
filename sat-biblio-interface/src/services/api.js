@@ -278,25 +278,81 @@ export function getLogEventsCount(params, token) {
 
 
 // region import
+// region import csv
 export function markRowAsProcessed(nRow) {
   return axios.get(`/import-csv/rows/${nRow}/add-store`)
 }
 
 export function markRowAsNotProcessed(nRow) {
-  return axios.get(`/import-csv/rows/${nRow}/remove-store`)
+  return axios.get(`/import-csv/rows/${nRow}/remove-store`);
+}
+// endregion
 
+// export function importOneCatalogue() {
+//   return axios.post("/imports-ci-2023/");
+// }
+
+export function getCatalogueListRequest(params) {
+  return axios.get(`/import-ci-2023/catalogues/${params}`);
 }
 
+export function getCataloguesCountRequest(params) {
+  return axios.get(`/import-ci-2023/catalogues/count/${params}`);
+}
+
+export function uploadOneCatalogueRequest(formData, token) {
+  return axios.post("/import-ci-2023/catalogues/", formData, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function getCatalogueInfoByKey(key) {
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=info`);
+}
+
+export function getCatalogueImportByKey(key) {
+  return axios.get(`/import-ci-2023/keys/${key}/`);
+}
+
+export function applyCatalogueRequest(key, action) {
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=${action}`)
+}
+
+export function deleteCatalogueByKey(key, token) {
+  return axios.delete(`/import-ci-2023/catalogues/${key}/`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function getOneImportRequest(importId) {
+  return axios.get(`/import-ci-2023/${importId}/`);
+}
+
+export function importCatalogueFromFileRequest(data, token) {
+  return axios.post(`/import-ci-2023/`, data, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function checkColumnsRequest(key, ignore_n_first_rows) {
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=check&ignore_n_first_rows=${ignore_n_first_rows}`)
+}
+
+export async function getCatalogueReferenceColumns(key) {
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=reference`);
+}
+
+export function previewCatalogueRequest(key, ignoreNFirstRows, nFirstRows, filterByVerifiedEntry) {
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=preview&ignore_n_first_rows=${ignoreNFirstRows}&n_first_rows=${nFirstRows}&filter_by_verified_entry=${filterByVerifiedEntry}`)
+}
+
+// region too much
 export function goToNextNotMarkedRow(nRow) {
-  return axios.get(`/import-csv/rows/${nRow}/go-to-next-not-marked-row`)
+  return axios.get(`/import-csv/rows/${nRow}/go-to-next-not-marked-row`);
 }
 
 export function importAllCatalogue() {
-  return axios.get("/import/all/")
+  return axios.get("/import/all/");
 }
+
 export function deleteAllCatalogue() {
   return axios.delete("/import/catalogue/");
 }
+// endregion
 // endregion
 
 // region export
