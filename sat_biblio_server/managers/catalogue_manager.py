@@ -1,11 +1,17 @@
 """
 
 """
+import datetime
 from collections import defaultdict
 import re
-from typing import List
+from typing import List, Optional, Dict, Union
+
+from sat_biblio_server import ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB
+from sat_biblio_server.data.models_2023 import Author2023, \
+    ReferenceBibliographiqueLivre2023, Enregistrement2023
 
 
+# region catalogue schweitz
 class CatalogueSchweitz:
     COLUMNS = ["Auteurs - Titres - Editeurs - Année", "cote", "Nb ex sup", "année entrée", "Provenance",
                "lieu-personnage", "mot clé 1", "mot clé 2",
@@ -199,6 +205,7 @@ class CatalogueSchweitzRow:
             self.mot_clef_2,
             self.observation_transfert_bht
         ]
+# endregion
 
 
 def normalize_cote(cote: str):
@@ -253,6 +260,7 @@ def void_if_none(a):
         return ""
 
 
+# region catalogue hamelain 1
 class CatalogueHamelain1:
     COLUMNS = ["Cote SAT de l'ouvrage", "Titre de l'ouvrage", "Auteur", "Année de publication", "Editeur",
                "Nombre de pages", "Entrée dans la bibliothèque", "Observations",
@@ -311,8 +319,10 @@ class CatalogueHamelain1Row:
             self.observations,
             self.aide_a_la_recherche
         ]
+# endregion
 
 
+# region catalogue hamelain 2
 class CatalogueHamelain2:
     COLUMNS = ["Cote", "Titre", "Auteur", "Lieu d'édition", "Editeur",
                "Année d'édition", "Nombre de pages", "Description",
@@ -384,8 +394,10 @@ class CatalogueHamelain2Row:
             self.contenu_schweitz,
             self.ouvrages_desherbes_2022
         ]
+# endregion
 
 
+# region catalogue hamelain 3
 class CatalogueHamelain3:
     COLUMNS = ["Cote", "Titre", "Auteur", "Année d'édition", "Editeur (lieu d'édition)",
                "Provenance", "Description", "Entrée bibliothèque",
@@ -396,6 +408,17 @@ class CatalogueHamelain3:
     def __init__(self):
         self.rows: List[CatalogueHamelain3Row] = []
         self.d = defaultdict(list)
+
+    @classmethod
+    def check_column_names(cls, rows) -> Optional[List]:
+        l = []
+        if rows:
+            for i in range(len(rows[0])):
+                if cls.COLUMNS[i] != rows[0][i]:
+                    l.append((rows[0][i], cls.COLUMNS[i]))
+            return l
+        return None
+
 
     def parse_rows(self, rows, ignore_n_first_rows=2):
         for i, row in enumerate(rows):
@@ -467,7 +490,276 @@ class CatalogueHamelain3Row:
             self.contenu_schweitz,
             self.ouvrages_desherbes
         ]
+# endregion
 
+
+# region catalogue 2023
+class Catalogue2023:
+    COLUMNS = ["Cote", "Titre", "Auteur", "Année d'édition", "Editeur (lieu d'édition)",
+               "Observations", "Ouvrages supprimés en 2022", "Provenance et date d'entrée",
+               "Description", "Entrée bibliothèque", "Aide à la recherche",
+               "Contenu colonne Schweitz", "Vérification effectuée en 2022"]
+    COLUMNS_WIDTHS = [12.55, 22, 19.36, 8, 25.55, 17.55, 29.36, 11, 16.55, 13, 62.73, 8.82, 10.36]
+
+    def __init__(self):
+        self.rows: List[Catalogue2023Row] = []
+        self.column_names = []
+        self.d = defaultdict(list)
+
+    def check_column_names(self) -> Optional[List]:
+        match_ids = []
+        # print(f"self.column_names={self.column_names}")
+        for column_name in self.COLUMNS:
+            if column_name in self.column_names:
+                match_ids.append(self.column_names.index(column_name))
+            else:
+                print(f"{column_name} was not found in import file")
+                return [f"{column_name} missing"]
+        return match_ids
+
+    def parse_rows(self, rows, ignore_n_first_rows=2):
+        # print(f"parse rows: {rows[:2]}")
+        for i, row in enumerate(rows):
+            if i == ignore_n_first_rows:
+                self.column_names = row
+            elif i > ignore_n_first_rows:
+                row_2023 = Catalogue2023Row()
+                row_2023.parse_row(row)
+
+                self.rows.append(row_2023)
+        self.update_d()
+
+    def update_d(self):
+        for i, row in enumerate(self.rows):
+            self.d[row.cote].append(i)
+
+    def keys(self):
+        return self.d.keys()
+
+    def sort_by_cote(self):
+        cotes = sorted(list(set(self.keys())))
+        new_rows = []
+        for cote in cotes:
+            for i_line in self.d[cote]:
+                new_rows.append(self.rows[i_line])
+
+        self.rows = new_rows
+
+    def export_to_data(self):
+        data = []
+        for i, row in enumerate(self.rows):
+            data.append(row.extract_book_record())
+        return data
+
+    @property
+    def rows_filtered_by_verified_entry(self):
+        rows = []
+        for row in self.rows:
+            if row.verified_and_present:
+                rows.append(row)
+        return rows
+
+    def __repr__(self):
+        return f"<Catalogue2023> {len(self.rows)} rows"
+
+
+
+class Catalogue2023Row:
+    def __init__(self):
+        self.cote = ""
+        self.titre = ""
+        self.auteurs = ""
+        self.annee_edition = ""
+        self.editeur_lieu_edition = ""
+        self.provenance_date_entree = ""
+        self.entree_bibliotheque = ""
+        self.help_description = ""
+        self.aide_a_la_recherche = ""
+        self.observations = ""
+        self.help_contenu_schweitz = ""
+        self.ouvrages_supprimes_2022 = ""
+        self.verification_effectuee_en_2022 = ""
+
+        self.row = None
+
+        self._extracted_authors = None
+        self._extracted_book_reference = None
+        self._extracted_book_record = None
+
+    def parse_row(self, row):
+        self.cote = normalize_cote(row[0])
+        self.titre = void_if_none(row[1])
+        self.auteurs = void_if_none(row[2])
+        self.annee_edition = void_if_none(row[3])
+        self.editeur_lieu_edition = void_if_none(row[4])
+        self.observations = void_if_none(row[5])
+        self.ouvrages_supprimes_2022 = void_if_none(row[6])
+        self.provenance_date_entree = void_if_none(row[7])
+        self.help_description = void_if_none(row[8])
+        self.entree_bibliotheque = void_if_none(row[9])
+        self.aide_a_la_recherche = void_if_none(row[10])
+        self.help_contenu_schweitz = void_if_none(row[11])
+        self.verification_effectuee_en_2022 = void_if_none(row[12])
+        self.row = str(row)
+
+    def to_csv_row(self):
+        return [
+            self.cote,
+            self.titre,
+            self.auteurs,
+            self.annee_edition,
+            self.editeur_lieu_edition,
+            self.observations,
+            self.ouvrages_supprimes_2022,
+            self.provenance_date_entree,
+            # self.description,
+            self.entree_bibliotheque,
+            self.aide_a_la_recherche,
+            # self.contenu_schweitz,
+            self.verification_effectuee_en_2022
+        ]
+
+    def extract_authors(self) -> List[Author2023]:
+        authors = []
+        for auteur in self.auteurs.split(","):
+            m = re.match(r"(?P<nom>[\w\- '.]+) \((?P<prenom>[ \-'\w.]+)\)", auteur)
+            if m is not None:
+                prenom = m.group("prenom")
+                nom = m.group("nom")
+                author = Author2023(first_name=prenom, family_name=nom)
+            else:
+                author = Author2023(family_name=auteur)
+            authors.append(author)
+        return authors
+
+    def _extract_publisher_and_publication_place(self):
+        m = re.match(r"(?P<editeur>[\w\- '.]+) \((?P<lieu_edition>[ \-'\w.]+)\)", self.editeur_lieu_edition)
+        publication_place = ""
+        if m is not None:
+            publisher = m.group("editeur")
+            publication_place = m.group("lieu_edition")
+        else:
+            publisher = self.editeur_lieu_edition
+        return publisher, publication_place
+
+    def _extract_provenance_date_entree(self):
+        """
+
+        :return:
+        """
+        parts = self.provenance_date_entree.split(";")
+        if len(parts) == 1:
+            return parts[0], ""
+        return parts[:2]
+
+    @property
+    def authors(self):
+        if self._extracted_authors is None:
+            self._extracted_authors = self.extract_authors()
+        return self._extracted_authors
+
+    @property
+    def book_reference(self):
+        if self._extracted_book_reference is None:
+            self._extracted_book_reference = self.extract_book_reference()
+        return self._extracted_book_reference
+
+    @property
+    def book_record(self):
+        if self._extracted_book_record is None:
+            self._extracted_book_record = self.extract_book_record()
+        return self._extracted_book_record
+
+    @property
+    def page_number(self) -> int:
+        """
+        TODO complete with more cases
+        -1 is the default number of pages (when not found)
+        :return:
+        """
+        for observation in self.observations.split(";"):
+            m = re.match(r"(?P<page_number>[0-9]+) p\.", observation.strip())
+            if m is not None:
+                return m.group("page_number")
+        return -1
+
+    @property
+    def provenance(self):
+        return self._extract_provenance_date_entree()[0]
+
+    @property
+    def annee_obtention(self):
+        return self._extract_provenance_date_entree()[1]  # self.observations
+
+    @property
+    def nb_exemplaire_supp(self):
+        return ""
+
+    @property
+    def verified_and_present(self):
+        return self.verification_effectuee_en_2022.strip() == "oui"
+
+    def extract_book_reference(self) \
+            -> ReferenceBibliographiqueLivre2023DB:
+            # -> Dict[str, Union[str, int]]:
+        editeur, lieu_edition = self._extract_publisher_and_publication_place()
+
+        ref = ReferenceBibliographiqueLivre2023DB()
+        ref.titre = self.titre
+        ref.editeur = editeur
+        ref.lieu_edition = lieu_edition
+        ref.annee = self.annee_edition
+        ref.nb_page = self.page_number
+        ref.origin = "import"
+        ref.description = self.help_description
+        return ref
+        # book_reference = {}
+        # book_reference["auteurs"] = self.extract_authors()
+        # book_reference["titre"] = self.titre
+        # book_reference["editeur"], book_reference["lieu_edition"] = self._extract_publisher_and_publication_place()
+        # book_reference["annee"] = self.annee_edition
+        # book_reference["nb_page"] = self.page_number
+        # book_reference["description"] = self.help_description
+        #
+        # return book_reference
+
+    def extract_book_record(self) \
+            -> Enregistrement2023DB:
+            # -> Dict[str, str]:
+        now = datetime.datetime.now()
+        rec = Enregistrement2023DB()
+
+        rec.origin = "import"
+        rec.annee_obtention = self.annee_obtention
+        rec.observations = self.observations
+        rec.cote = self.cote
+        rec.date_derniere_modification = now
+        rec.row = self.row
+        rec.provenance = self.provenance
+        rec.commentaire = ""
+        rec.aide_a_la_recherche = self.aide_a_la_recherche
+        return rec
+
+        # book_record = {}
+        # book_record["reference"] = self.book_reference
+        # book_record["annee_obtention"] = self.annee_obtention
+        # book_record["observations"] = self.observations
+        # book_record["commentaire"] = ""
+        # book_record["aide_a_la_recherche"] = self.aide_a_la_recherche
+        # book_record["provenance"] = self.provenance
+        # book_record["cote"] = self.cote
+        # book_record["nb_exemplaire_supp"] = self.nb_exemplaire_supp
+        # book_record["row"] = self.row
+        # return book_record
+
+    def __repr__(self):
+        return f"<Catalogue2023Row> {self.to_csv_row()}"
+
+
+
+
+
+# endregion
 
 class CatalogueConverter:
 

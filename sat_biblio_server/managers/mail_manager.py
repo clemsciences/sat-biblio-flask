@@ -4,7 +4,7 @@ Only module which uses flask_mail
 
 import logging
 import random
-from smtplib import SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError, SMTPServerDisconnected
+from smtplib import SMTPSenderRefused, SMTPRecipientsRefused, SMTPDataError, SMTPServerDisconnected, SMTPAuthenticationError
 from typing import Union
 
 from flask import render_template
@@ -32,6 +32,8 @@ def send_email(msg: Message, recipient_email_address: str):
     try:
         mail.send(msg)
         return True
+    except SMTPAuthenticationError:
+        logging.error(f"Email could not be sent because of invalid credentials: {recipient_email_address}")
     except SMTPSenderRefused:
         logging.error("Email could not be sent due to refused sender " + SENDER)
     except SMTPRecipientsRefused:
