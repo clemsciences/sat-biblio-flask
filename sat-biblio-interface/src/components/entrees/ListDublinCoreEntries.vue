@@ -295,7 +295,6 @@ export default {
       }
     },
     extractLink: function(link) {
-      let a = "";
       let linkList = link.split(" ");
       if(linkList.length > 1) {
         return linkList[0];
