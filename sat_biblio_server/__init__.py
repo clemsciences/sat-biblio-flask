@@ -11,7 +11,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_mail import Mail
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, DataRequired
 from wtforms import StringField, PasswordField
 import wtforms
 from werkzeug.security import check_password_hash
@@ -68,8 +68,8 @@ class SatAdminModelView(ModelView):
 
 
 class AdminLoginForm(wtforms.form.Form):
-    email = StringField(validators=[wtforms.validators.required()])
-    password = PasswordField(validators=[wtforms.validators.required()])
+    email = StringField(validators=[DataRequired()])
+    password = PasswordField(validators=[DataRequired()])
 
     def validate_login(self, field):
         user = self.get_user()
@@ -77,7 +77,7 @@ class AdminLoginForm(wtforms.form.Form):
         if user is None:
             raise ValidationError('Invalid user')
 
-        # we're comparing the plaintext pw with the the hash from the db
+        # we're comparing the plaintext pw with the hash from the db
         if not check_password_hash(user.password, self.password.data):
             # to compare plain text passwords use
             # if user.password != self.password.data:
@@ -88,9 +88,9 @@ class AdminLoginForm(wtforms.form.Form):
 
 
 class RegistrationForm(wtforms.form.Form):
-    login = wtforms.fields.StringField(validators=[wtforms.validators.required()])
+    login = wtforms.fields.StringField(validators=[DataRequired()])
     email = wtforms.fields.StringField()
-    password = wtforms.fields.PasswordField(validators=[wtforms.validators.required()])
+    password = wtforms.fields.PasswordField(validators=[DataRequired()])
 
     def validate_login(self, field):
         if db.session.query(UserDB).filter_by(email=self.login.data).count() > 0:
