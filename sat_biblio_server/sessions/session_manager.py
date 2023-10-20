@@ -6,11 +6,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 from sat_biblio_server.utils import UserRight
 
-options = {
-    'echo': True
-}
-
-engine = dbm.db.create_engine('sqlite:///sqlalchemy_example.db', engine_opts=options)
+engine = dbm.db.create_engine('sqlite:///sqlalchemy_example.db', echo=True)
 DBSession = dbm.db.sessionmaker(bind=engine)
 db_session = DBSession()
 

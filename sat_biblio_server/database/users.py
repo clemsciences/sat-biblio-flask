@@ -5,7 +5,7 @@
 import datetime
 
 from flask import current_app
-from itsdangerous import TimedJSONWebSignatureSerializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sat_biblio_server.database.db_manager import db
@@ -109,11 +109,11 @@ class UserDB(db.Model):
         return '<User {0}>'.format(self.email)
 
     def generate_confirmation_token(self, expiration=3600):
-        s = TimedJSONWebSignatureSerializer(current_app.config["SECRET_KEY"], expiration)
+        s = Serializer(current_app.config["SECRET_KEY"], expiration)
         return s.dumps({"confirm": self.id}).decode("utf-8")
 
     def confirm(self, token):
-        s = TimedJSONWebSignatureSerializer(current_app.config["SECRET_KEY"])
+        s = Serializer(current_app.config["SECRET_KEY"])
         try:
             data = s.loads(token.encode('utf-8'))
         except:
