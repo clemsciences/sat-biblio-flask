@@ -25,11 +25,10 @@ jobs:
       - name: Build package
         run: |
           python -m build
-          ls
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with: 
-          name: satbiblio-vue
-          path: sat-biblio-interface/satbiblio-dist
+          name: satbiblio-python
+          path: dist/*
           
