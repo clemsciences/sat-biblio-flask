@@ -18,3 +18,9 @@ jobs:
         run: cd sat-biblio-interface; npm install 
       - name: "Build project"
         run: cd sat-biblio-interface; npm run build
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v2
+        with: 
+          name: satbiblio-vue
+          path: satbiblio-dist
+        
