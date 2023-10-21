@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 
-with io.open(os.path.join(CUR_DIR, "README.md"), "r", encoding="utf-8") as f:
+with io.open(os.path.join(CUR_DIR, "sat-biblio-interface/README.md"), "r", encoding="utf-8") as f:
     README = f.read()
 
 with io.open(os.path.join(CUR_DIR, "LICENSE"), "r", encoding="utf-8") as f:
