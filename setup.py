@@ -23,6 +23,7 @@ setup(
     include_package_data=True,
     keywords=['library', 'book', 'MARC', 'UNIMARC', 'INTERMARC'],
     scripts=[],
+    exclude_package_data={'': ['doc', 'sat-biblio-interface', 'static']},
     zip_safe=True,
     python_requires=">=3.7",
     license=LICENSE,
