@@ -22,5 +22,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: satbiblio-vue
-          path: satbiblio-dist
+          path: sat-biblio-interface/satbiblio-dist
         
