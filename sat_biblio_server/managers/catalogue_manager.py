@@ -256,8 +256,19 @@ def normalize_cote(cote: str):
 def void_if_none(a):
     if a:
         return a
-    else:
-        return ""
+    return ""
+
+
+def clean_string(a: str):
+    if type(a) == str:
+        return a.strip()
+    return ""
+
+
+def clean_integer_as_string(a):
+    if type(a) == str:
+        return a.replace("'", "").replace("", "").strip()
+    return str(a)
 
 
 # region catalogue hamelain 1
@@ -525,9 +536,25 @@ class Catalogue2023:
             elif i > ignore_n_first_rows:
                 row_2023 = Catalogue2023Row()
                 row_2023.parse_row(row)
-
                 self.rows.append(row_2023)
         self.update_d()
+
+    def check_rows(self) -> List:
+        checks = []
+        for row_2023 in self.rows:
+            row_2023.check_row()
+            checks.append(row_2023)
+        return checks
+
+    # def check_rows(self, rows, ignore_n_first_rows=2) -> List:
+    #     checks = []
+    #     for i, row in enumerate(rows):
+    #         if i > ignore_n_first_rows:
+    #             row_2023 = Catalogue2023Row()
+    #             row_2023.parse_row(row)
+    #             row_2023.check_row()
+    #             checks.append(row_2023)
+    #     return checks
 
     def update_d(self):
         for i, row in enumerate(self.rows):
@@ -565,6 +592,20 @@ class Catalogue2023:
 
 
 class Catalogue2023Row:
+    COTE_INDEX = 0
+    TITLE_INDEX = 1
+    AUTHORS_INDEX = 2
+    ANNEE_EDITION_INDEX = 3
+    EDITEUR_LIEU_EDITION_INDEX = 4
+    OBSERVATIONS_INDEX = 5
+    OUVRAGES_SUPPRIMES_INDEX = 6
+    PROVENANCE_DATE_ENTREE_INDEX = 7
+    HELP_DESCRIPTION_INDEX = 8
+    ENTREE_BIBLIOTHEQUE_INDEX = 9
+    AIDE_A_LA_RECHERCHE_INDEX = 10
+    HELP_CONTENU_SCHWEIZ_INDEX = 11
+    VERIFICATION_2022_INDEX = 12
+
     def __init__(self):
         self.cote = ""
         self.titre = ""
@@ -587,22 +628,117 @@ class Catalogue2023Row:
         self._extracted_book_record = None
 
     def parse_row(self, row):
-        self.cote = normalize_cote(row[0])
-        self.titre = void_if_none(row[1])
-        self.auteurs = void_if_none(row[2])
-        self.annee_edition = void_if_none(row[3])
-        self.editeur_lieu_edition = void_if_none(row[4])
-        self.observations = void_if_none(row[5])
-        self.ouvrages_supprimes_2022 = void_if_none(row[6])
-        self.provenance_date_entree = void_if_none(row[7])
-        self.help_description = void_if_none(row[8])
-        self.entree_bibliotheque = void_if_none(row[9])
-        self.aide_a_la_recherche = void_if_none(row[10])
-        self.help_contenu_schweitz = void_if_none(row[11])
-        self.verification_effectuee_en_2022 = void_if_none(row[12])
+        if len(row) <= self.VERIFICATION_2022_INDEX:
+            raise ValueError("The row is too short. Probably a wrong row.")
+        self.cote = normalize_cote(row[self.COTE_INDEX])
+        self.titre = void_if_none(row[self.TITLE_INDEX])
+        self.auteurs = void_if_none(row[self.AUTHORS_INDEX])
+        self.annee_edition = clean_integer_as_string(void_if_none(row[self.ANNEE_EDITION_INDEX]))
+        self.editeur_lieu_edition = void_if_none(row[self.EDITEUR_LIEU_EDITION_INDEX])
+        self.observations = void_if_none(row[self.OBSERVATIONS_INDEX])
+        self.ouvrages_supprimes_2022 = void_if_none(row[self.OUVRAGES_SUPPRIMES_INDEX])
+        self.provenance_date_entree = void_if_none(row[self.PROVENANCE_DATE_ENTREE_INDEX])
+        self.help_description = void_if_none(row[self.HELP_DESCRIPTION_INDEX])
+        self.entree_bibliotheque = void_if_none(row[self.ENTREE_BIBLIOTHEQUE_INDEX])
+        self.aide_a_la_recherche = void_if_none(row[self.AIDE_A_LA_RECHERCHE_INDEX])
+        self.help_contenu_schweitz = void_if_none(row[self.HELP_CONTENU_SCHWEIZ_INDEX])
+        self.verification_effectuee_en_2022 = void_if_none(row[self.VERIFICATION_2022_INDEX])
         self.row = str(row)
 
-    def to_csv_row(self):
+    def check_row(self) -> List[bool]:
+        return [
+            self.check_cote(),
+            self.check_title(),
+            self.check_auteurs(),
+            self.check_edition_year(),
+            self.check_editor_and_edition_place(),
+            self.check_observations(),
+            self.check_deleted_works(),
+            self.check_provenance(),
+            self.check_help_description(),
+            self.check_library_entry(),
+            self.check_help_to_research(),
+            self.check_help_schweiz(),
+            self.check_2022_checks()
+
+        ]
+    def check_cote(self) -> bool:
+        cote_expression = re.compile(r"^(A|B|C|D|MM|DOC|BBH) [0-9]{1,4}(-([0-9\-]{1,2}|[A-Z]))?$")
+        return cote_expression.match(self.cote) is not None
+
+    def check_title(self) -> bool:
+        return 0 < len(self.titre) < 500
+
+    def check_auteurs(self) -> bool:
+        ok = True
+        if self.auteurs == "s. n.":
+            return True
+        for auteur in self.auteurs.split(","):
+            ok = ok and self.check_auteur(auteur)
+        return ok
+
+    def check_auteur(self, auteur: str) -> bool:
+        return re.match(r"^([\w\- ’.]+ \([ \-’\w.]+\)|\[collectif] \(-\)|\[anonyme] \(-\)|s\. n\.)$", auteur) is not None
+
+    def check_edition_year(self) -> bool:
+        if self.annee_edition == "s. d.":
+            return True
+        if type(self.annee_edition) == str:
+            edition_year_expression = re.compile("^((vers )?[0-9]{4}|s\. d\.|[0-9]{4}-[0-9]{4})$")
+            # print(f"self.annee_edition->{self.annee_edition}-{type(self.annee_edition)}")
+            return edition_year_expression.match(self.annee_edition) is not None
+        return type(self.annee_edition) == int
+
+    def check_editor_and_edition_place(self) -> bool:
+        if self.editeur_lieu_edition == "s. e. (s. l.)":
+            return True
+        edition_expression = re.compile(r"(s\. e\.|[\w\- /.’]* \((s\. l\.|[\w\-, /.’]*)\))")
+        return edition_expression.match(self.editeur_lieu_edition) is not None
+
+    def check_observations(self) -> bool:
+        return True
+
+    def check_deleted_works(self) -> bool:
+        return True
+
+    def check_provenance(self) -> bool:
+        return True
+
+    def check_help_description(self) -> bool:
+        return True
+
+    def check_library_entry(self) -> bool:
+        return True
+
+    def check_help_to_research(self) -> bool:
+        return True
+
+    def check_help_schweiz(self) -> bool:
+        return True
+
+    def check_2022_checks(self) -> bool:
+        # print(self.verification_effectuee_en_2022)
+        # print(self.verification_effectuee_en_2022.strip().lower() in ["oui", "non", "OUI", "NON"])
+        return self.verification_effectuee_en_2022.strip().lower() in ["oui", "non", "OUI", "NON"]
+
+    def to_raw_row(self) -> List[str]:
+        return [
+            self.cote,
+            self.titre,
+            self.auteurs,
+            self.annee_edition,
+            self.editeur_lieu_edition,
+            self.observations,
+            self.ouvrages_supprimes_2022,
+            self.provenance_date_entree,
+            self.help_description,
+            self.entree_bibliotheque,
+            self.aide_a_la_recherche,
+            self.help_contenu_schweitz,
+            self.verification_effectuee_en_2022
+        ]
+
+    def to_csv_row(self) -> List[str]:
         return [
             self.cote,
             self.titre,
@@ -697,7 +833,7 @@ class Catalogue2023Row:
 
     @property
     def verified_and_present(self):
-        return self.verification_effectuee_en_2022.strip() == "oui"
+        return self.verification_effectuee_en_2022.lower().strip() == "oui"
 
     def extract_book_reference(self) \
             -> ReferenceBibliographiqueLivre2023DB:

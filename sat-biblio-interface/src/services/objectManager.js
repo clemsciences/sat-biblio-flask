@@ -52,11 +52,39 @@ export class ImportItem {
         this.title = "";
         this.description = "";
         this.datetime = "";
-        this.file = "";
+        this.filename = "";
         this.selectedMethod = "";
         this.startDate = "";
         this.endDate = "";
         this.status = "";
         this.idUser = -1;
+    }
+    fromServer(importData) {
+        this.title = importData.title ?? "Aucun titre";
+        this.description = importData.description ?? "Aucune description";
+        this.filename = importData.filename ?? "Aucun fichier";
+        this.startDate = importData.start_date ?? null;
+        this.endDate = importData.end_date ?? null;
+        this.selectedMethod = importData.selected_method ?? "";
+        this.status = importData.status ?? "";
+        this.idUser = importData.id_user ?? -2;
+    }
+}
+
+export class User {
+    constructor() {
+        this.firstName = "";
+        this.familyName = "";
+        this.right = 0;
+        this.dateInscription = "";
+        this.email = ""
+    }
+
+    fromServer(serverData) {
+        this.firstName = serverData.first_name;
+        this.familyName = serverData.family_name;
+        this.right = serverData.right;
+        this.dateInscription = serverData.date_inscription;
+        this.email = serverData.email;
     }
 }

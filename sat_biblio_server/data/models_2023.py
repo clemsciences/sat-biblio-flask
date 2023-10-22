@@ -7,7 +7,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 import abc
 import datetime
 import logging
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Optional
 
 from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, \
     EmpruntLivre2023DB, \
@@ -590,6 +590,13 @@ class EmpruntLivre:
 
 
 class User2023:
+    @classmethod
+    def from_id_to_user_data(cls, _user_id: int) -> Optional[Dict]:
+        user_db = UserDB.query.filter_by(id=_user_id).first()
+        if user_db:
+            cls.from_db_to_data(user_db)
+        return None
+
     @staticmethod
     def from_db_to_data(user_db: UserDB):
         return dict(
@@ -597,7 +604,8 @@ class User2023:
             family_name=user_db.family_name,
             email=user_db.email,
             right=user_db.right.value,
-            id=user_db.id
+            id=user_db.id,
+            date_inscription=user_db.date_inscription
         )
 
     @staticmethod
@@ -702,7 +710,7 @@ class Import:
         return None
 
     @staticmethod
-    def get_import_db_by_id(id_: int):
+    def get_import_db_by_id(id_: int) -> Optional[ImportDB]:
         return ImportDB.query.filter_by(id_=id_).first()
 
     # @staticmethod

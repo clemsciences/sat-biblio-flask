@@ -25,11 +25,18 @@ class CsvReader:
 
 
     @classmethod
-    def read_xslx(cls, filename: str, ignore_n_first_lines=0):
+    def read_xlsx(cls, filename: str, ignore_n_first_lines=0):
         current_sheet = cls.get_current_sheet(filename)
         rows = [row for i, row in enumerate(current_sheet.iter_rows(values_only=True)) if
                 i > ignore_n_first_lines and row[0] is not None and row[1] is not None]
         return rows
+
+    @classmethod
+    def generate_xlsx(cls, columns: List[str]):
+        excel_catalogue = openpyxl.Workbook(True)
+        current_sheet = excel_catalogue.active
+        current_sheet.title = "Catalogue"
+
 
     @classmethod
     def get_row(cls, filename: str, index: int):
@@ -48,6 +55,8 @@ class CsvReader:
     @classmethod
     def read_xslx_with_columns(cls, filename):
         current_sheet = cls.get_current_sheet(filename)
+        # rows = [row for i, row in enumerate(current_sheet.iter_rows(values_only=True))
+        #         if row[0] is not None and row[1] is not None]
         rows = [row for i, row in enumerate(current_sheet.iter_rows(values_only=True))
                 if row[0] is not None and row[1] is not None]
         return rows
@@ -65,14 +74,14 @@ class CsvReader:
 class ImportManager(CsvReader):
     @classmethod
     def import_schweitz_format(_cls, filename: str, ignore_n_first_lines=0):
-        rows = _cls.read_xslx(filename)
+        rows = _cls.read_xlsx(filename)
         catalogue = CatalogueSchweitz()
         catalogue.parse_rows(rows)
         return catalogue
 
     @classmethod
     def import_hamelain_1(_cls, filename: str, ignore_n_first_lines=0):
-        rows = _cls.read_xslx(filename)
+        rows = _cls.read_xlsx(filename)
         catalogue = CatalogueHamelain1()
         catalogue.parse_rows(rows, ignore_n_first_lines)
         return catalogue
@@ -82,21 +91,21 @@ class ImportManager(CsvReader):
     @classmethod
     def import_hamelain_2(_cls, filename: str, ignore_n_first_lines=0):
         # excel_catalogue = openpyxl.load_workbook(filename)
-        rows = _cls.read_xslx(filename)
+        rows = _cls.read_xlsx(filename)
         catalogue = CatalogueHamelain2()
         catalogue.parse_rows(rows, ignore_n_first_lines)
         return catalogue
 
     @classmethod
     def import_hamelain_3(_cls, filename: str, ignore_n_first_lines=0):
-        rows = _cls.read_xslx(filename)
+        rows = _cls.read_xlsx(filename)
         catalogue = CatalogueHamelain3()
         catalogue.parse_rows(rows, ignore_n_first_lines)
         return catalogue
 
     @classmethod
     def check_hamelain_3_column_names(cls, filename: str):
-        rows = cls.read_xslx(filename)
+        rows = cls.read_xlsx(filename)
         return CatalogueHamelain3.check_column_names(rows)
 
 

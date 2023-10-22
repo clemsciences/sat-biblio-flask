@@ -42,6 +42,7 @@
     <b-form-group class="m-2">
       <b-button @click="previewImport">Prévisualiser</b-button>
       <div v-if="isPreviewing">
+        <b-button @click="downloadCatalogueToFix">Télécharger le catalogue à corriger</b-button>
         <p>La <b>première ligne</b> correspond aux colonnes de référence qu'il faut suivre.
           <br/>La <b>deuxième ligne</b> correspond aux colonnes du fichier importé.
           <br/>Le <b>reste des lignes</b> correspond à des exemples.
@@ -57,13 +58,14 @@
             </div>
           </template>
         </b-table>
+
       </div>
     </b-form-group>
     <b-form-group label="Description" v-if="columnFitness">
       <b-form-textarea v-model="importItem.description" :disabled="disabled"/>
     </b-form-group>
     <b-row class="m-2" v-if="columnFitness">
-      <p>{{ isIncorrect }} {{ disabled }}</p>
+<!--      <p>{{ isIncorrect }} {{ disabled }}</p>-->
       <b-button type="submit" :disabled="isIncorrect || disabled">Enregistrer</b-button>
       <div v-if="isImporting">
         <b-spinner label="Importation en cours..." class="m-2"/>
@@ -83,6 +85,7 @@ import {
 } from "@/services/api";
 
 import {canManage} from "@/services/rights";
+import {downloadCatalogueToFix} from "../../services/api";
 
 export default {
   name: "ImportItemCreation",
@@ -92,9 +95,9 @@ export default {
       type: String,
       optional: false
     },
-    fullFilename: {
-      type: String,
-    }
+    // fullFilename: {
+    //   type: String,
+    // }
   },
   data: function() {
     return {
@@ -123,8 +126,8 @@ export default {
     }
   },
   mounted() {
-    this.loadFilename();
     this.importItem.key = this.selectedKey;
+    this.loadFilename();
   },
   methods: {
     loadFilename() {
@@ -134,6 +137,7 @@ export default {
             (response) => {
               if (response.data.success) {
                 const catalogueInfo = response.data.info;
+
                 if (catalogueInfo) {
                   this.importItem.filename = catalogueInfo.filename;
                   this.importItem.fullPath = response.data.path;
@@ -141,6 +145,8 @@ export default {
                   this.importItem.filename = "";
                   this.importItem.fullPath = "";
                 }
+              } else {
+                console.error("impossible to retrieve filename")
               }
             }
         );
@@ -168,17 +174,33 @@ export default {
         console.error(reason);
       });
     },
+    downloadCatalogueToFix() {
+      downloadCatalogueToFix(this.selectedKey).then(
+          (response) => {
+            console.log(response);
+            // let linkToDownload = response.data.linkToDownload;
+            // window.open(`${process.env.VUE_APP_SITE_API_URL}/static/${linkToDownload}`, '_blank');
+        }
+      )
+
+    },
     checkImport() {
       this.checked = false;
       checkColumnsRequest(this.selectedKey, this.importItem.firstRowsToIgnoreNumber).then(
           (response) => {
             console.log(response.data.file_check);
-            let l = response.data.file_check.filter((item, index) => {
-              return item !== index;
-            });
-            this.checked = true;
-            this.checkOk = l.length === 0;
-            this.columnFitness = l.length === 0;
+            if (response.data.file_check) {
+              let l = response.data.file_check.filter((item, index) => {
+                return item !== index;
+              });
+              this.checked = true;
+              this.checkOk = l.length === 0;
+              this.columnFitness = l.length === 0;
+            } else {
+              this.checked = false;
+              this.checkOk = false;
+              this.columnFitness = false;
+            }
           }
       );
     },
@@ -221,6 +243,12 @@ export default {
     isIncorrect() {
       return this.importItem.description.length === 0 ||
           this.importItem.filename.length === 0;
+    }
+  },
+  watch: {
+    selectedKey: function (newValue) {
+      this.importItem.key = newValue;
+      this.loadFilename();
     }
   }
 }

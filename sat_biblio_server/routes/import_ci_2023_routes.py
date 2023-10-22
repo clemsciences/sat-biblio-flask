@@ -12,13 +12,15 @@ import os
 
 from flask import request, session
 
-from routes import validation_connexion_et_retour_defaut
-from sat_biblio_server.managers.catalogue_manager import Catalogue2023
+from sat_biblio_server.config.production import Config
+from sat_biblio_server.managers.export_manager import ExportCatalogueManager
+from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.managers.catalogue_manager import Catalogue2023, Catalogue2023Row
 from sat_biblio_server.database import db, ImportDB
 from sat_biblio_server.managers.import_manager import ImportManager2023, CatalogueFileManager, CsvReader
 # from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement, Import
 from sat_biblio_server import sat_biblio, json_result
-from sat_biblio_server.data.models_2023 import Import
+from sat_biblio_server.data.models_2023 import Import, User2023
 
 
 # region catalogue
@@ -28,6 +30,7 @@ class CatalogueAction:
     preview = "preview"
     download = "download"
     info = "info"
+    to_fix = "to-fix"
 
 
 @sat_biblio.route("/import-ci-2023/catalogues/<string:key>/", methods=["GET", "DELETE"])
@@ -48,7 +51,10 @@ def manage_ci_2023_catalogue(key):
         if action == CatalogueAction.check:
             ignore_n_first_rows = int(request.args.get("ignore_n_first_rows", 1))
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
-            file_check = ImportManager2023.check_2023_column_names(path_to_file, ignore_n_first_rows)
+            try:
+                file_check = ImportManager2023.check_2023_column_names(path_to_file, ignore_n_first_rows)
+            except ValueError:
+                return json_result(True, file_check=False, message="")
             return json_result(True, file_check=file_check)
             pass
         elif action == CatalogueAction.preview:
@@ -58,23 +64,50 @@ def manage_ci_2023_catalogue(key):
             # print(f"filter_by_verified_entry={filter_by_verified_entry}")
             first_rows = CatalogueFileManager.get_first_row(key, ignore_n_first_rows, n_first_rows)
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
-            file_check = ImportManager2023.check_2023_column_names(path_to_file)
-            catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file, ignore_n_first_rows)
-            if filter_by_verified_entry == 1:
-                number_of_rows = len(catalogue.rows_filtered_by_verified_entry)
-            else:
-                number_of_rows = len(catalogue.rows)
-            column_reference = Catalogue2023.COLUMNS
-            actual_columns = CsvReader.get_row(path_to_file, ignore_n_first_rows)
-            return json_result(True, first_rows=first_rows,
-                               check=file_check,
-                               column_reference=column_reference,
-                               actual_columns=actual_columns,
-                               number_of_rows=number_of_rows)
+            try:
+                file_check = ImportManager2023.check_2023_column_names(path_to_file)
+                catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file, ignore_n_first_rows)
+                if filter_by_verified_entry == 1:
+                    number_of_rows = len(catalogue.rows_filtered_by_verified_entry)
+                else:
+                    number_of_rows = len(catalogue.rows)
+                column_reference = Catalogue2023.COLUMNS
+                actual_columns = CsvReader.get_row(path_to_file, ignore_n_first_rows)
+                return json_result(True, first_rows=first_rows,
+                                   check=file_check,
+                                   column_reference=column_reference,
+                                   actual_columns=actual_columns,
+                                   number_of_rows=number_of_rows)
+            except ValueError:
+                return json_result(False, check=False)
         elif action == CatalogueAction.info:
             path_to_file = CatalogueFileManager.get_catalogue_filename(key)
             info = CatalogueFileManager.extract_from_filename(path_to_file)
             return json_result(True, info=info, path=path_to_file)
+        elif action == CatalogueAction.to_fix:
+            # path_to_file = CatalogueFileManager.get_catalogue_filename(key)
+            path_to_file = CatalogueFileManager.get_catalogue_path(key)
+            print(path_to_file)
+            catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file)
+            # new_path_to_file = os.path.join(os.path.dirname(path_to_file), "to-fix.xslx")
+            filename_without_extension = os.path.basename(path_to_file)[:-5]
+            new_path_to_file = ExportCatalogueManager.export_2023(os.path.dirname(path_to_file),
+                                                                  catalogue, title="To fix",
+                                                                  filename_prefix=f"{filename_without_extension}-",
+                                                                  protected=False)
+
+            # xlsx_file_content = CsvReader.get_current_sheet(path_to_file)
+            # # checks = []
+            # for row in xlsx_file_content.iter_rows():
+            #     # print(dir(row))
+            #     # print(row)
+            #     row_2023 = Catalogue2023Row()
+            #     row_2023.parse_row([cell.value for cell in row])
+            #     # check = row_2023.check_row()
+            #     # checks.append(check)
+
+            link_to_download = os.path.join(Config.UPLOAD_FOLDER, new_path_to_file)
+            return json_result(True, linkToDownload=link_to_download)
 
     elif request.method == "DELETE":
         existed = CatalogueFileManager.delete_catalogue(key)
@@ -159,9 +192,10 @@ def imports_ci_2023():
         # selected_method = data.get("selected_method", "0")
         ignore_n_first_lines = data.get("ignore_n_first_lines", 1)
         # status = "to-do"
-
-        path_to_file = CatalogueFileManager.get_catalogue_path(data.get("key", ""))
+        key = data.get("key", "")
+        path_to_file = CatalogueFileManager.get_catalogue_path(key)
         # file_check = ImportManager2023.check_2023_column_names(path_to_file)
+        print(f"path_to_file {path_to_file}")
         catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file, ignore_n_first_lines)
 
         # if file_check is None:
@@ -229,10 +263,15 @@ def import_ci_2023(import_id):
     if request.method == "GET":
         # Get details of a previous import
         import_db = Import.get_import_db_by_id(import_id)
-        import_data = Import.from_db_to_data(import_db)
-        # import_data = Import.get_import_by_filename(import_id)
+        if import_db:
+            import_data = Import.from_db_to_data(import_db)
+            user_data = User2023.from_db_to_data(import_db.user)
+            # import_data = Import.get_import_by_filename(import_id)
+        else:
+            import_data = None
+            user_data = None
         if import_data:
-            return json_result(True, import_data=import_data)
+            return json_result(True, import_data=import_data, user_data=user_data)
         return json_result(False)
     elif request.method == "PUT":
         db.session.commit()

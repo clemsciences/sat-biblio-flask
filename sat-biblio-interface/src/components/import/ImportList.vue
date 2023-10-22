@@ -4,12 +4,12 @@
     <h2>Imports</h2>
 
     <b-row>
-      <UploadCatalogueView @upload-finished="getImportTotalNumber"/>
+      <UploadCatalogueView @upload-finished="refreshImportList"/>
 <!--      <b-button @click="uploadCatalogue">Téléverser un catalogue</b-button>-->
     </b-row>
     <b-row>
 
-<!--    <b-col cols="6">-->
+    <b-col cols="6">
       <b-card>
         <b-card-body>
           <div v-if="catalogueNumber > 0">
@@ -17,7 +17,7 @@
 <!--              <b-list-group v-for="item in importList" :key="`id-${item.id}`">-->
 <!--                <b-list-group-item>{{ item }}</b-list-group-item>-->
 <!--              </b-list-group>-->
-            <b-table responsive striped bordered hover :items="loadImports"
+            <b-table ref="importsTable" responsive striped bordered hover :items="loadImports"
                      :fields="fields" primary-key="key"
                      :per-page="perPage" :current-page="currentPage"
                      :sort-by="sortBy" selectable select-mode="single"
@@ -54,10 +54,10 @@
           </div>
         </b-card-body>
       </b-card>
-    </b-row>
-    <b-row>
-<!--    </b-col>-->
-<!--    <b-col cols="6">-->
+<!--    </b-row>-->
+<!--    <b-row>-->
+    </b-col>
+    <b-col cols="6">
         <b-card>
           <b-card-body>
             <div v-if="selectedImportId === null">
@@ -71,7 +71,7 @@
             </div>
           </b-card-body>
         </b-card>
-<!--    </b-col>-->
+    </b-col>
     </b-row>
     <b-modal id="suppression" title="Suppression de l'import"
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteFile">
@@ -186,12 +186,16 @@ export default {
       deleteCatalogueByKey(this.selectedKey, this.$store.state.connectionInfo.token).then(
           (response) => {
             if (response.data.success) {
-              this.getImportTotalNumber();
+              this.refreshImportList();
             } else {
               console.log(response.data);
             }
           }
       );
+    },
+    refreshImportList() {
+      this.getImportTotalNumber();
+      this.$refs.importsTable.refresh();
     },
     showCatalogueView(item) {
       console.log(item);
@@ -202,8 +206,6 @@ export default {
               if (response.data.success) {
                 const importData = response.data.import_data;
                 if (importData) {
-                  console.log(`importData`);
-                  console.log(importData);
                     this.selectedImportId = importData.id;
                 } else {
                   this.selectedImportId = -1;

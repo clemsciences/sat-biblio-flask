@@ -313,9 +313,12 @@ export function getCatalogueImportByKey(key) {
 }
 
 export function applyCatalogueRequest(key, action) {
-  return axios.get(`/import-ci-2023/catalogues/${key}/?action=${action}`)
+  return axios.get(`/import-ci-2023/catalogues/${key}/?action=${action}`);
 }
 
+export function downloadCatalogueToFix(key) {
+  return applyCatalogueRequest(key, "to-fix");
+}
 export function deleteCatalogueByKey(key, token) {
   return axios.delete(`/import-ci-2023/catalogues/${key}/`, { headers: { Authorization: `Bearer ${token}` } });
 }

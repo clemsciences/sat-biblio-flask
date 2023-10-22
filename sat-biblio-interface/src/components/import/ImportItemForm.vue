@@ -16,7 +16,12 @@
       <b-form-textarea v-model="importItem.status" :disabled="disabled"/>
     </b-form-group>
     <b-form-group label="Utilisateur">
-      <b-form-textarea v-model="importItem.idUser" :disabled="true"/>
+      <div v-if="importItem.user" >
+        <b-form-textarea :value="`${importItem.user.firstName} ${importItem.user.familyName}`" :disabled="true"/>
+      </div>
+      <div v-else>
+        <b-form-textarea v-model="importItem.user" :disabled="true"/>
+      </div>
     </b-form-group>
     <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
     <span class="mx-3">{{ message }}</span>

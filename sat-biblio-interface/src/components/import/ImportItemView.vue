@@ -25,6 +25,7 @@
 import {getOneImportRequest} from "@/services/api";
 import ImportItemForm from "@/components/import/ImportItemForm.vue";
 import Title from "@/components/visuel/Title.vue";
+import {ImportItem, User} from "../../services/objectManager";
 
 export default {
   name: "ImportItem",
@@ -42,17 +43,28 @@ export default {
     }
   },
   mounted() {
-    this.loadImportItem();
+    this.loadImportItem(this.importItemId);
 
   },
   methods: {
-    loadImportItem() {
-      console.log("import item in import item view", this.importItemId)
-      getOneImportRequest(this.importItemId).then(
+    loadImportItem(importItemId) {
+      console.log("import item in import item view", importItemId)
+      getOneImportRequest(importItemId).then(
         (response) => {
-          console.log(response.data);
-          if (response.data.import_data) {
-            this.importItem = response.data.import_data;
+          if(response.data.success) {
+            console.log(response.data);
+            let importData = response.data.import_data;
+            if (importData) {
+              this.importItem = new ImportItem()
+              this.importItem.fromServer(importData);
+            }
+            let userData = response.data.user_data;
+            if (userData) {
+              this.importItem.user = new User();
+              this.importItem.user.fromServer(userData);
+            }
+          } else {
+            this.importItem = null;
           }
         }
     );
@@ -68,6 +80,11 @@ export default {
   computed: {
     prettyImport: function() {
       return this.importItem;
+    }
+  },
+  watch: {
+    importItemId(newValue) {
+      this.loadImportItem(newValue);
     }
   }
 }

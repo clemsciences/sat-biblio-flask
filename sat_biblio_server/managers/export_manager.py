@@ -10,10 +10,10 @@ import logging
 import os
 
 import openpyxl
-from openpyxl.styles import Font, colors, PatternFill, Border, Side, Protection, Alignment
+from openpyxl.styles import Font, PatternFill, Border, Side, Protection, Alignment, Color
 from openpyxl.utils import get_column_letter
 
-from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3
+from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3, Catalogue2023
 from sat_biblio_server.data.models import Enregistrement
 
 
@@ -187,6 +187,85 @@ class ExportCatalogueManager:
                 c = current_sheet.cell(row=i + shift_i_row, column=j + 1, value=row[j])
                 c.alignment = center_alignment
         current_sheet.protection = protection
+
+        excel_catalogue.save(complete_path)
+        return complete_path
+
+    @staticmethod
+    def export_2023(path: str, catalogue_2023: Catalogue2023, filename_prefix: str = "", title="", protected=True):
+        complete_path = os.path.join(path, f"{filename_prefix}catalogue-exporte-2023.xlsx")
+        excel_catalogue = openpyxl.Workbook()
+        first_line = "Bibliothèque de la S.A.T. Inventaire des ouvrages. Format 2023."
+        current_sheet = excel_catalogue.active
+        current_sheet.title = "Catalogue 2023"
+        bold_font = Font(bold=True)
+        red_fill = PatternFill(start_color="00FF0000", end_color="00FF0000", fill_type="solid")
+        white_fill = PatternFill(start_color='FFFFFFFF', end_color='FF000000', fill_type="solid")
+        grey_fill = PatternFill(start_color="00CCFFFF", end_color="00CCFFFF", fill_type="solid")
+        black_border = Border(left=Side(color="FF000000"),
+                              right=Side(color="FF000000"),
+                              bottom=Side(color="FF000000"),
+                              top=Side(color="FF000000"))
+        protection = Protection(locked=True)
+        center_alignment = Alignment(wrap_text=True, vertical='center', horizontal='center')
+        column_names = Catalogue2023.COLUMNS
+        column_widths = Catalogue2023.COLUMNS_WIDTHS
+
+        shift_i_row = 1
+        # region first line
+        current_date = datetime.date.today().isoformat()
+        c = current_sheet.cell(row=shift_i_row, column=1,
+                               value=f"BIBLIOTHEQUE DE LA SAT. Catalogue des livres. {title}. Point au {current_date}")
+        c.font = bold_font
+        c.fill = white_fill
+        c.border = black_border
+        c.alignment = center_alignment
+
+        current_sheet.merge_cells(range_string=f"A1:{get_column_letter(len(Catalogue2023.COLUMNS))}1")
+        # endregion
+
+        # region second line
+        shift_i_row += 1
+
+        for i in range(len(column_names)):
+            c = current_sheet.cell(row=shift_i_row, column=i + 1, value=column_names[i])
+            c.font = bold_font
+            c.fill = white_fill
+            c.border = black_border
+            c.alignment = center_alignment
+
+        for i, width in enumerate(column_widths, 1):
+            column_letter = get_column_letter(i)
+            current_sheet.column_dimensions[column_letter].width = width
+            # current_sheet.column_dimensions[column_letter].height = 10
+        current_sheet.auto_filter.ref = f"A{shift_i_row}:L{len(catalogue_2023.rows) + shift_i_row}"
+        current_sheet.auto_filter.add_sort_condition(
+            f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(1)}{len(catalogue_2023.rows) + shift_i_row}")
+        # endregion
+
+        shift_i_row += 1
+
+        for i, row_2023 in enumerate(catalogue_2023.rows):
+            row = row_2023.to_raw_row()
+            current_sheet.row_dimensions[i].height = 30
+            # print(row)
+            if i % 1000 == 0:
+                logging.error(f"row {i}->{row}")
+            check = row_2023.check_row()
+            for j in range(len(row)):
+                c = current_sheet.cell(row=i + shift_i_row, column=j + 1, value=row[j])
+                if row_2023.verified_and_present:
+                    if not check[j]:
+                        c.fill = red_fill
+                        # print("fill!!!")
+                    # else:
+                    #     c.fill = white_fill
+                else:
+                    c.fill = grey_fill
+                c.alignment = center_alignment
+                c.border = black_border
+        if protected:
+            current_sheet.protection = protection
 
         excel_catalogue.save(complete_path)
         return complete_path
