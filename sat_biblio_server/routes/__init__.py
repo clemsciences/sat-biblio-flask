@@ -3,7 +3,7 @@
 """
 
 from flask import Blueprint
-from flask.json import JSONEncoder
+from json import JSONEncoder
 # from app.database_manager import JsonEncodedDict
 
 
