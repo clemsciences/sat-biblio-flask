@@ -813,11 +813,17 @@ class Catalogue2023Row:
         -1 is the default number of pages (when not found)
         :return:
         """
-        for observation in self.observations.split(";"):
-            m = re.match(r"(?P<page_number>[0-9]+) p\.", observation.strip())
-            if m is not None:
-                return m.group("page_number")
-        return -1
+        if type(self.observations) == str:
+            for observation in self.observations.split(";"):
+                m = re.match(r"(?P<page_number>[0-9]+) p\.", observation.strip())
+                if m is not None:
+                    return m.group("page_number")
+            return -1
+        else:
+            # C 3563, to add again
+            # Provenance et date d’entrée
+            # Provenance et date d'entrée
+            print(f"self.observations: {self.observations}")
 
     @property
     def provenance(self):
