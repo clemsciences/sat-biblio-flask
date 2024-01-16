@@ -220,7 +220,7 @@ class Enregistrement2023DB(db.Model):
     colonne_schweitz = db.Column(db.String(200), default="")
     date_derniere_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
     valide = db.Column(db.Boolean, default=False)
-    origin = db.Column(db.String(50), default="")  # from "import"
+    origin = db.Column(db.String(50), default="")  # from "import", "manual"
     row = db.Column(db.String(500), default="")
     # endregion
 

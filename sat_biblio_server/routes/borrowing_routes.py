@@ -46,8 +46,8 @@ def borrowings():
         if commentaire:
             query = query.filter(EmpruntLivreDB.commentaire.like(commentaire))
 
-        in_commantaire = request.args.get("in_commentaire")
-        if in_commantaire:
+        in_commentaire = request.args.get("in_commentaire")
+        if in_commentaire:
             query = query.filter(EmpruntLivreDB.commentaire.like(f"%{commentaire}%"))
 
         emprunte = request.args.get("emprunte")

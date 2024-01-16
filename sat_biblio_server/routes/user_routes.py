@@ -276,6 +276,7 @@ def valider_inscription(link):
 # endregion
 
 
+# region users
 @sat_biblio.route("/users/", methods=["GET"])
 @validation_connexion_et_retour_defaut("email", ["GET"])
 def users_():
@@ -345,3 +346,4 @@ def users_count():
         the_query = the_query.filter(UserDB.right.like(f"%{request.args.get('right')}%"))
     number = the_query.count()
     return json_result(True, total=number), 200
+# endregion
