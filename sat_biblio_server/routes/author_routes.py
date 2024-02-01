@@ -189,7 +189,9 @@ def chercher_auteurs_plus_proches():
     res = []
     for author_db in authors_db:
         res.append(dict(text=f"{author_db.first_name} {author_db.family_name}",
-                        value=author_db.id))
+                        value=author_db.id,
+                        family_name=author_db.family_name,
+                        first_name=author_db.first_name))
     return json_result(True, suggestedAuthors=res), 200
 
 
