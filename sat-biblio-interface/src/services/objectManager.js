@@ -19,6 +19,7 @@ export class BookReference {
         this.editeur = "";
         this.annee = "";
         this.nb_page = "";
+        this.description = "";
     }
     // getPrettyForm() {
         // let authorPrettyForm = "";
