@@ -1,11 +1,15 @@
 <template>
   <b-card title="">
     <b-card-body>
-      <p v-if="rendering.length > 0" id="copy-btn"><span v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
-        {{ i.family_name }} ({{ i.first_name }}),
-      </span>
-      <span><i>{{ reference.titre }}</i>, {{reference.lieu_edition}}, {{ reference.editeur }}, {{ reference.annee }}</span>
-        <span v-if="reference.nb_page >= 0">, {{ reference.nb_page }} p.</span>
+      <p v-if="rendering.length > 0" id="copy-btn">
+        <span v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
+          {{ renderAuthor(i) }},&nbsp;
+        </span>
+        <span v-if="reference.selectedAuthors.length === 0">
+          [anonyme],&nbsp;
+        </span>
+      <span><i>{{renderTitle(reference)}}</i>, {{ renderEditor(reference)}}, {{ renderYear(reference) }}</span>
+        <span>{{renderPages(reference)}}</span>
       </p>
       <input type="hidden" id="rendering" :value="rendering"/>
       <b-tooltip target="copy-btn" triggers="manual" :show="showingCopyMessage">Copié !</b-tooltip>
@@ -18,7 +22,14 @@
 <script>
 // import {BookReference} from "@/services/objectManager";
 
-import {renderReference} from "@/services/renderingManager";
+import {
+  renderAuthor,
+  renderEditor,
+  renderPages,
+  renderReference,
+  renderTitle,
+  renderYear
+} from "@/services/renderingManager";
 import {BookReference} from "@/services/objectManager";
 
 export default {
@@ -38,6 +49,11 @@ export default {
     }
   },
   methods: {
+    renderYear,
+    renderEditor,
+    renderPages,
+    renderTitle,
+    renderAuthor,
     copy() {
       let copiedTextInput = document.querySelector("#rendering");
       copiedTextInput.setAttribute("type", "text");
@@ -53,11 +69,12 @@ export default {
       setTimeout(() => {
          this.showingCopyMessage = false;
       }, 3000);
-    }
+    },
   },
 
   computed: {
     rendering: function() {
+      console.log(this.reference);
       return renderReference(this.reference);
     }
   }
