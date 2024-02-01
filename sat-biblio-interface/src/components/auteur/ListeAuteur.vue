@@ -33,6 +33,14 @@
              :sort-by="sortBy" @row-dblclicked="goToAuthor" :filter="onFilter">
       <template #table-caption>La liste des auteurs dans la base.</template>
     </b-table>
+    <b-row>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="authorTotalNumber"
+        :per-page="perPage"
+        aria-controls="my-table" />
+      <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
+    </b-row>
   </b-container>
 </template>
 

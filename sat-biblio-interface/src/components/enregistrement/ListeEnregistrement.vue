@@ -36,13 +36,23 @@
         aria-controls="my-table"
         class="my-3"/>
       <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-      </b-row>
+    </b-row>
 
     <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
+
+    <b-row>
+    <b-pagination
+        v-model="currentPage"
+        :total-rows="recordTotalNumber"
+        :per-page="perPage"
+        aria-controls="my-table"
+        class="my-3"/>
+      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </b-row>
   </b-container>
 </template>
 

@@ -27,6 +27,15 @@
              :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
+    <b-row>
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="refTotalNumber"
+      :per-page="perPage"
+      aria-controls="my-table"
+      class="my-3"/>
+      <filter-count :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
+    </b-row>
   </b-container>
 </template>
 
