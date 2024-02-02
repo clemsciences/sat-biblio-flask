@@ -82,8 +82,8 @@ def manage_ci_2023_catalogue(key):
                 return json_result(False, check=False)
         elif action == CatalogueAction.info:
             path_to_file = CatalogueFileManager.get_catalogue_filename(key)
-            info = CatalogueFileManager.extract_from_filename(path_to_file)
-            return json_result(True, info=info, path=path_to_file)
+            catalogue_file = CatalogueFileManager.extract_from_filename(path_to_file)
+            return json_result(True, info=catalogue_file.to_dict(), path=path_to_file)
         elif action == CatalogueAction.to_fix:
             # path_to_file = CatalogueFileManager.get_catalogue_filename(key)
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
@@ -136,7 +136,7 @@ def manage_ci_2023_catalogues():
         n_page = int(request.args.get("page", 0))
         size = int(request.args.get("size", 10))
         catalogues = CatalogueFileManager.get_catalogue_list(n_page, size)
-        return json_result(True, catalogues=catalogues)
+        return json_result(True, catalogues=[catalogue.to_dict() for catalogue in catalogues])
     return json_result(False, "Wrong request")
 
 
@@ -228,7 +228,7 @@ def get_import_data_by_catalogue_key_request(key):
     filename = CatalogueFileManager.get_catalogue_filename(key)
     long_filename = CatalogueFileManager.extract_from_filename(filename)
     if long_filename:
-        import_data = Import.get_import_by_filename(long_filename["filename"])
+        import_data = Import.get_import_by_filename(long_filename.filename)
         return json_result(True, import_data=import_data, filename=filename)
     return json_result(False)
 
