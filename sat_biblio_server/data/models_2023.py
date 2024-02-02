@@ -594,7 +594,14 @@ class User2023:
     def from_id_to_user_data(cls, _user_id: int) -> Optional[Dict]:
         user_db = UserDB.query.filter_by(id=_user_id).first()
         if user_db:
-            cls.from_db_to_data(user_db)
+            return cls.from_db_to_data(user_db)
+        return None
+
+    @classmethod
+    def from_email_address_to_user(cls, email_address: str):
+        user_db = UserDB.query.filter_by(email=email_address).first()
+        if user_db:
+            return cls.from_db_to_data(user_db)
         return None
 
     @staticmethod
