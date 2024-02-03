@@ -22,7 +22,7 @@ class ExportCatalogueManager:
     @staticmethod
     def export_catalogue_csv(path, filename_without_extension, records_db):
         records = [Enregistrement.from_db_to_data(record_db) for record_db in records_db]
-        print(os.getcwd())
+        # print(os.getcwd())
         complete_path = os.path.join(path, f"{filename_without_extension}.csv")
         with codecs.open(complete_path, "w", encoding="utf-8") as f:
             writer = csv.writer(f, delimiter="\t")

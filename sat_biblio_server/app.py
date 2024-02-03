@@ -30,7 +30,7 @@ app = create_app(Config)
 
 with app.app_context():
     # print(os.path.join(os.path.join(os.path.dirname(__file__), "sat_biblio_server", "data-dev.sqlite3")))
-    print(os.path.join(os.path.join(os.path.dirname(__file__))))
+    # print(os.path.join(os.path.join(os.path.dirname(__file__))))
     if not os.path.exists(
             os.path.join(os.path.join(os.path.dirname(__file__), "data-dev.sqlite3"))):
         db.create_all()

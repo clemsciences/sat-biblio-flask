@@ -18,7 +18,7 @@ class BnfSruManager:
         :param query: in already formatted form
         :return:
         """
-        print(f"la requête: {query}")
+        # print(f"la requête: {query}")
         return cls._post(query)
 
     @classmethod
@@ -55,7 +55,7 @@ class BnfSruManager:
                                       maximumRecords=100,
                                       startRecord=1,
                                       ))
-        print(response.url)
+        # print(response.url)
         if response.status_code == 200:
             r = RequestResult(response.content)
             return r
@@ -84,24 +84,24 @@ class RequestResult:
         self.records = []
         for node in root:
             if node.tag == f"{namespaces['srw']}version":
-                print(f"{namespaces['srw']}version")
+                # print(f"{namespaces['srw']}version")
                 self.version = node.text
-                print(self.version)
+                # print(self.version)
             elif node.tag == f"{namespaces['srw']}numberOfRecords":
                 self.number_of_records = node.text
             elif node.tag == f"{namespaces['srw']}echoedSearchRetrieveRequest":
                 self.echoed_search_retrieve_request = node.text
             elif node.tag == f"{namespaces['srw']}records":
-                print("RECORDS")
+                # print("RECORDS")
                 for n in node:
                     # print(etree.tostring(n))
                     record = Record(etree.tostring(n))
                     self.records.append(record)
-                print("taille", len(self.records))
+                # print("taille", len(self.records))
             elif node.tag == f"{namespaces['srw']}diagnostics":
                 self.diagnostics = node.text
-                print(self.diagnostics)
-        print(self.number_of_records)
+                # print(self.diagnostics)
+        # print(self.number_of_records)
 
     def to_dict(self):
         return dict(records=[r.to_dict() for r in self.records],
@@ -112,7 +112,7 @@ class RequestResult:
 
 class Record:
     def __init__(self, result):
-        print("record")
+        # print("record")
         namespaces = {"srw": "{http://www.loc.gov/zing/srw/}"}
         parser = etree.XMLParser(no_network=False, encoding="utf-8")
         root = etree.fromstring(result, parser=parser)
@@ -128,22 +128,22 @@ class Record:
         namespaces = {"srw": "{http://www.loc.gov/zing/srw/}",
                       "mxc": ""}
         for node in root:
-            print(node.tag)
+            # print(node.tag)
             if node.tag == f"{namespaces['srw']}recordSchema":
-                print(f"recordSchema {namespaces['srw']}recordSchema")
-                print(self.record_schema)
+                # print(f"recordSchema {namespaces['srw']}recordSchema")
+                # print(self.record_schema)
                 self.record_schema = node.text
             elif node.tag == f"{namespaces['srw']}recordPacking":
                 self.record_packing = node.text
             elif node.tag == f"{namespaces['srw']}recordData":
                 self.record_data = node.text
-                print(self.record_data)
+                # print(self.record_data)
                 if self.record_schema == "dc":
                     d = DublinCoreResult(node)
                     self.record_data = d
                 elif self.record_schema == "marcexchange":
                     d = IntermarcResult(node)
-                    print(d)
+                    # print(d)
                     self.record_data = d
             elif node.tag == f"{namespaces['srw']}recordIdentifier":
                 self.record_identifier = node.text

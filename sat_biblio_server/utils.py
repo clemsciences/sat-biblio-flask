@@ -122,7 +122,7 @@ class Date:
         d2 = datetime.datetime.today()
         d1 = d1.replace(year=self.annee, month=self.mois, day=self.jour)
         d2 = d2.replace(year=autre_d.annee, month=autre_d.mois, day=autre_d.jour)
-        print(d1, d2)
+        # print(d1, d2)
         return (d2 - d1).days
 
     def liste_jours_entre_dates(self, autre_d):
@@ -192,7 +192,7 @@ class DateHeure(Date, Heure):
 
     @staticmethod
     def from_select_datetime(d: dict, label: str):
-        print(d)
+        # print(d)
         heure = int(d["heure_" + label])
         minute = int(d["minute_" + label])
         jour = int(d["jour_" + label])
@@ -232,7 +232,7 @@ class DateHeure(Date, Heure):
         :param d:
         :return:
         """
-        print(d)
+        # print(d)
         self.heure = int(d["heure"])
         self.minute = int(d["minute"])
         self.jour = int(d["jour"])
@@ -241,7 +241,7 @@ class DateHeure(Date, Heure):
         return datetime.datetime(int(self.annee), int(self.mois), int(self.jour), int(self.heure), int(self.minute))
 
     def from_dictionary_app_label(self, d: dict, label: str):
-        print(d)
+        # print(d)
         self.heure = int(d["_".join(["heure", label])])
         self.minute = int(d["_".join(["minute"])])
         self.jour = int(d["_".join(["jour"])])
@@ -268,7 +268,7 @@ class DateHeure(Date, Heure):
         :return:
         """
         # date_str = d["entree_date"]
-        print(date_str)
+        # print(date_str)
         date, heure = date_str.split('T')
         annee, mois, jour = date.split("-")
         heure, minute = heure.split(":")
@@ -276,7 +276,7 @@ class DateHeure(Date, Heure):
 
     @staticmethod
     def from_firefox(date_str: str):
-        print(date_str)
+        # print(date_str)
         date, heure = date_str.split(' ')
         annee, mois, jour = date.split("-")
         heure, minute, secondes = heure.split(":")

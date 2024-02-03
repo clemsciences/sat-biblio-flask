@@ -42,17 +42,17 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_reque
                 return methode(*args, **kwargs)
             if type(pseudo) == str:
                 try:
-                    print("p")
+                    # print("p")
                     verify_jwt_in_request()
-                    print("oui :)")
+                    # print("oui :)")
                 except FreshTokenRequired:
-                    print("euh")
+                    # print("euh")
                     disconnect_user()
                     logging.log(logging.ERROR, "disconnected")
                 if pseudo in session:
-                    print("oui")
+                    # print("oui")
                     return methode(*args, **kwargs)
-                print("jjj")
+                # print("jjj")
                 logging.log(logging.ERROR, "not connected")
                 return json_result(False, "Vous n'êtes pas connecté"), 401
             else:

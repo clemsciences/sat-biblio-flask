@@ -87,7 +87,7 @@ def manage_ci_2023_catalogue(key):
         elif action == CatalogueAction.to_fix:
             # path_to_file = CatalogueFileManager.get_catalogue_filename(key)
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
-            print(path_to_file)
+            # print(path_to_file)
             catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file)
             # new_path_to_file = os.path.join(os.path.dirname(path_to_file), "to-fix.xslx")
             filename_without_extension = os.path.basename(path_to_file)[:-5]
@@ -176,7 +176,7 @@ def imports_ci_2023():
         # key = data.get("key", "")
 
         # filename = CatalogueFileManager.get_catalogue_filename(key)
-        print(request.get_json())
+        # print(request.get_json())
         data = request.get_json()
 
         # region
@@ -195,7 +195,7 @@ def imports_ci_2023():
         key = data.get("key", "")
         path_to_file = CatalogueFileManager.get_catalogue_path(key)
         # file_check = ImportManager2023.check_2023_column_names(path_to_file)
-        print(f"path_to_file {path_to_file}")
+        # print(f"path_to_file {path_to_file}")
         catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file, ignore_n_first_lines)
 
         # if file_check is None:

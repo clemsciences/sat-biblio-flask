@@ -455,7 +455,6 @@ class Enregistrement(IoData):
                   f"(SELECT id_reference_biblio_livre FROM helperauthorbook " \
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
         res = db.engine.execute(request)
-        print(request)
         return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
                 for rec_db in res.fetchall()]
 

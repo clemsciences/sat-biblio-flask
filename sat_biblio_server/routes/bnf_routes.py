@@ -27,19 +27,19 @@ def dublin_core_request():
     if request.method == "GET":
         query = request.args.get("query", "")
         n_page, size, sort_by = get_pagination(request)
-        print(f"query {query}")
+        # print(f"query {query}")
 
         entries = BnfSruManager.search_from_query(query)
-        print(entries.number_of_records)
+        # print(entries.number_of_records)
         if entries:
             assert isinstance(entries, RequestResult)
-            print("1")
+            # print("1")
             # print(entries.to_dict())
 
             return json_result(True, entries=entries.to_dict(), total=int(entries.number_of_records)), 200
-        print("2")
+        # print("2")
         return json_result(True, entries=[], total=0), 200
-    print("3")
+    # print("3")
     return json_result(False), 400
 
 
