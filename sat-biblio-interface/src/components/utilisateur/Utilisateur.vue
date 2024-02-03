@@ -19,7 +19,7 @@
       </b-form-group>
       <b-form-group label="Droit">
         <b-form-select :disabled="!managerCanUse || (isMyProfile && managerCanUse)"
-                       v-model="right" :options="limitedRightsForSelect()"
+                       v-model="right" :options="limitedRightsForSelect"
                        :select-size="1" size="sm"/>
       </b-form-group>
       <b-form-group label="Adresse email">
