@@ -1,7 +1,7 @@
 <template>
   <b-card title="">
     <b-card-body>
-      <p v-if="rendering.length > 0" id="copy-btn">
+      <p v-if="rendering.length > 0" id="copy-btn" class="mx-1">
         <span v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
           {{ renderAuthor(i) }},&nbsp;
         </span>
@@ -12,8 +12,10 @@
         <span>{{renderPages(reference)}}</span>
       </p>
       <input type="hidden" id="rendering" :value="rendering"/>
-      <b-tooltip target="copy-btn" triggers="manual" :show="showingCopyMessage">Copié !</b-tooltip>
-      <b-button class="mx-2" @click="copy">Copier</b-button>
+      <b-tooltip target="copy-btn" placement="topleft" triggers="manual" :show="showingCopyMessage">
+        Copié !
+      </b-tooltip>
+      <b-button class="my-2" @click="copy">Copier</b-button>
     </b-card-body>
   </b-card>
 

@@ -3,14 +3,16 @@
     <Title title="Nouvelle référence bibliographique - livre"
            info="Une référence bibliographique désigne les informations propres à un livre"
            id="id-ref"/>
+    <div v-if="reference">
+      <ReferenceLivrePrettyView :reference="reference"/>
 
-    <ReferenceLivrePrettyView :reference="reference"/>
+      <ReferenceLivreFormulaire
+          :reference="reference"
+          :on-submit="saveReference"
+          :message="message"
+      />
+    </div>
 
-    <ReferenceLivreFormulaire
-        :reference="reference"
-        :on-submit="saveReference"
-        :message="message"
-    />
   </b-container>
 </template>
 
@@ -20,23 +22,19 @@ import Title from "../visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canManage} from "@/services/rights";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
+import {BookReference} from "@/services/objectManager";
 
 export default {
   name: "ReferenceLivre",
   components: {ReferenceLivrePrettyView, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
-      reference: {
-        selectedAuthors: [],
-        titre: "",
-        lieu_edition: "",
-        editeur: "",
-        annee: "",
-        nb_page: "",
-        description: "",
-      },
+      reference: null,
       message: ""
     }
+  },
+  mounted() {
+    this.reference = new BookReference();
   },
   methods: {
     saveReference: function () {

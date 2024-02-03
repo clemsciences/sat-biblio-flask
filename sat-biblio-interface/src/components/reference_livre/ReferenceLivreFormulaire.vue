@@ -6,7 +6,7 @@
         :disabled="disabled"/>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre" :disabled="disabled"/>
-      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>
+<!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
     </b-form-group>
     <b-form-group label="Lieu d'édition">
       <b-form-input v-model="reference.lieu_edition" :disabled="disabled"/>
@@ -32,11 +32,11 @@
 
 <script>
 import SuggestionAuteur from "@/components/auteur/SuggestionAuteur";
-import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
+// import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
 
 export default {
   name: "ReferenceLivreFormulaire",
-  components: {SuggestionAuteur, BNFSearchBadge},
+  components: {SuggestionAuteur, /*BNFSearchBadge*/},
   props: {
     reference: Object,
     message: {
