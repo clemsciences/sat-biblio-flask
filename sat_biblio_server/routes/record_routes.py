@@ -1,7 +1,7 @@
 """
 Manages records in library.
 
-Records are hints fto manage books in the library.
+Records are hints to manage books in the library.
 """
 import json
 import logging

@@ -6,7 +6,7 @@ from typing import Optional, List, Dict
 import openpyxl
 from werkzeug.utils import secure_filename
 
-from config.production import Config
+from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, \
     CatalogueHamelain2, CatalogueHamelain3, Catalogue2023
 from sat_biblio_server import db, Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, PACKDIR
