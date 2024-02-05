@@ -14,7 +14,7 @@ from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB,
     UserDB, LogEventDB, db, ImportDB, HelperAuthorBook2023
 from sqlalchemy import and_, join
 
-from utils import DateHeure
+from sat_biblio_server.utils import DateHeure
 
 
 class IoData(abc.ABC):

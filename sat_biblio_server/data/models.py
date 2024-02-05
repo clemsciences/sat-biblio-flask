@@ -13,7 +13,7 @@ from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, Enregis
     UserDB, LogEventDB, db, ImportDB
 from sqlalchemy import and_, join
 
-from utils import DateHeure
+from sat_biblio_server.utils import DateHeure
 
 
 def date_to_str(date: Union[None, datetime.date]) -> str:
