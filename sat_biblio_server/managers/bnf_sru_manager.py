@@ -26,6 +26,10 @@ class BnfSruManager:
         return cls._post(f"bib.author all \"{author}\"")
 
     @classmethod
+    def search_by_isbn(cls, isbn: str):
+        return cls._post(f"bib.isbn adj \"{isbn}\"")
+
+    @classmethod
     def search_book_ref(cls, book_ref: ReferenceBibliographiqueLivre):
         return cls._post(f"bib.title all \"{book_ref}\"")
 
@@ -208,4 +212,19 @@ class IntermarcResult:
 
 
 if __name__ == "__main__":
-    BnfSruManager.search_author(Author(first_name="Jean-Michel", family_name="Besnier"))
+    # res = BnfSruManager.search_author(Author(first_name="Jean-Michel", family_name="Besnier"))
+    # print(res.result)
+
+    isbn_string = "9782072690679"
+    isbn_result = BnfSruManager.search_by_isbn(isbn_string)
+    for record in isbn_result.records:
+        print(record.to_dict())
+        print(record.record_data.to_dict())
+
+    url = f"https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&query=isn%20{isbn_string}"
+    headers = {"Accept": "application/xml"}
+    # Remplacez "VOTRE_CLE_API" par votre clé d'accès à l'API de la BNF
+    params = {"apikey": "VOTRE_CLE_API"}
+    response = requests.get(url, headers=headers, params=params)
+    # print(response.raw.decode_content())
+
