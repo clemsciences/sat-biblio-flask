@@ -12,7 +12,7 @@ from typing import Union, List, Dict, Optional
 from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, \
     EmpruntLivre2023DB, \
     UserDB, LogEventDB, db, ImportDB, HelperAuthorBook2023
-from sqlalchemy import and_, join
+from sqlalchemy import and_, join, text
 
 from sat_biblio_server.utils import DateHeure
 
@@ -309,21 +309,13 @@ class ReferenceBibliographiqueLivre2023:
         :param sort_by:
         :return:
         """
-
-        res = db.engine.execute(f"SELECT * FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
-                                f"WHERE id IN "
-                                f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                                f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}")
-        # print([i.values() for i in res])
-        # return res.first().values()[0]
-        return [dict(type="reference", description=str(ref_db["titre"])+" "+ref_db["editeur"], id=ref_db["id"])
-                for ref_db in res.fetchall()]
-
-        # the_query = ReferenceBibliographiqueLivreDB.query
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # the_query = ReferenceBibliographiqueLivreDB.authors.any(id=id_author)
-        # return [dict(type="reference", description=str(ref_db), id=ref_db.id)
-        #         for ref_db in the_query.paginate(page=n_page, per_page=size).items]
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT * FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
+                                    f"WHERE id IN "
+                                    f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
+                                    f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}"))
+            return [dict(type="reference", description=str(ref_db["titre"])+" "+ref_db["editeur"], id=ref_db["id"])
+                    for ref_db in res.mappings()]
 
     @staticmethod
     def get_references_by_author_count(id_author):
@@ -333,15 +325,13 @@ class ReferenceBibliographiqueLivre2023:
         :param id_author:
         :return:
         """
-        res = db.engine.execute(f"SELECT COUNT(*) FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
-                                f"WHERE id IN "
-                                f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                                f"WHERE id_author = {id_author} )")
-        # print([i.values() for i in res])
-        return res.first().values()[0]
-        # the_query = ReferenceBibliographiqueLivreDB.query
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return the_query.count()
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT COUNT(*) FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
+                                    f"WHERE id IN "
+                                    f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
+                                    f"WHERE id_author = {id_author} )"))
+            for i in res:
+                return i[0]
 
     @staticmethod
     def get_references_by_record(id_record, n_page, size, sort_by):
@@ -483,16 +473,10 @@ class Enregistrement2023:
                   f"WHERE id_reference IN " \
                   f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} " \
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
-        res = db.engine.execute(request)
-        print(request)
-        return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
-                for rec_db in res.fetchall()]
-
-        # the_query = EnregistrementDB.query
-        # the_query = the_query.join(EnregistrementDB.reference)
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return [dict(type="record", description=str(rec_db), id=rec_db.id)
-        #         for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+        with db.engine.connect() as connection:
+            res = connection.execute(text(request))
+            return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
+                    for rec_db in res.mappings()]
 
     @staticmethod
     def get_records_by_author_count(id_author):
@@ -501,19 +485,13 @@ class Enregistrement2023:
         :param id_author:
         :return:
         """
-        res = db.engine.execute(f"SELECT COUNT(*) FROM {Enregistrement2023DB.__tablename__} "
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT COUNT(*) FROM {Enregistrement2023DB.__tablename__} "
                           f"WHERE id_reference IN "
                           f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                          f"WHERE id_author = {id_author} )")
-        # print(help(res))
-        # b = RowProxy()
-
-        return res.first().values()[0]
-        # the_query = EnregistrementDB.query
-        # the_query = the_query.join(EnregistrementDB.reference)
-        # the_query = EnregistrementDB.reference
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return the_query.count()
+                          f"WHERE id_author = {id_author} )"))
+            for i in res:
+                return i[0]
 
     @staticmethod
     def get_records_by_ref(id_ref, n_page, size, sort_by):
