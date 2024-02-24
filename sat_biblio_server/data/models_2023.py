@@ -314,7 +314,7 @@ class ReferenceBibliographiqueLivre2023:
                                     f"WHERE id IN "
                                     f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
                                     f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}"))
-            return [dict(type="reference", description=str(ref_db["titre"])+" "+ref_db["editeur"], id=ref_db["id"])
+            return [dict(type="reference", description=str(ref_db["titre"])+", "+ref_db["editeur"], id=ref_db["id"])
                     for ref_db in res.mappings()]
 
     @staticmethod
@@ -346,7 +346,7 @@ class ReferenceBibliographiqueLivre2023:
         the_query = ReferenceBibliographiqueLivre2023DB.query
         the_query = the_query.join(Enregistrement2023DB.reference)
         the_query = the_query.filter(Enregistrement2023DB.id == id_record)
-        return [dict(type="reference", description=str(ref_db), id=ref_db.id)
+        return [dict(type="reference", description=f"{ref_db.titre}, {ref_db.editeur}", id=ref_db.id)
                 for ref_db in the_query.paginate(page=n_page, per_page=size).items]
 
     @staticmethod
@@ -475,7 +475,7 @@ class Enregistrement2023:
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
         with db.engine.connect() as connection:
             res = connection.execute(text(request))
-            return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
+            return [dict(type="record", description=str(rec_db["cote"]), id=rec_db["id"])
                     for rec_db in res.mappings()]
 
     @staticmethod

@@ -65,8 +65,16 @@ def book_references():
         references = []
         for reference_db in the_query.paginate(page=n_page, per_page=size).items:
             reference = ReferenceBibliographiqueLivre2023.from_db_to_data(reference_db)
-            reference["authors"] = " ".join(
-                [f"{author['first_name']} {author['family_name']}" for author in reference['authors']])
+            authors = ""
+            for author in reference['authors']:
+                # if author["family_name"] == "[collectif]":
+                #     authors += "[collectif] (-), "
+                # elif author["family_name"] == "[anonyme]":
+                #     authors += "[anonyme] (-), "
+                # else:
+                authors += f"{author['first_name']} {author['family_name']}, "
+
+            reference["authors"] = authors[:-2].strip()
             references.append(reference)
         logging.debug(len(references))
         return json_result(True, references=references), 200
