@@ -8,8 +8,9 @@
       <b-card-title title="Fiche"/>
       <b-card-body>
         <ValidEntry v-if="canManage" :approved="auteur.valide"/>
-
-        <AuteurPrettyView :author="auteur" mode="sat"/>
+        <b-card-header>
+          <AuteurPrettyView :author="auteur" mode="sat"/>
+        </b-card-header>
 
         <AuteurFormulaire
             :on-submit="updateAuthor"

@@ -19,6 +19,7 @@ export class BookReference {
         this.editeur = "";
         this.annee = "";
         this.nb_page = "";
+        this.valide = false;
         this.description = "";
     }
     // getPrettyForm() {
@@ -33,7 +34,9 @@ export class BookReference {
 
 export class Record {
     constructor() {
-        this.selectedReference = {value: -1, text: ""};
+        this.selectedReference = new BookReference;
+        this.selectedReference.value = -1;
+        this.selectedReference.text = "";
         this.description = "";
         this.cote = "";
         this.annee = "";
@@ -41,7 +44,9 @@ export class Record {
         this.provenance =  "";
         this.mots_clef = "";
 
-        this.reference = {value: -1, text: ""};
+        this.reference = new BookReference();
+        this.reference.value = -1;
+        this.reference.text = "";
         this.suggestedReferences = [];
         this.valid = false;
         this.row = ""

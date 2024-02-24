@@ -8,7 +8,9 @@
       <b-card-title title="Fiche"/>
       <b-card-body>
         <ValidEntry v-if="canManage" :approved="reference.valide"/>
-        <ReferenceLivrePrettyView :reference="reference"/>
+        <b-card-header>
+          <ReferenceLivrePrettyView :reference="reference"/>
+        </b-card-header>
         <ReferenceLivreFormulaire
             :message="message"
             :on-submit="updateReference"
@@ -45,6 +47,7 @@ import {mapState} from "vuex";
 import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
+import {BookReference} from "@/services/objectManager";
 
 export default {
 name: "LireReferenceLivre",
@@ -52,17 +55,7 @@ name: "LireReferenceLivre",
   data: function () {
     return {
       suggestedAuthors: [],
-      reference: {
-        // selectedAuthorId: '',
-        selectedAuthors: [],
-        titre: "",
-        lieu_edition: "",
-        editeur: "",
-        annee: "",
-        nb_page: "",
-        valide: false,
-        description: ""
-      },
+      reference: new BookReference(),
       message: "",
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
       referenceId: parseInt(this.$route.params.id),

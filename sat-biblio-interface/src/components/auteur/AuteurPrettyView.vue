@@ -1,5 +1,13 @@
 <template>
-  <span>{{ author.family_name }} ({{ author.first_name }})</span>
+  <span v-if="author.family_name === '[collectif] (-)'">
+    Collectif
+  </span>
+  <span v-else-if="author.family_name === '[anonyme] (-)'">
+    Anonyme
+  </span>
+  <span v-else>
+    {{ author.family_name }} ({{ author.first_name }})
+  </span>
 </template>
 
 <script>

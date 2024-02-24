@@ -10,7 +10,9 @@
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
       <ValidEntry v-if="false" :approved="record.valide"/>
       <BorrowingState v-if="isConnected" :recordId="recordId"/>
-      <EnregistrementPrettyView :record="record"/>
+      <b-card-header>
+        <EnregistrementPrettyView :record="record"/>
+      </b-card-header>
       <EnregistrementFormulaire
           :message="message"
           :on-submit="updateRecord"

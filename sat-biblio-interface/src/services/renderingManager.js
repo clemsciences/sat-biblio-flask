@@ -6,7 +6,12 @@
  * @returns {string}
  */
 export function renderAuthor(author) {
-    return `${author.family_name} (${author.first_name})`
+    if(author.family_name === '[collectif] (-)') {
+        return `[collectif] (-)`;
+    } else if (author.family_name === '[anonyme] (-)') {
+        return `[anonyme] (-)`;
+    }
+    return `${author.family_name} (${author.first_name})`;
 }
 
 /**
@@ -25,7 +30,7 @@ export function renderReference(reference) {
 
         if (result.length === 0) {
             console.log(result.length === 0);
-            result += "[anonyme]"
+            result += "[anonyme], "
         }
         result += `${renderTitle(reference)}, ${renderEditor(reference)}, ${renderYear(reference)} ${renderPages(reference)}`;
     }
@@ -85,15 +90,18 @@ export function renderYear(reference) {
  * @returns {string}
  */
 export function renderPages(reference) {
+    console.log(reference);
+if(reference.nb_page == 0) {
+  return '';
+} else if (reference.nb_page == -1) {
+    return '';
+}
   if(typeof reference.nb_page === "number") {
-    if(reference.nb_page === 0) {
-      return '';
-    }
     return `,${reference.nb_page } p.`;
   } else {
     if (reference.nb_page.length === 0) {
       return '';
-    }
+    } else if(reference.nb_page)
     return `,${reference.nb_page} p.`;
   }
 }
@@ -105,6 +113,10 @@ export function renderPages(reference) {
 export function renderRecord(record) {
     let result = "";
     result += `${record.cote}, `
-    result += renderReference(record.selectedReference);
+    if(record.selectedReference.value !== -1) {
+        result += renderReference(record.selectedReference);
+    } else if(record.selectedReference.value !== -1) {
+        result += renderReference(record.reference);
+    }
     return result;
 }

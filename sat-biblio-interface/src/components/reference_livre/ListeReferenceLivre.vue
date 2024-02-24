@@ -26,6 +26,30 @@
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
+
+      <template #cell(annee)="data">
+        <div v-if="data.item.annee === 's. d.'">Inconnu</div><div v-else>{{ data.item.annee }}</div>
+      </template>
+
+      <template #cell(authors)="data">
+        <div v-if="data.item.authors === '[collectif] (-)'">Collectif</div>
+        <div v-else-if="data.item.authors === '[anonyme] (-)'">Anonyme</div>
+        <div v-else>{{data.item.authors}}</div>
+      </template>
+
+      <template #cell(lieu_edition)="data">
+        <div v-if="data.item.lieu_edition === 's. l.'">Inconnu</div>
+        <div v-else>{{ data.item.lieu_edition }}</div>
+      </template>
+      <template #cell(editeur)="data">
+        <div v-if="data.item.editeur === 's. ed.'">Inconnu</div>
+        <div v-else>{{ data.item.editeur }}</div>
+      </template>
+
+
+      <template #cell(nb_page)="data">
+        <div v-if="data.item.nb_page === '-1' || data.item.nb_page === ''">Inconnu</div><div v-else>{{ data.item.nb_page }}</div>
+      </template>
     </b-table>
     <b-row>
     <b-pagination
