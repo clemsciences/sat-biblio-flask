@@ -114,9 +114,6 @@ export default {
           sortable: false
         }
       ],
-      coteFiltre: "",
-      motClefFiltre: "",
-      titreFiltre: ""
       coteFilter: "",
       keywordsFilter: "",
       titleFilter: "",
@@ -202,7 +199,7 @@ export default {
   },
   computed: {
     onFilter() {
-      return `${this.coteFiltre} ${this.titreFiltre} ${this.motClefFiltre}`;
+
       return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter}`;
     }
   }
