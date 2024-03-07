@@ -53,7 +53,7 @@ def book_records():
             the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
                 .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
         if mot_clef:
-            the_query = the_query.filter(Enregistrement2023DB.mots_clef.like(f"%{mot_clef}%"))
+            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
         # valid = request.args.get("valid", "1")
         # if valid in ["1", "0"]:
         #     the_query = the_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
@@ -125,8 +125,8 @@ def book_record(id_):
                 enregistrement_db.nb_exemplaire_supp = data["nb_exemplaire_supp"]
             if "provenance" in data:
                 enregistrement_db.provenance = data["provenance"]
-            if "mots_clef" in data:
-                enregistrement_db.mots_clef = data["mots_clef"]
+            if "aide_a_la_recherche" in data:
+                enregistrement_db.aide_a_la_recherche = data["aide_a_la_recherche"]
             db.session.commit()
 
             LogEventManager(db).add_update_event(id_,
@@ -153,7 +153,7 @@ def book_records_count():
         the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
             .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
     if mot_clef:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.mots_clef.like(f"%{mot_clef}%"))
+        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
 
     # valid = request.args.get("valid", "1")
     # if valid in ["1", "0"]:
@@ -186,8 +186,8 @@ def chercher_enregistrements():
     if "provenance" in data and data["provenance"]:
         the_query.filter_by(provenance=data["provenance"])
         filtered = True
-    if "mots_clef" in data and data["mots_clef"]:
-        the_query.filter_by(mots_clef=data["mots_clef"])
+    if "aide_a_la_recherche" in data and data["aide_a_la_recherche"]:
+        the_query.filter_by(aide_a_la_recherche=data["aide_a_la_recherche"])
         filtered = True
     # if "valide" in data and data["valide"]:
     #     the_query.filter_by(valide=data["valide"])

@@ -173,12 +173,12 @@ def clean_cote(cote):
 
 def extraire_enregistrements(record) -> Dict[str, str]:
     # print(record.keys())
-    mots_clef = f"{record.get('theme1', '')} " \
+    aide_a_la_recherche = f"{record.get('theme1', '')} " \
                 f"{record.get('theme2', '')} " \
                 f"{record.get('theme3', '')}".strip()
     record = dict(cote=clean_cote(record["cote"]),
                   nb_exemplaire_supp=record["nb_supp"],
                   annee=record["annee"], provenance=record["provenance"],
-                  mots_clef=mots_clef, valide=True, id_reference=record["index"],
+                  aide_a_la_recherche=aide_a_la_recherche, valide=True, id_reference=record["index"],
                   row=" ; ".join([f"{i} -> {j}" for i, j in record.items()]))
     return record

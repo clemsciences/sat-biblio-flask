@@ -98,7 +98,7 @@ export default {
         cote: this.cote,
         annee: this.annee,
         provenance: this.provenance,
-        mots_clef: this.mots_clef,
+        aide_a_la_recherche: this.aide_a_la_recherche,
         valide: this.valide
       };
 

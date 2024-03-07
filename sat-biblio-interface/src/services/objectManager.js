@@ -42,7 +42,7 @@ export class Record {
         this.annee = "";
         this.nb_exemplaire_supp = 0;
         this.provenance =  "";
-        this.mots_clef = "";
+        this.aide_a_la_recherche = "";
 
         this.reference = new BookReference();
         this.reference.value = -1;

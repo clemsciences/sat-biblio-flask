@@ -35,7 +35,7 @@ def check_enregistrement(enregistrement):
            "annee" in enregistrement and \
            "nb_exemplaire_supp" in enregistrement and \
            "provenance" in enregistrement and \
-           "mots_clef" in enregistrement and \
+           "aide_a_la_recherche" in enregistrement and \
            enregistrement["id_reference"] > 0 and \
            len(enregistrement["nb_exemplaire_supp"]) == 0 or \
            ((type(enregistrement["nb_exemplaire_supp"]) == str and
