@@ -26,6 +26,10 @@ export function renderReference(reference) {
             for (let value of reference.selectedAuthors) {
                 result += `${renderAuthor(value)},`;
             }
+        } else if (typeof reference.authors !== "undefined") {
+            for(let value of reference.authors) {
+                result += `${renderAuthor(value)}`;
+            }
         }
 
         if (result.length === 0) {

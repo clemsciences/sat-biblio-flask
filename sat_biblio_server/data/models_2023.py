@@ -253,6 +253,7 @@ class ReferenceBibliographiqueLivre2023:
             return dict(
                 id=reference.id,
                 authors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
+                selectedAuthors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
                 titre=reference.titre,
                 lieu_edition=reference.lieu_edition,
                 editeur=reference.editeur,
