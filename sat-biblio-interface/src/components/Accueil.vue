@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-row>
+    <b-row class="py-2">
       <h2>Accueil</h2>
     </b-row>
     <b-row v-if="connected"><h3>Connexion</h3></b-row>
@@ -13,7 +13,7 @@
       </b-col>
     </b-row>
 
-    <b-row><h3>Description</h3></b-row>
+<!--    <b-row><h3>Description</h3></b-row>-->
     <b-row>
 <!--      <b-col cols="9">-->
         <p>Bienvenue sur SatBiblio, c'est une application web qui permet de gérer
