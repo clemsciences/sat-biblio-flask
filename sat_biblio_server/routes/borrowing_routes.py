@@ -114,11 +114,16 @@ def borrowings():
             db.session.add(emprunt)
             db.session.commit()
             current_user = UserDB.query.filter_by(email=session["email"]).first()
-            reference = ReferenceBibliographiqueLivreDB.query.filter_by(id=emprunt.enregistrement.id_reference).first()
+            emprunt.enregistrement = Enregistrement2023DB.query.filter_by(id=data["record"]).first()
+            if emprunt.enregistrement:
+                reference = (ReferenceBibliographiqueLivre2023DB
+                             .query
+                             .filter_by(id=emprunt.enregistrement.id_reference)
+                             .first())
 
-            success = send_new_borrowing_email(current_user, reference, emprunt)
-            if success:
-                return json_result(True, id=emprunt.id), 201
+                success = send_new_borrowing_email(current_user, reference, emprunt)
+                if success:
+                    return json_result(True, id=emprunt.id), 201
             return json_result(False, id=emprunt.id, message="Echec de l'envoi de l'email."), 200
         return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
