@@ -135,8 +135,8 @@ def book_record(id_):
                                                  values=json.dumps(dict(previous=previous_value,
                                                                         new=Enregistrement2023.from_db_to_data(
                                                                             enregistrement_db))))
-            return json_result(True), 200
-        return json_result(False), 404
+            return json_result(True, "Enregistrement correctement mis à jour."), 200
+        return json_result(False, "Echec de la mis à jour de l'enregistrement."), 404
 
 
 @sat_biblio.route("/book-records/count/", methods=["GET"])

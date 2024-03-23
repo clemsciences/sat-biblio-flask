@@ -321,16 +321,16 @@ def user_(id_):
             user_db.family_name = data["family_name"]
             user_db.right = UserRight.from_value(data["right"])
             db.session.commit()
-            return json_result(True), 200
+            return json_result(True, "L'utilisateur a bien été enregistré."), 200
         else:
-            return json_result(False), 400
+            return json_result(False, "Echec de l'enregistrement de l'utilisateur"), 400
     elif request.method == "DELETE":
         if user_db:
             # user_db.right.value
             db.session.delete(user_db)
             db.session.commit()
-            return json_result(True), 204
-        return json_result(False), 400
+            return json_result(True, "Utilisateur correctement supprimé/"), 204
+        return json_result(False, "Echec lors de la suppression de l'utilisateur."), 400
 
 
 @sat_biblio.route("/users/count/", methods=["GET"])

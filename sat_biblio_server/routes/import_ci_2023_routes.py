@@ -130,7 +130,7 @@ def manage_ci_2023_catalogues():
         file = request.files["file"]
         if file:
             key = CatalogueFileManager.save_downloaded_file(file)
-            return json_result(True, key=key)
+            return json_result(True, "Téléversement du fichier correctement effectué.", key=key)
         return json_result(False, message="No file")
     elif request.method == "GET":
         n_page = int(request.args.get("page", 0))

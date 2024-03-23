@@ -76,8 +76,8 @@ def authors_():
                 db.session.commit()
                 LogEventManager(db).add_create_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
                                                  values=json.dumps(data))
-                return json_result(True, id=author_db.id), 201
-            return json_result(True, id=author_exists.id), 200
+                return json_result(True, "Ajout de l'auteur correctement effectué.", id=author_db.id), 201
+            return json_result(True, "L'auteur existe déjà.", id=author_exists.id), 200
         else:
             return json_result(False), 304
 
@@ -114,9 +114,9 @@ def author_(id_):
             db.session.commit()
             LogEventManager(db).add_update_event(id_, session.get("id", -1), Author2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_value, new=data)))
-            return json_result(True), 200
+            return json_result(True, "Auteur correctement mis à jour."), 200
         else:
-            return json_result(False), 400
+            return json_result(False, "Echec de la mise à jour de l'auteur."), 400
     elif request.method == "DELETE":
         id_author = id_
         author_db = Author2023DB.query.filter_by(id=id_author).first()

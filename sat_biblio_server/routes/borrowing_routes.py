@@ -123,7 +123,7 @@ def borrowings():
 
                 success = send_new_borrowing_email(current_user, reference, emprunt)
                 if success:
-                    return json_result(True, id=emprunt.id), 201
+                    return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=emprunt.id), 201
             return json_result(False, id=emprunt.id, message="Echec de l'envoi de l'email."), 200
         return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
@@ -205,8 +205,8 @@ def borrowing(id_: int):
                 return json_result(True, borrowing=borrowing_data,
                                    message="La fiche de l'emprunt vient d'être mise à jour."), 200
             else:
-                return json_result(False), 404
-        return json_result(False), 400
+                return json_result(False, "Erreur lors de la récupération de la fiche de l'emprunt."), 404
+        return json_result(False, "Echec de la mise à jour de la fiche de l'emprunt."), 400
 
 
 @sat_biblio.route("/borrowings/count/", methods=["GET"])

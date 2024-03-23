@@ -126,8 +126,8 @@ def book_reference(id_):
                                                      previous=previous_value,
                                                      new=ReferenceBibliographiqueLivre2023.from_db_to_data(ref_biblio_db))))
 
-            return json_result(True), 200
-        return json_result(False), 404
+            return json_result(True, "La mise à jour de la référence bibliographique a été sauvegardée."), 200
+        return json_result(False, "Echec de la mise à jour de la référence bibliographique."), 404
     elif request.method == "DELETE":
         ref_biblio_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(id=id_).first()
         if ref_biblio_db:

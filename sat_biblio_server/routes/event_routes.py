@@ -99,8 +99,8 @@ def log_event_request(id_):
             if "table_name" in data:
                 log_event_db.table_name = data["table_name"]
             db.session.commit()
-            return json_result(True), 200
-        return json_result(False), 404
+            return json_result(True, "Evenement correctement mis à jour."), 200
+        return json_result(False, "Echec de la mise à jour de l'événement."), 404
 
 
 @sat_biblio.route("/log-events/count/", methods=["GET"])
