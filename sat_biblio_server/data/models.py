@@ -9,8 +9,11 @@ import datetime
 import logging
 from typing import Union, List, Dict
 
-from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, \
-    UserDB, LogEventDB, db, ImportDB
+from sat_biblio_server.database.books import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, \
+    UserDB
+from sat_biblio_server.database.events import LogEventDB
+from sat_biblio_server.database.imports import ImportDB
+from sat_biblio_server.database import db
 from sqlalchemy import and_, join
 
 from sat_biblio_server.utils import DateHeure
