@@ -10,7 +10,7 @@ from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server.database import db, AuthorDB
-from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivreDB
+from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivre2023DB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
