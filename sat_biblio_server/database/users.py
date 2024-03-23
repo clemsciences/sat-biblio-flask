@@ -106,14 +106,14 @@ class UserDB(db.Model):
         return True
 
     def __repr__(self):
-        return '<User {0}>'.format(self.email)
+        return f"<User {self.email}>"
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config["SECRET_KEY"], str(expiration))
         return s.dumps({"confirm": self.id})
 
-    def confirm(self, token):
-        s = Serializer(current_app.config["SECRET_KEY"])
+    def confirm(self, token, expiration=3600):
+        s = Serializer(current_app.config["SECRET_KEY"], str(expiration))
         try:
             data = s.loads(token.encode('utf-8'))
         except:
