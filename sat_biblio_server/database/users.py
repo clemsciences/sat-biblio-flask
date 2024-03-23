@@ -34,7 +34,7 @@ class UserDB(db.Model):
     date_inscription = db.Column(db.DateTime, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     # mdp = db.Column(db.String(80), unique=False, nullable=False)
-    mdp_hash = db.Column(db.String(128), unique=False, nullable=False)
+    mdp_hash = db.Column(db.String(4096), unique=False, nullable=False)
     confirmed = db.Column(db.Boolean, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True, default=None)
     is_admin = db.Column(db.Boolean, nullable=True, default=False)
