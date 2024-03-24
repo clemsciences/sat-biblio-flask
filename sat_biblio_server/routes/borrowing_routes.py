@@ -102,29 +102,37 @@ def borrowings():
         data = request.get_json()
         # logging.log(logging.DEBUG, data)
         if dv.check_emprunt(data):
-            user = UserSess(session["email"])
-            date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])
-            emprunt = EmpruntLivre2023DB(id_emprunteur=data["borrower"],
-                                     id_enregistrement=data["record"],
-                                     id_gestionnaire=user.user_db.id,
-                                     commentaire=data["comment"],
-                                     date_retour_prevu=date_retour_prevu,  # TODO string to date
-                                     emprunte=True,
-                                     rendu=False)
-            db.session.add(emprunt)
-            db.session.commit()
-            current_user = UserDB.query.filter_by(email=session["email"]).first()
-            emprunt.enregistrement = Enregistrement2023DB.query.filter_by(id=data["record"]).first()
-            if emprunt.enregistrement:
-                reference = (ReferenceBibliographiqueLivre2023DB
-                             .query
-                             .filter_by(id=emprunt.enregistrement.id_reference)
-                             .first())
+            current_user_db = UserDB.query.filter_by(email=session["email"]).first()
+            borrower_db = UserDB.query.filter_by(id=data["borrower"]).first()
+            if borrower_db:
+                date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])
+                record_db = Enregistrement2023DB.query.filter_by(id=data["record"]).first()
+                if record_db:
+                    existing_record_borrowing = EmpruntLivre2023DB.query.filter_by(id_enregistrement=record_db.id).first()
+                    if existing_record_borrowing:
+                        return json_result(False, "L'ouvrage demandé est déjà emprunté.")
+                    reference_db = (ReferenceBibliographiqueLivre2023DB
+                                 .query
+                                 .filter_by(id=record_db.id)
+                                 .first())
+                    borrowing_db = EmpruntLivre2023DB(id_emprunteur=data["borrower"],
+                                                 id_enregistrement=data["record"],
+                                                 id_gestionnaire=current_user_db.id,
+                                                 commentaire=data["comment"],
+                                                 date_retour_prevu=date_retour_prevu,  # TODO string to date
+                                                 emprunte=True,
+                                                 rendu=False)
+                    borrowing_db.enregistrement = record_db
+                    db.session.add(borrowing_db)
+                    db.session.commit()
 
-                success = send_new_borrowing_email(current_user, reference, emprunt)
-                if success:
-                    return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=emprunt.id), 201
-            return json_result(False, id=emprunt.id, message="Echec de l'envoi de l'email."), 200
+                    success = send_new_borrowing_email(current_user_db, reference_db, borrowing_db)
+                    if success:
+                        return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=borrowing_db.id), 201
+                    return json_result(False, id=borrowing_db.id, message="Echec de l'envoi de l'email."), 200
+                return json_result(False, "L'enregistrmeent n'est pas reconnu. Contactez l'administrateur.")
+            else:
+                return json_result(False, "L'emprunteur n'est pas reconnu. Cnotactez l'administrateur.")
         return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
 
