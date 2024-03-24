@@ -12,7 +12,6 @@
       :is-update="true"
     />
     <b-button class="my-3" v-if="canModify" :disabled="!canModify"
-              @click="deleteBorrowing"
               v-b-modal.suppression>
       Supprimer
     </b-button>
