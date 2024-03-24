@@ -16,7 +16,7 @@
     <b-row>
     <b-pagination
       v-model="currentPage"
-      :total-rows="refTotalNumber"
+      :total-rows="refFilteredNumber"
       :per-page="perPage"
       aria-controls="my-table"
       class="my-3"/>
@@ -54,7 +54,7 @@
     <b-row>
     <b-pagination
       v-model="currentPage"
-      :total-rows="refTotalNumber"
+      :total-rows="refFilteredNumber"
       :per-page="perPage"
       aria-controls="my-table"
       class="my-3"/>

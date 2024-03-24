@@ -23,7 +23,7 @@
     <b-row>
       <b-pagination
         v-model="currentPage"
-        :total-rows="authorTotalNumber"
+        :total-rows="authorFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table" />
       <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
@@ -36,7 +36,7 @@
     <b-row>
       <b-pagination
         v-model="currentPage"
-        :total-rows="authorTotalNumber"
+        :total-rows="authorFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table" />
       <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>

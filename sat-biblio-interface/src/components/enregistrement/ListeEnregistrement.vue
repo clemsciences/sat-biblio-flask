@@ -31,7 +31,7 @@
     <b-row>
     <b-pagination
         v-model="currentPage"
-        :total-rows="recordTotalNumber"
+        :total-rows="recordFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
@@ -47,7 +47,7 @@
     <b-row>
     <b-pagination
         v-model="currentPage"
-        :total-rows="recordTotalNumber"
+        :total-rows="recordFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
@@ -66,7 +66,7 @@ export default {
   components: {Title, FilterCount},
   data: function () {
     return {
-      enregistrements: [],
+      records: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "cote",
@@ -117,6 +117,7 @@ export default {
       coteFilter: "",
       keywordsFilter: "",
       titleFilter: "",
+      noChangeIn: 0,
     }
   },
   methods: {
@@ -138,8 +139,8 @@ export default {
           .then(
               (response) => {
                 if(response.data.success) {
-                  this.enregistrements = response.data.enregistrements;
-                  callback(this.enregistrements);
+                  this.records = response.data.enregistrements;
+                  callback(this.records);
                 }
               }
           ).catch(
@@ -179,26 +180,52 @@ export default {
     goToEnregistrement: function(item) {
       this.$router.push(`/enregistrement/lire/${item.id}`);
     },
+    // reloadWithFilters() {
+    //   this.$router.push({
+    //       name: "",
+    //       query: {
+    //         cote: encodeURIComponent(this.coteFilter),
+    //         keyWords: encodeURIComponent(this.keywordsFilter),
+    //         title: encodeURIComponent(this.titleFilter),
+    //       }
+    //   }).then(() => {
+    //     window.location.reload();
+    //   });
+    // }
   },
   mounted() {
+    // if(this.$route.query.coteFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
+    // if(this.$route.query.titleFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
+    // if(this.$route.query.keywordsFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
     this.getRecordTotalNumber();
   },
   watch: {
     coteFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     },
     keywordsFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     },
     titleFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     }
   },
   computed: {
     onFilter() {
+      // if(this.noChangeIn > 2000) {
+      // }
 
       return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter}`;
     }
