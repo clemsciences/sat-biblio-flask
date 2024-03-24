@@ -218,16 +218,10 @@ def create_new_user():
                                    message="Il existe déjà un compte avec cet adresse email.")
             else:
                 user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
-                # print("Créer nouvel utilisateur")
                 if user:
                     token = user.generate_confirmation_token()
-                    # satbibilio.clementbesnier.eu/utilisateur/enregistre
-                    link = f"https://satbiblio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
+                    link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
                            f"inscription_token={token}&email={user.email}"
-                    # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
-                    #                inscription_token=token,
-                    #                email=user.email,
-                    #                _external=True)
                     link_to_resend = ""
                     mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
                     return json_result(True,
@@ -299,9 +293,26 @@ def users_():
                       family_name=user.family_name,
                       id=user.id,
                       email=user.email,
-                      right=user.right.name)
+                      right=user.right.name,
+                      confirmed=user.confirmed
+                      )
                  for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         return json_result(True, users=users), 200
+
+@sat_biblio.route("/users/<int:id_>/resend-confirmation-email/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def resend_conformation_email(id_):
+    user_db = UserDB.query.filter_by(id=id_).first()
+    if user_db:
+        token = user_db.generate_confirmation_token()
+        link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
+               f"inscription_token={token}&email={user_db.email}"
+        mail_manager.envoyer_mail_demande_inscription_utilisateur(user_db, link)
+        return json_result(True,
+                           message="Un email de confirmation va être renvoyé. "
+                                   "Vous allez recevoir un courriel de confirmation "
+                                   "à l'adresse email donnée.")
+    return json_result(False, message="Il existe déjà un compte avec cet adresse email.")
 
 
 @sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT", "DELETE"])
@@ -311,7 +322,6 @@ def user_(id_):
     # connected_user_email_address = session["email"]
     # connected_user_right = session["right"]
     if request.method == "GET":
-        user_db = UserDB.query.filter_by(id=id_).first()
         user = User.from_db_to_data(user_db)
         return json_result(True, user=user), 200
     elif request.method == "PUT":

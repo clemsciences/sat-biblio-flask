@@ -566,7 +566,8 @@ class User:
             family_name=user_db.family_name,
             email=user_db.email,
             right=user_db.right.value,
-            id=user_db.id
+            id=user_db.id,
+            confirmed=user_db.confirmed
         )
 
     @staticmethod

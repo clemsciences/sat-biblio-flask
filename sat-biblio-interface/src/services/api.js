@@ -53,6 +53,10 @@ export function deleteUser(id, token) {
   return axios.delete(`/users/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
+export function resendConfirmationEmail(id, token) {
+  return axios.get(`/users/${id}/resend-confirmation-email/`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
 // endregion
 
 // region auteurs

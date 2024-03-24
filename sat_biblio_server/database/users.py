@@ -38,7 +38,7 @@ class UserDB(db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True, default=None)
     is_admin = db.Column(db.Boolean, nullable=True, default=False)
-    link_to_validate = db.Column(db.String(64), nullable=True, default="")
+    link_to_validate = db.Column(db.String(512), nullable=True, default="")
 
     def get_id(self):
         return self.id
