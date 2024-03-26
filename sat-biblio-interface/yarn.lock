@@ -8209,6 +8209,11 @@ vue-typeahead-bootstrap@^2.7.2:
     resize-observer-polyfill "^1.5.0"
     vue "^2.5.17"
 
+vue2-teleport@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue2-teleport/-/vue2-teleport-1.0.1.tgz#1b7f9f69c1223f522cf6cd81c39b8d6019e1cf66"
+  integrity sha512-hbY/Q0x8qXGFxo6h4KU4YYesUcN+uUjliqqC0PoNSgpcbS2QRb3qXi+7XMTgLYs0a8i7o1H6Mu43UV4Vbgkhgw==
+
 vue@^2.5.17, vue@^2.6.12:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
