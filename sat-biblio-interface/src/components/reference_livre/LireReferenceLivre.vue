@@ -4,6 +4,7 @@
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
+    <JsonLd :json-data="reference"/>
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
@@ -48,10 +49,11 @@ import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 import {BookReference} from "@/services/objectManager";
+import JsonLd from "@/components/web_semantics/JsonLd.vue";
 
 export default {
 name: "LireReferenceLivre",
-  components: {ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
+  components: {JsonLd, ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
       suggestedAuthors: [],
