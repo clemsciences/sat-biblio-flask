@@ -94,3 +94,23 @@ export class User {
         this.email = serverData.email;
     }
 }
+
+export class DublincCore {
+    constructor() {
+        this.title = "";
+        this.date = "";
+        this.subject = "";
+        this.language = "";
+        this.description = "";
+        this.source = "";
+        this.creator = "";
+        this.publisher = "";
+        this.contributor = "";
+        this.type = "";
+        this.format = "";
+        this.identifier = "";
+        this.relation = "";
+        this.coverage = "";
+        this.rights = "";
+    }
+}
