@@ -8,8 +8,11 @@ Resources are:
 """
 
 import logging
+from urllib.parse import unquote
 
 from flask import request
+
+from managers.ark_manager import ArkManager
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023
 from sat_biblio_server.database import ReferenceBibliographiqueLivre2023DB, \
@@ -19,29 +22,26 @@ from sat_biblio_server.utils import json_result
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
-@sat_biblio.route(f"/ark:/<naan:string>/<ark_name:string>", methods=["GET", "POST"])
-def book_records(naan: str, ark_name: str):
+@sat_biblio.route(f"/ark:/<string:naan>/<string:ark_name>", methods=["GET", "POST"])
+def ark_name_resolver_route(naan: str, ark_name: str):
     if request.method == "GET":
-        enregistrement_db = Enregistrement2023DB.query.filter_by(ark=ark_name).first()
-        if enregistrement_db:
-            logging.warning(ReferenceBibliographiqueLivre2023.get_references_by_record(id_, 1, 10, ""))
-            # logging.warning(Author.get_authors_by_record(id_, 1, 10, ""))
-            enregistrement = Enregistrement2023.from_db_to_data(enregistrement_db)
-            reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(
-                id=enregistrement_db.reference.id).first()
-            if reference_db:
-                enregistrement["reference"] = ReferenceBibliographiqueLivre2023.from_db_to_data(reference_db)
-                enregistrement["reference"]["text"] = enregistrement_db.reference.titre
-                enregistrement["reference"]["value"] = enregistrement_db.id_reference
-            return json_result(True, enregistrement=enregistrement), 200
-        book_reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(ark=ark_name).first()
-        if book_reference_db:
-            return json_result(True, book_reference=ReferenceBibliographiqueLivre2023.from_db_to_data(book_reference_db)), 200
+        if naan == ArkManager.AUTHORITY:
+            reconstructed_ark_name = f"{naan}/{ark_name}"
+            resource = ArkManager.get_resource(reconstructed_ark_name)
+            if resource:
+                return json_result(True, **resource)
+            # record_db = Enregistrement2023DB.query.filter_by(ark_name=reconstructed_ark_name).first()
+            # if record_db:
+            #     return json_result(True, id=record_db.id, table_name=Enregistrement2023DB.__tablename__), 200
+            # book_reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(ark_name=reconstructed_ark_name).first()
+            # if book_reference_db:
+            #     return json_result(True, id=book_reference_db, table_name=ReferenceBibliographiqueLivre2023DB.__tablename__), 200
+            # author_db = Author2023DB.query.filter_by(ark_name=reconstructed_ark_name).first()
+            # if author_db:
+            #     return json_result(True, id=author_db.id, table_name=Author2023DB.__tablename__)
+            return json_result(True, id=-1)
 
-        author_db = Author2023DB.query.filter_by(ark=ark_name).first()
-        if author_db:
-            return json_result(True, author=Author2023.from_db_to_data(author_db))
-
-        return json_result(False), 404
-    return json_result(False), 400
+        return json_result(False, message="hoho"), 404
+    logging.error(f"{naan}/{ark_name}")
+    return json_result(False, message=f"{naan}-{ark_name}"), 400
 
