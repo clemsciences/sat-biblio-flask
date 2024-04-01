@@ -413,3 +413,9 @@ export function getDublinCoreEntry(id, params) {
   return axios.get(`/dublin-core/${id}`, params);
 }
 // endregion
+
+// region ark
+export function resolveArk(naan, arkName) {
+  return axios.get(`/ark:/${naan}/${arkName}`);
+}
+// endregion

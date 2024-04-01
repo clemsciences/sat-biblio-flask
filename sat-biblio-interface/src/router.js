@@ -47,6 +47,7 @@ import WorkList from "@/components/works/WorkList.vue";
 import WorkAnnotation from "@/components/works/WorkAnnotation.vue";
 import ImportList from "@/components/import/ImportList.vue";
 import ImportItem from "@/components/import/ImportItemView.vue";
+import ArkView from "@/components/ark/ArkView.vue";
 
 Vue.use(VueRouter);
 
@@ -316,6 +317,14 @@ let router = new VueRouter({
         {
             name: "dublin-core-entry",
             path: "/dublin-core/:id",
+        },
+        // endregion
+        // region
+        {
+            name: "",
+            path: "/ark:/:naan/:ark_name",
+            component: ArkView,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         // region
