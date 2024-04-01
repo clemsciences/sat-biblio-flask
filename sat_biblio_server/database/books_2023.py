@@ -106,6 +106,8 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     authors = db.relationship(Author2023DB, secondary=HelperAuthorBook2023, back_populates="reference_biblio_livres")
+    # used to note authors as it is written on the book cover.
+    authors_form = db.Column(db.String(1024), default="", nullable=False)
     titre = db.Column(db.String(200), nullable=False)
     lieu_edition = db.Column(db.String(100), default="s.l.")
     editeur = db.Column(db.String(50), default="s.n.")
