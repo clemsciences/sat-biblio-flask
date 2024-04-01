@@ -71,7 +71,7 @@ class Author2023DB(db.Model):
     reference_biblio_livres = db.relationship("ReferenceBibliographiqueLivre2023DB", secondary=HelperAuthorBook2023,
                                               back_populates="authors")
     # permanent_link = db.Column(db.String(128))
-    ark_name = db.Column(db.String(128), unique=True, default="")
+    ark_name = db.Column(db.String(128), default="")
 
     def __str__(self):
         return f"{self.first_name} {self.family_name}"
@@ -118,7 +118,7 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     description = db.Column(db.String(500), default="")
     # endregion
     # permanent_link = db.Column(db.String(128))
-    ark_name = db.Column(db.String(128), unique=True, default="")
+    ark_name = db.Column(db.String(128), default="")
 
     def __str__(self):
         return " ".join([auteur.__str__() for auteur in self.authors]) + \
@@ -227,7 +227,7 @@ class Enregistrement2023DB(db.Model):
     origin = db.Column(db.String(50), default="")  # from "import", "manual"
     row = db.Column(db.String(500), default="")
     # permanent_link = db.Column(db.String(128))
-    ark_name = db.Column(db.String(128), unique=True, default="")
+    ark_name = db.Column(db.String(128), default="")
     # endregion
 
     def __str__(self):
