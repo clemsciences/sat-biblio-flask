@@ -16,7 +16,7 @@ import store from "./store";
 Vue.component('vue-typeahead-bootstrap', VueTypeaheadBootstrap)
 axios.defaults.baseURL = process.env.VUE_APP_SITE_API_URL;
 axios.defaults.withCredentials = true;
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'https://satbiblio.clementbesnier.eu';
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'https://bht.societearcheotouraine.fr';
 
 import VueMeta from 'vue-meta';
 Vue.use(VueMeta);

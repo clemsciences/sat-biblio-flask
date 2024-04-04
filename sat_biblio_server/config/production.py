@@ -39,7 +39,7 @@ class Config:
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
 
     SERVER_NAME = "api.satbiblio.clementbesnier.eu"
-    VUE_SERVER_NAME = "satbiblio.clementbesnier.eu"
+    VUE_SERVER_NAME = "bht.societearcheotouraine.fr"
 
     # region sqlalchemy
     SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
@@ -85,7 +85,7 @@ class Config:
     CORS_INTERCEPT_EXCEPTIONS = True
     CORS_MAX_AGE = None
     CORS_METHODS = ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
-    CORS_ORIGINS = "https://satbiblio.clementbesnier.eu"
+    CORS_ORIGINS = "https://bht.societearcheotouraine.fr"
     CORS_RESOURCES = "/*"
     CORS_SEND_WILDCARD = True
     CORS_SUPPORTS_CREDENTIALS = True
