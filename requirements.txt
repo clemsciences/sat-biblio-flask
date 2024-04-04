@@ -19,3 +19,4 @@ openpyxl==3.0.9
 rdflib
 requests
 gunicorn
+arkpy
