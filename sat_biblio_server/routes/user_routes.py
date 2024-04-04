@@ -137,7 +137,7 @@ def search_near_users():
         or_(dbm.UserDB.first_name.like(f"%{query_result}%"),
             dbm.UserDB.family_name.like(f"%{query_result}%"))).all()
     for user_db in users_db:
-        res.append(dict(text=f"{user_db.first_name} {user_db.family_name}",
+        res.append(dict(text=f"{user_db.first_name} {user_db.family_name} ({user_db.email})",
                         value=user_db.id))
     return json_result(True, suggestedUsers=res), 200
 
