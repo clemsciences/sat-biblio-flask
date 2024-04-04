@@ -15,11 +15,13 @@
 <script>
 // import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
 
+import {Author} from "@/services/objectManager";
+
 export default {
   name: "AuteurFormulaire",
   components: {/*BNFSearchBadge*/},
   props: {
-    auteur: Object,
+    auteur: Author,
     onSubmit: Function,
     message: {
       type: String,

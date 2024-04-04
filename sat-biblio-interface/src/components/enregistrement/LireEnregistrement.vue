@@ -24,6 +24,7 @@
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
           <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
       </b-modal>
+      <ArkInput :ark-name="record.ark_name"/>
       </b-card-body>
     </b-card>
 
@@ -53,10 +54,12 @@ import BorrowingState from "@/components/emprunt/BorrowingState";
 import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
 import EnregistrementPrettyView from "@/components/enregistrement/EnregistrementPrettyView.vue";
 import {Record} from "@/services/objectManager";
+import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
   name: "LireEnregistrement",
   components: {
+    ArkInput,
     EnregistrementPrettyView, ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
     Title, BorrowingState, ListBorrowingsOfRecord},
   /**
@@ -89,6 +92,7 @@ export default {
               this.record.observations = value.data.enregistrement.observations;
               this.record.valide = value.data.enregistrement.valide;
               this.record.row = value.data.enregistrement.row;
+              this.record.ark_name = value.data.enregistrement.ark_name;
 
             }
           }

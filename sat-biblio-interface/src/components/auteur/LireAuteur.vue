@@ -13,13 +13,13 @@
         <b-card-header>
           <AuteurPrettyView :author="auteur" mode="sat"/>
         </b-card-header>
-
         <AuteurFormulaire
             :on-submit="updateAuthor"
             :auteur="auteur"
             :message="message"
             :disabled="!canModify"
         />
+      <ArkInput :ark-name="auteur.ark_name"/>
       <b-button class="my-3" v-if="canModify" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
 
       <b-modal id="suppression" title="Suppression de l'auteur"
@@ -29,15 +29,15 @@
       </b-card-body>
     </b-card>
 
-      <b-card>
-        <b-card-title title="Entrées liées"/>
-        <b-card-body>
-          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
-          <b-collapse id="collapse-bound" class="my-2">
-            <ListeEntreesAuteur :author-id="authorId"/>
-          </b-collapse>
-        </b-card-body>
-      </b-card>
+    <b-card>
+      <b-card-title title="Entrées liées"/>
+      <b-card-body>
+        <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
+        <b-collapse id="collapse-bound" class="my-2">
+          <ListeEntreesAuteur :author-id="authorId"/>
+        </b-collapse>
+      </b-card-body>
+    </b-card>
 
   </b-container>
 </template>
@@ -53,10 +53,11 @@ import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
 import AuteurPrettyView from "@/components/auteur/AuteurPrettyView.vue";
 import {Author} from "@/services/objectManager";
 import JsonLd from "@/components/web_semantics/JsonLd.vue";
+import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
   name: "LireAuteur",
-  components: {JsonLd, AuteurPrettyView, ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
+  components: {ArkInput, JsonLd, AuteurPrettyView, ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
   data: function () {
     return {
       auteur: new Author(),
@@ -72,6 +73,7 @@ export default {
             this.auteur.first_name = response.data.author.first_name;
             this.auteur.family_name = response.data.author.family_name;
             this.auteur.valide = response.data.author.valide;
+            this.auteur.ark_name = response.data.author.ark_name;
           } else {
             console.log("erreur de récupération de l'auteur");
           }

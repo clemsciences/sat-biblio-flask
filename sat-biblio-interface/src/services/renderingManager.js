@@ -22,7 +22,9 @@ export function renderAuthor(author) {
 export function renderReference(reference) {
     let result = "";
     if(reference) {
-        if (typeof reference.selectedAuthors !== "undefined") {
+        if(typeof reference.authorsForm !== "undefined") {
+            result += reference.authorsForm;
+        } else if (typeof reference.selectedAuthors !== "undefined") {
             for (let value of reference.selectedAuthors) {
                 result += `${renderAuthor(value)},`;
             }

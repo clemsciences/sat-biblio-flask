@@ -14,6 +14,7 @@ export class Author {
 export class BookReference {
     constructor() {
         this.selectedAuthors = [];
+        this.authorsForm = "";
         this.titre = "";
         this.lieu_edition = "";
         this.editeur = "";
@@ -21,6 +22,7 @@ export class BookReference {
         this.nb_page = "";
         this.valide = false;
         this.description = "";
+        this.ark_name = "";
     }
     // getPrettyForm() {
         // let authorPrettyForm = "";
@@ -49,7 +51,8 @@ export class Record {
         this.reference.text = "";
         this.suggestedReferences = [];
         this.valid = false;
-        this.row = ""
+        this.row = "";
+        this.ark_name = "";
     }
 }
 

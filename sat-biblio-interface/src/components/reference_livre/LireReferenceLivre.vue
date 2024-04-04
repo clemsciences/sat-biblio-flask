@@ -23,6 +23,7 @@
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
           <p>Êtes-vous sûr de supprimer cette référence ?</p>
         </b-modal>
+        <ArkInput :ark-name="reference.ark_name"/>
       </b-card-body>
     </b-card>
 
@@ -50,10 +51,13 @@ import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 import {BookReference} from "@/services/objectManager";
 import JsonLd from "@/components/web_semantics/JsonLd.vue";
+import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
 name: "LireReferenceLivre",
-  components: {JsonLd, ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
+  components: {
+    ArkInput,
+    JsonLd, ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
   data: function () {
     return {
       suggestedAuthors: [],
@@ -80,6 +84,7 @@ name: "LireReferenceLivre",
                   this.reference.nb_page = response.data.reference.nb_page;
                   this.reference.valide = response.data.reference.valide;
                   this.reference.description = response.data.reference.description;
+                  this.reference.ark_name = response.data.reference.ark_name;
                   this.message = "";
                 } else {
                   this.message = "Impossible de récupérer la référence."

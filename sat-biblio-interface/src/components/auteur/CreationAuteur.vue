@@ -15,15 +15,19 @@ import {createAuthor} from "@/services/api";
 import Title from "../visuel/Title";
 import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
 import {canManage} from "@/services/rights";
+import {Author} from "@/services/objectManager";
 
 export default {
   name: "Auteur",
   components: {AuteurFormulaire, Title},
   data: function () {
     return {
-      auteur: {first_name: '', family_name: '', valide: this.isManager},
+      auteur: new Author(),
       message: ''
     };
+  },
+  mounted() {
+    this.auteur.validated = this.isManager;
   },
   methods: {
     onSubmit: function() {

@@ -33,7 +33,7 @@
 <!--                      :disabled="disabled"/>-->
 <!--      </b-form-group>-->
 
-      <b-form-group label="Ligne">
+      <b-form-group label="Ligne" v-if="!disabled">
         <b-form-textarea v-model="record.row"
                          :disabled="disabled"
                          :rows="5" size="sm"/>

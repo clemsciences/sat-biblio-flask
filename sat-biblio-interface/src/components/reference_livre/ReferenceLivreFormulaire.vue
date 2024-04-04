@@ -4,6 +4,10 @@
         v-if="reference.selectedAuthors"
         v-model="reference.selectedAuthors" class="my-3"
         :disabled="disabled"/>
+    <b-form-group label="Auteurs tels qu'ils sont mentionnés dans le livre."
+    v-if="reference.authorsForm.length > 0 || !disabled">
+      <b-form-input v-model="reference.authorsForm" :disabled="disabled"/>
+    </b-form-group>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre" :disabled="disabled"/>
 <!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
@@ -18,9 +22,10 @@
       <b-form-input v-model="reference.annee" :disabled="disabled"/>
     </b-form-group>
     <b-form-group label="Nombre de pages" :state="isNbPageValid">
-      <b-form-input v-model="reference.nb_page" :disabled="disabled"/>
+      <b-form-input v-if="reference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
+      <b-form-input v-else v-model="reference.nb_page" :disabled="disabled"/>
     </b-form-group>
-    <b-form-group label="Description">
+    <b-form-group label="Description" v-if="!disabled">
       <b-form-textarea v-model="reference.description"
                        :disabled="disabled"
                        :rows="5" size="sm"/>
@@ -32,13 +37,14 @@
 
 <script>
 import SuggestionAuteur from "@/components/auteur/SuggestionAuteur";
+import {BookReference} from "@/services/objectManager";
 // import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
 
 export default {
   name: "ReferenceLivreFormulaire",
   components: {SuggestionAuteur, /*BNFSearchBadge*/},
   props: {
-    reference: Object,
+    reference: BookReference,
     message: {
       type: String,
       default: ''

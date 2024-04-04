@@ -2,7 +2,10 @@
   <b-card title="">
     <b-card-body>
       <p v-if="rendering.length > 0" id="copy-btn" class="mx-1">
-        <span v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
+        <span v-if="reference.authorsForm.length > 0">
+          {{ reference.authorsForm }}
+        </span>
+        <span v-else v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
           {{ renderAuthor(i) }},&nbsp;
         </span>
         <span v-if="reference.selectedAuthors.length === 0">
@@ -22,7 +25,6 @@
 </template>
 
 <script>
-// import {BookReference} from "@/services/objectManager";
 
 import {
   renderAuthor,

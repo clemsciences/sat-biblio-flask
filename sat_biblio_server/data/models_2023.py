@@ -50,6 +50,7 @@ class Author2023:
     def __init__(self, **kwargs):
         self.first_name = kwargs.get("first_name", "")
         self.family_name = kwargs.get("family_name", "")
+        self.ark_name = kwargs.get("ark_name", "")
 
     def __str__(self):
         return f"{self.first_name} {self.family_name}"
@@ -64,7 +65,8 @@ class Author2023:
                 first_name=author_db.first_name,
                 family_name=author_db.family_name,
                 id=author_db.id,
-                valide=author_db.valide
+                valide=author_db.valide,
+                ark_name=author_db.ark_name
             )
         else:
             return {}
@@ -80,6 +82,8 @@ class Author2023:
             author_db.family_name = author["family_name"]
         if "valide" in author:
             author_db.valide = author["valide"]
+        if "ark_name" in author:
+            author_db.ark_name = author["ark_name"]
         else:
             author_db.valide = False
         return author_db
@@ -244,6 +248,8 @@ class ReferenceBibliographiqueLivre2023:
         #     reference_db.valide = False
         if "description" in reference:
             reference_db.description = reference["description"]
+        if "ark_name" in reference:
+            reference_db.ark_name = reference["ark_name"]
 
         return reference_db
 
@@ -259,6 +265,7 @@ class ReferenceBibliographiqueLivre2023:
                 editeur=reference.editeur,
                 annee=reference.annee,
                 nb_page=reference.nb_page,
+                ark_name=reference.ark_name,
                 # region meta
                 # valide=reference.valide,
 
@@ -398,6 +405,8 @@ class Enregistrement2023:
             enregistrement_db.observations = enregistrement["observations"]
         if "aide_a_la_recherche" in enregistrement:
             enregistrement_db.aide_a_la_recherche = enregistrement["aide_a_la_recherche"]
+        if "ark_name" in enregistrement:
+            enregistrement_db.ark_name = enregistrement["ark_name"]
         # region meta
         # if "row" in enregistrement:
         #     enregistrement_db.row = enregistrement["row"]
@@ -423,6 +432,7 @@ class Enregistrement2023:
                 provenance=enregistrement_db.provenance,
                 aide_a_la_recherche=enregistrement_db.aide_a_la_recherche,
                 observations=enregistrement_db.observations,
+                ark_name=enregistrement_db.ark_name,
                 # region meta
                 date_desherbe=enregistrement_db.date_desherbe,
                 date_derniere_modification=enregistrement_db.date_derniere_modification,
