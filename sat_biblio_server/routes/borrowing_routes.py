@@ -126,7 +126,7 @@ def borrowings():
                     db.session.add(borrowing_db)
                     db.session.commit()
 
-                    success = send_new_borrowing_email(current_user_db, reference_db, borrowing_db)
+                    success = send_new_borrowing_email(borrower_db, reference_db, borrowing_db)
                     if success:
                         return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=borrowing_db.id), 201
                     return json_result(False, id=borrowing_db.id, message="Echec de l'envoi de l'email."), 200
