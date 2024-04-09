@@ -90,7 +90,7 @@ export default {
       this.passwordType1 = this.togglePasswordType(this.passwordType1);
     },
     togglePasswordType2: function() {
-      this.passwordType2 = this.togglePasswordType(this.password2);
+      this.passwordType2 = this.togglePasswordType(this.passwordType2);
     },
     passwordAction: function(passwordType) {
       if(passwordType === "password") {
