@@ -43,11 +43,13 @@ import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
 // import ImageManager from "@/components/images/ImageManager";
 import ImportExport from "@/components/import_export/ImportExport";
 import SearchBulletin from "@/components/recherche/SearchBulletin";
-import WorkList from "@/components/works/WorkList.vue";
-import WorkAnnotation from "@/components/works/WorkAnnotation.vue";
-import ImportList from "@/components/import/ImportList.vue";
-import ImportItem from "@/components/import/ImportItemView.vue";
-import ArkView from "@/components/ark/ArkView.vue";
+import WorkList from "@/components/works/WorkList";
+import WorkAnnotation from "@/components/works/WorkAnnotation";
+import ImportList from "@/components/import/ImportList";
+import ImportItem from "@/components/import/ImportItemView";
+import ArkView from "@/components/ark/ArkView";
+import LinkView from "@/components/LinkView";
+import ConceptionView from "@/components/ConceptionView";
 
 Vue.use(VueRouter);
 
@@ -282,6 +284,20 @@ let router = new VueRouter({
             path: '/emprunt/:id',
             component:  LireEmprunt,
             meta: {needAuth: true, reachableFrom: rights.lecteur}
+        },
+        // endregion
+        // region diverse
+        {
+            name: "links-page",
+            path: "/liens",
+            component: LinkView,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "conception-page",
+            path: "/conception",
+            component: ConceptionView,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion
         // region admin
