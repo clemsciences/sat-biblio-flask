@@ -24,7 +24,7 @@
             <b-list-group-item>Le catalogue est accessible par tous selon des droits précis : tout le monde peut consulter le catalogue,
             mais seulement les contributeurs peuvent proposer des modifications, le gestionnaire peut en plus accepter les modifications.</b-list-group-item>
             <b-list-group-item>Le catalogue ne dépend plus d'un format particulier. On peut exporter les fichiers sous le format qu'on souhaite.</b-list-group-item>
-            <b-list-group-item>On peut gérer les emprunts des livres par cet outil.</b-list-group-item>
+            <b-list-group-item>On peut gérer les emprunts des livres et envoyer des emails aux retardataires.</b-list-group-item>
         </b-list-group>
 <!--      </b-col>-->
     </b-row>
