@@ -3,6 +3,7 @@
     <Title title="Enregistrement"
            info=""
            id=""/>
+    <JsonLdHeader :json-data="record"/>
 
     <b-card>
       <b-card-title title="Fiche"/>
@@ -55,17 +56,20 @@ import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord"
 import EnregistrementPrettyView from "@/components/enregistrement/EnregistrementPrettyView.vue";
 import {Record} from "@/services/objectManager";
 import ArkInput from "@/components/ark/ArkInput.vue";
+import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 
 export default {
   name: "LireEnregistrement",
   components: {
+    JsonLdHeader,
     ArkInput,
-    EnregistrementPrettyView, ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
-    Title, BorrowingState, ListBorrowingsOfRecord},
-  /**
-   *
-   * @returns {record: Record, message: string}}
-   */
+    EnregistrementPrettyView,
+    ListeEntreesEnregistrement,
+    ValidEntry,
+    EnregistrementFormulaire,
+    Title,
+    BorrowingState,
+    ListBorrowingsOfRecord},
   data: function () {
     return {
       record: new Record(),

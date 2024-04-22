@@ -2,7 +2,7 @@
 
 import Teleport from 'vue2-teleport';
 export default {
-  name: "JsonLd",
+  name: "JsonLdHeader",
   components: {Teleport},
   props: {
       jsonData: {

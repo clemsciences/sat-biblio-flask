@@ -3,9 +3,7 @@
     <Title id="id-lecture-auteur"
            info="Fiche d'un auteur. Attention, les homonymes ne sont pas gérés."
            title="Auteur"/>
-
-    <JsonLd :json-data="auteur"/>
-
+    <JsonLdHeader :json-data="auteur"/>
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
@@ -52,12 +50,18 @@ import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
 import AuteurPrettyView from "@/components/auteur/AuteurPrettyView.vue";
 import {Author} from "@/services/objectManager";
-import JsonLd from "@/components/web_semantics/JsonLd.vue";
+import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
   name: "LireAuteur",
-  components: {ArkInput, JsonLd, AuteurPrettyView, ValidEntry, AuteurFormulaire, Title, ListeEntreesAuteur},
+  components: {JsonLdHeader,
+    ArkInput,
+    AuteurPrettyView,
+    ValidEntry,
+    AuteurFormulaire,
+    Title,
+    ListeEntreesAuteur},
   data: function () {
     return {
       auteur: new Author(),

@@ -3,7 +3,7 @@
 import Teleport from 'vue2-teleport';
 import {DublincCore} from "@/services/objectManager";
 export default {
-  name: "DublinCore",
+  name: "DublinCoreHeader",
   components: {Teleport},
   props: {
       dublinCore: {

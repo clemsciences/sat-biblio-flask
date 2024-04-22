@@ -4,7 +4,7 @@
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
-    <JsonLd :json-data="reference"/>
+    <JsonLdHeader :json-data="reference"/>
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
@@ -50,14 +50,19 @@ import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 import {BookReference} from "@/services/objectManager";
-import JsonLd from "@/components/web_semantics/JsonLd.vue";
+import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
 name: "LireReferenceLivre",
   components: {
+    JsonLdHeader,
     ArkInput,
-    JsonLd, ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
+    ReferenceLivrePrettyView,
+    ListeEntreesReference,
+    ValidEntry,
+    ReferenceLivreFormulaire,
+    Title},
   data: function () {
     return {
       suggestedAuthors: [],
