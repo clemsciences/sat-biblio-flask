@@ -50,23 +50,9 @@
           <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
 
           <b-nav-item class="active" active>
-            <b-nav-item-dropdown text="Liens" class="titre-nav-item">
-              <b-dropdown-item @click="goToMainSite" id="sat-website-tooltip">
-                Le site de la SAT
-                <b-tooltip target="sat-website-tooltip" triggers="hover" class="my-tooltip">
-                  Allez sur le site internet de la Société Archéologique de Touraine
-                </b-tooltip>
-              </b-dropdown-item>
-              <b-dropdown-item @click="goToGallicaSAT" id="sat-gallica-tooltip">
-                Les bulletins de la SAT sur Gallica
-                <b-tooltip target="sat-gallica-tooltip" triggers="hover" class="my-tooltip">
-                  Allez sur Gallica pour voir les bulletins de la Société Archéologique de Touraine
-                </b-tooltip>
-              </b-dropdown-item>
-              <b-dropdown-item @click="getSatBiblioDoc" id="doc-sat-biblio-tooltip">
-                La documentation de SAT-Biblio
-                <b-tooltip target="doc-sat-biblio-tooltip" triggers="hover" class="my-tooltip">La documentation de ce site internet</b-tooltip>
-              </b-dropdown-item>
+            <b-nav-item-dropdown text="Divers" class="titre-nav-item">
+              <b-dropdown-item to="/liens">Liens utiles</b-dropdown-item>
+              <b-dropdown-item to="/conception">Conception</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
