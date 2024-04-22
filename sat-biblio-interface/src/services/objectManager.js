@@ -98,7 +98,6 @@ export class User {
     }
 }
 
-export class DublincCore {
 export class DublinCore {
     constructor() {
         this.title = "";
