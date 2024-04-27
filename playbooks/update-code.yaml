@@ -1,0 +1,12 @@
+
+
+- name: Update source code
+  hosts: bht.societearcheotouraine.fr
+  remote_user: debian
+  tasks:
+    - name: Update code
+      ansible.builtin.shell:
+        cmd: ./scripts/update_code.sh
+        chdir: sat-biblio-flask
+
+

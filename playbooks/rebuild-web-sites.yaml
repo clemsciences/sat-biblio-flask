@@ -1,0 +1,13 @@
+- name: Rebuild web sites
+  hosts: societearcheotouraine
+  remote_user: debian
+  tasks:
+    - name: Rebuild web sites
+      ansible.builtin.shell:
+        cmd: ./build_dist.sh
+    - name: Deploy web sites
+      ansible.builtin.shell:
+        cmd: sudo ./deploy-views.sh
+
+
+
