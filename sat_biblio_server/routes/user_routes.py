@@ -241,7 +241,7 @@ def create_new_user():
 def confirmer_inscription_utilisateur(inscription_token):
     email = request.args.get("email")
     user_sess = sm.UserSess(email)
-    if user_sess and user_sess.confirmer_token(inscription_token):
+    if user_sess and user_sess.confirm_token(inscription_token):
         token = create_access_token(identity=user_sess.user_db.email)
         connect_user_login(user_sess.user_db, token)
         return json_result(True,
