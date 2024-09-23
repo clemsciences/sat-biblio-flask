@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <b-row class="py-2">
-      <h2>Accueil</h2>
+      <h2>Catalogue en ligne de la Bibliothèque d'Histoire de la Touraine - BHT</h2>
     </b-row>
     <b-row v-if="connected"><h3>Connexion</h3></b-row>
     <b-row v-if="connected">
