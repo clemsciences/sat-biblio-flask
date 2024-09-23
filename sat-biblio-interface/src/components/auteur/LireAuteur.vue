@@ -110,7 +110,7 @@ export default {
       );
     }
   },
-  mounted() {
+  beforeMount() {
     this.auteur.valide = false;
     this.getAuthor();
   },

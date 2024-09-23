@@ -140,7 +140,7 @@ export default {
       this.$router.push(`/auteur/lire/${item.id}`);
     }
   },
-  mounted() {
+  beforeMount() {
     this.getAuthorTotalNumber();
   },
   watch: {
