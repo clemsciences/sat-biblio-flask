@@ -68,7 +68,7 @@ class EventEnum(enum.Enum):
 
 
 # region TEMPS
-class Date:
+class DateUtils:
     def __init__(self, jour, mois, annee):
         self.jour = jour
         self.mois = mois
@@ -88,7 +88,7 @@ class Date:
         jour = int(liste_date[0])
         mois = int(liste_date[1])
         annee = int(liste_date[2])
-        return DateHeure(jour=jour, mois=mois, annee=annee)
+        return DateHeureUtils(jour=jour, mois=mois, annee=annee)
 
     # @staticmethod
     # def from_html_to_date(date_str):
@@ -117,7 +117,7 @@ class Date:
         return ajout_jour + str(self.jour) + "-" + ajout_mois + str(self.mois) + "-" + str(self.annee)
 
     def nombre_de_jours_separant(self, autre_d):
-        assert isinstance(autre_d, Date)
+        assert isinstance(autre_d, DateUtils)
         d1 = datetime.datetime.today()
         d2 = datetime.datetime.today()
         d1 = d1.replace(year=self.annee, month=self.mois, day=self.jour)
@@ -126,7 +126,7 @@ class Date:
         return (d2 - d1).days
 
     def liste_jours_entre_dates(self, autre_d):
-        assert isinstance(autre_d, Date)
+        assert isinstance(autre_d, DateUtils)
         d1 = datetime.datetime.today()
         d2 = datetime.datetime.today()
         d1 = d1.replace(self.annee, self.mois, self.jour)
@@ -134,11 +134,39 @@ class Date:
         jours = []
         for i in range(d1.toordinal(), d2.toordinal() + 1):
             ordinal = datetime.datetime.fromordinal(i)
-            jours.append(Date(ordinal.day, ordinal.month, ordinal.year))
+            jours.append(DateUtils(ordinal.day, ordinal.month, ordinal.year))
         return jours
 
+    # def parse_unknown_date(self, date, output_format: Union[str, datetime.date, datetime.date], string_formatter: Optional[str]) -> Union[str, datetime.date, datetime.date, None]:
+    #     if type(date) == str:
+    #         if output_format == datetime.datetime:
+    #
+    #         elif output_format == datetime.date:
+    #
+    #         elif output_format == str:
+    #             return date
+    #     elif type(date) == datetime.date:
+    #         if output_format == datetime.datetime:
+    #             return datetime.datetime.
+    #         elif output_format == datetime.date:
+    #             return date
+    #         elif output_format == str:
+    #             return date
+    #
+    #     elif type(date) == datetime.datetime:
+    #         if output_format == datetime.datetime:
+    #             return date.date
+    #
+    #         elif output_format == datetime.date:
+    #             return date.date()
+    #         elif output_format == str:
+    #             return date
+    #
+    #     return None
 
-class Heure:
+
+
+class HeureUtils:
     def __init__(self, heure: int, minute: int):
         # assert heure < 24
         # assert minute < 60
@@ -152,10 +180,10 @@ class Heure:
             return str(self.heure) + "h" + str(self.minute)
 
 
-class DateHeure(Date, Heure):
+class DateHeureUtils(DateUtils, HeureUtils):
     def __init__(self, heure=None, minute=None, jour=None, mois=None, annee=None):
-        Date.__init__(self, jour, mois, annee)
-        Heure.__init__(self, heure, minute)
+        DateUtils.__init__(self, jour, mois, annee)
+        HeureUtils.__init__(self, heure, minute)
         self.heure = heure
         self.minute = minute
         self.jour = jour
@@ -167,7 +195,7 @@ class DateHeure(Date, Heure):
                                  int(self.heure), int(self.minute)).strftime("%H:%M %d/%m/%Y")
 
     def est_anterieur(self, autre_dh):
-        assert isinstance(autre_dh, DateHeure)
+        assert isinstance(autre_dh, DateHeureUtils)
         if self.annee < autre_dh.annee:
             return True
         elif self.annee > autre_dh.annee:

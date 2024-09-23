@@ -8,15 +8,11 @@ Resources are:
 """
 
 import logging
-from urllib.parse import unquote
 
 from flask import request
 
-from managers.ark_manager import ArkManager
+from sat_biblio_server.managers.ark_manager import ArkManager
 from sat_biblio_server import sat_biblio
-from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023
-from sat_biblio_server.database import ReferenceBibliographiqueLivre2023DB, \
-    Enregistrement2023DB, Author2023DB
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
