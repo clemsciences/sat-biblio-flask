@@ -42,7 +42,7 @@ class Config:
     VUE_SERVER_NAME = "bht.societearcheotouraine.fr"
 
     # region sqlalchemy
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # endregion
 
