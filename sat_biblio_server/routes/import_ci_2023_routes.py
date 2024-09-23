@@ -53,7 +53,7 @@ def manage_ci_2023_catalogue(key):
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
             try:
                 file_check = ImportManager2023.check_2023_column_names(path_to_file, ignore_n_first_rows)
-            except ValueError:
+            except ValueError as e:
                 return json_result(True, file_check=False, message="")
             return json_result(True, file_check=file_check)
             pass

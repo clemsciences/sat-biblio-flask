@@ -188,18 +188,22 @@ export default {
       this.checked = false;
       checkColumnsRequest(this.selectedKey, this.importItem.firstRowsToIgnoreNumber).then(
           (response) => {
-            console.log(response.data.file_check);
-            if (response.data.file_check) {
-              let l = response.data.file_check.filter((item, index) => {
-                return item !== index;
-              });
-              this.checked = true;
-              this.checkOk = l.length === 0;
-              this.columnFitness = l.length === 0;
+            if(response.data.success) {
+              console.log(response.data.file_check);
+              if (response.data.file_check) {
+                let l = response.data.file_check.filter((item, index) => {
+                  return item !== index;
+                });
+                this.checked = true;
+                this.checkOk = l.length === 0;
+                this.columnFitness = l.length === 0;
+              } else {
+                this.checked = false;
+                this.checkOk = false;
+                this.columnFitness = false;
+              }
             } else {
-              this.checked = false;
-              this.checkOk = false;
-              this.columnFitness = false;
+              console.error("check failed");
             }
           }
       );
@@ -215,15 +219,19 @@ export default {
             this.importItem.filterByVerifiedEntry ? 1 : 0
         ).then(
             (response) => {
-              console.log(response.data);
-              this.previewedRows = [response.data.column_reference];
-              this.previewedRows.push(response.data.check);
-              console.log(response.data.actual_columns);
-              this.previewedRows.push(response.data.actual_columns);
-              response.data.first_rows.forEach((item) => {
-                this.previewedRows.push(item);
-              });
-              this.numberOfImportedRows = response.data.number_of_rows;
+              if(response.data.success) {
+                console.log(response.data);
+                this.previewedRows = [response.data.column_reference];
+                this.previewedRows.push(response.data.check);
+                console.log(response.data.actual_columns);
+                this.previewedRows.push(response.data.actual_columns);
+                response.data.first_rows.forEach((item) => {
+                  this.previewedRows.push(item);
+                });
+                this.numberOfImportedRows = response.data.number_of_rows;
+              } else {
+                console.error("preview has failed");
+              }
 
               this.isPreviewLoading = false;
             }
