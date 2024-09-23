@@ -14,7 +14,7 @@ from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB,
     UserDB, LogEventDB, db, ImportDB, HelperAuthorBook2023
 from sqlalchemy import and_, join, text
 
-from sat_biblio_server.utils import DateHeure
+from sat_biblio_server.utils import DateHeureUtils
 
 
 class IoData(abc.ABC):
@@ -422,10 +422,20 @@ class Enregistrement2023:
     @staticmethod
     def from_db_to_data(enregistrement_db: Enregistrement2023DB) -> dict:
         if enregistrement_db:
+            annee_obtention = enregistrement_db.annee_obtention
+            if type(annee_obtention) == datetime.date or type(annee_obtention) == datetime.datetime:
+                annee_obtention = f"{annee_obtention.year}"
+            date_derniere_modification = enregistrement_db.date_derniere_modification
+            if type(date_derniere_modification) == datetime.date or type(date_derniere_modification) == datetime.datetime:
+                date_derniere_modification = date_derniere_modification.isoformat()
+            date_desherbe = enregistrement_db.date_desherbe
+            if type(date_desherbe) == datetime.date or  type(date_desherbe) == datetime.datetime:
+                date_desherbe = date_desherbe.isoformat()
+            
             return dict(
                 id=enregistrement_db.id,
                 reference=ReferenceBibliographiqueLivre2023.from_db_to_data(enregistrement_db.reference),
-                annee_obtention=enregistrement_db.annee_obtention,  # année d'obtention
+                annee_obtention=annee_obtention,  # année d'obtention
                 commentaire=enregistrement_db.commentaire,
                 cote=enregistrement_db.cote,
                 # nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
@@ -434,8 +444,8 @@ class Enregistrement2023:
                 observations=enregistrement_db.observations,
                 ark_name=enregistrement_db.ark_name,
                 # region meta
-                date_desherbe=enregistrement_db.date_desherbe,
-                date_derniere_modification=enregistrement_db.date_derniere_modification,
+                date_desherbe=date_desherbe,
+                date_derniere_modification=date_derniere_modification,
                 valide=enregistrement_db.valide,
                 origin=enregistrement_db.origin,
                 row=enregistrement_db.row,
@@ -543,11 +553,11 @@ class EmpruntLivre:
         date_emprunt_string = ""
         date_retour_prevu_string = ""
         if emprunt_db.date_retour_reel:
-            date_retour_reel_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_reel)
+            date_retour_reel_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_reel)
         if emprunt_db.date_emprunt:
-            date_emprunt_string = DateHeure.date_to_vue_str(emprunt_db.date_emprunt)
+            date_emprunt_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_emprunt)
         if emprunt_db.date_retour_prevu:
-            date_retour_prevu_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_prevu)
+            date_retour_prevu_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_prevu)
         return dict(
             id=emprunt_db.id,
             id_gestionnaire=emprunt_db.id_gestionnaire,
@@ -621,7 +631,7 @@ class LogEvent:
             id=event_db.id,
             event_type=event_db.event_type.value,
             object_id=event_db.object_id,
-            event_datetime=DateHeure.datetime_to_str(event_db.event_datetime),
+            event_datetime=DateHeureUtils.datetime_to_str(event_db.event_datetime),
             event_owner_id=event_db.event_owner_id,
             table_name=event_db.table_name,
             values=event_db.values

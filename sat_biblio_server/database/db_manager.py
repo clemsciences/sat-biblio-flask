@@ -5,7 +5,7 @@
 import datetime
 import json
 from flask_sqlalchemy import SQLAlchemy
-from sat_biblio_server.utils import UserRight, DateHeure
+from sat_biblio_server.utils import UserRight, DateHeureUtils
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
@@ -35,7 +35,7 @@ def row_to_dict(row):
             if type(value) == UserRight:
                 result[c.name] = value.name
             elif isinstance(value, datetime.datetime):
-                dt = DateHeure()
+                dt = DateHeureUtils()
                 dt.from_datetime(value)
                 result[c.name] = dt.to_json()
             else:
