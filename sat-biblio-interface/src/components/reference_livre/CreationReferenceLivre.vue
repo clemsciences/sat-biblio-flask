@@ -46,7 +46,7 @@ export default {
         annee: this.reference.annee,
         nb_page: this.reference.nb_page,
         valide: this.isManager,
-        description: this.description
+        description: this.reference.description
       };
 
       createBookReference(formData, this.$store.state.connectionInfo.token)
