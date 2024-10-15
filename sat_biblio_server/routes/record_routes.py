@@ -34,7 +34,7 @@ def book_records():
             LogEventManager(db).add_create_event(enregistrement_db.id, session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(
-                                                     Enregistrement2023DB.from_db_to_data(enregistrement_db)))
+                                                     Enregistrement2023.from_db_to_data(enregistrement_db)))
             return json_result(True, id=enregistrement_db.id,
                                message="L'enregistrement a correctement été sauvegardé."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
