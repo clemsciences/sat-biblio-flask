@@ -49,11 +49,11 @@ def authors_():
         if family_name:
             the_query = the_query.filter(Author2023DB.family_name.like(f"%{family_name}%"))
             logging.error(f"{family_name}")
-        valid = request.args.get("valid", "1")
-        if valid in ["1", "0"]:
-            the_query = the_query.filter(Author2023DB.valide == int_to_bool(valid))
-        else:
-            the_query = the_query.filter(Author2023DB.valide == True)
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_query = the_query.filter(Author2023DB.valide == int_to_bool(valid))
+        # else:
+        the_query = the_query.filter(Author2023DB.valide == True)
 
         if sort_by:
             the_query = the_query.order_by(sort_by)
@@ -158,14 +158,14 @@ def authors_count():
     the_total_query = Author2023DB.query.filter()
 
 
-    valid = request.args.get("valid", "1")
-    if valid in ["1", "0"]:
-        # print("HERE")
-        the_filtered_query = the_filtered_query.filter(Author2023DB.valide == int_to_bool(valid))
-        the_total_query = the_total_query.filter(Author2023DB.valide == int_to_bool(valid))
-    else:
-        the_filtered_query = the_filtered_query.filter(Author2023DB.valide == True)
-        the_total_query = the_total_query.filter(Author2023DB.valide == True)
+    # valid = request.args.get("valid", "1")
+    # if valid in ["1", "0"]:
+    #     print("HERE")
+    #    the_filtered_query = the_filtered_query.filter(Author2023DB.valide == int_to_bool(valid))
+    #    the_total_query = the_total_query.filter(Author2023DB.valide == int_to_bool(valid))
+    # else:
+    the_filtered_query = the_filtered_query.filter(Author2023DB.valide == True)
+    the_total_query = the_total_query.filter(Author2023DB.valide == True)
 
     filtered_total = the_filtered_query.count()
     total = the_total_query.count()
