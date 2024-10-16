@@ -9,7 +9,7 @@
       <b-card-title title="Fiche"/>
       <b-card-body>
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
-      <ValidEntry v-if="false" :approved="record.valide"/>
+<!--      <ValidEntry v-if="false" :approved="record.valide"/>-->
       <BorrowingState v-if="isConnected" :recordId="recordId"/>
       <b-card-header>
         <EnregistrementPrettyView :record="record"/>
@@ -49,7 +49,7 @@ import Title from "../visuel/Title";
 import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
-import ValidEntry from "@/components/visuel/ValidEntry";
+// import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
 import BorrowingState from "@/components/emprunt/BorrowingState";
 import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
@@ -65,7 +65,7 @@ export default {
     ArkInput,
     EnregistrementPrettyView,
     ListeEntreesEnregistrement,
-    ValidEntry,
+    // ValidEntry,
     EnregistrementFormulaire,
     Title,
     BorrowingState,

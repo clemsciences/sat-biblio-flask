@@ -8,7 +8,7 @@
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
-        <ValidEntry v-if="canManage" :approved="reference.valide"/>
+<!--        <ValidEntry v-if="canManage" :approved="reference.valide"/>-->
         <b-card-header>
           <ReferenceLivrePrettyView :reference="reference"/>
         </b-card-header>
@@ -46,7 +46,7 @@ import Title from "@/components/visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canEdit} from "@/services/rights";
 import {mapState} from "vuex";
-import ValidEntry from "@/components/visuel/ValidEntry";
+// import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 import {BookReference} from "@/services/objectManager";
@@ -60,7 +60,7 @@ name: "LireReferenceLivre",
     ArkInput,
     ReferenceLivrePrettyView,
     ListeEntreesReference,
-    ValidEntry,
+    // ValidEntry,
     ReferenceLivreFormulaire,
     Title},
   data: function () {

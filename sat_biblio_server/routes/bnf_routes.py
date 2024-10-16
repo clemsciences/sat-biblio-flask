@@ -63,11 +63,11 @@ def dublin_core_entry_request(naan, ark_name):
         if family_name:
             the_query = the_query.filter(AuthorDB.family_name.like(f"%{family_name}%"))
             logging.error(f"{family_name}")
-        valid = request.args.get("valid", "1")
-        if valid in ["1", "0"]:
-            the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
-        else:
-            the_query = the_query.filter(AuthorDB.valide == True)
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
+        # else:
+        #     the_query = the_query.filter(AuthorDB.valide == True)
 
         if sort_by:
             the_query = the_query.order_by(sort_by)

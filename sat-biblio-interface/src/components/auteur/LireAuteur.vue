@@ -7,7 +7,7 @@
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
-        <ValidEntry v-if="canManage" :approved="auteur.valide"/>
+<!--        <ValidEntry v-if="canManage" :approved="auteur.valide"/>-->
         <b-card-header>
           <AuteurPrettyView :author="auteur" mode="sat"/>
         </b-card-header>
@@ -46,7 +46,7 @@ import Title from "@/components/visuel/Title";
 import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
-import ValidEntry from "@/components/visuel/ValidEntry";
+// import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
 import AuteurPrettyView from "@/components/auteur/AuteurPrettyView.vue";
 import {Author} from "@/services/objectManager";
@@ -58,7 +58,7 @@ export default {
   components: {JsonLdHeader,
     ArkInput,
     AuteurPrettyView,
-    ValidEntry,
+    // ValidEntry,
     AuteurFormulaire,
     Title,
     ListeEntreesAuteur},
