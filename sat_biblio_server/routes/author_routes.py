@@ -123,10 +123,11 @@ def author_(id_):
         # exists ReferenceBibliographiqueLivreDB.query.filter_by(au)
         # TODO refuser si c'est utilisé dans des références
         if author_db:
+            author_data = Author2023.from_db_to_data(author_db)
             db.session.delete(author_db)
             db.session.commit()
             LogEventManager(db).add_delete_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
-                                             values=json.dumps(Author2023.from_db_to_data(author_db)))
+                                             values=json.dumps(author_data))
             return json_result(True), 204
         return json_result(False), 400
 

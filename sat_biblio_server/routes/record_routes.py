@@ -99,12 +99,12 @@ def book_record(id_):
     elif request.method == "DELETE":
         enregistrement_db = Enregistrement2023DB.query.filter_by(id=id_).first()
         if enregistrement_db:
+            record_data = Enregistrement2023.from_db_to_data(enregistrement_db)
             db.session.delete(enregistrement_db)
             db.session.commit()
             LogEventManager(db).add_delete_event(enregistrement_db.id, session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
-                                                 values=json.dumps(
-                                                     Enregistrement2023.from_db_to_data(enregistrement_db)))
+                                                 values=json.dumps(record_data))  # TODO
             return json_result(True), 204
         else:
             return json_result(False), 404

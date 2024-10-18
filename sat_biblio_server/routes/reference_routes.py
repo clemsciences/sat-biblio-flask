@@ -10,7 +10,8 @@ import logging
 
 from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
-from sat_biblio_server.data.models_2023 import ReferenceBibliographiqueLivre2023, Author2023, Enregistrement2023, EmpruntLivre
+from sat_biblio_server.data.models_2023 import ReferenceBibliographiqueLivre2023, Author2023, Enregistrement2023, \
+    EmpruntLivre
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
@@ -124,19 +125,20 @@ def book_reference(id_):
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values=json.dumps(dict(
                                                      previous=previous_value,
-                                                     new=ReferenceBibliographiqueLivre2023.from_db_to_data(ref_biblio_db))))
+                                                     new=ReferenceBibliographiqueLivre2023.from_db_to_data(
+                                                         ref_biblio_db))))
 
             return json_result(True, "La mise à jour de la référence bibliographique a été sauvegardée."), 200
         return json_result(False, "Echec de la mise à jour de la référence bibliographique."), 404
     elif request.method == "DELETE":
         ref_biblio_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(id=id_).first()
         if ref_biblio_db:
+            ref_data = ReferenceBibliographiqueLivre2023.from_db_to_data(ref_biblio_db)
             db.session.delete(ref_biblio_db)
             db.session.commit()
-            LogEventManager.add_delete_event(ref_biblio_db.id, session.get("id", -1),
-                                             ReferenceBibliographiqueLivre2023DB.__tablename__,
-                                             values=json.dumps(
-                                                 ReferenceBibliographiqueLivre2023.from_db_to_data(ref_biblio_db)))
+            LogEventManager(db).add_delete_event(ref_biblio_db.id, session.get("id", -1),
+                                                 ReferenceBibliographiqueLivre2023DB.__tablename__,
+                                                 values=json.dumps(ref_data))
             return json_result(True), 204
         return json_result(False), 404
 
@@ -189,6 +191,8 @@ def chercher_reference_livre():
                    for ref_livre_db in ref_livres_db]
         return json_result(True, results=results)
     return json_result(True, results=[]), 200
+
+
 # endregion
 
 
