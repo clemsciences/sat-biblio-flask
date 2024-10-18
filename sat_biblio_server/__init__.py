@@ -67,8 +67,8 @@ class SatAdminModelView(ModelView):
         # redirect to login page if user doesn't have access
         return redirect(url_for('login', next=request.url))
 
-
-class AdminLoginForm(wtforms.Form):
+      
+class AdminLoginForm(wtforms.form.Form):
     email = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
 
@@ -88,7 +88,7 @@ class AdminLoginForm(wtforms.Form):
         return db.session.query(UserDB).filter_by(email=self.email.data).first()
 
 
-class RegistrationForm(wtforms.Form):
+class RegistrationForm(wtforms.form.Form):
     login = wtforms.fields.StringField(validators=[DataRequired()])
     email = wtforms.fields.StringField()
     password = wtforms.fields.PasswordField(validators=[DataRequired()])
