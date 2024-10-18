@@ -88,7 +88,7 @@ header h1 {
     color: #6cb0f3;
     margin: 0;
     font-weight: normal;
-    font-size: 42px;
+    //font-size: 25px;
 
 }
 
@@ -101,7 +101,7 @@ header nav ul {
 
 header nav ul li {
     display: inline;
-    margin: 0 0px 0 0;
+    margin: 0 0 0 0;
     padding: 0;
 }
 

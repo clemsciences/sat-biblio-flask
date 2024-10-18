@@ -12,9 +12,9 @@ from typing import Union, List, Dict, Optional
 from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, \
     EmpruntLivre2023DB, \
     UserDB, LogEventDB, db, ImportDB, HelperAuthorBook2023
-from sqlalchemy import and_, join
+from sqlalchemy import and_, join, text
 
-from utils import DateHeure
+from sat_biblio_server.utils import DateHeureUtils
 
 
 class IoData(abc.ABC):
@@ -50,6 +50,7 @@ class Author2023:
     def __init__(self, **kwargs):
         self.first_name = kwargs.get("first_name", "")
         self.family_name = kwargs.get("family_name", "")
+        self.ark_name = kwargs.get("ark_name", "")
 
     def __str__(self):
         return f"{self.first_name} {self.family_name}"
@@ -64,7 +65,8 @@ class Author2023:
                 first_name=author_db.first_name,
                 family_name=author_db.family_name,
                 id=author_db.id,
-                valide=author_db.valide
+                valide=author_db.valide,
+                ark_name=author_db.ark_name
             )
         else:
             return {}
@@ -80,6 +82,8 @@ class Author2023:
             author_db.family_name = author["family_name"]
         if "valide" in author:
             author_db.valide = author["valide"]
+        if "ark_name" in author:
+            author_db.ark_name = author["ark_name"]
         else:
             author_db.valide = False
         return author_db
@@ -244,6 +248,8 @@ class ReferenceBibliographiqueLivre2023:
         #     reference_db.valide = False
         if "description" in reference:
             reference_db.description = reference["description"]
+        if "ark_name" in reference:
+            reference_db.ark_name = reference["ark_name"]
 
         return reference_db
 
@@ -253,11 +259,13 @@ class ReferenceBibliographiqueLivre2023:
             return dict(
                 id=reference.id,
                 authors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
+                selectedAuthors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
                 titre=reference.titre,
                 lieu_edition=reference.lieu_edition,
                 editeur=reference.editeur,
                 annee=reference.annee,
                 nb_page=reference.nb_page,
+                ark_name=reference.ark_name,
                 # region meta
                 # valide=reference.valide,
 
@@ -309,21 +317,13 @@ class ReferenceBibliographiqueLivre2023:
         :param sort_by:
         :return:
         """
-
-        res = db.engine.execute(f"SELECT * FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
-                                f"WHERE id IN "
-                                f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                                f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}")
-        # print([i.values() for i in res])
-        # return res.first().values()[0]
-        return [dict(type="reference", description=str(ref_db["titre"])+" "+ref_db["editeur"], id=ref_db["id"])
-                for ref_db in res.fetchall()]
-
-        # the_query = ReferenceBibliographiqueLivreDB.query
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # the_query = ReferenceBibliographiqueLivreDB.authors.any(id=id_author)
-        # return [dict(type="reference", description=str(ref_db), id=ref_db.id)
-        #         for ref_db in the_query.paginate(page=n_page, per_page=size).items]
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT * FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
+                                    f"WHERE id IN "
+                                    f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
+                                    f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size}"))
+            return [dict(type="reference", description=str(ref_db["titre"])+", "+ref_db["editeur"], id=ref_db["id"])
+                    for ref_db in res.mappings()]
 
     @staticmethod
     def get_references_by_author_count(id_author):
@@ -333,15 +333,13 @@ class ReferenceBibliographiqueLivre2023:
         :param id_author:
         :return:
         """
-        res = db.engine.execute(f"SELECT COUNT(*) FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
-                                f"WHERE id IN "
-                                f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                                f"WHERE id_author = {id_author} )")
-        # print([i.values() for i in res])
-        return res.first().values()[0]
-        # the_query = ReferenceBibliographiqueLivreDB.query
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return the_query.count()
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT COUNT(*) FROM {ReferenceBibliographiqueLivre2023DB.__tablename__} "
+                                    f"WHERE id IN "
+                                    f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
+                                    f"WHERE id_author = {id_author} )"))
+            for i in res:
+                return i[0]
 
     @staticmethod
     def get_references_by_record(id_record, n_page, size, sort_by):
@@ -356,7 +354,7 @@ class ReferenceBibliographiqueLivre2023:
         the_query = ReferenceBibliographiqueLivre2023DB.query
         the_query = the_query.join(Enregistrement2023DB.reference)
         the_query = the_query.filter(Enregistrement2023DB.id == id_record)
-        return [dict(type="reference", description=str(ref_db), id=ref_db.id)
+        return [dict(type="reference", description=f"{ref_db.titre}, {ref_db.editeur}", id=ref_db.id)
                 for ref_db in the_query.paginate(page=n_page, per_page=size).items]
 
     @staticmethod
@@ -407,6 +405,8 @@ class Enregistrement2023:
             enregistrement_db.observations = enregistrement["observations"]
         if "aide_a_la_recherche" in enregistrement:
             enregistrement_db.aide_a_la_recherche = enregistrement["aide_a_la_recherche"]
+        if "ark_name" in enregistrement:
+            enregistrement_db.ark_name = enregistrement["ark_name"]
         # region meta
         # if "row" in enregistrement:
         #     enregistrement_db.row = enregistrement["row"]
@@ -422,19 +422,30 @@ class Enregistrement2023:
     @staticmethod
     def from_db_to_data(enregistrement_db: Enregistrement2023DB) -> dict:
         if enregistrement_db:
+            annee_obtention = enregistrement_db.annee_obtention
+            if type(annee_obtention) == datetime.date or type(annee_obtention) == datetime.datetime:
+                annee_obtention = f"{annee_obtention.year}"
+            date_derniere_modification = enregistrement_db.date_derniere_modification
+            if type(date_derniere_modification) == datetime.date or type(date_derniere_modification) == datetime.datetime:
+                date_derniere_modification = date_derniere_modification.isoformat()
+            date_desherbe = enregistrement_db.date_desherbe
+            if type(date_desherbe) == datetime.date or  type(date_desherbe) == datetime.datetime:
+                date_desherbe = date_desherbe.isoformat()
+            
             return dict(
                 id=enregistrement_db.id,
                 reference=ReferenceBibliographiqueLivre2023.from_db_to_data(enregistrement_db.reference),
-                annee_obtention=enregistrement_db.annee_obtention,  # année d'obtention
+                annee_obtention=annee_obtention,  # année d'obtention
                 commentaire=enregistrement_db.commentaire,
                 cote=enregistrement_db.cote,
                 # nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
                 provenance=enregistrement_db.provenance,
                 aide_a_la_recherche=enregistrement_db.aide_a_la_recherche,
                 observations=enregistrement_db.observations,
+                ark_name=enregistrement_db.ark_name,
                 # region meta
-                date_desherbe=enregistrement_db.date_desherbe,
-                date_derniere_modification=enregistrement_db.date_derniere_modification,
+                date_desherbe=date_desherbe,
+                date_derniere_modification=date_derniere_modification,
                 valide=enregistrement_db.valide,
                 origin=enregistrement_db.origin,
                 row=enregistrement_db.row,
@@ -483,16 +494,10 @@ class Enregistrement2023:
                   f"WHERE id_reference IN " \
                   f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} " \
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
-        res = db.engine.execute(request)
-        print(request)
-        return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
-                for rec_db in res.fetchall()]
-
-        # the_query = EnregistrementDB.query
-        # the_query = the_query.join(EnregistrementDB.reference)
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return [dict(type="record", description=str(rec_db), id=rec_db.id)
-        #         for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+        with db.engine.connect() as connection:
+            res = connection.execute(text(request))
+            return [dict(type="record", description=str(rec_db["cote"]), id=rec_db["id"])
+                    for rec_db in res.mappings()]
 
     @staticmethod
     def get_records_by_author_count(id_author):
@@ -501,19 +506,13 @@ class Enregistrement2023:
         :param id_author:
         :return:
         """
-        res = db.engine.execute(f"SELECT COUNT(*) FROM {Enregistrement2023DB.__tablename__} "
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT COUNT(*) FROM {Enregistrement2023DB.__tablename__} "
                           f"WHERE id_reference IN "
                           f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
-                          f"WHERE id_author = {id_author} )")
-        # print(help(res))
-        # b = RowProxy()
-
-        return res.first().values()[0]
-        # the_query = EnregistrementDB.query
-        # the_query = the_query.join(EnregistrementDB.reference)
-        # the_query = EnregistrementDB.reference
-        # the_query = the_query.filter(ReferenceBibliographiqueLivreDB.authors.any(id=id_author))
-        # return the_query.count()
+                          f"WHERE id_author = {id_author} )"))
+            for i in res:
+                return i[0]
 
     @staticmethod
     def get_records_by_ref(id_ref, n_page, size, sort_by):
@@ -554,11 +553,11 @@ class EmpruntLivre:
         date_emprunt_string = ""
         date_retour_prevu_string = ""
         if emprunt_db.date_retour_reel:
-            date_retour_reel_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_reel)
+            date_retour_reel_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_reel)
         if emprunt_db.date_emprunt:
-            date_emprunt_string = DateHeure.date_to_vue_str(emprunt_db.date_emprunt)
+            date_emprunt_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_emprunt)
         if emprunt_db.date_retour_prevu:
-            date_retour_prevu_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_prevu)
+            date_retour_prevu_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_prevu)
         return dict(
             id=emprunt_db.id,
             id_gestionnaire=emprunt_db.id_gestionnaire,
@@ -594,7 +593,14 @@ class User2023:
     def from_id_to_user_data(cls, _user_id: int) -> Optional[Dict]:
         user_db = UserDB.query.filter_by(id=_user_id).first()
         if user_db:
-            cls.from_db_to_data(user_db)
+            return cls.from_db_to_data(user_db)
+        return None
+
+    @classmethod
+    def from_email_address_to_user(cls, email_address: str):
+        user_db = UserDB.query.filter_by(email=email_address).first()
+        if user_db:
+            return cls.from_db_to_data(user_db)
         return None
 
     @staticmethod
@@ -625,7 +631,7 @@ class LogEvent:
             id=event_db.id,
             event_type=event_db.event_type.value,
             object_id=event_db.object_id,
-            event_datetime=DateHeure.datetime_to_str(event_db.event_datetime),
+            event_datetime=DateHeureUtils.datetime_to_str(event_db.event_datetime),
             event_owner_id=event_db.event_owner_id,
             table_name=event_db.table_name,
             values=event_db.values

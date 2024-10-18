@@ -137,7 +137,7 @@ def search_near_users():
         or_(dbm.UserDB.first_name.like(f"%{query_result}%"),
             dbm.UserDB.family_name.like(f"%{query_result}%"))).all()
     for user_db in users_db:
-        res.append(dict(text=f"{user_db.first_name} {user_db.family_name}",
+        res.append(dict(text=f"{user_db.first_name} {user_db.family_name} ({user_db.email})",
                         value=user_db.id))
     return json_result(True, suggestedUsers=res), 200
 
@@ -218,16 +218,10 @@ def create_new_user():
                                    message="Il existe déjà un compte avec cet adresse email.")
             else:
                 user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
-                # print("Créer nouvel utilisateur")
                 if user:
                     token = user.generate_confirmation_token()
-                    # satbibilio.clementbesnier.eu/utilisateur/enregistre
-                    link = f"https://satbiblio.clementbesnier.eu/utilisateur/verification-enregistrement?" \
+                    link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
                            f"inscription_token={token}&email={user.email}"
-                    # link = url_for("sat_biblio.confirmer_inscription_utilisateur",
-                    #                inscription_token=token,
-                    #                email=user.email,
-                    #                _external=True)
                     link_to_resend = ""
                     mail_manager.envoyer_mail_demande_inscription_utilisateur(user, link)
                     return json_result(True,
@@ -247,7 +241,7 @@ def create_new_user():
 def confirmer_inscription_utilisateur(inscription_token):
     email = request.args.get("email")
     user_sess = sm.UserSess(email)
-    if user_sess and user_sess.confirmer_token(inscription_token):
+    if user_sess and user_sess.confirm_token(inscription_token):
         token = create_access_token(identity=user_sess.user_db.email)
         connect_user_login(user_sess.user_db, token)
         return json_result(True,
@@ -276,6 +270,7 @@ def valider_inscription(link):
 # endregion
 
 
+# region users
 @sat_biblio.route("/users/", methods=["GET"])
 @validation_connexion_et_retour_defaut("email", ["GET"])
 def users_():
@@ -298,9 +293,26 @@ def users_():
                       family_name=user.family_name,
                       id=user.id,
                       email=user.email,
-                      right=user.right.name)
+                      right=user.right.name,
+                      confirmed=user.confirmed
+                      )
                  for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         return json_result(True, users=users), 200
+
+@sat_biblio.route("/users/<int:id_>/resend-confirmation-email/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
+def resend_conformation_email(id_):
+    user_db = UserDB.query.filter_by(id=id_).first()
+    if user_db:
+        token = user_db.generate_confirmation_token()
+        link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
+               f"inscription_token={token}&email={user_db.email}"
+        mail_manager.envoyer_mail_demande_inscription_utilisateur(user_db, link)
+        return json_result(True,
+                           message="Un email de confirmation va être renvoyé. "
+                                   "Vous allez recevoir un courriel de confirmation "
+                                   "à l'adresse email donnée.")
+    return json_result(False, message="Il existe déjà un compte avec cet adresse email.")
 
 
 @sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT", "DELETE"])
@@ -310,7 +322,6 @@ def user_(id_):
     # connected_user_email_address = session["email"]
     # connected_user_right = session["right"]
     if request.method == "GET":
-        user_db = UserDB.query.filter_by(id=id_).first()
         user = User.from_db_to_data(user_db)
         return json_result(True, user=user), 200
     elif request.method == "PUT":
@@ -320,16 +331,16 @@ def user_(id_):
             user_db.family_name = data["family_name"]
             user_db.right = UserRight.from_value(data["right"])
             db.session.commit()
-            return json_result(True), 200
+            return json_result(True, "L'utilisateur a bien été enregistré."), 200
         else:
-            return json_result(False), 400
+            return json_result(False, "Echec de l'enregistrement de l'utilisateur"), 400
     elif request.method == "DELETE":
         if user_db:
             # user_db.right.value
             db.session.delete(user_db)
             db.session.commit()
-            return json_result(True), 204
-        return json_result(False), 400
+            return json_result(True, "Utilisateur correctement supprimé/"), 204
+        return json_result(False, "Echec lors de la suppression de l'utilisateur."), 400
 
 
 @sat_biblio.route("/users/count/", methods=["GET"])
@@ -345,3 +356,4 @@ def users_count():
         the_query = the_query.filter(UserDB.right.like(f"%{request.args.get('right')}%"))
     number = the_query.count()
     return json_result(True, total=number), 200
+# endregion

@@ -11,7 +11,7 @@ from flask import render_template
 from flask_mail import Message
 from flask_babel import lazy_gettext
 
-from sat_biblio_server import mail, ReferenceBibliographiqueLivreDB, EmpruntLivreDB
+from sat_biblio_server import mail, ReferenceBibliographiqueLivre2023DB, EmpruntLivre2023DB
 from sat_biblio_server.database.users import UserDB
 from sat_biblio_server.config.development import Config
 
@@ -91,7 +91,7 @@ def envoyer_message_contact(user_email_address: str, message: str) -> bool:
     return send_email(msg2, user_email_address)
 
 
-def send_new_borrowing_email(user_email_address: Union[UserDB], reference: ReferenceBibliographiqueLivreDB, borrowing: EmpruntLivreDB):
+def send_new_borrowing_email(user_email_address: Union[UserDB], reference: ReferenceBibliographiqueLivre2023DB, borrowing: EmpruntLivre2023DB):
     msg = Message(lazy_gettext(f"Nouvel emprunt à la BHT : \"{reference.titre}\""), sender=SENDER,
                   html=render_template("mails/new_borrowing.html", user=user_email_address,
                                        reference=reference,
@@ -104,13 +104,13 @@ def send_new_borrowing_email(user_email_address: Union[UserDB], reference: Refer
     return send_email(msg, user_email_address.email)
 
 
-def send_late_borrowing(user: Union[UserDB], reference: ReferenceBibliographiqueLivreDB, borrowing: EmpruntLivreDB):
+def send_late_borrowing(user: Union[UserDB], reference: ReferenceBibliographiqueLivre2023DB, borrowing: EmpruntLivre2023DB):
     msg = Message(lazy_gettext(""), sender=SENDER,
                   html=render_template("mails/borrowing_late.html"))
     return send_email(msg, user.email)
 
 
-def send_borrowing_soon_finished(user: Union[UserDB], reference: ReferenceBibliographiqueLivreDB, borrowing: EmpruntLivreDB):
+def send_borrowing_soon_finished(user: Union[UserDB], reference: ReferenceBibliographiqueLivre2023DB, borrowing: EmpruntLivre2023DB):
     msg = Message(lazy_gettext(""), sender=SENDER,
                   html=render_template("mails/borrowing_soon_finished.html.html"))
     return send_email(msg, user.email)

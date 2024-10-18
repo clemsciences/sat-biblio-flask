@@ -8,7 +8,7 @@
           aria-controls="my-table"
           class="my-3"/>
       <b-table striped bordered hover :items="retrieveList" :fields="fields"
-               primary-key="description" :per-page="perPage" :current-page="currentPage"
+               primary-key="uniqueId" :per-page="perPage" :current-page="currentPage"
                :sort-by="sortBy" @row-dblclicked="goTo">
         <template #table-caption v-if="caption.length > 0">{{ caption }}</template>
       </b-table>
@@ -86,6 +86,7 @@ export default {
               this.entries.map((value) => {
                 // console.log(value);
                 value.type_string = entries[value.type].string;
+                value.uniqueId = `${value.type}-${value.id}`;
                 return value;
               });
               callback(this.entries);

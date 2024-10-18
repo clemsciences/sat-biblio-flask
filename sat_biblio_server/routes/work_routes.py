@@ -34,7 +34,7 @@ def published_works_list_request():
         session.add(data)
         session.commit()
         session.close()
-        return json_result(True), 200
+        return json_result(True, "Ajout d'une oeuvre publiée correctement effectué."), 200
     return json_result(False), 304
 
 
@@ -63,5 +63,5 @@ def published_work_request(id_):
         published_word_db.publication_type = published_word_db_from_data.publication_type
         session.commit()
         session.close()
-        return json_result(True)
-    return json_result(False), 304
+        return json_result(True, "Enregistrement de la mise à jour de l'oeuvre publiée.")
+    return json_result(False, "Echec de la requête."), 304

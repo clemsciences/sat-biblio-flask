@@ -77,7 +77,7 @@ class CatalogueSchweitzRow:
             else:
                 break
             limite_auteur += 1
-            auteurs.append(dict(first_name=prenom.strip(), family_name=nom.strip(), valide=True))
+            auteurs.append(dict(first_name=prenom.strip(), family_name=nom.strip().capitalize(), valide=True))
         i = 0
         reste = description[limite_auteur:]
         if len(reste) > 0:
@@ -518,6 +518,10 @@ class Catalogue2023:
         self.d = defaultdict(list)
 
     def check_column_names(self) -> Optional[List]:
+        """
+
+        :return:
+        """
         match_ids = []
         # print(f"self.column_names={self.column_names}")
         for column_name in self.COLUMNS:
@@ -529,6 +533,7 @@ class Catalogue2023:
         return match_ids
 
     def parse_rows(self, rows, ignore_n_first_rows=2):
+
         # print(f"parse rows: {rows[:2]}")
         for i, row in enumerate(rows):
             if i == ignore_n_first_rows:
@@ -760,11 +765,11 @@ class Catalogue2023Row:
         for auteur in self.auteurs.split(","):
             m = re.match(r"(?P<nom>[\w\- '.]+) \((?P<prenom>[ \-'\w.]+)\)", auteur)
             if m is not None:
-                prenom = m.group("prenom")
-                nom = m.group("nom")
+                prenom = clean_string(m.group("prenom"))
+                nom = clean_string(m.group("nom"))
                 author = Author2023(first_name=prenom, family_name=nom)
             else:
-                author = Author2023(family_name=auteur)
+                author = Author2023(family_name=clean_string(auteur))
             authors.append(author)
         return authors
 
@@ -772,10 +777,10 @@ class Catalogue2023Row:
         m = re.match(r"(?P<editeur>[\w\- '.]+) \((?P<lieu_edition>[ \-'\w.]+)\)", self.editeur_lieu_edition)
         publication_place = ""
         if m is not None:
-            publisher = m.group("editeur")
-            publication_place = m.group("lieu_edition")
+            publisher = clean_string(m.group("editeur"))
+            publication_place = clean_string(m.group("lieu_edition"))
         else:
-            publisher = self.editeur_lieu_edition
+            publisher = clean_string(self.editeur_lieu_edition)
         return publisher, publication_place
 
     def _extract_provenance_date_entree(self):
@@ -785,8 +790,8 @@ class Catalogue2023Row:
         """
         parts = self.provenance_date_entree.split(";")
         if len(parts) == 1:
-            return parts[0], ""
-        return parts[:2]
+            return clean_string(parts[0]), ""
+        return [clean_string(i) for i in parts[:2]]
 
     @property
     def authors(self):
@@ -813,19 +818,25 @@ class Catalogue2023Row:
         -1 is the default number of pages (when not found)
         :return:
         """
-        for observation in self.observations.split(";"):
-            m = re.match(r"(?P<page_number>[0-9]+) p\.", observation.strip())
-            if m is not None:
-                return m.group("page_number")
-        return -1
+        if type(self.observations) == str:
+            for observation in self.observations.split(";"):
+                m = re.match(r"(?P<page_number>[0-9]+) p\.", clean_string(observation))
+                if m is not None:
+                    return m.group("page_number")
+            return -1
+        else:
+            # C 3563, to add again
+            # Provenance et date d’entrée
+            # Provenance et date d'entrée
+            print(f"self.observations: {self.observations}")
 
     @property
     def provenance(self):
-        return self._extract_provenance_date_entree()[0]
+        return clean_string(self._extract_provenance_date_entree()[0])
 
     @property
     def annee_obtention(self):
-        return self._extract_provenance_date_entree()[1]  # self.observations
+        return clean_string(self._extract_provenance_date_entree()[1])  # self.observations
 
     @property
     def nb_exemplaire_supp(self):
@@ -833,7 +844,7 @@ class Catalogue2023Row:
 
     @property
     def verified_and_present(self):
-        return self.verification_effectuee_en_2022.lower().strip() == "oui"
+        return clean_string(self.verification_effectuee_en_2022.lower()) == "oui"
 
     def extract_book_reference(self) \
             -> ReferenceBibliographiqueLivre2023DB:
@@ -841,13 +852,13 @@ class Catalogue2023Row:
         editeur, lieu_edition = self._extract_publisher_and_publication_place()
 
         ref = ReferenceBibliographiqueLivre2023DB()
-        ref.titre = self.titre
-        ref.editeur = editeur
-        ref.lieu_edition = lieu_edition
+        ref.titre = clean_string(self.titre)
+        ref.editeur = clean_string(editeur)
+        ref.lieu_edition = clean_string(lieu_edition)
         ref.annee = self.annee_edition
         ref.nb_page = self.page_number
         ref.origin = "import"
-        ref.description = self.help_description
+        ref.description = clean_string(self.help_description)
         return ref
         # book_reference = {}
         # book_reference["auteurs"] = self.extract_authors()
@@ -867,13 +878,13 @@ class Catalogue2023Row:
 
         rec.origin = "import"
         rec.annee_obtention = self.annee_obtention
-        rec.observations = self.observations
-        rec.cote = self.cote
+        rec.observations = clean_string(self.observations)
+        rec.cote = clean_string(self.cote)
         rec.date_derniere_modification = now
         rec.row = self.row
-        rec.provenance = self.provenance
+        rec.provenance = clean_string(self.provenance)
         rec.commentaire = ""
-        rec.aide_a_la_recherche = self.aide_a_la_recherche
+        rec.aide_a_la_recherche = clean_string(self.aide_a_la_recherche)
         return rec
 
         # book_record = {}

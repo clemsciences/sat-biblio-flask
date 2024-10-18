@@ -1,0 +1,393 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: https://api.satbiblio.clementbesnier.eu
+paths:
+  # region user
+  /users:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/sizeParam"
+        - $ref: "#/components/parameters/sortByParam"
+        - in: query
+          description: "Filter by first name"
+          example: "Clément"
+          name: "first_name"
+          allowEmptyValue: true
+          schema:
+            type: string
+          required: false
+        - in: query
+          description: "Filter by family name"
+          name: "family_name"
+          example: "Besnier"
+          schema:
+            type: string
+          allowEmptyValue: true
+          required: false
+        - in: query
+          description: "Filter by right"
+          name: "right"
+          example: ""
+          schema:
+            type: string
+          allowEmptyValue: true
+          required: false
+      responses:
+        200:
+          description: "Get users and their hints."
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/SessionUserRequest"
+        '401':
+          description: "Not authenticated or user not allowed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FalseResponse"
+  /users/{id}:
+    get:
+      description: "Get information of a user. Protected by authentication."
+      parameters:
+        - $ref: "#/components/parameters/userIdParam"
+      responses:
+        '200':
+          description: "Get the hints of a user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionUser"
+        '401':
+          description: "Not authenticated or user not allowed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FalseResponse"
+
+    put:
+      description: "Update information of a user. Protected by authentication."
+      parameters:
+        - $ref: "#/components/parameters/userIdParam"
+      responses:
+        200:
+          description: "User info updated."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrueResponse"
+        401:
+          description: "Not authenticated or user not allowed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FalseResponse"
+    delete:
+      description: "Delete a user"
+      parameters:
+        - $ref: "#/components/parameters/userIdParam"
+      responses:
+        204:
+          description: "User deleted."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrueResponse"
+        401:
+          description: "Not authenticated or user not allowed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FalseResponse"
+  /users/count:
+    get:
+      description: "Get the number of users according to defined filter"
+      parameters:
+        - in: query
+          description: "Filter by first name"
+          example: "Clément"
+          name: "first_name"
+          allowEmptyValue: true
+          schema:
+            type: string
+          required: false
+        - in: query
+          description: "Filter by family name"
+          name: "family_name"
+          example: "Besnier"
+          schema:
+            type: string
+          allowEmptyValue: true
+          required: false
+        - in: query
+          description: "Filter by user right"
+          name: "right"
+          example: ""
+          schema:
+            type: string
+          allowEmptyValue: true
+          required: false
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TotalResponse"
+  /users/create/:
+    post:
+      description: "Add user if not already defined."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/NewUser"
+      responses:
+        200:
+          description: "User added or failed."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: "Send link to user with user's email address"
+                    properties:
+                      success:
+                        $ref: "#/components/schemas/TrueResponse"
+                      message:
+                        $ref: "#/components/schemas/Message"
+                      link_to_resent:
+                        type: string
+                        description: ""
+                  - type: object
+                    properties:
+                      success:
+                        $ref: "#/components/schemas/FalseResponse"
+                      message:
+                        $ref: "#/components/schemas/Message"
+  /users/confirm/${inscriptionToken}:
+    get:
+      parameters:
+        - in: path
+          name: inscriptionToken
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: "email"
+          description: "Email address of user"
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: "User has confirmed its email address"
+                    properties:
+                      message:
+                        type: string
+                      connected:
+                        type: boolean
+                      connectionInfo:
+                        $ref: "#/components/schemas/ConnectionInfo"
+                  - type: object
+                    description: "The given inscriptionToken or email address is invalid."
+                    properties:
+                      success:
+                        $ref: "#/components/schemas/FalseResponse"
+                      message:
+                        $ref: "#/components/schemas/Message"
+#  /users/validation_inscription/${link}:
+#    get:
+#      description: ""
+#      responses:
+#        200:
+#          description: ""
+#          content:
+#            application/json:
+#              schema:
+#                oneOf:
+#                  - $ref: "#/components/schemas/FalseResponse"
+#                  - $ref: "#/components/schemas/TrueResponse"
+  # endregion
+
+components:
+  schemas:
+    SessionUserRequests:
+      allOf:
+        - $ref: "#/components/schemas/DefaultRequest"
+        - type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: "#/components/schemas/SessionUser"
+    SessionUserRequest:
+      allOf:
+        - $ref: "#/components/schemas/DefaultRequest"
+        - type: object
+          properties:
+            user:
+              $ref: "#/components/schemas/SessionUser"
+    SessionUser:
+      type: object
+      properties:
+        first_name:
+          type: string
+        family_name:
+          type: string
+        id:
+          type: integer
+        email:
+          description: "Email address"
+          type: string
+        right:
+          description: "Right that a user has "
+          type: string
+
+    NewUser:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        first_name:
+          type: string
+        family_name:
+          type: string
+        email:
+          type: string
+        mdp_hash:
+          description: "Hash of password"
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        first_name:
+          type: string
+        family_name:
+          type: string
+        email:
+          type: string
+        mdp_hash:
+          description: "Hash of password"
+          type: string
+        #date_inscription:
+        #  type: string
+
+    ConnectionInfo:
+      type: object
+      properties:
+        token:
+          description: "Authentication token"
+          type: string
+        email:
+          description: "Email address of use"
+          type: string
+        first_name:
+          description: "First name of user"
+          type: string
+        family_name:
+          description: "Family name of user"
+          type: string
+        right:
+          description: "Right of user"
+          type: string
+
+    # region request
+    Success:
+      type: boolean
+      description: "Has the request succeeded?"
+    Message:
+      type: string
+      description: "Message sent to the user that may help interpret what's happening"
+      example: "Message example"
+    NewId:
+      description: "New id to find"
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          $ref: "#/components/schemas/Message"
+        success:
+          $ref: "#/components/schemas/Success"
+    DefaultRequest:
+      type: object
+      properties:
+        success:
+          $ref: '#/components/schemas/Success'
+        message:
+          $ref: "#/components/schemas/Message"
+    TrueResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+
+    FalseResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+    TotalResponse:
+      allOf:
+        - $ref: "#/components/schemas/DefaultRequest"
+        - type: object
+          properties:
+            name:
+              type: integer
+
+
+    # endregion
+
+  parameters:
+    userIdParam:
+      in: path
+      name: id
+      description: "Id of user"
+      schema:
+        type: integer
+      allowEmptyValue: false
+      required: true
+
+    pageParam:
+      example: 1
+      name: page
+      in: query
+      description: "The page to select."
+      required: false
+      schema:
+        type: integer
+    sizeParam:
+      example: 10
+      name: size
+      description: "Number of items to retrieve"
+      in: query
+      required: false
+      schema:
+        type: integer
+    sortByParam:
+      example: ""
+      name: sortBy
+      in: query
+      required: false
+      schema:
+        type: string
+      description: "Column to sort by."

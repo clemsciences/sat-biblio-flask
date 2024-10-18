@@ -19,18 +19,25 @@
       </b-form-group>
       <b-form-group label="Droit">
         <b-form-select :disabled="!managerCanUse || (isMyProfile && managerCanUse)"
-                       v-model="right" :options="limitedRightsForSelect()"
+                       v-model="right" :options="limitedRightsForSelect"
                        :select-size="1" size="sm"/>
       </b-form-group>
       <b-form-group label="Adresse email">
         <b-form-input type="text" v-model="emailAddress" disabled/>
+      </b-form-group>
+      <b-form-group>
+        <b-form-checkbox :disabled="true" :checked="emailConfirmed">Email confirmé</b-form-checkbox>
+      </b-form-group>
+      <b-form-group>
+        <b-button @click="resendConfirmationEmail" :disabled="emailConfirmed">Renvoyer un email de confirmation</b-button>
       </b-form-group>
       <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
       <span class="mx-3">{{ message }}</span>
     </b-form>
     </b-row>
     <b-row>
-      <b-button class="my-3" :disabled="!isMyProfile || !isAdmin" v-b-modal.suppression>Supprimer</b-button>
+      <b-button class="my-3" :disabled="(isAdmin && isMyProfile) || (!isAdmin && !isMyProfile)"
+                v-b-modal.suppression>Supprimer</b-button>
       <b-modal id="suppression" title="Suppression de l'enregistrement"
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteUser">
           <p>Êtes-vous sûr de supprimer votre compte ?</p>
@@ -41,7 +48,7 @@
 
 <script>
 import {rights} from "@/services/rights";
-import {deleteUser, retrieveUser, updateUser} from "@/services/api";
+import {deleteUser, resendConfirmationEmail, retrieveUser, updateUser} from "@/services/api";
 import Title from "@/components/visuel/Title";
 
 export default {
@@ -54,6 +61,7 @@ export default {
       right: rights.lecteur.index,
       emailAddress: '',
       message: '',
+      emailConfirmed: false,
       rightsForSelect: [
         {value: rights.lecteur.index, text: rights.lecteur.string},
         {value: rights.contributeur.index, text: rights.contributeur.string},
@@ -73,6 +81,7 @@ export default {
               this.family_name = response.data.user.family_name;
               this.right = response.data.user.right;
               this.emailAddress = response.data.user.email;
+              this.emailConfirmed = response.data.user.confirmed;
             }
           }
       )
@@ -102,6 +111,15 @@ export default {
             }
           }
       );
+    },
+    resendConfirmationEmail() {
+      resendConfirmationEmail(this.$route.params.id, this.$store.state.connectionInfo.token).then(
+          response => {
+            if(response.status === 200) {
+              this.message = response.data.message;
+            }
+          }
+      )
     }
   },
   mounted() {

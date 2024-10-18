@@ -37,6 +37,12 @@
         {{ fromISOtoFrenchDateFormat(data.item.date_retour_reel) }}
       </template>
     </b-table>
+    <b-row>
+    <b-pagination v-model="currentPage"
+      :total-rows="borrowings.length"
+      :per-page="perPage"
+      aria-controls="my-table"/>
+    </b-row>
   </b-container>
 </template>
 

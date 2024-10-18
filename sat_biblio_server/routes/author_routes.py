@@ -49,11 +49,11 @@ def authors_():
         if family_name:
             the_query = the_query.filter(Author2023DB.family_name.like(f"%{family_name}%"))
             logging.error(f"{family_name}")
-        valid = request.args.get("valid", "1")
-        if valid in ["1", "0"]:
-            the_query = the_query.filter(Author2023DB.valide == int_to_bool(valid))
-        else:
-            the_query = the_query.filter(Author2023DB.valide == True)
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_query = the_query.filter(Author2023DB.valide == int_to_bool(valid))
+        # else:
+        # the_query = the_query.filter(Author2023DB.valide == True)
 
         if sort_by:
             the_query = the_query.order_by(sort_by)
@@ -76,8 +76,8 @@ def authors_():
                 db.session.commit()
                 LogEventManager(db).add_create_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
                                                  values=json.dumps(data))
-                return json_result(True, id=author_db.id), 201
-            return json_result(True, id=author_exists.id), 200
+                return json_result(True, "Ajout de l'auteur correctement effectué.", id=author_db.id), 201
+            return json_result(True, "L'auteur existe déjà.", id=author_exists.id), 200
         else:
             return json_result(False), 304
 
@@ -114,19 +114,20 @@ def author_(id_):
             db.session.commit()
             LogEventManager(db).add_update_event(id_, session.get("id", -1), Author2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_value, new=data)))
-            return json_result(True), 200
+            return json_result(True, "Auteur correctement mis à jour."), 200
         else:
-            return json_result(False), 400
+            return json_result(False, "Echec de la mise à jour de l'auteur."), 400
     elif request.method == "DELETE":
         id_author = id_
         author_db = Author2023DB.query.filter_by(id=id_author).first()
         # exists ReferenceBibliographiqueLivreDB.query.filter_by(au)
         # TODO refuser si c'est utilisé dans des références
         if author_db:
+            author_data = Author2023.from_db_to_data(author_db)
             db.session.delete(author_db)
             db.session.commit()
             LogEventManager(db).add_delete_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
-                                             values=json.dumps(Author2023.from_db_to_data(author_db)))
+                                             values=json.dumps(author_data))
             return json_result(True), 204
         return json_result(False), 400
 
@@ -158,14 +159,14 @@ def authors_count():
     the_total_query = Author2023DB.query.filter()
 
 
-    valid = request.args.get("valid", "1")
-    if valid in ["1", "0"]:
-        # print("HERE")
-        the_filtered_query = the_filtered_query.filter(Author2023DB.valide == int_to_bool(valid))
-        the_total_query = the_total_query.filter(Author2023DB.valide == int_to_bool(valid))
-    else:
-        the_filtered_query = the_filtered_query.filter(Author2023DB.valide == True)
-        the_total_query = the_total_query.filter(Author2023DB.valide == True)
+    # valid = request.args.get("valid", "1")
+    # if valid in ["1", "0"]:
+    #     print("HERE")
+    #    the_filtered_query = the_filtered_query.filter(Author2023DB.valide == int_to_bool(valid))
+    #    the_total_query = the_total_query.filter(Author2023DB.valide == int_to_bool(valid))
+    # else:
+    # the_filtered_query = the_filtered_query.filter(Author2023DB.valide == True)
+    # the_total_query = the_total_query.filter(Author2023DB.valide == True)
 
     filtered_total = the_filtered_query.count()
     total = the_total_query.count()
@@ -189,7 +190,9 @@ def chercher_auteurs_plus_proches():
     res = []
     for author_db in authors_db:
         res.append(dict(text=f"{author_db.first_name} {author_db.family_name}",
-                        value=author_db.id))
+                        value=author_db.id,
+                        family_name=author_db.family_name,
+                        first_name=author_db.first_name))
     return json_result(True, suggestedAuthors=res), 200
 
 

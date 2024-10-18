@@ -1,10 +1,14 @@
+import os
+
+from flask import request
 from sqlalchemy.orm import Session
 
-from sat_biblio_server.routes import *
 from sat_biblio_referencement import TABLE_PUBLICATION_2004_FILENAME
 from sat_biblio_referencement.database.database_manager import DatabaseManager
 from sat_biblio_referencement.data.search_manager import SearchManager
 from sat_biblio_referencement.scripts.populate_table_publication_2004 import generate_publication_table_2004
+
+from sat_biblio_server import PACKDIR, sat_biblio, json_result
 
 TABLE_PUBLICATION_2004_PATH = os.path.join(PACKDIR, "static", TABLE_PUBLICATION_2004_FILENAME)
 sbr_dbm = DatabaseManager(False, False, path=TABLE_PUBLICATION_2004_PATH)

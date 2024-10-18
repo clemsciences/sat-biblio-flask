@@ -53,7 +53,7 @@ def manage_ci_2023_catalogue(key):
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
             try:
                 file_check = ImportManager2023.check_2023_column_names(path_to_file, ignore_n_first_rows)
-            except ValueError:
+            except ValueError as e:
                 return json_result(True, file_check=False, message="")
             return json_result(True, file_check=file_check)
             pass
@@ -82,12 +82,12 @@ def manage_ci_2023_catalogue(key):
                 return json_result(False, check=False)
         elif action == CatalogueAction.info:
             path_to_file = CatalogueFileManager.get_catalogue_filename(key)
-            info = CatalogueFileManager.extract_from_filename(path_to_file)
-            return json_result(True, info=info, path=path_to_file)
+            catalogue_file = CatalogueFileManager.extract_from_filename(path_to_file)
+            return json_result(True, info=catalogue_file.to_dict(), path=path_to_file)
         elif action == CatalogueAction.to_fix:
             # path_to_file = CatalogueFileManager.get_catalogue_filename(key)
             path_to_file = CatalogueFileManager.get_catalogue_path(key)
-            print(path_to_file)
+            # print(path_to_file)
             catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file)
             # new_path_to_file = os.path.join(os.path.dirname(path_to_file), "to-fix.xslx")
             filename_without_extension = os.path.basename(path_to_file)[:-5]
@@ -130,13 +130,13 @@ def manage_ci_2023_catalogues():
         file = request.files["file"]
         if file:
             key = CatalogueFileManager.save_downloaded_file(file)
-            return json_result(True, key=key)
+            return json_result(True, "Téléversement du fichier correctement effectué.", key=key)
         return json_result(False, message="No file")
     elif request.method == "GET":
         n_page = int(request.args.get("page", 0))
         size = int(request.args.get("size", 10))
         catalogues = CatalogueFileManager.get_catalogue_list(n_page, size)
-        return json_result(True, catalogues=catalogues)
+        return json_result(True, catalogues=[catalogue.to_dict() for catalogue in catalogues])
     return json_result(False, "Wrong request")
 
 
@@ -176,7 +176,7 @@ def imports_ci_2023():
         # key = data.get("key", "")
 
         # filename = CatalogueFileManager.get_catalogue_filename(key)
-        print(request.get_json())
+        # print(request.get_json())
         data = request.get_json()
 
         # region
@@ -195,7 +195,7 @@ def imports_ci_2023():
         key = data.get("key", "")
         path_to_file = CatalogueFileManager.get_catalogue_path(key)
         # file_check = ImportManager2023.check_2023_column_names(path_to_file)
-        print(f"path_to_file {path_to_file}")
+        # print(f"path_to_file {path_to_file}")
         catalogue = ImportManager2023.parse_file_to_catalogue_2023(path_to_file, ignore_n_first_lines)
 
         # if file_check is None:
@@ -228,7 +228,7 @@ def get_import_data_by_catalogue_key_request(key):
     filename = CatalogueFileManager.get_catalogue_filename(key)
     long_filename = CatalogueFileManager.extract_from_filename(filename)
     if long_filename:
-        import_data = Import.get_import_by_filename(long_filename["filename"])
+        import_data = Import.get_import_by_filename(long_filename.filename)
         return json_result(True, import_data=import_data, filename=filename)
     return json_result(False)
 

@@ -7,19 +7,21 @@
         <b-form-input type="text" v-model="auteur.family_name" :disabled="disabled"/>
       </b-form-group>
       <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
-      <BNFSearchBadge :author="authorString" labelPrefix="- Auteur"/>
+<!--      <BNFSearchBadge :author="authorString" labelPrefix="- Auteur"/>-->
       <span class="mx-3">{{ message }}</span>
     </b-form>
 </template>
 
 <script>
-import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
+// import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
+
+import {Author} from "@/services/objectManager";
 
 export default {
   name: "AuteurFormulaire",
-  components: {BNFSearchBadge},
+  components: {/*BNFSearchBadge*/},
   props: {
-    auteur: Object,
+    auteur: Author,
     onSubmit: Function,
     message: {
       type: String,

@@ -14,3 +14,4 @@ venv
 sat_biblio_server/static/catalogue-*
 /sat_biblio_server/scripts/
 /sat-biblio-interface/satbiblio.zip
+/sat_biblio_server/uploads/

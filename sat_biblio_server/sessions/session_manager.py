@@ -1,4 +1,5 @@
 import datetime
+from typing import Dict
 
 import sat_biblio_server.database as dbm
 
@@ -43,7 +44,7 @@ class UserSess:
         self.user_db = dbm.UserDB.query.filter_by(email=email).first()
 
     @staticmethod
-    def create_new(form, mdp_hash):
+    def create_new(form: Dict[str, str], mdp_hash: str):
         new_user = dbm.UserDB(first_name=form["first_name"],
                               family_name=form["family_name"],
                               right=UserRight.lecteur,
@@ -66,14 +67,14 @@ class UserSess:
         dbm.UserDB.query.filter_by(id=self.user_db.get_id()).delete()
         dbm.db.session.commit()
 
-    def confirmer_token(self, token):
-        if self.user_db.confirm(token):
-            self.user_db.confirmed = True
-            self.user_db.confirmed_on = datetime.datetime.utcnow()
-            dbm.db.session.commit()
-            return True
-        else:
-            return False
+    def confirm_token(self, token: str):
+        if self.user_db:
+            if self.user_db.confirm(token):
+                self.user_db.confirmed = True
+                self.user_db.confirmed_on = datetime.datetime.utcnow()
+                dbm.db.session.commit()
+                return True
+        return False
 
     def regenerate_token(self, expiration):
         return self.user_db.generate_confirmation_token(expiration)

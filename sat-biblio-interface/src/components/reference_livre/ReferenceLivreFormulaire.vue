@@ -4,9 +4,13 @@
         v-if="reference.selectedAuthors"
         v-model="reference.selectedAuthors" class="my-3"
         :disabled="disabled"/>
+    <b-form-group label="Auteurs tels qu'ils sont mentionnés dans le livre."
+    v-if="reference.authorsForm.length > 0 || !disabled">
+      <b-form-input v-model="reference.authorsForm" :disabled="disabled"/>
+    </b-form-group>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre" :disabled="disabled"/>
-      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>
+<!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
     </b-form-group>
     <b-form-group label="Lieu d'édition">
       <b-form-input v-model="reference.lieu_edition" :disabled="disabled"/>
@@ -17,10 +21,11 @@
     <b-form-group label="Année">
       <b-form-input v-model="reference.annee" :disabled="disabled"/>
     </b-form-group>
-    <b-form-group label="Nombre de pages">
-      <b-form-input v-model="reference.nb_page" :disabled="disabled"/>
+    <b-form-group label="Nombre de pages" :state="isNbPageValid">
+      <b-form-input v-if="reference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
+      <b-form-input v-else v-model="reference.nb_page" :disabled="disabled"/>
     </b-form-group>
-    <b-form-group label="Description">
+    <b-form-group label="Description" v-if="!disabled">
       <b-form-textarea v-model="reference.description"
                        :disabled="disabled"
                        :rows="5" size="sm"/>
@@ -32,13 +37,14 @@
 
 <script>
 import SuggestionAuteur from "@/components/auteur/SuggestionAuteur";
-import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
+import {BookReference} from "@/services/objectManager";
+// import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
 
 export default {
   name: "ReferenceLivreFormulaire",
-  components: {SuggestionAuteur, BNFSearchBadge},
+  components: {SuggestionAuteur, /*BNFSearchBadge*/},
   props: {
-    reference: Object,
+    reference: BookReference,
     message: {
       type: String,
       default: ''
@@ -54,6 +60,16 @@ export default {
       return (this.reference.selectedAuthors && this.reference.selectedAuthors.length === 0) ||
           this.reference.titre.length === 0 ||
           this.reference.editeur.length === 0;
+    },
+    isNbPageValid: function() {
+      if(typeof this.reference.nb_page === "string") {
+        if(this.reference.nb_page.length === 0) {
+          return null;
+        }
+        let number = parseInt(this.reference.nb_page);
+        return Number.isNaN(number);
+      }
+      return null;
     }
   },
   watch: {

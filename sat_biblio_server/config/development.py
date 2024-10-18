@@ -41,7 +41,7 @@ class Config:
     # SERVER_NAME = ""
 
     # region sqlalchemy
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:///' + os.path.join(
         os.path.dirname(__file__), '../data-dev.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # endregion

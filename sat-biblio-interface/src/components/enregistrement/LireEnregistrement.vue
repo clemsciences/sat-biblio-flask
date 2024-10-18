@@ -3,14 +3,17 @@
     <Title title="Enregistrement"
            info=""
            id=""/>
+    <JsonLdHeader :json-data="record"/>
 
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
-      <ValidEntry v-if="false" :approved="record.valide"/>
+<!--      <ValidEntry v-if="false" :approved="record.valide"/>-->
       <BorrowingState v-if="isConnected" :recordId="recordId"/>
-      <EnregistrementPrettyView :record="record"/>
+      <b-card-header>
+        <EnregistrementPrettyView :record="record"/>
+      </b-card-header>
       <EnregistrementFormulaire
           :message="message"
           :on-submit="updateRecord"
@@ -22,6 +25,7 @@
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
           <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
       </b-modal>
+      <ArkInput :ark-name="record.ark_name"/>
       </b-card-body>
     </b-card>
 
@@ -45,22 +49,27 @@ import Title from "../visuel/Title";
 import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
-import ValidEntry from "@/components/visuel/ValidEntry";
+// import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
 import BorrowingState from "@/components/emprunt/BorrowingState";
 import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
 import EnregistrementPrettyView from "@/components/enregistrement/EnregistrementPrettyView.vue";
 import {Record} from "@/services/objectManager";
+import ArkInput from "@/components/ark/ArkInput.vue";
+import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 
 export default {
   name: "LireEnregistrement",
   components: {
-    EnregistrementPrettyView, ListeEntreesEnregistrement, ValidEntry, EnregistrementFormulaire,
-    Title, BorrowingState, ListBorrowingsOfRecord},
-  /**
-   *
-   * @returns {record: Record, message: string}}
-   */
+    JsonLdHeader,
+    ArkInput,
+    EnregistrementPrettyView,
+    ListeEntreesEnregistrement,
+    // ValidEntry,
+    EnregistrementFormulaire,
+    Title,
+    BorrowingState,
+    ListBorrowingsOfRecord},
   data: function () {
     return {
       record: new Record(),
@@ -87,6 +96,7 @@ export default {
               this.record.observations = value.data.enregistrement.observations;
               this.record.valide = value.data.enregistrement.valide;
               this.record.row = value.data.enregistrement.row;
+              this.record.ark_name = value.data.enregistrement.ark_name;
 
             }
           }

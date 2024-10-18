@@ -20,7 +20,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
 from sat_biblio_server.database.db_manager import db
-from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB, AuthorDB, ReferenceBibliographiqueLivreDB
+# from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB,
+# AuthorDB, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.database.books_2023 import EmpruntLivre2023DB, Enregistrement2023DB, \
     Author2023DB, ReferenceBibliographiqueLivre2023DB, HelperAuthorBook2023
 from sat_biblio_server.database.users import UserDB
@@ -66,7 +67,7 @@ class SatAdminModelView(ModelView):
         # redirect to login page if user doesn't have access
         return redirect(url_for('login', next=request.url))
 
-
+      
 class AdminLoginForm(wtforms.form.Form):
     email = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
@@ -184,16 +185,17 @@ def create_app(config):
                   index_view=MyAdminIndexView(),
                   template_mode="bootstrap3")
     admin.add_view(SatAdminModelView(UserDB, db.session))
-    admin.add_view(SatAdminModelView(AuthorDB, db.session))
+    # admin.add_view(SatAdminModelView(AuthorDB, db.session))
     admin.add_view(SatAdminModelView(Author2023DB, db.session))
-    admin.add_view(SatAdminModelView(EnregistrementDB, db.session))
+    # admin.add_view(SatAdminModelView(EnregistrementDB, db.session))
     admin.add_view(SatAdminModelView(Enregistrement2023DB, db.session))
     # admin.add_view(SatAdminModelView(ReferenceBibliographiqueArticleDB, db.session))
-    admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivreDB, db.session))
+    # admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivreDB, db.session))
     admin.add_view(SatAdminModelView(ReferenceBibliographiqueLivre2023DB, db.session))
     admin.add_view(SatAdminModelView(EmpruntLivre2023DB, db.session))
     admin.add_view(SatAdminModelView(ImportDB, db.session))
     admin.add_view(SatAdminModelView(ImportedItemsDB, db.session))
+    admin.add_view(SatAdminModelView(LogEventDB, db.session))
 
     # migration
     migrate.init_app(app, db)

@@ -9,21 +9,21 @@
       <b-col lg="4">
         <b-form-group label="Cote" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="coteFiltre" size="sm"
+          <b-input v-model="coteFilter" size="sm"
                    placeholder="Filtrer en fonction de la cote"/>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="Aide à la recherche" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="motClefFiltre" size="sm"
+          <b-input v-model="keywordsFilter" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titreFiltre" size="sm"
+          <b-input v-model="titleFilter" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
         </b-form-group>
       </b-col>
@@ -31,18 +31,28 @@
     <b-row>
     <b-pagination
         v-model="currentPage"
-        :total-rows="recordTotalNumber"
+        :total-rows="recordFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
       <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-      </b-row>
+    </b-row>
 
     <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
+
+    <b-row>
+    <b-pagination
+        v-model="currentPage"
+        :total-rows="recordFilteredNumber"
+        :per-page="perPage"
+        aria-controls="my-table"
+        class="my-3"/>
+      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </b-row>
   </b-container>
 </template>
 
@@ -56,7 +66,7 @@ export default {
   components: {Title, FilterCount},
   data: function () {
     return {
-      enregistrements: [],
+      records: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "cote",
@@ -104,9 +114,10 @@ export default {
           sortable: false
         }
       ],
-      coteFiltre: "",
-      motClefFiltre: "",
-      titreFiltre: ""
+      coteFilter: "",
+      keywordsFilter: "",
+      titleFilter: "",
+      noChangeIn: 0,
     }
   },
   methods: {
@@ -115,21 +126,21 @@ export default {
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy;
       let filterParams = "";
-      if(this.coteFiltre.length > 0) {
-        filterParams = filterParams+"&cote="+this.coteFiltre;
+      if(this.coteFilter.length > 0) {
+        filterParams = filterParams+"&cote="+this.coteFilter;
       }
-      if(this.titreFiltre.length > 0) {
-        filterParams = filterParams+"&titre="+this.titreFiltre;
+      if(this.titleFilter.length > 0) {
+        filterParams = filterParams+"&titre="+this.titleFilter;
       }
-      if(this.motClefFiltre.length > 0) {
-        filterParams = filterParams+"&mot_clef="+this.motClefFiltre;
+      if(this.keywordsFilter.length > 0) {
+        filterParams = filterParams+"&mot_clef="+this.keywordsFilter;
       }
       retrieveBookRecords(params+filterParams)
           .then(
               (response) => {
                 if(response.data.success) {
-                  this.enregistrements = response.data.enregistrements;
-                  callback(this.enregistrements);
+                  this.records = response.data.enregistrements;
+                  callback(this.records);
                 }
               }
           ).catch(
@@ -141,20 +152,20 @@ export default {
     },
     getRecordTotalNumber: function() {
       let filterParams = "?result_type=number";
-      if(this.coteFiltre.length > 0) {
-        filterParams = filterParams+"&cote="+encodeURI(this.coteFiltre);
+      if(this.coteFilter.length > 0) {
+        filterParams = filterParams+"&cote="+encodeURI(this.coteFilter);
       }
-      if(this.titreFiltre.length > 0) {
+      if(this.titleFilter.length > 0) {
         if(filterParams.length > 0) {
           filterParams = filterParams+"&";
         }
-        filterParams = filterParams+"titre="+encodeURI(this.titreFiltre);
+        filterParams = filterParams+"titre="+encodeURI(this.titleFilter);
       }
-      if(this.motClefFiltre.length > 0) {
+      if(this.keywordsFilter.length > 0) {
         if(filterParams.length > 0) {
           filterParams = filterParams+"&";
         }
-        filterParams = filterParams+"mot_clef="+encodeURI(this.motClefFiltre);
+        filterParams = filterParams+"mot_clef="+encodeURI(this.keywordsFilter);
       }
 
       getBookRecordsCount(filterParams).then(
@@ -169,27 +180,54 @@ export default {
     goToEnregistrement: function(item) {
       this.$router.push(`/enregistrement/lire/${item.id}`);
     },
+    // reloadWithFilters() {
+    //   this.$router.push({
+    //       name: "",
+    //       query: {
+    //         cote: encodeURIComponent(this.coteFilter),
+    //         keyWords: encodeURIComponent(this.keywordsFilter),
+    //         title: encodeURIComponent(this.titleFilter),
+    //       }
+    //   }).then(() => {
+    //     window.location.reload();
+    //   });
+    // }
   },
   mounted() {
+    // if(this.$route.query.coteFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
+    // if(this.$route.query.titleFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
+    // if(this.$route.query.keywordsFilter.length > 0) {
+    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
+    // }
     this.getRecordTotalNumber();
   },
   watch: {
-    coteFiltre: function () {
+    coteFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     },
-    motClefFiltre: function () {
+    keywordsFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     },
-    titreFiltre: function () {
+    titleFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      // this.reloadWithFilters();
     }
   },
   computed: {
     onFilter() {
-      return `${this.coteFiltre} ${this.titreFiltre} ${this.motClefFiltre}`;
+      // if(this.noChangeIn > 2000) {
+      // }
+
+      return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter}`;
     }
   }
 }

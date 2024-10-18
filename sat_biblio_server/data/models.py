@@ -9,11 +9,14 @@ import datetime
 import logging
 from typing import Union, List, Dict
 
-from sat_biblio_server import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, \
-    UserDB, LogEventDB, db, ImportDB
+from sat_biblio_server.database.books import AuthorDB, ReferenceBibliographiqueLivreDB, EnregistrementDB, EmpruntLivreDB, \
+    UserDB
+from sat_biblio_server.database.events import LogEventDB
+from sat_biblio_server.database.imports import ImportDB
+from sat_biblio_server.database import db
 from sqlalchemy import and_, join
 
-from utils import DateHeure
+from sat_biblio_server.utils import DateHeureUtils
 
 
 def date_to_str(date: Union[None, datetime.date]) -> str:
@@ -455,7 +458,6 @@ class Enregistrement(IoData):
                   f"(SELECT id_reference_biblio_livre FROM helperauthorbook " \
                   f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page-1)*size} "
         res = db.engine.execute(request)
-        print(request)
         return [dict(type="record", description=str(rec_db.__str__()), id=rec_db["id"])
                 for rec_db in res.fetchall()]
 
@@ -521,11 +523,11 @@ class EmpruntLivre:
         date_emprunt_string = ""
         date_retour_prevu_string = ""
         if emprunt_db.date_retour_reel:
-            date_retour_reel_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_reel)
+            date_retour_reel_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_reel)
         if emprunt_db.date_emprunt:
-            date_emprunt_string = DateHeure.date_to_vue_str(emprunt_db.date_emprunt)
+            date_emprunt_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_emprunt)
         if emprunt_db.date_retour_prevu:
-            date_retour_prevu_string = DateHeure.date_to_vue_str(emprunt_db.date_retour_prevu)
+            date_retour_prevu_string = DateHeureUtils.date_to_vue_str(emprunt_db.date_retour_prevu)
         return dict(
             id=emprunt_db.id,
             id_gestionnaire=emprunt_db.id_gestionnaire,
@@ -564,7 +566,8 @@ class User:
             family_name=user_db.family_name,
             email=user_db.email,
             right=user_db.right.value,
-            id=user_db.id
+            id=user_db.id,
+            confirmed=user_db.confirmed
         )
 
     @staticmethod
@@ -583,7 +586,7 @@ class LogEvent:
             id=event_db.id,
             event_type=event_db.event_type.value,
             object_id=event_db.object_id,
-            event_datetime=DateHeure.datetime_to_str(event_db.event_datetime),
+            event_datetime=DateHeureUtils.datetime_to_str(event_db.event_datetime),
             event_owner_id=event_db.event_owner_id,
             table_name=event_db.table_name,
             values=event_db.values

@@ -17,8 +17,10 @@ export default {
   },
   methods: {
     check: function() {
-      if(this.$route.query.inscription_token && this.$route.query.email) {
-        confirmUserRegistration(this.$route.query.inscription_token, this.$route.query.email).then(
+      const inscriptionToken = this.$route.query.inscription_token;
+      const emailAddress = this.$route.query.email;
+      if(inscriptionToken && emailAddress) {
+        confirmUserRegistration(inscriptionToken, emailAddress).then(
             response => {
               this.message = response.data.message;
               console.log(response);
@@ -29,6 +31,9 @@ export default {
               console.log(reason)
             }
         )
+      } else {
+        this.message = "Lien invalide";
+        console.log("Lien invalide");
       }
     }
   },

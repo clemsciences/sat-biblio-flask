@@ -1,7 +1,7 @@
 """
 Manages records in library.
 
-Records are hints fto manage books in the library.
+Records are hints to manage books in the library.
 """
 import json
 import logging
@@ -34,7 +34,7 @@ def book_records():
             LogEventManager(db).add_create_event(enregistrement_db.id, session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(
-                                                     Enregistrement2023DB.from_db_to_data(enregistrement_db)))
+                                                     Enregistrement2023.from_db_to_data(enregistrement_db)))
             return json_result(True, id=enregistrement_db.id,
                                message="L'enregistrement a correctement été sauvegardé."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
@@ -53,7 +53,7 @@ def book_records():
             the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
                 .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
         if mot_clef:
-            the_query = the_query.filter(Enregistrement2023DB.mots_clef.like(f"%{mot_clef}%"))
+            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
         # valid = request.args.get("valid", "1")
         # if valid in ["1", "0"]:
         #     the_query = the_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
@@ -99,12 +99,12 @@ def book_record(id_):
     elif request.method == "DELETE":
         enregistrement_db = Enregistrement2023DB.query.filter_by(id=id_).first()
         if enregistrement_db:
+            record_data = Enregistrement2023.from_db_to_data(enregistrement_db)
             db.session.delete(enregistrement_db)
             db.session.commit()
             LogEventManager(db).add_delete_event(enregistrement_db.id, session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
-                                                 values=json.dumps(
-                                                     Enregistrement2023.from_db_to_data(enregistrement_db)))
+                                                 values=json.dumps(record_data))  # TODO
             return json_result(True), 204
         else:
             return json_result(False), 404
@@ -125,8 +125,8 @@ def book_record(id_):
                 enregistrement_db.nb_exemplaire_supp = data["nb_exemplaire_supp"]
             if "provenance" in data:
                 enregistrement_db.provenance = data["provenance"]
-            if "mots_clef" in data:
-                enregistrement_db.mots_clef = data["mots_clef"]
+            if "aide_a_la_recherche" in data:
+                enregistrement_db.aide_a_la_recherche = data["aide_a_la_recherche"]
             db.session.commit()
 
             LogEventManager(db).add_update_event(id_,
@@ -135,8 +135,8 @@ def book_record(id_):
                                                  values=json.dumps(dict(previous=previous_value,
                                                                         new=Enregistrement2023.from_db_to_data(
                                                                             enregistrement_db))))
-            return json_result(True), 200
-        return json_result(False), 404
+            return json_result(True, "Enregistrement correctement mis à jour."), 200
+        return json_result(False, "Echec de la mis à jour de l'enregistrement."), 404
 
 
 @sat_biblio.route("/book-records/count/", methods=["GET"])
@@ -153,7 +153,7 @@ def book_records_count():
         the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
             .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
     if mot_clef:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.mots_clef.like(f"%{mot_clef}%"))
+        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
 
     # valid = request.args.get("valid", "1")
     # if valid in ["1", "0"]:
@@ -186,8 +186,8 @@ def chercher_enregistrements():
     if "provenance" in data and data["provenance"]:
         the_query.filter_by(provenance=data["provenance"])
         filtered = True
-    if "mots_clef" in data and data["mots_clef"]:
-        the_query.filter_by(mots_clef=data["mots_clef"])
+    if "aide_a_la_recherche" in data and data["aide_a_la_recherche"]:
+        the_query.filter_by(aide_a_la_recherche=data["aide_a_la_recherche"])
         filtered = True
     # if "valide" in data and data["valide"]:
     #     the_query.filter_by(valide=data["valide"])

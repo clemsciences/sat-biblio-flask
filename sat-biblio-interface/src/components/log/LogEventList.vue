@@ -57,7 +57,7 @@ export default {
           sortable: false,
           formatter: value => {
             let d = new Date(value);
-            return d.getDay()+"/"+d.getMonth()+"/"+d.getFullYear()+" ("+d.getHours()+":"+d.getMinutes()+")";
+            return new Intl.DateTimeFormat("fr-FR", {dateStyle: "short", timeStyle: "short"}).format(d)+" ("+d.getHours()+":"+d.getMinutes()+")";
           }
         },
         {

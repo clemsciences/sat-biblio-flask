@@ -6,7 +6,7 @@ import logging
 import os
 
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
-from sat_biblio_server import sat_biblio, json_result, EnregistrementDB, PACKDIR
+from sat_biblio_server import sat_biblio, json_result, Enregistrement2023DB, PACKDIR
 
 
 @sat_biblio.route("/export/csv/", methods=["GET"])
@@ -16,7 +16,7 @@ def export_catalogue():
     :return:
     """
 
-    records_db = EnregistrementDB.query.all()
+    records_db = Enregistrement2023DB.query.all()
 
     path = os.path.join(PACKDIR, "static")
     filename_without_extension = f"catalogue-{datetime.datetime.now().isoformat().replace(':', '_')}"
@@ -36,7 +36,7 @@ def export_catalogue_xlsx():
     """
 
     logging.error("records beginning")
-    records_db = EnregistrementDB.query.all()
+    records_db = Enregistrement2023DB.query.all()
 
     path = os.path.join(PACKDIR, "static")
     filename_without_extension = f"catalogue-{datetime.datetime.now().isoformat().replace(':', '_')}"

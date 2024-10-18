@@ -13,16 +13,16 @@
 <!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
           <b-nav-item v-if="connected && isContributor">
             <b-nav-item-dropdown text="Créer" class="titre-nav-item">
-              <b-dropdown-item to="/auteur/creer">Créer auteur</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/creer">Créer référence</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/creer">Créer enregistrement</b-dropdown-item>
+              <b-dropdown-item to="/auteur/creer">Auteur</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/creer">Référence bibliographique</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/creer">Enregistrement dans le catalogue</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
           <b-nav-item class="active" active>
             <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
-              <b-dropdown-item to="/auteur/liste">Consulter auteurs</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/liste">Consulter références</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/liste">Consulter catalogue</b-dropdown-item>
+              <b-dropdown-item to="/auteur/liste">Auteurs</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/liste">Références bibliographiques</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/liste">Catalogue</b-dropdown-item>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
             </b-nav-item-dropdown>
           </b-nav-item>
@@ -50,10 +50,9 @@
           <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
 
           <b-nav-item class="active" active>
-            <b-nav-item-dropdown text="Liens" class="titre-nav-item">
-              <b-dropdown-item @click="goToMainSite">Consulter le site de la SAT</b-dropdown-item>
-              <b-dropdown-item @click="goToGallicaSAT">Consulter les bulletins de la SAT en ligne</b-dropdown-item>
-              <b-dropdown-item @click="getSatBiblioDoc">Consulter la documentation de </b-dropdown-item>
+            <b-nav-item-dropdown text="Divers" class="titre-nav-item">
+              <b-dropdown-item to="/liens">Liens utiles</b-dropdown-item>
+              <b-dropdown-item to="/conception">Conception</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
@@ -131,6 +130,11 @@ export default {
 </script>
 
 <style scoped>
+
+h1 {
+  font-size: 2rem;
+
+}
 .sat-color-nav {
   background-color: #6cb0f3;
 }

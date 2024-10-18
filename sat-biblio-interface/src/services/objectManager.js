@@ -14,11 +14,15 @@ export class Author {
 export class BookReference {
     constructor() {
         this.selectedAuthors = [];
+        this.authorsForm = "";
         this.titre = "";
         this.lieu_edition = "";
         this.editeur = "";
         this.annee = "";
         this.nb_page = "";
+        this.valide = false;
+        this.description = "";
+        this.ark_name = "";
     }
     // getPrettyForm() {
         // let authorPrettyForm = "";
@@ -32,18 +36,23 @@ export class BookReference {
 
 export class Record {
     constructor() {
-        this.selectedReference = {value: -1, text: ""};
+        this.selectedReference = new BookReference;
+        this.selectedReference.value = -1;
+        this.selectedReference.text = "";
         this.description = "";
         this.cote = "";
         this.annee = "";
         this.nb_exemplaire_supp = 0;
         this.provenance =  "";
-        this.mots_clef = "";
+        this.aide_a_la_recherche = "";
 
-        this.reference = {value: -1, text: ""};
+        this.reference = new BookReference();
+        this.reference.value = -1;
+        this.reference.text = "";
         this.suggestedReferences = [];
         this.valid = false;
-        this.row = ""
+        this.row = "";
+        this.ark_name = "";
     }
 }
 
@@ -86,5 +95,25 @@ export class User {
         this.right = serverData.right;
         this.dateInscription = serverData.date_inscription;
         this.email = serverData.email;
+    }
+}
+
+export class DublinCore {
+    constructor() {
+        this.title = "";
+        this.date = "";
+        this.subject = "";
+        this.language = "";
+        this.description = "";
+        this.source = "";
+        this.creator = "";
+        this.publisher = "";
+        this.contributor = "";
+        this.type = "";
+        this.format = "";
+        this.identifier = "";
+        this.relation = "";
+        this.coverage = "";
+        this.rights = "";
     }
 }

@@ -53,6 +53,10 @@ export function deleteUser(id, token) {
   return axios.delete(`/users/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
+export function resendConfirmationEmail(id, token) {
+  return axios.get(`/users/${id}/resend-confirmation-email/`, { headers: { Authorization: `Bearer ${token}` } });
+}
+
 // endregion
 
 // region auteurs
@@ -407,5 +411,11 @@ export function getDublinCoreEntries(query, params) {
 
 export function getDublinCoreEntry(id, params) {
   return axios.get(`/dublin-core/${id}`, params);
+}
+// endregion
+
+// region ark
+export function resolveArk(naan, arkName) {
+  return axios.get(`/ark:/${naan}/${arkName}`);
 }
 // endregion

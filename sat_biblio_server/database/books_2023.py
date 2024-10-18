@@ -70,6 +70,8 @@ class Author2023DB(db.Model):
     # endregion
     reference_biblio_livres = db.relationship("ReferenceBibliographiqueLivre2023DB", secondary=HelperAuthorBook2023,
                                               back_populates="authors")
+    # permanent_link = db.Column(db.String(128))
+    ark_name = db.Column(db.String(128), default="")
 
     def __str__(self):
         return f"{self.first_name} {self.family_name}"
@@ -104,6 +106,8 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     __table_args__ = {'sqlite_autoincrement': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     authors = db.relationship(Author2023DB, secondary=HelperAuthorBook2023, back_populates="reference_biblio_livres")
+    # used to note authors as it is written on the book cover.
+    authors_form = db.Column(db.String(1024), default="", nullable=False)
     titre = db.Column(db.String(200), nullable=False)
     lieu_edition = db.Column(db.String(100), default="s.l.")
     editeur = db.Column(db.String(50), default="s.n.")
@@ -115,6 +119,8 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     # valide = db.Column(db.Boolean, default=False)
     description = db.Column(db.String(500), default="")
     # endregion
+    # permanent_link = db.Column(db.String(128))
+    ark_name = db.Column(db.String(128), default="")
 
     def __str__(self):
         return " ".join([auteur.__str__() for auteur in self.authors]) + \
@@ -220,8 +226,10 @@ class Enregistrement2023DB(db.Model):
     colonne_schweitz = db.Column(db.String(200), default="")
     date_derniere_modification = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=True)
     valide = db.Column(db.Boolean, default=False)
-    origin = db.Column(db.String(50), default="")  # from "import"
+    origin = db.Column(db.String(50), default="")  # from "import", "manual"
     row = db.Column(db.String(500), default="")
+    # permanent_link = db.Column(db.String(128))
+    ark_name = db.Column(db.String(128), default="")
     # endregion
 
     def __str__(self):

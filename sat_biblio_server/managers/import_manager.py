@@ -6,10 +6,10 @@ from typing import Optional, List, Dict
 import openpyxl
 from werkzeug.utils import secure_filename
 
-from config.production import Config
+from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.catalogue_manager import CatalogueSchweitz, CatalogueHamelain1, \
     CatalogueHamelain2, CatalogueHamelain3, Catalogue2023
-from sat_biblio_server import db, Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB
+from sat_biblio_server import db, Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, PACKDIR
 from sat_biblio_server.data.models_2023 import Author2023, ReferenceBibliographiqueLivre2023, Enregistrement2023
 
 
@@ -187,10 +187,28 @@ class ImportManager2023(CsvReader):
             # db.session.commit()
 
 
+class CatalogueFile:
+    def __init__(self, timestamp: datetime.datetime, key: str, filename: str):
+        self.timestamp = timestamp
+        self.key = key
+        self.filename = filename
+    def to_dict(self) -> Optional[Dict[str, str]]:
+        return dict(datetime=self.timestamp.isoformat(),
+             key=self.key,
+             filename=self.filename)
+
+    @classmethod
+    def from_dict_values(cls,
+                         timestamp_string: str,
+                         key: str,
+                         filename: str):
+        return cls(datetime.datetime.fromisoformat(timestamp_string),
+                   key, filename)
+
 
 class CatalogueFileManager:
 
-    UPLOAD_FOLDER = os.path.join(Config.UPLOAD_FOLDER, Config.UPLOAD_CATALOGUE_FOLDER)
+    UPLOAD_FOLDER = os.path.join(PACKDIR, "..", Config.UPLOAD_FOLDER, Config.UPLOAD_CATALOGUE_FOLDER)
 
     @classmethod
     def generate_key(cls) -> str:
@@ -250,20 +268,22 @@ class CatalogueFileManager:
         return len(cls.get_existing_keys())
 
     @classmethod
-    def extract_from_filename(cls, filename: str) -> Optional[Dict[str, str]]:
+    def extract_from_filename(cls, filename: str) -> Optional[CatalogueFile]:
         parts = filename.split("_")
         timestamp_string = parts[0].replace("!", ":")
         # print(timestamp_string)
         # print(datetime.datetime.fromisoformat(timestamp_string))
         timestamp_datetime = datetime.datetime.fromisoformat(timestamp_string)
         if len(parts) == 3:
-            return dict(datetime=timestamp_string,
-                        key=parts[1],
-                        filename=parts[2])
+            catalogue_file = CatalogueFile(timestamp_datetime, parts[1], parts[2])
+            return catalogue_file
+            # dict(datetime=timestamp_string,
+            #             key=parts[1],
+            #             filename=parts[2])
         return None
 
     @classmethod
-    def get_catalogue_list(cls, n_page: int, size: int):
+    def get_catalogue_list(cls, n_page: int, size: int) -> List[CatalogueFile]:
         """
         >>>
         >>> os.chdir("..")

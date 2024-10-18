@@ -4,11 +4,14 @@
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
+    <JsonLdHeader :json-data="reference"/>
     <b-card>
       <b-card-title title="Fiche"/>
       <b-card-body>
-        <ValidEntry v-if="canManage" :approved="reference.valide"/>
-        <ReferenceLivrePrettyView :reference="reference"/>
+<!--        <ValidEntry v-if="canManage" :approved="reference.valide"/>-->
+        <b-card-header>
+          <ReferenceLivrePrettyView :reference="reference"/>
+        </b-card-header>
         <ReferenceLivreFormulaire
             :message="message"
             :on-submit="updateReference"
@@ -20,6 +23,7 @@
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
           <p>Êtes-vous sûr de supprimer cette référence ?</p>
         </b-modal>
+        <ArkInput :ark-name="reference.ark_name"/>
       </b-card-body>
     </b-card>
 
@@ -42,27 +46,27 @@ import Title from "@/components/visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canEdit} from "@/services/rights";
 import {mapState} from "vuex";
-import ValidEntry from "@/components/visuel/ValidEntry";
+// import ValidEntry from "@/components/visuel/ValidEntry";
 import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
+import {BookReference} from "@/services/objectManager";
+import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
+import ArkInput from "@/components/ark/ArkInput.vue";
 
 export default {
 name: "LireReferenceLivre",
-  components: {ReferenceLivrePrettyView, ListeEntreesReference, ValidEntry, ReferenceLivreFormulaire, Title},
+  components: {
+    JsonLdHeader,
+    ArkInput,
+    ReferenceLivrePrettyView,
+    ListeEntreesReference,
+    // ValidEntry,
+    ReferenceLivreFormulaire,
+    Title},
   data: function () {
     return {
       suggestedAuthors: [],
-      reference: {
-        // selectedAuthorId: '',
-        selectedAuthors: [],
-        titre: "",
-        lieu_edition: "",
-        editeur: "",
-        annee: "",
-        nb_page: "",
-        valide: false,
-        description: ""
-      },
+      reference: new BookReference(),
       message: "",
       selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
       referenceId: parseInt(this.$route.params.id),
@@ -85,6 +89,7 @@ name: "LireReferenceLivre",
                   this.reference.nb_page = response.data.reference.nb_page;
                   this.reference.valide = response.data.reference.valide;
                   this.reference.description = response.data.reference.description;
+                  this.reference.ark_name = response.data.reference.ark_name;
                   this.message = "";
                 } else {
                   this.message = "Impossible de récupérer la référence."

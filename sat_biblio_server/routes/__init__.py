@@ -31,3 +31,4 @@ from sat_biblio_server.routes.import_export_routes import *
 from sat_biblio_server.routes.search_routes import *
 from sat_biblio_server.routes.work_routes import *
 from sat_biblio_server.routes.import_ci_2023_routes import *
+from sat_biblio_server.routes.ark_routes import *

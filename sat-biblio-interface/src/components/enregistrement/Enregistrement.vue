@@ -49,7 +49,7 @@ export default {
           annee: this.record.annee_obtention,
           nb_exemplaire_supp: this.record.nb_exemplaire_supp,
           provenance: this.record.provenance,
-          mots_clef: this.record.mots_clef,
+          aide_a_la_recherche: this.record.aide_a_la_recherche,
           valide: this.isManager,
           row: this.row
       };
@@ -63,7 +63,7 @@ export default {
               this.record.annee = "";
               this.record.nb_exemplaire_supp = "";
               this.record.provenance = "";
-              this.record.mots_clef = "";
+              this.record.aide_a_la_recherche = "";
               this.record.row = "";
             } else {
               console.log("bizarre");

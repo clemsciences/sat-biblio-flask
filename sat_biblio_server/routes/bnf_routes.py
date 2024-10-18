@@ -10,7 +10,7 @@ from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data import validation
 from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server.database import db, AuthorDB
-from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivreDB
+from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivre2023DB
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
@@ -27,19 +27,19 @@ def dublin_core_request():
     if request.method == "GET":
         query = request.args.get("query", "")
         n_page, size, sort_by = get_pagination(request)
-        print(f"query {query}")
+        # print(f"query {query}")
 
         entries = BnfSruManager.search_from_query(query)
-        print(entries.number_of_records)
+        # print(entries.number_of_records)
         if entries:
             assert isinstance(entries, RequestResult)
-            print("1")
+            # print("1")
             # print(entries.to_dict())
 
             return json_result(True, entries=entries.to_dict(), total=int(entries.number_of_records)), 200
-        print("2")
+        # print("2")
         return json_result(True, entries=[], total=0), 200
-    print("3")
+    # print("3")
     return json_result(False), 400
 
 
@@ -63,11 +63,11 @@ def dublin_core_entry_request(naan, ark_name):
         if family_name:
             the_query = the_query.filter(AuthorDB.family_name.like(f"%{family_name}%"))
             logging.error(f"{family_name}")
-        valid = request.args.get("valid", "1")
-        if valid in ["1", "0"]:
-            the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
-        else:
-            the_query = the_query.filter(AuthorDB.valide == True)
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_query = the_query.filter(AuthorDB.valide == int_to_bool(valid))
+        # else:
+        #     the_query = the_query.filter(AuthorDB.valide == True)
 
         if sort_by:
             the_query = the_query.order_by(sort_by)

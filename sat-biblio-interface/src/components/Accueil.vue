@@ -1,7 +1,7 @@
 <template>
   <b-container>
-    <b-row>
-      <h2>Accueil</h2>
+    <b-row class="py-2">
+      <h2>Catalogue en ligne de la Bibliothèque d'Histoire de la Touraine - BHT</h2>
     </b-row>
     <b-row v-if="connected"><h3>Connexion</h3></b-row>
     <b-row v-if="connected">
@@ -13,7 +13,7 @@
       </b-col>
     </b-row>
 
-    <b-row><h3>Description</h3></b-row>
+<!--    <b-row><h3>Description</h3></b-row>-->
     <b-row>
 <!--      <b-col cols="9">-->
         <p>Bienvenue sur SatBiblio, c'est une application web qui permet de gérer
@@ -24,7 +24,7 @@
             <b-list-group-item>Le catalogue est accessible par tous selon des droits précis : tout le monde peut consulter le catalogue,
             mais seulement les contributeurs peuvent proposer des modifications, le gestionnaire peut en plus accepter les modifications.</b-list-group-item>
             <b-list-group-item>Le catalogue ne dépend plus d'un format particulier. On peut exporter les fichiers sous le format qu'on souhaite.</b-list-group-item>
-            <b-list-group-item>On peut gérer les emprunts des livres par cet outil.</b-list-group-item>
+            <b-list-group-item>On peut gérer les emprunts des livres et envoyer des emails aux retardataires.</b-list-group-item>
         </b-list-group>
 <!--      </b-col>-->
     </b-row>
