@@ -60,7 +60,7 @@ export default {
               this.message = "L'enregistrement a été sauvegardé.";
               this.record.selectedReference = {value: -1, text: ""};
               this.record.cote = "";
-              this.record.annee = "";
+              this.record.annee_obtention = "";
               this.record.nb_exemplaire_supp = "";
               this.record.provenance = "";
               this.record.aide_a_la_recherche = "";
