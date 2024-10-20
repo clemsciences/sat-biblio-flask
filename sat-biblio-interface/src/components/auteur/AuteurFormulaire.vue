@@ -1,12 +1,24 @@
 <template>
-    <b-form @submit.prevent="onSubmit">
+    <b-form @submit.prevent>
       <b-form-group label="Prénom">
-        <b-form-input type="text" v-model="auteur.first_name" :disabled="disabled"/>
+        <b-form-input type="text"
+                      v-model="auteur.first_name"
+                      :disabled="disabled"
+                      ref="first_name"
+                      @keydown.enter="focusNext('family_name')"/>
       </b-form-group>
       <b-form-group label="Nom">
-        <b-form-input type="text" v-model="auteur.family_name" :disabled="disabled"/>
+        <b-form-input type="text"
+                      v-model="auteur.family_name"
+                      :disabled="disabled"
+                      ref="family_name"
+                      @keydown.enter="focusNext('submit')"/>
       </b-form-group>
-      <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
+      <b-button type="submit"
+                v-if="!disabled"
+                :disabled="isIncorrect || disabled"
+                ref="submit"
+                @click="onSubmit">Enregistrer</b-button>
 <!--      <BNFSearchBadge :author="authorString" labelPrefix="- Auteur"/>-->
       <span class="mx-3">{{ message }}</span>
     </b-form>
@@ -33,10 +45,24 @@ export default {
     }
 
   },
+  data: function() {
+    return {
+      refs: ["first_name", "family_name", "submit"]
+    }
+  },
   computed: {
     isIncorrect: function () {
 
       return this.auteur.first_name.length === 0 || this.auteur.family_name.length === 0;
+    }
+  },
+  methods: {
+    focusNext(ref) {
+      if (this.refs.includes(ref)) {
+        this.$refs[ref].focus();
+      } else {
+        console.log("wrong ref")
+      }
     }
   }
 }
