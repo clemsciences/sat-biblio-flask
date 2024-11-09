@@ -109,11 +109,11 @@ class UserDB(db.Model):
         return f"<User {self.email}>"
 
     def generate_confirmation_token(self, expiration=3600):
-        s = Serializer(current_app.config["SECRET_KEY"], str(expiration))
-        return s.dumps({"confirm": self.id})
+        s = Serializer(current_app.config["SECRET_KEY"], expiration)
+        return s.dumps({"confirm": self.id}).decode("utf-8")
 
-    def confirm(self, token, expiration=3600):
-        s = Serializer(current_app.config["SECRET_KEY"], str(expiration))
+    def confirm(self, token):
+        s = Serializer(current_app.config["SECRET_KEY"])
         try:
             data = s.loads(token.encode('utf-8'))
         except:
