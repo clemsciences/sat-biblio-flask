@@ -8,7 +8,7 @@ import logging
 from urllib.parse import urlparse
 
 from flask import redirect, request, session
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
@@ -176,24 +176,48 @@ def authors_count():
 
 @sat_biblio.route("/authors/search-near/", methods=["GET"])
 def chercher_auteurs_plus_proches():
-    query_result = request.args.get("auteur", "")
-    queries_string = query_result.split(" ")
-    # print(queries_string)
+    author_query_result = request.args.get("auteur", "").strip()
+    first_name_query = request.args.get("first_name", "").strip()
+    family_name_query = request.args.get("family_name", "").strip()
+    exact_matching = False
 
     authors_db = set()
-    for query_string in queries_string:
+    if first_name_query and family_name_query:
         res_authors_db = set(Author2023DB.query.filter(
-            or_(Author2023DB.first_name.like(f"%{query_string}%"),
-                Author2023DB.family_name.like(f"%{query_string}%"))
+            and_(Author2023DB.first_name.like(f"%{first_name_query}%"),
+                 Author2023DB.family_name.like(f"%{family_name_query}%"))
         ).all())
         authors_db.update(res_authors_db)
+    elif first_name_query:
+        res_authors_db = set(Author2023DB.query.filter(
+            Author2023DB.first_name.like(f"%{first_name_query}%")
+        ).all())
+        authors_db.update(res_authors_db)
+    elif family_name_query:
+        res_authors_db = set(Author2023DB.query.filter(
+            Author2023DB.family_name.like(f"%{family_name_query}%")
+        ).all())
+        authors_db.update(res_authors_db)
+    if first_name_query and family_name_query:
+        exact_matching = ((Author2023DB.query
+                          .filter_by(first_name=first_name_query)
+                          .filter_by(family_name=family_name_query))
+                          .first()) is not None
+    if author_query_result:
+        queries_string = author_query_result.split(" ")
+        for query_string in queries_string:
+            res_authors_db = set(Author2023DB.query.filter(
+                or_(Author2023DB.first_name.like(f"%{query_string}%"),
+                    Author2023DB.family_name.like(f"%{query_string}%"))
+            ).all())
+            authors_db.update(res_authors_db)
     res = []
     for author_db in authors_db:
         res.append(dict(text=f"{author_db.first_name} {author_db.family_name}",
                         value=author_db.id,
                         family_name=author_db.family_name,
                         first_name=author_db.first_name))
-    return json_result(True, suggestedAuthors=res), 200
+    return json_result(True, suggestedAuthors=res, exactMatching=exact_matching), 200
 
 
 @sat_biblio.route("/authors/search/", methods=["POST"])

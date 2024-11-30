@@ -1,15 +1,11 @@
 """
 
 """
-import datetime
-import dbm
 
-from flask import jsonify
 import os
 
-from sat_biblio_server.data.models import ReferenceBibliographiqueLivre
 from sat_biblio_server.database.db_manager import db
-from sat_biblio_server import create_app, sat_biblio, UserDB
+from sat_biblio_server import create_app
 from sat_biblio_server.config.development import Config
 try:
     from sat_biblio_server.create_admin_user import create_admin_user
