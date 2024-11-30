@@ -50,13 +50,7 @@ def check_reference_bibliographique_livre(reference):
            reference["auteurs"] and \
            reference["titre"] and \
            reference["lieu_edition"] and \
-           reference["editeur"] and \
-           reference["description"]
-    # and \
-    # (type(reference["annee"]) == int or
-    #  type(reference["annee"]) == str and
-    #  reference["annee"].isdigit()) and \
-    # type(reference["nb_page"]) == int
+           reference["editeur"]
 
 
 def check_user_connection(user_connection):
