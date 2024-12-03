@@ -14,6 +14,13 @@
         </b-form-group>
       </b-col>
       <b-col lg="4">
+        <b-form-group label="Auteur" label-cols-sm="3"
+          label-align-sm="right" label-size="sm" class="mb-0">
+          <b-input v-model="authorFilter" size="sm"
+                   placeholder="Filtrer en fonction de l'auteur"/>
+        </b-form-group>
+      </b-col>
+      <b-col lg="4">
         <b-form-group label="Aide à la recherche" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <b-input v-model="keywordsFilter" size="sm"
@@ -83,6 +90,11 @@ export default {
           label: "Titre",
           sortable: false
         },
+          {
+          key: "authors",
+          label: "Auteurs",
+          sortable: false
+        },
         /*{
           key: "description",
           label: "Description",
@@ -112,9 +124,11 @@ export default {
           key: "observations",
           label: "Observations",
           sortable: false
-        }
+        },
+
       ],
       coteFilter: "",
+      authorFilter: "",
       keywordsFilter: "",
       titleFilter: "",
       noChangeIn: 0,
@@ -127,13 +141,16 @@ export default {
           "&sortBy="+ctx.sortBy;
       let filterParams = "";
       if(this.coteFilter.length > 0) {
-        filterParams = filterParams+"&cote="+this.coteFilter;
+        filterParams = `${filterParams}&cote=${this.coteFilter}`;
+      }
+      if(this.authorFilter.length > 0) {
+        filterParams = `${filterParams}&author=${this.authorFilter}`;
       }
       if(this.titleFilter.length > 0) {
-        filterParams = filterParams+"&titre="+this.titleFilter;
+        filterParams = `${filterParams}&titre=${this.titleFilter}`;
       }
       if(this.keywordsFilter.length > 0) {
-        filterParams = filterParams+"&mot_clef="+this.keywordsFilter;
+        filterParams = `${filterParams}&mot_clef=${this.keywordsFilter}`;
       }
       retrieveBookRecords(params+filterParams)
           .then(
@@ -153,19 +170,25 @@ export default {
     getRecordTotalNumber: function() {
       let filterParams = "?result_type=number";
       if(this.coteFilter.length > 0) {
-        filterParams = filterParams+"&cote="+encodeURI(this.coteFilter);
+        filterParams = `${filterParams}&cote=${encodeURI(this.coteFilter)}`;
+      }
+      if(this.authorFilter.length > 0) {
+        if(filterParams.length > 0) {
+          filterParams = `${filterParams}&`;
+        }
+        filterParams = `${filterParams}author=${encodeURI(this.authorFilter)}`;
       }
       if(this.titleFilter.length > 0) {
         if(filterParams.length > 0) {
-          filterParams = filterParams+"&";
+          filterParams = `${filterParams}&`;
         }
-        filterParams = filterParams+"titre="+encodeURI(this.titleFilter);
+        filterParams = `${filterParams}titre=${encodeURI(this.titleFilter)}`;
       }
       if(this.keywordsFilter.length > 0) {
         if(filterParams.length > 0) {
-          filterParams = filterParams+"&";
+          filterParams = `${filterParams}&`;
         }
-        filterParams = filterParams+"mot_clef="+encodeURI(this.keywordsFilter);
+        filterParams = `${filterParams}mot_clef=${encodeURI(this.keywordsFilter)}`;
       }
 
       getBookRecordsCount(filterParams).then(
@@ -173,6 +196,8 @@ export default {
             if(response.data.success) {
               this.recordFilteredNumber = response.data.filtered_total;
               this.recordTotalNumber = response.data.total;
+            } else {
+              console.error(response.data);
             }
           }
       );
@@ -211,6 +236,10 @@ export default {
       this.currentPage = 1;
       // this.reloadWithFilters();
     },
+    authorFilter() {
+      this.getRecordTotalNumber();
+      this.currentPage = 1;
+    },
     keywordsFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
@@ -227,7 +256,7 @@ export default {
       // if(this.noChangeIn > 2000) {
       // }
 
-      return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter}`;
+      return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter} ${this.authorFilter}`;
     }
   }
 }

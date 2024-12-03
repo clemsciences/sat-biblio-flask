@@ -8,9 +8,11 @@ import logging
 import re
 
 from flask import redirect, request, session
+from sqlalchemy import or_, text
+from sqlalchemy.orm import joinedload
 
 from sat_biblio_server.managers.log_manager import LogEventManager
-from sat_biblio_server import sat_biblio
+from sat_biblio_server import sat_biblio, Author2023DB
 from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023
 import sat_biblio_server.data.validation as dv
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, \
@@ -45,6 +47,7 @@ def book_records():
         cote = request.args.get("cote", "")
         titre = request.args.get("titre", "")
         mot_clef = request.args.get("mot_clef", "")
+        author = request.args.get("author", "")
 
         the_query = Enregistrement2023DB.query
         if cote:
@@ -54,6 +57,17 @@ def book_records():
                 .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
         if mot_clef:
             the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
+        if author:
+            the_query = (the_query
+                         .join(ReferenceBibliographiqueLivre2023DB)
+                         .join(ReferenceBibliographiqueLivre2023DB.authors)
+                         .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
+                                     Author2023DB.family_name.ilike(f"%{author}%"))
+                                 )
+                         ).options(
+                            joinedload(Enregistrement2023DB.reference)
+                            .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
+                        )
         # valid = request.args.get("valid", "1")
         # if valid in ["1", "0"]:
         #     the_query = the_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
@@ -62,15 +76,17 @@ def book_records():
         # endregion
 
         if sort_by:
-            the_query = the_query.order_by(sort_by)
+            the_query = the_query.order_by(Enregistrement2023DB.cote)
+            # the_query = the_query.order_by(text(sort_by))
         else:
-            the_query = the_query.order_by("cote")
+            the_query = the_query.order_by(Enregistrement2023DB.cote)
 
         enregistrements = []
         for record_db in the_query.paginate(page=n_page, per_page=size).items:
             record = Enregistrement2023.from_db_to_data(record_db)
             # print(record)
             if record and record['reference']:
+                record["authors"] = ", ".join([author["first_name"] + " " + author["family_name"] for author in record["reference"]['authors']])
                 record["reference"] = record['reference']['titre']
                 enregistrements.append(record)
             else:
@@ -144,6 +160,7 @@ def book_records_count():
     cote = request.args.get("cote", "")
     titre = request.args.get("titre", "")
     mot_clef = request.args.get("mot_clef", "")
+    author = request.args.get("author", "")
 
     the_filtered_query = Enregistrement2023DB.query
     the_total_query = Enregistrement2023DB.query
@@ -154,6 +171,17 @@ def book_records_count():
             .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
     if mot_clef:
         the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
+    if author:
+        the_filtered_query = (the_filtered_query
+                     .join(ReferenceBibliographiqueLivre2023DB)
+                     .join(ReferenceBibliographiqueLivre2023DB.authors)
+                     .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
+                                 Author2023DB.family_name.ilike(f"%{author}%"))
+                             )
+                     ).options(
+                        joinedload(Enregistrement2023DB.reference)
+                        .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
+                    )
 
     # valid = request.args.get("valid", "1")
     # if valid in ["1", "0"]:
