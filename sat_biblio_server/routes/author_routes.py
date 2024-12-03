@@ -245,21 +245,28 @@ def chercher_auteurs():
 @sat_biblio.route("/authors/<int:id_>/entries/")
 def author_entries_routes(id_):
     n_page, size, sort_by = get_pagination(request)
+    entry_type = request.args.get("type", "")
     entries = []
-    records = Enregistrement2023.get_records_by_author(id_, n_page, size, sort_by)
-    references = ReferenceBibliographiqueLivre2023.get_references_by_author(id_, n_page, size, sort_by)
-
-    entries.extend(records)
-    entries.extend(references)
+    if entry_type == "record":
+        records = Enregistrement2023.get_records_by_author(id_, n_page, size, sort_by)
+        entries.extend(records)
+    elif entry_type == "reference":
+        references = ReferenceBibliographiqueLivre2023.get_references_by_author(id_, n_page, size, sort_by)
+        entries.extend(references)
     return json_result(True, entries=entries), 200
 
 
 @sat_biblio.route("/authors/<int:id_>/entries/count/", methods=["GET"])
 def author_entries_count_routes(id_):
     # logging.warning("bizarre")
-    record_count = Enregistrement2023.get_records_by_author_count(id_)
-    reference_count = ReferenceBibliographiqueLivre2023.get_references_by_author_count(id_)
-    total = record_count + reference_count
+    entry_type = request.args.get("type", "")
+    total = 0
+    if entry_type == "record":
+        record_count = Enregistrement2023.get_records_by_author_count(id_)
+        total += record_count
+    elif entry_type == "reference":
+        reference_count = ReferenceBibliographiqueLivre2023.get_references_by_author_count(id_)
+        total += reference_count
 
     return json_result(True, total=total), 200
 

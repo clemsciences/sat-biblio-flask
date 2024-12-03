@@ -6,7 +6,8 @@
         :caption="caption"
         :get-total-number-request="getEntryListAssociatedToAuthorCount"
         :go-to="goTo"
-    :entry-id="authorId">
+        :entry-id="authorId"
+        entry-type="reference">
 
     </ListEntriesOfEntry >
   </b-container>

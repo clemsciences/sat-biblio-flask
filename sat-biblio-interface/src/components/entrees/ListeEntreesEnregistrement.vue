@@ -5,6 +5,7 @@
                 :per-page="perPage"
                 :get-total-number-request="getEntryListAssociatedToBookRecordsCount"
                 :entry-id="recordId"
+                entry-type="reference"
   />
 </template>
 

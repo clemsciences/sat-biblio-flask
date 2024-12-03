@@ -44,6 +44,10 @@ export default {
     },
     entryId: {
       type: Number,
+    },
+    entryType: {
+      type: String,
+      required: true
     }
   },
   data: function() {
@@ -74,7 +78,7 @@ export default {
       let params = "page="+ctx.currentPage+
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy+
-          "&valid=1";
+          "&valid=1&type="+this.entryType
 
       this.retrieveListRequest(this.entryId, params).then(
           (response) => {
@@ -101,7 +105,7 @@ export default {
       return null;
     },
     getTotalNumber() {
-      this.getTotalNumberRequest(this.entryId, "").then(
+      this.getTotalNumberRequest(this.entryId, "type="+this.entryType).then(
           (response) => {
             if(response.data.success) {
               this.totalNumber = response.data.total;
