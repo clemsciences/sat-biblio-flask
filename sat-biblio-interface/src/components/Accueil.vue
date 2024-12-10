@@ -37,11 +37,11 @@
       <a href="/liens" class="mx-2">Liens utiles</a>
     </div>
 
-    <div class="d-flex justify-content-center align-items-center mt-5" id="book-images">
-      <b-img src="bht_livres_1.jpg" class="mx-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
-      <b-img src="bht_livres_2.jpg" class="mx-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
-      <b-img src="bht_livres_3.jpg" class="mx-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
-      <b-img src="bht_livres_4.jpg" class="mx-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
+    <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
+      <b-img src="bht_livres_1.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
+      <b-img src="bht_livres_2.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
+      <b-img src="bht_livres_3.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
+      <b-img src="bht_livres_4.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>
     </div>
 
     <!-- Bouton toggle et collapsible (placé plus bas à gauche) -->
@@ -68,7 +68,9 @@
 <!--      </b-collapse>-->
     </div>
 
-    <b-img src="bht_rdc_1.jpg" class="m-3 img-fluid" style="max-width: 1000px" alt="Photo du rez-de-chaussée de la bibliothèque."/>
+    <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
+      <b-img src="bht_rdc_1.jpg" class="m-auto img-fluid" style="max-width: 1000px" alt="Photo du rez-de-chaussée de la bibliothèque."/>
+    </div>
 
     <div id="video-introduction">
       <b-embed
