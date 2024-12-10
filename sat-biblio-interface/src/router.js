@@ -259,6 +259,13 @@ let router = new VueRouter({
             component: ListeEnregistrement,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
+        {
+            name: "catalogue",
+            path: '/catalogue',
+            component: ListeEnregistrement,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+
         // endregion
         {
             name: "contact",

@@ -174,5 +174,8 @@ blockquote{
     padding-left: 10px;
 }
 
+.detail {
+  font-size: 0.8rem
+}
 
 </style>
