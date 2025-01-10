@@ -10,9 +10,12 @@ with io.open(os.path.join(CUR_DIR, "README.md"), "r", encoding="utf-8") as f:
 with io.open(os.path.join(CUR_DIR, "LICENSE"), "r", encoding="utf-8") as f:
     LICENSE = f.read()
 
+with open(os.path.join(CUR_DIR, "version.txt"), "r") as f:
+    VERSION = f.read().strip()
+
 setup(
     name='sat-biblio-web',
-    version='0.4.0',
+    version=VERSION,
     author='Clément Besnier',
     author_email='clem@clementbesnier.fr',
     description='Web app to manage library books.',
