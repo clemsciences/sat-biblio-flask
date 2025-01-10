@@ -342,7 +342,7 @@ let router = new VueRouter({
             path: "/dublin-core/:id",
         },
         // endregion
-        // region
+        // region ark
         {
             name: "",
             path: "/ark:/:naan/:ark_name",

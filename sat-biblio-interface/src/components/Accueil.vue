@@ -37,6 +37,15 @@
       <a href="/liens" class="mx-2">Liens utiles</a>
     </div>
 
+    <b-button variant="secondary"
+    size="mg"
+    href="#video-introduction"
+    class="my-4">
+      <b-icon icon="file-play"></b-icon>
+      Voir la vidéo d'introduction
+
+    </b-button>
+
     <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
 
     <b-img
@@ -204,12 +213,13 @@ bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg 1400w"
 src="bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg"
 alt=""/>
     </div>
+<!--    <iframe width="560" height="315" src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>-->
 
     <div id="video-introduction">
       <b-embed
         type="iframe"
         aspect="16by9"
-        src=""
+        src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX"
         allowfullscreen
       ></b-embed>
     </div>
