@@ -18,10 +18,11 @@
           :select-size="5"
           size="sm"/>
     </b-form-group>
-    <b-button class="my-3" v-if="!disabled" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
+    <b-button class="m-3" v-if="!disabled" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
       Enlever auteur
     </b-button>
-    <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>
+    <b-button class="m-3" v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>
+    <b-button class="m-3" v-if="!disabled" @click="goToNewAuthor">Créer auteur</b-button>
 <!--    <b-form-group :label="selectedAuthorsMessage">-->
 <!--      <b-form-select v-model="selectedAuthorId" -->
 <!--                     :options="selectedAuthors" -->
@@ -80,6 +81,10 @@ name: "SuggestionAuteur",
     goToAuthor: function() {
       console.log(this.selectedAuthorId);
       let routeData = this.$router.resolve(`/auteur/lire/${this.selectedAuthorId}`);
+      window.open(routeData.href, '_blank');
+    },
+    goToNewAuthor() {
+      let routeData = this.$router.resolve(`/auteur/creer`);
       window.open(routeData.href, '_blank');
     },
     removeLastAuthor: function() {

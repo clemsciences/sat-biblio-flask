@@ -21,7 +21,7 @@ import {createBookReference} from "@/services/api";
 import Title from "../visuel/Title";
 import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
 import {canManage} from "@/services/rights";
-import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
+import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView";
 import {BookReference} from "@/services/objectManager";
 
 export default {
