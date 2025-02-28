@@ -4,15 +4,13 @@
         <b-form-input type="text"
                       v-model="auteur.first_name"
                       :disabled="disabled"
-                      ref="first_name"
-                      @keydown.enter="focusNext('family_name')"/>
+                      ref="first_name"/>
       </b-form-group>
       <b-form-group label="Nom">
         <b-form-input type="text"
                       v-model="auteur.family_name"
                       :disabled="disabled"
-                      ref="family_name"
-                      @keydown.enter="focusNext('submit')"/>
+                      ref="family_name"/>
       </b-form-group>
       <b-button type="submit"
                 v-if="!disabled"
@@ -57,13 +55,7 @@ export default {
     }
   },
   methods: {
-    focusNext(ref) {
-      if (this.refs.includes(ref)) {
-        this.$refs[ref].focus();
-      } else {
-        console.log("wrong ref")
-      }
-    }
+
   }
 }
 </script>

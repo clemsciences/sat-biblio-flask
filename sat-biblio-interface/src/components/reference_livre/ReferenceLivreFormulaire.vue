@@ -5,38 +5,38 @@
         v-model="reference.selectedAuthors" class="my-3"
         :disabled="disabled"
         ref="authors"
-        @keydown.enter="focusNext('authorsForm')"/>
+    />
     <b-form-group label="Auteurs tels qu'ils sont mentionnés dans le livre."
     v-if="reference.authorsForm.length > 0 || !disabled">
       <b-form-input v-model="reference.authorsForm"
                     :disabled="disabled"
                     ref="authorsForm"
-                    @keydown.enter="focusNext('title')"/>
+      />
     </b-form-group>
     <b-form-group label="Titre">
       <b-form-input v-model="reference.titre"
                     :disabled="disabled"
                     ref="title"
-                    @keydown.enter="focusNext('lieu_edition')"/>
+      />
 <!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
     </b-form-group>
     <b-form-group label="Lieu d'édition">
       <b-form-input v-model="reference.lieu_edition"
                     :disabled="disabled"
                     ref="lieu_edition"
-                    @keydown.enter="focusNext('editeur')"/>
+      />
     </b-form-group>
     <b-form-group label="Editeurs">
       <b-form-input v-model="reference.editeur"
                     :disabled="disabled"
                     ref="editeur"
-                    @keydown.enter="focusNext('annee')"/>
+      />
     </b-form-group>
     <b-form-group label="Année">
       <b-form-input v-model="reference.annee"
                     :disabled="disabled"
                     ref="annee"
-                    @keydown.enter="focusNext('nb_page')"/>
+      />
     </b-form-group>
     <b-form-group label="Nombre de pages" :state="isNbPageValid">
       <b-form-input v-if="reference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
@@ -44,13 +44,14 @@
                     v-model="reference.nb_page"
                     :disabled="disabled"
                     ref="nb_page"
-                    @keydown.enter="focusNext('description')"/>
+      />
     </b-form-group>
     <b-form-group label="Description" v-if="!disabled">
       <b-form-textarea v-model="reference.description"
                        :disabled="disabled"
                        :rows="5" size="sm"
-                       ref="description" @keydown.enter="focusNext('submit')"/>
+                       ref="description"
+      />
     </b-form-group>
     <b-button type="submit"
               v-if="!disabled"
@@ -116,13 +117,6 @@ export default {
     }
   },
   methods: {
-    focusNext(ref) {
-      if (this.refs.includes(ref)) {
-        this.$refs[ref].focus();
-      } else {
-        console.log("wrong ref")
-      }
-    }
   }
 
 }
