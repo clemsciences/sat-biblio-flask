@@ -227,6 +227,47 @@ export function getEntryListAssociatedToBookRecordsCount(bookRecordId, params) {
 
 // endregion
 
+// region records with reference
+/**
+ *
+ * @param {BookRecordWithReference} bookRecordWithReference
+ * @param {String} token
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function createBookRecordWithReference(bookRecordWithReference, token) {
+  return axios.post("/book-records-with-reference/", bookRecordWithReference, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+/**
+ *
+ * @param {Object} params
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function retrieveBookRecordsWithReference(params) {
+  return axios.get(`/book-records-with-reference/${params}`);
+}
+
+/**
+ *
+ * @param {Number} bookRecordId
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function retrieveBookRecordWithReference(bookRecordId) {
+  return axios.get(`/book-records-with-reference/${bookRecordId}/`);
+}
+
+/**
+ *
+ * @param {Number} bookRecordId
+ * @param {BookRecordWithReference} bookRecordWithReference
+ * @param token
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function updateBookRecordWithReference(bookRecordId, bookRecordWithReference, token) {
+  return axios.put(`/book-records-with-reference/${bookRecordId}/`, bookRecordWithReference, { headers: { Authorization: `Bearer ${token}` } });
+}
+// endregion
+
 // region borrowings
 export function createBorrowing(borrowing, token) {
   return axios.post("/borrowings/", borrowing, { headers: { Authorization: `Bearer ${token}` } });

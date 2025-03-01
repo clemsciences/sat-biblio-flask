@@ -7,7 +7,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 import abc
 import datetime
 import logging
-from typing import Union, List, Dict, Optional
+from typing import Union, List, Dict, Optional, Tuple
 
 from sat_biblio_server import Author2023DB, ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB, \
     EmpruntLivre2023DB, \
@@ -264,6 +264,7 @@ class ReferenceBibliographiqueLivre2023:
                 lieu_edition=reference.lieu_edition,
                 editeur=reference.editeur,
                 annee=reference.annee,
+                publication_annee=reference.annee,
                 nb_page=reference.nb_page,
                 ark_name=reference.ark_name,
                 # region meta
@@ -511,6 +512,219 @@ class Enregistrement2023:
                           f"WHERE id_reference IN "
                           f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
                           f"WHERE id_author = {id_author} )"))
+            for i in res:
+                return i[0]
+
+    @staticmethod
+    def get_records_by_ref(id_ref, n_page, size, sort_by):
+        the_query = Enregistrement2023DB.query
+        the_query = the_query.join(Enregistrement2023DB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivre2023DB.id == id_ref)
+        return [dict(type="record", description=str(rec_db), id=rec_db.id)
+                for rec_db in the_query.paginate(page=n_page, per_page=size).items]
+
+    @staticmethod
+    def get_records_by_ref_count(id_ref):
+        the_query = Enregistrement2023DB.query
+        the_query = the_query.join(Enregistrement2023DB.reference)
+        the_query = the_query.filter(ReferenceBibliographiqueLivre2023DB.id == id_ref)
+        return the_query.count()
+
+
+class EnregistrementComplet2023:
+
+    def __init__(self):
+        self.cote = ""
+
+    @staticmethod
+    def from_data_to_db(enregistrement_complet: dict) -> Tuple[ReferenceBibliographiqueLivre2023DB, Enregistrement2023DB]:
+        reference_db = ReferenceBibliographiqueLivre2023DB()
+        enregistrement_db = Enregistrement2023DB()
+
+        # region update timestamp
+        date_modification = datetime.datetime.now()
+        reference_db.date_derniere_modification = date_modification
+        enregistrement_db.date_derniere_modification = date_modification
+        # endregion
+
+        # region valid
+        enregistrement_db.valide = True
+        # endregion
+
+        # region ids
+        if "id" in enregistrement_complet:
+            enregistrement_db.id = enregistrement_complet["id"]
+        if "id_reference" in enregistrement_complet:
+            enregistrement_db.id_reference = enregistrement_complet["id_reference"]
+        # endregion
+
+        # region authors
+        auteurs_db = []
+        for auteur in enregistrement_complet["authors"]:
+            if type(auteur) == dict:
+                if "value" in auteur:
+                    author_db = Author2023.from_id_to_db(auteur["value"])
+                    if author_db:
+                        auteurs_db.append(author_db)
+            elif isinstance(auteur, Author2023):
+                print(auteur)
+        reference_db.authors = auteurs_db
+        # endregion
+
+        # region reference
+        if "titre" in enregistrement_complet:
+            reference_db.titre = enregistrement_complet["titre"]
+        if "lieu_edition" in enregistrement_complet:
+            reference_db.lieu_edition = enregistrement_complet["lieu_edition"]
+        if "editeur" in enregistrement_complet:
+            reference_db.editeur = enregistrement_complet["editeur"]
+        if "publication_annee" in enregistrement_complet:
+            reference_db.annee = enregistrement_complet["publication_annee"]
+        if "nb_page" in enregistrement_complet:
+            reference_db.nb_page = enregistrement_complet["nb_page"]
+        # if "valide" in reference:
+        #     reference_db.valide = reference["valide"]
+        # else:
+        #     reference_db.valide = False
+        if "reference_description" in enregistrement_complet:
+            reference_db.description = enregistrement_complet["reference_description"]
+        if "reference_ark_name" in enregistrement_complet:
+            reference_db.ark_name = enregistrement_complet["reference_ark_name"]
+        # endregion
+
+        # region enregistrement
+        if "cote" in enregistrement_complet:
+            enregistrement_db.cote = enregistrement_complet["cote"]
+        if "annee_entree" in enregistrement_complet:
+            enregistrement_db.annee_obtention = enregistrement_complet["annee_entree"]
+        # if "nb_exemplaire_supp" in enregistrement:
+        #     enregistrement_db.nb_exemplaire_supp = enregistrement["nb_exemplaire_supp"]
+        if "provenance" in enregistrement_complet:
+            enregistrement_db.provenance = enregistrement_complet["provenance"]
+        # if "mots_clef" in enregistrement:
+        #     enregistrement_db.mots_clef = enregistrement["mots_clef"]
+        if "commentaire" in enregistrement_complet:
+            enregistrement_db.commentaire = enregistrement_complet["commentaire"]
+        if "observations" in enregistrement_complet:
+            enregistrement_db.observations = enregistrement_complet["observations"]
+        if "aide_a_la_recherche" in enregistrement_complet:
+            enregistrement_db.aide_a_la_recherche = enregistrement_complet["aide_a_la_recherche"]
+        if "record_ark_name" in enregistrement_complet:
+            enregistrement_db.ark_name = enregistrement_complet["record_ark_name"]
+        # endregion
+
+        # region meta
+        # if "row" in enregistrement:
+        #     enregistrement_db.row = enregistrement["row"]
+        if "valide" in enregistrement_complet:
+            enregistrement_db.valide = enregistrement_complet["valide"]
+        if "origin" in enregistrement_complet:
+            enregistrement_db.origin = enregistrement_complet["origin"]
+        if "date_desherbe" in enregistrement_complet:
+            enregistrement_db.date_desherbe = enregistrement_complet["date_desherbe"]
+        # endregion
+
+        return reference_db, enregistrement_db
+
+    @staticmethod
+    def from_db_to_data(reference_db: ReferenceBibliographiqueLivre2023DB, enregistrement_db: Enregistrement2023DB) -> dict:
+        if enregistrement_db and reference_db:
+            annee_obtention = enregistrement_db.annee_obtention
+            if type(annee_obtention) == datetime.date or type(annee_obtention) == datetime.datetime:
+                annee_obtention = f"{annee_obtention.year}"
+            date_derniere_modification = enregistrement_db.date_derniere_modification
+            if type(date_derniere_modification) == datetime.date or type(
+                    date_derniere_modification) == datetime.datetime:
+                date_derniere_modification = date_derniere_modification.isoformat()
+            date_desherbe = enregistrement_db.date_desherbe
+            if type(date_desherbe) == datetime.date or type(date_desherbe) == datetime.datetime:
+                date_desherbe = date_desherbe.isoformat()
+            return dict(
+                id=enregistrement_db.id,
+                annee_entree=annee_obtention,  # année d'obtention
+                commentaire=enregistrement_db.commentaire,
+                cote=enregistrement_db.cote,
+                # nb_exemplaire_supp=enregistrement_db.nb_exemplaire_supp,
+                provenance=enregistrement_db.provenance,
+                aide_a_la_recherche=enregistrement_db.aide_a_la_recherche,
+                observations=enregistrement_db.observations,
+                record_ark_name=enregistrement_db.ark_name,
+                # region meta
+                date_desherbe=date_desherbe,
+                date_derniere_modification=date_derniere_modification,
+                valide=enregistrement_db.valide,
+                origin=enregistrement_db.origin,
+                row=enregistrement_db.row,
+                # endregion
+                reference=ReferenceBibliographiqueLivre2023.from_db_to_data(enregistrement_db.reference),
+                titre=reference_db.titre,
+                lieu_edition=reference_db.lieu_edition,
+                editeur=reference_db.editeur,
+                publication_annee=reference_db.annee,
+                nb_page=reference_db.nb_page,
+                reference_description=reference_db.description,
+                reference_ark_name=reference_db.ark_name,
+            )
+        else:
+            return {}
+
+    # region CSV & Excel
+    # @staticmethod
+    # def from_data_to_csv_row(data: dict):
+    #     return ReferenceBibliographiqueLivre2023.from_data_to_csv_row(data.get("reference")) + \
+    #         [
+    #             data.get("cote", ""),
+    #             data.get("observations", ""),
+    #             data.get("annee_obtention", ""),
+    #             data.get("date_desherbe", ""),
+    #             data.get("commentaire", ""),
+    #             data.get("nb_exemplaire_supp", ""),
+    #             data.get("provenance", ""),
+    #             data.get("origin", ""),
+    #             data.get("aide_a_la_recherche", ""),
+    #
+    #             # data.get("date_modification", ""),
+    #             data.get("row", "")
+    #            ]
+
+    # @staticmethod
+    # def get_column_names():
+    #     return ReferenceBibliographiqueLivre2023.get_column_names() + \
+    #         ["Cote", "Observations", "Ouvrages supprimés en 2022", "Provenance et date d'entrée", "Description", "Nombre d'exemplaire supplémentaire",
+    #          "Aide à la recherche", "Observations", "Ligne"]
+    # endregion
+
+    @staticmethod
+    def get_records_by_author(id_author, n_page, size, sort_by):
+        """
+
+        :param id_author:
+        :param n_page:
+        :param size:
+        :param sort_by:
+        :return:
+        """
+        request = f"SELECT * FROM {Enregistrement2023DB.__tablename__} " \
+                  f"WHERE id_reference IN " \
+                  f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} " \
+                  f"WHERE id_author = {id_author}) LIMIT {size} OFFSET {(n_page - 1) * size} "
+        with db.engine.connect() as connection:
+            res = connection.execute(text(request))
+            return [dict(type="record", description=str(rec_db["cote"]), id=rec_db["id"])
+                    for rec_db in res.mappings()]
+
+    @staticmethod
+    def get_records_by_author_count(id_author):
+        """
+
+        :param id_author:
+        :return:
+        """
+        with db.engine.connect() as connection:
+            res = connection.execute(text(f"SELECT COUNT(*) FROM {Enregistrement2023DB.__tablename__} "
+                                          f"WHERE id_reference IN "
+                                          f"(SELECT id_reference_biblio_livre FROM {HelperAuthorBook2023.__tablename__} "
+                                          f"WHERE id_author = {id_author} )"))
             for i in res:
                 return i[0]
 

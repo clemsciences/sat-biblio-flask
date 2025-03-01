@@ -29,6 +29,62 @@ def check_borrow(borrow):
     return True
 
 
+def check_enregistrement_complet(enregistrement_avec_reference):
+    if "cote" not in enregistrement_avec_reference:
+        print("cote is missing")
+        return False
+    elif "publication_annee" not in enregistrement_avec_reference:
+        print("publication_annee is missing")
+        return False
+    elif "annee_entree" not in enregistrement_avec_reference:
+        print("annee_entree is missing")
+        return False
+    elif "nb_exemplaire_supp" not in enregistrement_avec_reference:
+        print("nb_exemplaire_supp is missing")
+        return False
+    elif "provenance" not in enregistrement_avec_reference:
+        print("provenance is missing")
+        return False
+    elif "aide_a_la_recherche" not in enregistrement_avec_reference:
+        print("aide_a_la_recherche is missing")
+        return False
+    elif "authors" not in enregistrement_avec_reference:
+        print("authors is missing")
+        return False
+    elif "titre" not in enregistrement_avec_reference:
+        print("titre is missing")
+        return False
+    elif "lieu_edition" not in enregistrement_avec_reference:
+        print("lieu_edition is missing")
+        return False
+    elif "editeur" not in enregistrement_avec_reference:
+        print("editeur is missing")
+        return False
+    elif "annee_entree" not in enregistrement_avec_reference:
+        print("annee_entree is missing")
+        return False
+    elif "nb_page" not in enregistrement_avec_reference:
+        print("nb_page is missing")
+        return False
+    elif "reference_description" not in enregistrement_avec_reference:
+        print("reference_description is missing")
+        return False
+    elif not enregistrement_avec_reference["authors"]:
+        print("authors is void")
+        return False
+    elif not enregistrement_avec_reference["titre"]:
+        print("titre is void")
+        return False
+    elif not enregistrement_avec_reference["lieu_edition"]:
+        print("lieu_edition is void")
+        return False
+    elif not enregistrement_avec_reference["editeur"]:
+        print("editeur is void")
+        return False
+    return True
+
+
+
 def check_enregistrement(enregistrement):
     return "id_reference" in enregistrement and \
            "cote" in enregistrement and \

@@ -2,17 +2,32 @@
 
 export class Author {
     constructor() {
-        this.first_name = '';
-        this.family_name = '';
+        this.clear();
     }
-
     getPrettyForm() {
         return `${this.family_name} (${this.first_name})`;
+    }
+
+    clear() {
+        this.first_name = '';
+        this.family_name = '';
     }
 }
 
 export class BookReference {
     constructor() {
+        this.clear()
+    }
+    // getPrettyForm() {
+        // let authorPrettyForm = "";
+        // this.selectedAuthors.forEach(
+        //     (value) => {
+        //         authorPrettyForm = authorPrettyForm + value.getPrettyForm();
+        //     }
+        // )
+    // }
+
+    clear() {
         this.selectedAuthors = [];
         this.authorsForm = "";
         this.titre = "";
@@ -23,19 +38,16 @@ export class BookReference {
         this.valide = false;
         this.description = "";
         this.ark_name = "";
+
     }
-    // getPrettyForm() {
-        // let authorPrettyForm = "";
-        // this.selectedAuthors.forEach(
-        //     (value) => {
-        //         authorPrettyForm = authorPrettyForm + value.getPrettyForm();
-        //     }
-        // )
-    // }
 }
 
 export class Record {
     constructor() {
+        this.clear();
+    }
+
+    clear() {
         this.selectedReference = new BookReference;
         this.selectedReference.value = -1;
         this.selectedReference.text = "";
@@ -54,6 +66,46 @@ export class Record {
         this.row = "";
         this.ark_name = "";
     }
+}
+
+export class BookRecordWithReference {
+    constructor() {
+        this.clear();
+    }
+
+    clear() {
+        this.authors = [];
+        this.selectedAuthors = [];
+        // authors as mentioned in the book
+        this.authorsForm = "";
+        // title
+        this.titre = "";
+        // where it was published
+        this.lieu_edition = "";
+        // publisher
+        this.editeur = "";
+        // year of publication
+        this.publication_annee = "";
+        this.nb_page = "";
+        this.valide = false;
+        this.reference_description = "";
+        // ARK name of the reference
+        this.reference_ark_name = "";
+        this.record_description = "";
+        // id of the book in the library
+        this.cote = "";
+
+        this.annee_entree = "";
+        // how many books of it do we have.
+        this.nb_exemplaire_supp = 0;
+        // where the book comes from
+        this.provenance =  "";
+        // key words
+        this.aide_a_la_recherche = "";
+        // ARK name of the record
+        this.record_ark_name = "";
+    }
+
 }
 
 export class ImportItem {

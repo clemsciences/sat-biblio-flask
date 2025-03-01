@@ -50,6 +50,9 @@ import ImportItem from "@/components/import/ImportItemView";
 import ArkView from "@/components/ark/ArkView";
 import LinkView from "@/components/LinkView";
 import ConceptionView from "@/components/ConceptionView";
+import CreationEnregistrementComplet from "./components/enregistrement_complet/CreationEnregistrementComplet.vue";
+import LireEnregistrementComplet from "./components/enregistrement_complet/LireEnregistrementComplet.vue";
+import ListeEnregistrementComplet from "./components/enregistrement_complet/ListeEnregistrementComplet.vue";
 
 Vue.use(VueRouter);
 
@@ -262,7 +265,19 @@ let router = new VueRouter({
         {
             name: "catalogue",
             path: '/catalogue',
-            component: ListeEnregistrement,
+            component: ListeEnregistrementComplet,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "new-catalogue-entry",
+            path: '/catalogue/creer',
+            component: CreationEnregistrementComplet,
+            meta: {needAuth: true, reachableFrom: rights.contributeur}
+        },
+        {
+            name: "read-catalogue-entry",
+            path: '/catalogue/lire/:id',
+            component: LireEnregistrementComplet,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
 

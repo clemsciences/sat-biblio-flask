@@ -13,16 +13,20 @@
 <!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
           <b-nav-item v-if="connected && isContributor">
             <b-nav-item-dropdown text="Créer" class="titre-nav-item">
-              <b-dropdown-item to="/auteur/creer">Auteur</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/creer">Référence bibliographique</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/creer">Enregistrement dans le catalogue</b-dropdown-item>
+              <b-dropdown-item to="/catalogue/creer">Nouvelle entrée</b-dropdown-item>
+              <b-dropdown-item to="/auteur/creer" v-if="isAdmin">Auteur</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/creer" v-if="isAdmin">Référence bibliographique</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/creer" v-if="isAdmin">Enregistrement dans le catalogue</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
           <b-nav-item class="active" active>
             <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
-              <b-dropdown-item to="/auteur/liste">Auteurs</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/liste">Références bibliographiques</b-dropdown-item>
+              <b-dropdown-item to="/catalogue">Entrées dans le catalogue</b-dropdown-item>
+<!--              <b-dropdown-item to="/cotes">Cotes</b-dropdown-item>-->
               <b-dropdown-item to="/enregistrement/liste">Catalogue</b-dropdown-item>
+              <b-dropdown-item to="/auteur/liste" v-if="isAdmin">Auteurs</b-dropdown-item>
+              <b-dropdown-item to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</b-dropdown-item>
+              <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Catalogue</b-dropdown-item>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
             </b-nav-item-dropdown>
           </b-nav-item>
