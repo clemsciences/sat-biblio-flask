@@ -31,9 +31,6 @@ export default {
         aide_a_la_recherche: "",
         observations: "",
         // region meta
-        date_desherbe: "",
-        date_derniere_modification: "",
-        origin: "",
         row: ""
         // endregion
       },
@@ -51,22 +48,14 @@ export default {
           provenance: this.record.provenance,
           aide_a_la_recherche: this.record.aide_a_la_recherche,
           valide: this.isManager,
-          row: this.row
+          row: this.record.row
       };
       createBookRecord(formData, this.$store.state.connectionInfo.token)
           .then((response) => {
             if(response.data.success) {
-              console.log("record saved");
               this.message = "L'enregistrement a été sauvegardé.";
-              this.record.selectedReference = {value: -1, text: ""};
-              this.record.cote = "";
-              this.record.annee_obtention = "";
-              this.record.nb_exemplaire_supp = "";
-              this.record.provenance = "";
-              this.record.aide_a_la_recherche = "";
-              this.record.row = "";
+              this.record.clear();
             } else {
-              console.log("bizarre");
               this.message = "Echec de la sauvegarde de l'enregistrement.";
             }
           })

@@ -2,7 +2,7 @@
   <b-card title="">
     <b-card-body>
       <p v-if="rendering.length > 0" id="copy-btn" class="mx-1">
-        <span v-if="reference.authorsForm.length > 0">
+        <span v-if="reference.authorsForm && reference.authorsForm.length > 0">
           {{ reference.authorsForm }}
         </span>
         <span v-else v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">

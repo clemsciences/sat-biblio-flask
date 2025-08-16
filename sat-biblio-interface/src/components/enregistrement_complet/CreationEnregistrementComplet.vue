@@ -18,10 +18,10 @@
 <script>
 
 import Title from "../visuel/Title.vue";
-import {BookRecordWithReference} from "../../services/objectManager";
+import {BookRecordWithReference} from "@/services/objectManager";
 import {canManage} from "@/services/rights";
 import EnregistrementCompletFormulaire from "./EnregistrementCompletFormulaire.vue";
-import {createBookRecordWithReference} from "../../services/api";
+import {createBookRecordWithReference} from "@/services/api";
 
 export default {
   name: "CreationEnregistrementComplet",
@@ -47,11 +47,9 @@ export default {
       createBookRecordWithReference(this.recordWithReference, this.$store.state.connectionInfo.token).then(
           (response) => {
             if(response.data.success) {
-              console.log("record with reference saved");
+              this.recordWithReference.clear();
+              this.message = "Enregistrement effectué."
             } else {
-              console.log("failed");
-              console.error(response.status);
-              console.trace();
               this.message = "Echec de la sauvegarde"
             }
           }

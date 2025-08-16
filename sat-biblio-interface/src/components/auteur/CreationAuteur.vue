@@ -85,9 +85,8 @@ export default {
         createAuthor(this.auteur, this.$store.state.connectionInfo.token).then(
             (response) => {
               if (response.data.success) {
-                this.message = "L'auteur " + this.auteur.first_name + " " + this.auteur.family_name + " a été correctement créé.";
-                this.first_name = "";
-                this.family_name = "";
+                this.message = `L'auteur ${this.auteur.first_name} ${this.auteur.family_name} a été correctement créé.`;
+                this.auteur.clear();
               } else {
                 this.message = "Impossible de sauvegarder l'auteur."
               }

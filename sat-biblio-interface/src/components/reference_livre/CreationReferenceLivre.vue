@@ -54,14 +54,7 @@ export default {
             (response) => {
               if(response.data.success) {
                 this.message = "La référence a été créée."
-                console.log("créer une référence livresque");
-                this.reference.selectedAuthors = [];
-                this.reference.titre = "";
-                this.reference.lieu_edition = "";
-                this.reference.editeur = "";
-                this.reference.annee = "";
-                this.reference.nb_page = "";
-                this.reference.description = "";
+                this.reference.clear();
               } else {
                 this.message = "La création de la référence a échoué."
               }
