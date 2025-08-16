@@ -29,23 +29,14 @@ import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire";
 import Title from "@/components/visuel/Title";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
+import {BookBorrowing} from "@/services/objectManager";
 
 export default {
   name: "LireEmprunt",
   components: {EmpruntFormulaire, Title},
   data: function () {
     return {
-      borrowing: {
-        record: {value: -1, text: ""},
-        comment: "",
-        borrower: {value: -1, text: ""},
-        isBorrowed: true,
-        dateComebackExpected: null,
-        borrowingDate: null,
-        actualComebackDate: null,
-        givenBack: false,
-        manager: {value: -1, text: ""},
-      },
+      borrowing: new BookBorrowing(),
       message: "",
       borrowingId: parseInt(this.$route.params.id),
     }
@@ -93,13 +84,12 @@ export default {
       updateBorrowing(this.$route.params.id, {borrowing: formData}, this.$store.state.connectionInfo.token).then(
           (response) => {
             if(response.data.success) {
-              console.log("borrowing updated");
               this.message = response.data.message;
             }
           }
       ).catch(
           (reason => {
-            console.log("borrowing update failed "+reason);
+            console.error("borrowing update failed "+reason);
           })
       );
     },

@@ -107,7 +107,24 @@ export class BookRecordWithReference {
 
         this.referenceId = -1;
     }
+}
 
+export class BookBorrowing {
+    constructor() {
+        this.clear();
+    }
+
+    clear() {
+        this.record = {value: -1, text: ""};
+        this.borrower = {value: -1, text: ""};
+        this.manager = {value: -1, text: ""};
+        this.isBorrowed = false;
+        this.borrowingDate = null;
+        this.dateComebackExpected = null;
+        this.actualComebackDate = null;
+        this.comment = "";
+        this.givenBack = false;
+    }
 }
 
 export class ImportItem {
