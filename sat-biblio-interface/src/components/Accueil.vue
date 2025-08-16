@@ -171,21 +171,20 @@
         <h5>Pourquoi passer à ce nouvel outil ?</h5>
 <!--      </b-button>-->
 <!--      <b-collapse id="collapse-why" class="mt-3">-->
-        <b-list-group>
-          <b-list-group-item>
-            Le catalogue est <b>centralisé</b>.<br/> <span class="detail">Si quelqu'un fait une modification, celle-ci sera directement accessible par les autres,
-            ce qui évite d'avoir différentes versions.</span>
-          </b-list-group-item>
-          <b-list-group-item>
-            Le catalogue est <b>accessible</b> par tous selon.<br/> <span class="detail">Des droits spécifiques permettentde gérer et de modifier le catalogue.</span>
-          </b-list-group-item>
-          <b-list-group-item>
-            Le catalogue ne dépend plus d'un format particulier.<br/> <span class="detail">On peut exporter les fichiers sous le format souhaité.</span>
-          </b-list-group-item>
-          <b-list-group-item>
-            On peut <b>gérer les emprunts</b> des livres et envoyer des emails aux retardataires.
-          </b-list-group-item>
-        </b-list-group>
+      <b-list-group>
+        <b-list-group-item>
+          Le catalogue est <b>centralisé</b>.<br/> <span class="detail">Si quelqu'un fait une modification, celle-ci est directement accessible par tous les utilisateurs, évitant ainsi d'avoir différentes versions.</span>
+        </b-list-group-item>
+        <b-list-group-item>
+          Le catalogue est <b>accessible</b> à tous.<br/> <span class="detail">Des droits spécifiques permettent de gérer et de modifier le catalogue.</span>
+        </b-list-group-item>
+        <b-list-group-item>
+          Le catalogue est <b>indépendant</b> du format.<br/> <span class="detail">Les données peuvent être exportées dans le format souhaité.</span>
+        </b-list-group-item>
+        <b-list-group-item>
+          Le système permet la <b>gestion des emprunts</b> et l'envoi automatique d'emails aux retardataires.
+        </b-list-group-item>
+      </b-list-group>
 <!--      </b-collapse>-->
     </div>
 
