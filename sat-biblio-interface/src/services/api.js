@@ -247,6 +247,13 @@ export function retrieveBookRecordsWithReference(params) {
   return axios.get(`/book-records-with-reference/${params}`);
 }
 
+export function exportBookRecordsWithReference(params) {
+    return axios({
+        url: `/book-records-with-reference/export/?${params}`,
+        method: 'GET',
+        responseType: 'blob'
+      });
+}
 /**
  *
  * @param {Number} bookRecordId

@@ -901,11 +901,99 @@ class Catalogue2023Row:
 
     def __repr__(self):
         return f"<Catalogue2023Row> {self.to_csv_row()}"
+# endregion
+
+# region catalogue 2025
+class Catalogue2025:
+    # COLUMNS = ["Cote", "Titre", "Auteurs", "Année d'édition", "Editeur", "Lieu d'édition",
+    #            "Observations", "Provenance", "Date d'entrée",
+    #            "Entrée bibliothèque", "Aide à la recherche"]
+    COLUMNS = ["Cote", "Titre", "Auteurs", "Année d'édition", "Editeur", "Lieu d'édition",
+               "Observations", "Provenance", "Date d'entrée",
+               "Aide à la recherche"]
+    # COLUMNS_WIDTHS = [12.55, 22, 19.36, 15, 25.55, 17.55, 29.36, 15, 16.55, 17, 62.73]  # , 8.82, 10.36]
+    COLUMNS_WIDTHS = [12.55, 22, 19.36, 20, 25.55, 17.55, 29.36, 15, 16.55, 62.73]  # , 8.82, 10.36]
+
+    def __init__(self):
+        self.rows: List[Catalogue2025Row] = []
+        self.column_names = []
+        self.d = defaultdict(list)
+
+    def check_column_names(self) -> Optional[List]:
+        """
+
+        :return:
+        """
+        match_ids = []
+        # print(f"self.column_names={self.column_names}")
+        for column_name in self.COLUMNS:
+            if column_name in self.column_names:
+                match_ids.append(self.column_names.index(column_name))
+            else:
+                print(f"{column_name} was not found in import file")
+                return [f"{column_name} missing"]
+        return match_ids
+
+    def __repr__(self):
+        return f"<Catalogue2025> {len(self.rows)} rows"
+
+class Catalogue2025Row:
+
+    def __init__(self, row: Enregistrement2023DB):
+        self.row = row
 
 
+    # @classmethod
+    # def create_row_from_db(cls, row: Enregistrement2023DB):
+    #     row_2023 = cls()
+    #     row_2023.cote = row.cote
+    #     assert row.reference is ReferenceBibliographiqueLivre2023DB
+    #     row_2023.titre = row.reference.titre
+    #     row_2023.auteurs =
+    #     row_2023.annee_edition = row.reference.annee
+    #     row_2023.editeur_lieu_edition = f"{row.reference.editeur}({row.reference.lieu_edition})"
+    #     row_2023.provenance_date_entree = row[cls.PROVENANCE_DATE_ENTREE_INDEX]
+    #     row_2023.help_description = row.commentaire
+    #     row_2023.entree_bibliotheque = row.annee_obtention
+    #     row_2023.aide_a_la_recherche = row.aide_a_la_recherche
+    #     row_2023.observations = row.observations
+    #     # row_2023.ouvrages_supprimes_2022 = row[cls.OUVRAGES_SUPPRIMES_INDEX]
+    #     # row_2023.help_contenu_schweiz = row[cls.HELP_CONTENU_SCHWEIZ_INDEX]
+    #     # row_2023.verification_effectuee_en_2022 = row[cls.VERIFICATION_2022_INDEX]
+    #     return row_2023
 
+    def to_raw_row(self) -> List[str]:
+        return [
+            self.row.cote,
+            self.row.reference.titre,
+            ", ".join([author.first_name + " " + author.family_name for author in self.row.reference.authors]),
+            self.row.reference.annee,
+            self.row.reference.editeur,
+            self.row.reference.lieu_edition,
+            self.row.observations,
+            self.row.provenance,
+            self.row.annee_obtention,
+            # "",
+            self.row.aide_a_la_recherche,
+            # self.row.ark_name,
+            # self.row.reference.nb_page,
 
+            # self.row.description,
+            # self.row.commentaire,
+            # self.row.reference.origin,
+            # self.row.reference.description,
 
+            # self.row.ouvrages_supprimes_2022,
+            # self.row.provenance_date_entree,
+            # self.row.help_description,
+            # self.row.entree_bibliotheque,
+            # self.row.aide_a_la_recherche,
+            # self.row.help_contenu_schweitz,
+            # self.row.verification_effectuee_en_2022
+        ]
+
+    def __repr__(self):
+        return f"<Catalogue2025Row> {self.row}"
 # endregion
 
 class CatalogueConverter:

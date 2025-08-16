@@ -7,17 +7,17 @@ import json
 import logging
 import re
 
-from flask import redirect, request, session
-from sqlalchemy import or_, text
+from flask import request, session
+from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
-from sat_biblio_server.managers.log_manager import LogEventManager
+import sat_biblio_server.data.validation as dv
 from sat_biblio_server import sat_biblio, Author2023DB
 from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023
-import sat_biblio_server.data.validation as dv
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, \
     Enregistrement2023DB
-from sat_biblio_server.routes import get_pagination, int_to_bool, validation_connexion_et_retour_defaut
+from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
@@ -62,12 +62,17 @@ def book_records():
                          .join(ReferenceBibliographiqueLivre2023DB)
                          .join(ReferenceBibliographiqueLivre2023DB.authors)
                          .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
-                                     Author2023DB.family_name.ilike(f"%{author}%"))
+                                     Author2023DB.family_name.ilike(f"%{author}%"),
+                                     (Author2023DB.first_name + ' ' + Author2023DB.family_name).ilike(
+                                         f"%{author}%"),
+                                     (Author2023DB.family_name + ' ' + Author2023DB.first_name).ilike(
+                                         f"%{author}%")
+                                     )
                                  )
                          ).options(
-                            joinedload(Enregistrement2023DB.reference)
-                            .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
-                        )
+                joinedload(Enregistrement2023DB.reference)
+                .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
+            )
         # valid = request.args.get("valid", "1")
         # if valid in ["1", "0"]:
         #     the_query = the_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))

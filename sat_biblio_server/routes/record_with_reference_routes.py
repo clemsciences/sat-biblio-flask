@@ -1,24 +1,27 @@
 """
-Manages records in library.
+Manages records in the library.
 
 Records are hints to manage books in the library.
 """
 import json
 import logging
+import os
 import re
 
-from flask import redirect, request, session
-from sqlalchemy import or_, text
+from flask import request, session, send_file
+from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
-from sat_biblio_server.managers.log_manager import LogEventManager
+import sat_biblio_server.data.validation as dv
+from managers.catalogue_manager import Catalogue2025, Catalogue2025Row
+from managers.export_manager import ExportCatalogueManager
 from sat_biblio_server import sat_biblio, Author2023DB
 from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023, \
     EnregistrementComplet2023
-import sat_biblio_server.data.validation as dv
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, \
     Enregistrement2023DB
-from sat_biblio_server.routes import get_pagination, int_to_bool, validation_connexion_et_retour_defaut
+from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
@@ -62,10 +65,10 @@ def book_records_with_reference():
 
         the_query = Enregistrement2023DB.query
         if cote:
-            the_query = the_query.filter(Enregistrement2023DB.cote.like(f"%{cote}%"))
+            the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
         if titre:
             the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
-                .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
+                .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
         if mot_clef:
             the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
         if author:
@@ -79,16 +82,10 @@ def book_records_with_reference():
                             joinedload(Enregistrement2023DB.reference)
                             .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
                         )
-        # valid = request.args.get("valid", "1")
-        # if valid in ["1", "0"]:
-        #     the_query = the_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
-        # else:
-        #     the_query = the_query.filter(Enregistrement2023DB.valide == True)
         # endregion
 
         if sort_by:
             the_query = the_query.order_by(Enregistrement2023DB.cote)
-            # the_query = the_query.order_by(text(sort_by))
         else:
             the_query = the_query.order_by(Enregistrement2023DB.cote)
 
@@ -104,6 +101,47 @@ def book_records_with_reference():
                 logging.error(f"record id = {record_db.id} record found "
                               f"but no bound reference")
         return json_result(True, enregistrements=enregistrements), 200
+
+@sat_biblio.route("/book-records-with-reference/export/", methods=["GET"])
+def book_records_with_reference_export():
+    if request.method == "GET":
+        # region filtre
+        cote = request.args.get("cote", "")
+        titre = request.args.get("titre", "")
+        mot_clef = request.args.get("mot_clef", "")
+        author = request.args.get("author", "")
+
+        the_query = Enregistrement2023DB.query
+        if cote:
+            the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
+        if titre:
+            the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
+                .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
+        if mot_clef:
+            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
+        if author:
+            the_query = (the_query
+                         .join(ReferenceBibliographiqueLivre2023DB)
+                         .join(ReferenceBibliographiqueLivre2023DB.authors)
+                         .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
+                                     Author2023DB.family_name.ilike(f"%{author}%"))
+                                 )
+                         ).options(
+                            joinedload(Enregistrement2023DB.reference)
+                            .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
+                        )
+        the_query = the_query.order_by(Enregistrement2023DB.cote)
+
+        enregistrements = []
+        for record_db in the_query.all():
+            enregistrements.append(record_db)
+
+        catalogue_to_export = Catalogue2025()
+        catalogue_to_export.rows = [Catalogue2025Row(record_db) for record_db in enregistrements]
+        complete_path = ExportCatalogueManager.export_2025(os.path.join(os.getcwd(), "export"), catalogue_to_export, "export-recherche-", "Export de la recherche", False)
+        # return json_result(True, complete_path=complete_path), 200
+        return send_file(complete_path)
+    return json_result(False, message="Erreur lors de l'export."), 400
 
 
 @sat_biblio.route("/book-records-with-reference/<int:id_>/", methods=["GET", "DELETE", "PUT"])
@@ -190,12 +228,12 @@ def book_records_with_reference_count():
     the_filtered_query = Enregistrement2023DB.query
     the_total_query = Enregistrement2023DB.query
     if cote:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.cote.like(f"%{cote}%"))
+        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
     if titre:
         the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
-            .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
+            .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
     if mot_clef:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
+        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.ilike(f"%{mot_clef}%"))
     if author:
         the_filtered_query = (the_filtered_query
                      .join(ReferenceBibliographiqueLivre2023DB)
@@ -260,7 +298,7 @@ def chercher_enregistrements_proches_with_reference():
     if re.match(r"^(A|B|C|D|MM|BBH|GHA|GHB|GHC|GHbr|BBC|CAF|JSFA|RCAF|Congrès|"
                 r"RCNSS|CNSS|CSS|TAB|FAG|FAM|FAP|MML|NUM|NUMbr) [0-9]{1,5}.*", query_result):
 
-        book_records_db = Enregistrement2023DB.query.filter(Enregistrement2023DB.cote.like(f"%{query_result}%")).all()
+        book_records_db = Enregistrement2023DB.query.filter(Enregistrement2023DB.cote.ilike(f"%{query_result}%")).all()
 
         for book_record_db in book_records_db:
             if book_record_db:
@@ -270,7 +308,7 @@ def chercher_enregistrements_proches_with_reference():
         book_records_db = db.session \
             .query(Enregistrement2023DB, ReferenceBibliographiqueLivre2023DB) \
             .filter(Enregistrement2023DB.id_reference == ReferenceBibliographiqueLivre2023DB.id) \
-            .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{query_result}%"))
+            .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{query_result}%"))
         for book_record_db, ref_biblio_db in book_records_db:
             res.append(dict(text=f"{book_record_db.reference.titre} {book_record_db.cote}",
                             value=book_record_db.id))

@@ -12,8 +12,10 @@ import os
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Border, Side, Protection, Alignment, Color
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.protection import SheetProtection
 
-from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3, Catalogue2023
+from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3, Catalogue2023, \
+    Catalogue2025
 from sat_biblio_server.data.models import Enregistrement
 
 
@@ -262,6 +264,81 @@ class ExportCatalogueManager:
                     #     c.fill = white_fill
                 else:
                     c.fill = grey_fill
+                c.alignment = center_alignment
+                c.border = black_border
+        if protected:
+            current_sheet.protection = protection
+
+        excel_catalogue.save(complete_path)
+        return complete_path
+
+
+    @staticmethod
+    def export_2025(path: str, catalogue_2025: Catalogue2025, filename_prefix: str = "", title="Catalogue", protected=True):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if not os.path.exists(path):
+            raise Exception(f"path {path} does not exist")
+        complete_path = os.path.join(path, f"{filename_prefix}catalogue-exporte-2025.xlsx")
+        excel_catalogue = openpyxl.Workbook()
+        first_line = "Bibliothèque de la S.A.T. Format 2025."
+        current_sheet = excel_catalogue.active
+        current_sheet.title = title
+        bold_font = Font(bold=True)
+        red_fill = PatternFill(start_color="00FF0000", end_color="00FF0000", fill_type="solid")
+        white_fill = PatternFill(start_color='FFFFFFFF', end_color='FF000000', fill_type="solid")
+        grey_fill = PatternFill(start_color="00CCFFFF", end_color="00CCFFFF", fill_type="solid")
+        black_border = Border(left=Side(color="FF000000"),
+                              right=Side(color="FF000000"),
+                              bottom=Side(color="FF000000"),
+                              top=Side(color="FF000000"))
+        protection = SheetProtection(sheet=protected)
+        center_alignment = Alignment(wrap_text=True, vertical='center', horizontal='center')
+        column_names = Catalogue2025.COLUMNS
+        column_widths = Catalogue2025.COLUMNS_WIDTHS
+
+        shift_i_row = 1
+        # region first line
+        current_date = datetime.date.today().isoformat()
+        c = current_sheet.cell(row=shift_i_row, column=1,
+                               value=f"BIBLIOTHEQUE DE LA SAT. {title} - {current_date}")
+        c.font = bold_font
+        c.fill = white_fill
+        c.border = black_border
+        c.alignment = center_alignment
+
+        current_sheet.merge_cells(range_string=f"A1:{get_column_letter(len(Catalogue2025.COLUMNS))}1")
+        # endregion
+
+        # region second line
+        shift_i_row += 1
+
+        for i in range(len(column_names)):
+            c = current_sheet.cell(row=shift_i_row, column=i + 1, value=column_names[i])
+            c.font = bold_font
+            c.fill = white_fill
+            c.border = black_border
+            c.alignment = center_alignment
+
+        for i, width in enumerate(column_widths, 1):
+            column_letter = get_column_letter(i)
+            current_sheet.column_dimensions[column_letter].width = width
+            # current_sheet.column_dimensions[column_letter].height = 10
+        current_sheet.auto_filter.ref = f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(len(catalogue_2025.rows))}{len(catalogue_2025.rows) + shift_i_row}"
+        current_sheet.auto_filter.add_sort_condition(
+            f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(1)}{len(catalogue_2025.rows) + shift_i_row}")
+        # endregion
+
+        shift_i_row += 1
+
+        for i, row_2025 in enumerate(catalogue_2025.rows):
+            row = row_2025.to_raw_row()
+            current_sheet.row_dimensions[i].height = 40
+            # print(row)
+            if i % 1000 == 0:
+                logging.error(f"row {i}->{row}")
+            for j in range(len(row)):
+                c = current_sheet.cell(row=i + shift_i_row, column=j + 1, value=row[j])
                 c.alignment = center_alignment
                 c.border = black_border
         if protected:
