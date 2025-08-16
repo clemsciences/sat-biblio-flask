@@ -11,6 +11,12 @@
                     :disabled="disabled"
                     ref="authorsForm"/>
     </b-form-group>
+    <b-form-group>
+      <b-button v-if="referenceId != null" @click="goToReference">
+        Voir la fiche de la référence bibliographique
+      </b-button>
+      <p v-else>pas de bouton</p>
+    </b-form-group>
 
 
       <b-form-group label="Titre">
@@ -91,7 +97,7 @@
 
 <script>
 import SuggestionAuteur from "../auteur/SuggestionAuteur.vue";
-import {BookRecordWithReference} from "../../services/objectManager";
+import {BookRecordWithReference} from "@/services/objectManager";
 import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 
 export default {
@@ -109,6 +115,10 @@ export default {
     },
     message: {
       type: String
+    },
+    referenceId: {
+      type: Number,
+      nullable: true
     }
 
   },
@@ -120,6 +130,9 @@ export default {
   methods: {
     isInvalid() {
       return false;
+    },
+    goToReference() {
+      this.$router.push(`/reference-livre/lire/${this.referenceId}`);
     }
 
   },

@@ -1,8 +1,12 @@
 <template>
   <b-container>
     <Title title="Enregistrement" info=""/>
+
+    <ReferenceLivrePrettyView :reference="reference"/>
+
     <EnregistrementCompletFormulaire
         :record-with-reference="bookRecordWithReference"
+        :reference-id="referenceId"
         :disabled="!canModify"
         :save="update"
         :message="message"
@@ -15,19 +19,22 @@
 <script>
 import Title from "../visuel/Title.vue";
 import EnregistrementCompletFormulaire from "./EnregistrementCompletFormulaire.vue";
-import {BookRecordWithReference} from "../../services/objectManager";
+import {BookRecordWithReference, BookReference} from "@/services/objectManager";
 import {retrieveBookRecordWithReference, updateBookRecordWithReference} from "../../services/api";
 import {mapState} from "vuex";
-import {canEdit} from "../../services/rights";
+import {canEdit} from "@/services/rights";
+import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 
 export default {
   name: "LireEnregistrementComplet",
-  components: {EnregistrementCompletFormulaire, Title},
+  components: {ReferenceLivrePrettyView, EnregistrementCompletFormulaire, Title},
   data() {
     return {
       bookRecordWithReference: new BookRecordWithReference(),
       message: "",
-      recordId: parseInt(this.$route.params.id)
+      recordId: parseInt(this.$route.params.id),
+      referenceId: null,
+      reference: new BookReference()
 
     }
   },
@@ -40,6 +47,17 @@ export default {
           (response) => {
             if(response.data.success) {
               const recordWithReference = response.data.record_with_reference;
+              this.referenceId = response.data.reference.id;
+              this.reference.annee = response.data.reference.annee;
+              this.reference.titre = response.data.reference.titre;
+              this.reference.ark_name = response.data.reference.ark_name;
+              this.reference.description = response.data.reference.description;
+              this.reference.nb_page = response.data.reference.nb_page;
+              this.reference.editeur = response.data.reference.editeur;
+              this.reference.lieu_edition = response.data.reference.lieu_edition;
+              this.reference.selectedAuthors = response.data.reference.selectedAuthors;
+              this.reference.authorsForm = response.data.reference.authorsForm;
+              console.log(this.reference);
 
               this.bookRecordWithReference.authors = recordWithReference.authors;
               this.bookRecordWithReference.selectedAuthors = recordWithReference.authors;
