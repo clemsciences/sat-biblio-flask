@@ -96,20 +96,20 @@ export function renderYear(reference) {
  * @returns {string}
  */
 export function renderPages(reference) {
-    console.log(reference);
-if(reference.nb_page == 0) {
-  return '';
-} else if (reference.nb_page == -1) {
-    return '';
-}
+    if(reference.nb_page == 0) {
+      return '';
+    } else if (reference.nb_page == -1) {
+        return '';
+    }
   if(typeof reference.nb_page === "number") {
     return `,${reference.nb_page } p.`;
-  } else {
+  } else if(typeof reference.nb_page === "string") {
     if (reference.nb_page.length === 0) {
       return '';
     } else if(reference.nb_page)
     return `,${reference.nb_page} p.`;
   }
+  return '';
 }
 
 /**
