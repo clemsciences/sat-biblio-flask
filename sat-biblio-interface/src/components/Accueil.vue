@@ -243,5 +243,11 @@ name: "Accueil",
 
 <style scoped>
 
+#new-tool,
+#video-introduction {
+  scroll-margin-top: 72px; /* Adjust to your navbar height */
+}
+
+
 
 </style>
