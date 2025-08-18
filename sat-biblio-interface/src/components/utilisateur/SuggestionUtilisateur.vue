@@ -8,9 +8,11 @@
       placeholder="Tapez le prénom ou le nom d'un utilisateur"
       @hit="addUser($event)"
     />
-    <b-form-input v-model="value.text" readonly/>
-    <b-button v-if="value.value > 0" @click="removeUser" class="m-1">Enlever utilisateur</b-button>
-    <b-button v-if="value.value > 0" @click="goToUser" class="m-1">Voir utilisateur</b-button>
+    <b-form-input v-model="value.text" readonly :disabled="disabled"/>
+    <div v-if="!disabled">
+      <b-button v-if="value.value > 0" @click="removeUser" :disabled="disabled" class="m-1">Enlever utilisateur</b-button>
+      <b-button v-if="value.value > 0" @click="goToUser" :disabled="disabled" class="m-1">Voir utilisateur</b-button>
+    </div>
 
   </b-form-group>
 </template>

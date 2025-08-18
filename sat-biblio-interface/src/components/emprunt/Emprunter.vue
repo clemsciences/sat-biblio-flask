@@ -19,24 +19,23 @@
 import {createBorrowing} from "@/services/api";
 import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire";
 import Title from "../visuel/Title";
+import {BookBorrowing} from "@/services/objectManager";
 
 export default {
   name: "Emprunter",
   components: {Title, EmpruntFormulaire},
   data: function () {
     return {
-      borrowing: {
-        record: {value: -1, text: ""},
-        comment: "",
-        borrower: {value: -1, text: ""},
-        isBorrowed: true,
-        dateComebackExpected: null,
-      },
+      borrowing: new BookBorrowing(),
       message: "",
     }
   },
+  mounted() {
+    this.reinit();
+  },
   methods: {
     saveBorrowing: function () {
+      this.borrowing.isBorrowed = true;
       const formData = {
         record: this.borrowing.record.value,
         comment: this.borrowing.comment,
@@ -47,21 +46,20 @@ export default {
       createBorrowing(formData, this.$store.state.connectionInfo.token).then(
         (response) => {
           if(response.data.success) {
-            console.log("borrowing registered");
-            this.reinitBorrowing()
+            this.reinitBorrowing();
             this.message = "L'emprunt a correctement été enregistré. Un courriel a été envoyé à l'emprunteur.";
           } else {
-            this.message = "Echec de l'enregistrement de l'emprunt.";
+            this.message = `Echec de l'enregistrement de l'emprunt.${response.data.message.length > 0 ? ' '+response.data.message : ''}`;
           }
         }
     )
     },
     reinitBorrowing() {
-      this.borrowing.record = {value: -1, text: ""};
-      this.borrowing.comment = "";
-      this.borrowing.borrower = {value: -1, text: ""};
+      this.borrowing.clear();
       this.borrowing.isBorrowed = true;
-      this.borrowing.dateComebackExpected = null;
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      this.borrowing.borrowingDate = today;
     },
     reinit() {
       this.reinitBorrowing();

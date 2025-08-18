@@ -129,10 +129,10 @@ def borrowings():
                     success = send_new_borrowing_email(borrower_db, reference_db, borrowing_db)
                     if success:
                         return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=borrowing_db.id), 201
-                    return json_result(False, id=borrowing_db.id, message="Echec de l'envoi de l'email."), 200
+                    return json_result(False, id=borrowing_db.id, message="Echec de l'envoi de l'email d'emprunt."), 200
                 return json_result(False, "L'enregistrmeent n'est pas reconnu. Contactez l'administrateur.")
             else:
-                return json_result(False, "L'emprunteur n'est pas reconnu. Cnotactez l'administrateur.")
+                return json_result(False, "L'emprunteur n'est pas reconnu. Contactez l'administrateur.")
         return json_result(False, message="Wrong data type"), 400
     return json_result(False), 400
 
