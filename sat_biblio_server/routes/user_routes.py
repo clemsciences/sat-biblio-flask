@@ -11,6 +11,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
+from managers.log_manager import LogEventManager
 from sat_biblio_server.data.models import User
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
@@ -219,6 +220,9 @@ def create_new_user():
             else:
                 user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
                 if user:
+                    LogEventManager(db).add_create_event(user.id, session.get("id", -1),
+                                                         UserDB.__tablename__,
+                                                         values=json.dumps(user_form))
                     token = user.generate_confirmation_token()
                     link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
                            f"inscription_token={token}&email={user.email}"
@@ -331,6 +335,9 @@ def user_(id_):
             user_db.family_name = data["family_name"]
             user_db.right = UserRight.from_value(data["right"])
             db.session.commit()
+            LogEventManager(db).add_update_event(user_db.id, session.get("id", -1),
+                                                 UserDB.__tablename__,
+                                                 values=json.dumps(User.from_db_to_data(user_db)))
             return json_result(True, "L'utilisateur a bien été enregistré."), 200
         else:
             return json_result(False, "Echec de l'enregistrement de l'utilisateur"), 400
@@ -339,6 +346,9 @@ def user_(id_):
             # user_db.right.value
             db.session.delete(user_db)
             db.session.commit()
+            LogEventManager(db).add_delete_event(user_db.id, session.get("id", -1),
+                                                 UserDB.__tablename__,
+                                                 values=json.dumps(User.from_db_to_data(user_db)))
             return json_result(True, "Utilisateur correctement supprimé/"), 204
         return json_result(False, "Echec lors de la suppression de l'utilisateur."), 400
 
