@@ -35,13 +35,16 @@
                   @change="updatePrefixCoteFilter">
               </b-form-select>
             </b-form-group>
-
             <b-form-group label="Numéro">
               <b-form-input
                   v-model="numberCoteFilter"
-                  type="number"
-                  min="1"
-                  max="9999"
+                  type="text"
+                  pattern="[0-9]*"
+                  inputmode="numeric"
+                  maxlength="4"
+                  @keydown="onlyDigitsKeydown"
+                  @paste.prevent="sanitizeDigitsPaste"
+                  @input="stripNonDigits"
                   placeholder="Entrez un numéro">
               </b-form-input>
             </b-form-group>
@@ -315,7 +318,49 @@ export default {
     updatePrefixCoteFilter(event) {
       console.log("event: ", event);
       this.prefixCoteFiler = event;
+    },
+    // region only digits
+    /** Allow only digits and necessary control/navigation keys
+     *
+     * @param e event
+     */
+    onlyDigitsKeydown(e) {
+      // Allow shortcuts like Ctrl/Cmd+A/C/X/V/Z/Y
+      if (e.ctrlKey || e.metaKey) return;
+      const allowed = [
+        'Backspace', 'Tab', 'Enter',
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+        'Delete', 'Home', 'End'
+      ];
+      if (allowed.includes(e.key)) return;
+      // Allow digits 0-9 (top row and numpad)
+      if (/^\d$/.test(e.key)) return;
+      // Block everything else (e, E, +, -, ., etc.)
+      e.preventDefault();
+    },
+    /** Clean pasted content to digits only (limit to 4 digits for 1..9999)
+     *
+     * @param e event
+     */
+    sanitizeDigitsPaste(e) {
+      const raw = (e.clipboardData || window.clipboardData).getData('text') || '';
+      const digits = raw.replace(/\D/g, '').slice(0, 4);
+      e.target.value = digits;
+      this.numberCoteFilter = digits;
+    },
+
+    /** Ensure input stays digits-only and within length limit even if injected
+     *
+     * @param e event
+     */
+    stripNonDigits(e) {
+      const cleaned = String(e.target.value || '').replace(/\D/g, '').slice(0, 4);
+      if (cleaned !== e.target.value) {
+        e.target.value = cleaned;
+      }
+      this.numberCoteFilter = cleaned;
     }
+    // endregion
   },
 
   mounted() {
