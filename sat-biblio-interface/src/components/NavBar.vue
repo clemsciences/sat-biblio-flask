@@ -24,7 +24,7 @@
               <b-dropdown-item to="/catalogue">Catalogue</b-dropdown-item>
 <!--              <b-dropdown-item to="/cotes">Cotes</b-dropdown-item>-->
               <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</b-dropdown-item>
-              <b-dropdown-item to="/auteur/liste" v-if="isAdmin">Auteurs</b-dropdown-item>
+              <b-dropdown-item to="/auteur/liste">Auteurs</b-dropdown-item>
               <b-dropdown-item to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</b-dropdown-item>
               <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Catalogue</b-dropdown-item>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
