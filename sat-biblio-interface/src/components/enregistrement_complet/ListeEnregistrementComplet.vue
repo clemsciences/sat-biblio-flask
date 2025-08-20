@@ -13,7 +13,8 @@
             {{ prefixCoteFiler.length > 0 || numberCoteFilter.length > 0 ? coteFilter : 'Choisir une cote' }}
           </b-button>
 
-          <b-modal id="modal-cote" title="Sélection de la cote" @ok="handleOk">
+          <b-modal id="modal-cote" title="Sélection de la cote"
+                   ok-title="Valider" cancel-title="Annuler">
             <b-form-group label="Préfixe">
               <b-form-select
                   v-model="prefixCoteFiler"
@@ -266,26 +267,20 @@ export default {
       );
     },
     goToEnregistrementComplet: function (item) {
-      //localStorage.setItem('coteFilter', this.coteFilter);
-      localStorage.setItem('prefixCoteFiler', this.prefixCoteFiler);
-      localStorage.setItem('numberCoteFilter', this.numberCoteFilter);
-      localStorage.setItem('authorFilter', this.authorFilter);
-      localStorage.setItem('keywordsFilter', this.keywordsFilter);
-      localStorage.setItem('titleFilter', this.titleFilter);
       this.$router.push(`/catalogue/lire/${item.id}`);
     },
-    // reloadWithFilters() {
-    //   this.$router.push({
-    //       name: "",
-    //       query: {
-    //         cote: encodeURIComponent(this.coteFilter),
-    //         keyWords: encodeURIComponent(this.keywordsFilter),
-    //         title: encodeURIComponent(this.titleFilter),
-    //       }
-    //   }).then(() => {
-    //     window.location.reload();
-    //   });
-    // }
+    reloadWithFilters() {
+      if(this.onFilter.trim().length > 0) {
+        this.$router.replace({
+          query: {
+            author: encodeURIComponent(this.authorFilter),
+            cote: encodeURIComponent(this.coteFilter),
+            keywords: encodeURIComponent(this.keywordsFilter),
+            title: encodeURIComponent(this.titleFilter),
+          }
+        });
+      }
+    },
     exportSearchResult() {
       this.isExporting = true;
       let filterParams = this.getFilterParams();
@@ -313,6 +308,9 @@ export default {
       this.keywordsFilter = "";
       this.titleFilter = "";
       localStorage.clear();
+      this.$router.replace({
+          query: {}
+        });
     },
     updatePrefixCoteFilter(event) {
       console.log("event: ", event);
@@ -321,43 +319,45 @@ export default {
   },
 
   mounted() {
-    // if(this.$route.query.coteFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
-    // if(this.$route.query.titleFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
-    // if(this.$route.query.keywordsFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
-    console.log("localStorage: ", localStorage.getItem('coteFilter'), " ", localStorage.getItem('authorFilter'), " ", localStorage.getItem('keywordsFilter'), " ", localStorage.getItem('titleFilter'), "");
-    // this.coteFilter = localStorage.getItem('coteFilter') || '';
-    this.prefixCoteFiler = localStorage.getItem('prefixCoteFiler') || '';
-    this.numberCoteFilter = localStorage.getItem('numberCoteFilter') || '';
-    this.authorFilter = localStorage.getItem('authorFilter') || '';
-    this.keywordsFilter = localStorage.getItem('keywordsFilter') || '';
-    this.titleFilter = localStorage.getItem('titleFilter') || '';
+    if(this.$route.query.cote.length > 0) {
+      const cote = decodeURIComponent(this.$route.query.cote);
+      const coteParts = cote.split(' ');
+      if (coteParts.length === 2) {
+        this.prefixCoteFiler = coteParts[0];
+        this.numberCoteFilter = coteParts[1];
+      }
+    }
+    if(this.$route.query.title.length > 0) {
+      this.titleFilter = decodeURIComponent(this.$route.query.title);
+    }
+    if(this.$route.query.author.length > 0) {
+      this.authorFilter = decodeURIComponent(this.$route.query.author);
+    }
+    if(this.$route.query.keywords.length > 0) {
+      this.keywordsFilter = decodeURIComponent(this.$route.query.keywords);
+    }
     this.getRecordTotalNumber();
   },
   watch: {
     coteFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
-      // this.reloadWithFilters();
+      this.reloadWithFilters();
     },
     authorFilter() {
       this.getRecordTotalNumber();
       this.currentPage = 1;
+      this.reloadWithFilters();
     },
     keywordsFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
-      // this.reloadWithFilters();
+      this.reloadWithFilters();
     },
     titleFilter: function () {
       this.getRecordTotalNumber();
       this.currentPage = 1;
-      // this.reloadWithFilters();
+      this.reloadWithFilters();
     }
   },
   computed: {
