@@ -82,17 +82,29 @@
       <b-col lg="4">
         <b-form-group label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="exportSearchResult" :disabled="isExporting">
+          <b-button @click="exportSearchResult" :disabled="isExporting" v-b-tooltip.hover
+                    title="Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucun filtre n'est mis, alors le catalogue entier est exporté.">
             {{ isExporting ? 'Export en cours...' : 'Exporter' }}
           </b-button>
+          <template #label>
+            <b-icon icon="info-circle" v-b-tooltip.hover
+                    title="Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucune filtre n'est mis, alors le catalogue entier est exporté."
+                    variant="dark"/>
+          </template>
         </b-form-group>
       </b-col>
       <b-col lg="4">
         <b-form-group label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="clearSearchFields" :disabled="!searchFieldsUsed">
+          <b-button @click="clearSearchFields" :disabled="!searchFieldsUsed" v-b-tooltip.hover
+                    title="Réinitialise les filtres de recherche.">
             Réinitialiser
           </b-button>
+          <template #label>
+            <b-icon icon="info-circle" v-b-tooltip.hover
+                    title="Réinitialise les filtres de recherche."
+                    variant="dark"/>
+          </template>
         </b-form-group>
       </b-col>
     </b-row>
@@ -273,7 +285,7 @@ export default {
       this.$router.push(`/catalogue/lire/${item.id}`);
     },
     reloadWithFilters() {
-      if(this.onFilter.trim().length > 0) {
+      if (this.onFilter.trim().length > 0) {
         this.$router.replace({
           query: {
             author: encodeURIComponent(this.authorFilter),
@@ -312,8 +324,8 @@ export default {
       this.titleFilter = "";
       localStorage.clear();
       this.$router.replace({
-          query: {}
-        });
+        query: {}
+      });
     },
     updatePrefixCoteFilter(event) {
       console.log("event: ", event);
@@ -364,7 +376,7 @@ export default {
   },
 
   mounted() {
-    if(this.$route.query.cote.length > 0) {
+    if (this.$route.query.cote.length > 0) {
       const cote = decodeURIComponent(this.$route.query.cote);
       const coteParts = cote.split(' ');
       if (coteParts.length === 2) {
@@ -372,13 +384,13 @@ export default {
         this.numberCoteFilter = coteParts[1];
       }
     }
-    if(this.$route.query.title.length > 0) {
+    if (this.$route.query.title.length > 0) {
       this.titleFilter = decodeURIComponent(this.$route.query.title);
     }
-    if(this.$route.query.author.length > 0) {
+    if (this.$route.query.author.length > 0) {
       this.authorFilter = decodeURIComponent(this.$route.query.author);
     }
-    if(this.$route.query.keywords.length > 0) {
+    if (this.$route.query.keywords.length > 0) {
       this.keywordsFilter = decodeURIComponent(this.$route.query.keywords);
     }
     this.getRecordTotalNumber();
