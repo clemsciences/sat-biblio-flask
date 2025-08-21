@@ -3,7 +3,8 @@ export default {
   name: 'ArkInput',
   props: {
     arkName: {
-      type: String
+      type: String,
+      default: ""
     }
   },
   data: function() {

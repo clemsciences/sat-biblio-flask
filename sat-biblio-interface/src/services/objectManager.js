@@ -11,6 +11,8 @@ export class Author {
     clear() {
         this.first_name = '';
         this.family_name = '';
+        this.valide = false;
+        this.ark_name = "";
     }
 }
 

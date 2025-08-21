@@ -69,6 +69,10 @@ export default {
       authorId: parseInt(this.$route.params.id),
     }
   },
+  mounted() {
+    this.auteur.valide = false;
+    this.getAuthor();
+  },
   methods: {
     getAuthor: function() {
       retrieveAuthor(this.$route.params.id).then(
