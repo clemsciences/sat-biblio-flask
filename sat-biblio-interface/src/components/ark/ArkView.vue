@@ -46,7 +46,7 @@ export default {
                   case "Enregistrement2023":
                     this.$router.replace(`/enregistrement/lire/${data.id}`);
                     break;
-                  case "ReferenceBibliographiqueLivre2023DB":
+                  case "ReferenceBibliographiqueLivre2023":
                     this.$router.replace(`/reference-livre/lire/${data.id}`);
                     break;
                 }
@@ -55,7 +55,9 @@ export default {
               this.replied = true;
               this.message = "Echec de la requête.";
             }
-          });
+          }).catch((error) => {
+            console.log(error);
+      });
     },
 
 

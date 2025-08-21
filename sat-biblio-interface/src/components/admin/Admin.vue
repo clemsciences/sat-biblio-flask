@@ -32,6 +32,10 @@
     <b-row>
       <b-button to="/administrateur/imports" class="m-2">Gestionnaire d'importation</b-button>
     </b-row>
+    <b-row>
+      <b-button @click="generateArk" class="m-2">Générer ARK</b-button>
+      <p v-if="message.length > 0">{{ message }}</p>
+    </b-row>
 
 <!--    <b-row>-->
 <!--      <b-button @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV</b-button>-->
@@ -50,7 +54,7 @@
 import Title from "../visuel/Title";
 import CreationUtilisateur from '../utilisateur/CreationUtilisateur'
 import ListeUtilisateur from './ListeUtilisateur'
-import {deleteAllCatalogue, importAllCatalogue} from "@/services/api";
+import {deleteAllCatalogue, generateArkForAllEntriesMissingOnes, importAllCatalogue} from "@/services/api";
 export default {
   name: "Admin",
   components: {Title, CreationUtilisateur, ListeUtilisateur},
@@ -80,6 +84,13 @@ export default {
             this.importMessage = "C'est importé";
           }
       )
+    },
+    generateArk() {
+      generateArkForAllEntriesMissingOnes().then((response) => {
+        this.arkMessage = response.data.message;
+      }).catch((error) => {
+        this.arkMessage = error;
+      });
     }
 
   }

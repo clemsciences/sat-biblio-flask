@@ -125,7 +125,7 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     def __str__(self):
         return " ".join([auteur.__str__() for auteur in self.authors]) + \
                " " + self.titre + " " + self.lieu_edition + " " + self.editeur + " " + str(self.annee) + " " + \
-               self.nb_page
+               self.nb_page if self.nb_page else ""
 
     def afficher_tooltip(self) -> str:
         """

@@ -466,4 +466,8 @@ export function getDublinCoreEntry(id, params) {
 export function resolveArk(naan, arkName) {
   return axios.get(`/ark:/${naan}/${arkName}`);
 }
+
+export function generateArkForAllEntriesMissingOnes() {
+    return axios.get(`/ark/generate-for-all-entries-missing-ark/`);
+}
 // endregion

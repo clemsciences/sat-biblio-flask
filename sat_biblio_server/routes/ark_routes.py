@@ -41,3 +41,8 @@ def ark_name_resolver_route(naan: str, ark_name: str):
     logging.error(f"{naan}/{ark_name}")
     return json_result(False, message=f"{naan}-{ark_name}"), 400
 
+
+@sat_biblio.route("/ark/generate-for-all-entries-missing-ark/", methods=["GET"])
+def generate_ark_for_all_entries_missing_ones_route():
+    ArkManager.give_ark_names()
+    return json_result(True, message="Succès")

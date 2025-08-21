@@ -114,10 +114,6 @@ export default {
       );
     }
   },
-  beforeMount() {
-    this.auteur.valide = false;
-    this.getAuthor();
-  },
   computed: {
     ...mapState(["connected", "connectionInfo"]),
     canManage() {
