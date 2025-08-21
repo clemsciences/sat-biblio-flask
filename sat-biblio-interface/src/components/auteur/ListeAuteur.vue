@@ -19,6 +19,20 @@
                    placeholder="Filtrer en fonction du nom de famille"/>
         </b-form-group>
       </b-col>
+      <b-col lg="4">
+        <b-form-group label="" label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <b-button @click="clearSearchFields"  v-b-tooltip.hover
+                    title="Réinitialise les filtres de recherche.">
+            Réinitialiser
+          </b-button>
+          <template #label>
+            <b-icon icon="info-circle" v-b-tooltip.hover
+                    title="Réinitialise les filtres de recherche."
+                    variant="dark"/>
+          </template>
+        </b-form-group>
+      </b-col>
     </b-row>
     <b-row>
       <b-pagination
@@ -78,6 +92,37 @@ export default {
     }
   },
   methods: {
+    // region filtering
+    getFilterParams() {
+      let filterparams = "";
+      if(this.firstNameFiltre.length > 0) {
+        filterparams = filterparams+"&first_name="+this.firstNameFiltre;
+      }
+      if(this.familyNameFiltre.length > 0) {
+        filterparams = filterparams+"&family_name="+this.familyNameFiltre;
+      }
+      return filterparams;
+    },
+    reloadWithFilters() {
+      if (this.onFilter.trim().length > 0) {
+        this.$router.replace({
+          query: {
+            firstName: encodeURIComponent(this.firstNameFiltre),
+            familyName: encodeURIComponent(this.familyNameFiltre),
+          }
+        });
+      }
+    },
+    clearSearchFields() {
+      this.firstNameFiltre = "";
+      this.familyNameFiltre = "";
+      localStorage.clear();
+      this.$router.replace({
+        query: {}
+      });
+      
+    },
+    // endregion
     retrieveAuthors: function(ctx, callback) {
       let params = "?page="+ctx.currentPage+
           "&size="+ctx.perPage+
@@ -143,21 +188,35 @@ export default {
   beforeMount() {
     this.getAuthorTotalNumber();
   },
+  mounted() {
+    if(this.$route.query.firstName && this.$route.query.firstName.length > 0) {
+      this.firstNameFiltre = decodeURIComponent(this.$route.query.firstName);
+    }
+    if(this.$route.query.familyName && this.$route.query.familyName.length > 0) {
+      this.familyNameFiltre = decodeURIComponent(this.$route.query.familyName);
+
+    }
+  },
   watch: {
     firstNameFiltre: function (newValue, oldValue) {
       if(newValue !== oldValue) {
         this.getAuthorTotalNumber();
         this.currentPage = 1;
+        this.reloadWithFilters();
       }
     },
     familyNameFiltre: function () {
       this.getAuthorTotalNumber();
       this.currentPage = 1
+      this.reloadWithFilters();
     }
   },
   computed: {
     onFilter: function() {
       return `${this.firstNameFiltre} ${this.familyNameFiltre}`;
+    },
+    searchFieldsUsed() {
+      return this.firstNameFiltre.length > 0 || this.familyNameFiltre.length > 0;
     }
   }
 }
