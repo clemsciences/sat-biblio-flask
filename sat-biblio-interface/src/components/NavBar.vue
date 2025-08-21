@@ -2,7 +2,9 @@
   <b-container>
     <b-navbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
       <b-navbar-brand to="/" id="accueil-tooltip">
-        <h1>SAT - Biblio</h1>
+        <h1 class="navbar-brand-title titre-nav-item" style="margin: 0; font-weight: normal; display: inline;">SAT -
+          Biblio</h1>
+<!--        <h1 class="navbar-brand-title titre-nav-item">SAT - Biblio</h1>-->
         <b-tooltip target="accueil-tooltip" triggers="hover" class="my-tooltip">
               Accueil
         </b-tooltip>
