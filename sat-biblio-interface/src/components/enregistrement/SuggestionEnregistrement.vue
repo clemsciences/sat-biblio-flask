@@ -12,8 +12,10 @@
     />
     <b-form-input v-model="value.text" readonly/>
 
-    <b-button v-if="value.value > 0" @click="removeRecord" class="m-1">Enlever enregistrement</b-button>
-    <b-button v-if="value.value > 0" @click="goToRecord" class="m-1">Voir enregistrement</b-button>
+    <div v-if="!disabled">
+      <b-button v-if="value.value > 0" @click="removeRecord" class="m-1">Enlever enregistrement</b-button>
+      <b-button v-if="value.value > 0" @click="goToRecord" class="m-1">Voir enregistrement</b-button>
+    </div>
   </b-form-group>
 
 </template>
