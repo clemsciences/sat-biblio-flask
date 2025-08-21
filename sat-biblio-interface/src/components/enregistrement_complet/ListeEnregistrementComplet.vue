@@ -96,7 +96,7 @@
       <b-col lg="4">
         <b-form-group label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="clearSearchFields" :disabled="!searchFieldsUsed" v-b-tooltip.hover
+          <b-button @click="clearSearchFields" v-b-tooltip.hover
                     title="Réinitialise les filtres de recherche.">
             Réinitialiser
           </b-button>
@@ -376,7 +376,7 @@ export default {
   },
 
   mounted() {
-    if (this.$route.query.cote.length > 0) {
+    if (this.$route.query.cote && this.$route.query.cote.length > 0) {
       const cote = decodeURIComponent(this.$route.query.cote);
       const coteParts = cote.split(' ');
       if (coteParts.length === 2) {
@@ -384,13 +384,13 @@ export default {
         this.numberCoteFilter = coteParts[1];
       }
     }
-    if (this.$route.query.title.length > 0) {
+    if (this.$route.query.title && this.$route.query.title.length > 0) {
       this.titleFilter = decodeURIComponent(this.$route.query.title);
     }
-    if (this.$route.query.author.length > 0) {
+    if (this.$route.query.author && this.$route.query.author.length > 0) {
       this.authorFilter = decodeURIComponent(this.$route.query.author);
     }
-    if (this.$route.query.keywords.length > 0) {
+    if (this.$route.query.keywords && this.$route.query.keywords.length > 0) {
       this.keywordsFilter = decodeURIComponent(this.$route.query.keywords);
     }
     this.getRecordTotalNumber();
