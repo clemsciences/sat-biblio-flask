@@ -3,7 +3,7 @@
     <b-col>
       <b-badge pill :variant="borrowingColor" :id="`${recordId}`">{{ message }}</b-badge>
       <b-tooltip :target="`${recordId}`" triggers="hover" class="my-tooltip">
-        {{ message }}.
+        {{ message }}
       </b-tooltip>
     </b-col>
   </b-row>
@@ -18,6 +18,11 @@ export default {
     recordId: {
       type: Number
     },
+    rendu: {
+      type: Boolean,
+      nullable: true,
+      default: null
+    }
 
   },
   data: function() {
@@ -27,7 +32,11 @@ export default {
     };
   },
   mounted() {
-    this.loadBorrowingState();
+    if(this.rendu === null) {
+      this.loadBorrowingState();
+    } else {
+      this.isBorrowed = !this.rendu;
+    }
   },
   methods: {
     loadBorrowingState() {
@@ -46,7 +55,14 @@ export default {
       return this.isBorrowed ? "warning" : "success";
     },
     message: function() {
-      return this.isBorrowed ? "Le livre est déjà emprunté" : "Le livre est consultable et il peut être emprunté si vous êtes sociétaire à la SAT."
+      return this.isBorrowed ? "Le livre est déjà emprunté." : "Le livre est consultable et il peut être emprunté si vous êtes sociétaire à la SAT."
+    }
+  },
+  watch: {
+    rendu: function(currentValue) {
+      if(currentValue !== null) {
+        this.isBorrowed = !currentValue;
+      }
     }
   }
 }

@@ -406,6 +406,9 @@ class Enregistrement(IoData):
     @staticmethod
     def from_db_to_data(enregistrement_db: EnregistrementDB) -> dict:
         if enregistrement_db:
+            date_modification_str = ""
+            if enregistrement_db.date_modification:
+                date_modification_str = DateHeureUtils.date_to_vue_str(enregistrement_db.date_modification)
             return dict(
                 id=enregistrement_db.id,
                 reference=ReferenceBibliographiqueLivre.from_db_to_data(enregistrement_db.reference),

@@ -432,6 +432,10 @@ class Enregistrement2023:
             date_desherbe = enregistrement_db.date_desherbe
             if type(date_desherbe) == datetime.date or  type(date_desherbe) == datetime.datetime:
                 date_desherbe = date_desherbe.isoformat()
+
+            date_derniere_modification_str = ""
+            if enregistrement_db.date_derniere_modification:
+                date_derniere_modification_str = DateHeureUtils.date_to_vue_str(enregistrement_db.date_derniere_modification)
             
             return dict(
                 id=enregistrement_db.id,
@@ -446,7 +450,7 @@ class Enregistrement2023:
                 ark_name=enregistrement_db.ark_name,
                 # region meta
                 date_desherbe=date_desherbe,
-                date_derniere_modification=date_derniere_modification,
+                date_derniere_modification=date_derniere_modification_str,
                 valide=enregistrement_db.valide,
                 origin=enregistrement_db.origin,
                 row=enregistrement_db.row,
@@ -819,13 +823,16 @@ class User2023:
 
     @staticmethod
     def from_db_to_data(user_db: UserDB):
+        date_inscription_str = ""
+        if user_db.date_inscription:
+            date_inscription_str = DateHeureUtils.date_to_vue_str(user_db.date_inscription)
         return dict(
             first_name=user_db.first_name,
             family_name=user_db.family_name,
             email=user_db.email,
             right=user_db.right.value,
             id=user_db.id,
-            date_inscription=user_db.date_inscription
+            date_inscription=date_inscription_str
         )
 
     @staticmethod
@@ -836,6 +843,7 @@ class User2023:
         user_db.email = user["email"]
         user_db.right = user["right"]
         user_db.id = user["id"]
+        # user_db.date_inscription = user["date_inscription"]
 
 
 class LogEvent:

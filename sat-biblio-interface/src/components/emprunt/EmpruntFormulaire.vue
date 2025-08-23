@@ -4,7 +4,7 @@
     <SuggestionEnregistrement v-model="borrowing.record"
                               :disabled="disabled || isUpdate"/>
     <div v-if="borrowing.record.value > 0 ">
-      <BorrowingState :record-id="borrowing.record.value"/>
+      <BorrowingState :rendu="isUpdate ? borrowing.givenBack : null" :record-id="borrowing.record.value"/>
     </div>
     <SuggestionUtilisateur label="Emprunteur"
                            v-model="borrowing.borrower"
@@ -45,6 +45,8 @@
                          :min="minDate"
                          :max="maxDate"
                          style="z-index: 900"
+                         label-reset-button="Réinitialiser"
+                         :reset-button="true"
       />
     </b-form-group>
     <div v-if="isUpdate">
@@ -60,12 +62,14 @@
                            label-prev-month="Mois précédent"
                            label-next-month="Mois suivant"
                            label-current-month="Mois courant"
+                           label-reset-button="Réinitialiser"
                            locale="fr"
                            start-weekday="1"
                            size="sm"
                            :min="borrowing.borrowingDate"
                            :max="today"
                            style="z-index: 900"
+                           :reset-button="true"
         />
       </b-form-group>
     </div>
@@ -123,12 +127,6 @@ export default {
           !this.borrowing.dateComebackExpected;
     },
   },
-  watch: {
-    borrowing: function (newValue) {
-      console.log(newValue);
-    }
-
-  }
 }
 </script>
 

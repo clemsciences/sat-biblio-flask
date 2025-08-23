@@ -111,20 +111,21 @@ def borrowings():
                 date_retour_prevu = datetime.date.fromisoformat(data["dateComebackExpected"])
                 record_db = Enregistrement2023DB.query.filter_by(id=data["record"]).first()
                 if record_db:
-                    existing_record_borrowing = EmpruntLivre2023DB.query.filter_by(id_enregistrement=record_db.id).first()
+                    existing_record_borrowing = EmpruntLivre2023DB.query.filter_by(
+                        id_enregistrement=record_db.id).first()
                     if existing_record_borrowing:
                         return json_result(False, "L'ouvrage demandé est déjà emprunté.")
                     reference_db = (ReferenceBibliographiqueLivre2023DB
-                                 .query
-                                 .filter_by(id=record_db.id)
-                                 .first())
+                                    .query
+                                    .filter_by(id=record_db.id)
+                                    .first())
                     borrowing_db = EmpruntLivre2023DB(id_emprunteur=data["borrower"],
-                                                 id_enregistrement=data["record"],
-                                                 id_gestionnaire=current_user_db.id,
-                                                 commentaire=data["comment"],
-                                                 date_retour_prevu=date_retour_prevu,  # TODO string to date
-                                                 emprunte=True,
-                                                 rendu=False)
+                                                      id_enregistrement=data["record"],
+                                                      id_gestionnaire=current_user_db.id,
+                                                      commentaire=data["comment"],
+                                                      date_retour_prevu=date_retour_prevu,  # TODO string to date
+                                                      emprunte=True,
+                                                      rendu=False)
                     borrowing_db.enregistrement = record_db
                     db.session.add(borrowing_db)
                     db.session.commit()
@@ -134,7 +135,9 @@ def borrowings():
 
                     success = send_new_borrowing_email(borrower_db, reference_db, borrowing_db)
                     if success:
-                        return json_result(True, "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.", id=borrowing_db.id), 201
+                        return json_result(True,
+                                           "L'enregistrement de la fiche d'emprunt et l'envoi de l'email se sont correctement passé.",
+                                           id=borrowing_db.id), 201
                     return json_result(False, id=borrowing_db.id, message="Echec de l'envoi de l'email d'emprunt."), 200
                 return json_result(False, "L'enregistrmeent n'est pas reconnu. Contactez l'administrateur.")
             else:
@@ -178,44 +181,59 @@ def borrowing(id_: int):
 
             borrowing_db = EmpruntLivre2023DB.query.filter_by(id=id_).first()
             if borrowing_db:
-                id_emprunteur = borrowing_data.get("id_emprunteur", -1)
-                if id_emprunteur > 0:
-                    borrowing_db.id_emprunteur = id_emprunteur
+                # id_emprunteur = borrowing_data.get("id_emprunteur", -1)
+                # if id_emprunteur > 0:
+                #     borrowing_db.id_emprunteur = id_emprunteur
 
-                id_enregistrement = borrowing_data.get("id_enregistrement", -1)
-                if id_enregistrement > 0:
-                    borrowing_db.id_enregistrement = id_enregistrement
+                # id_enregistrement = borrowing_data.get("id_enregistrement", -1)
+                # if id_enregistrement > 0:
+                #     borrowing_db.id_enregistrement = id_enregistrement
 
-                id_gestionnaire = borrowing_data.get("id_gestionnaire", -1)
-                if id_gestionnaire > 0:
-                    borrowing_db.id_gestionnaire = id_gestionnaire
+                # id_gestionnaire = borrowing_data.get("id_gestionnaire", -1)
+                # if id_gestionnaire > 0:
+                #     borrowing_db.id_gestionnaire = id_gestionnaire
 
                 if "commentaire" in borrowing_data:
                     borrowing_db.commentaire = borrowing_data["commentaire"]
 
-                if "emprunte" in borrowing_data:
-                    borrowing_db.emprunte = borrowing_data["emprunte"]
+                # if "emprunte" in borrowing_data:
+                #     borrowing_db.emprunte = borrowing_data["emprunte"]
 
-                if "date_emprunt" in borrowing_data:
-                    try:
-                        borrowing_db.date_emprunt = datetime.date.fromisoformat(borrowing_data["date_emprunt"])  # borrowing_data["date_emprunt"]
-                    except ValueError:
-                        borrowing_db.date_emprunt = None
+                # if "date_emprunt" in borrowing_data:
+                #     try:
+                #         borrowing_db.date_emprunt = datetime.date.fromisoformat(borrowing_data["date_emprunt"])  # borrowing_data["date_emprunt"]
+                #     except ValueError:
+                #         borrowing_db.date_emprunt = None
 
                 if "date_retour_prevu" in borrowing_data:
                     try:
-                        borrowing_db.date_retour_prevu = datetime.date.fromisoformat(borrowing_data["date_retour_prevu"])
+                        borrowing_db.date_retour_prevu = datetime.date.fromisoformat(
+                            borrowing_data["date_retour_prevu"])
+                        if borrowing_db.date_emprunt > borrowing_db.date_retour_prevu:
+                            return json_result(False, "La date d'emprunt est après la date de retour prévue."), 404
                     except ValueError:
                         borrowing_db.date_retour_prevu = None
 
+                # if "rendu" in borrowing_data:
+                #     borrowing_db.rendu = borrowing_data["rendu"]
+
                 if "date_retour_reel" in borrowing_data:
+                    today = datetime.date.today()
                     try:
                         borrowing_db.date_retour_reel = datetime.date.fromisoformat(borrowing_data["date_retour_reel"])
+                        if borrowing_db.date_retour_reel:
+                            if borrowing_db.date_emprunt > borrowing_db.date_retour_prevu:
+                                return json_result(False, "La date d'emprunt est après la date de retour prévue."), 404
+                            if borrowing_db.date_retour_reel <= today:
+                                borrowing_db.rendu = True
+                            else:
+                                return json_result(False,
+                                                   "Un livre ne peut pas être rendu avec certitude dans le futur à une date précise."), 404
+                        else:
+                            borrowing_db.rendu = False
                     except ValueError:
                         borrowing_db.date_retour_reel = None
-
-                if "rendu" in borrowing_data:
-                    borrowing_db.rendu = borrowing_data["rendu"]
+                        borrowing_db.rendu = False
 
                 db.session.commit()
                 borrowing_data = EmpruntLivre.from_db_to_data(borrowing_db)

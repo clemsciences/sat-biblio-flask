@@ -84,6 +84,22 @@ export default {
       updateBorrowing(this.$route.params.id, {borrowing: formData}, this.$store.state.connectionInfo.token).then(
           (response) => {
             if(response.data.success) {
+              let receivedBorrowing = response.data.borrowing;
+              // this.borrowing.record.value = receivedBorrowing.id_enregistrement;
+              // this.borrowing.record.text = receivedBorrowing.enregistrement.reference.titre+" "+response.data.borrowing.enregistrement.cote;
+              // this.borrowing.manager.value = receivedBorrowing.gestionnaire.first_name+" "+response.data.borrowing.gestionnaire.family_name;
+              // this.borrowing.manager.text = receivedBorrowing.gestionnaire;
+              // this.borrowing.comment = receivedBorrowing.comment;
+              // this.borrowing.borrower.value = receivedBorrowing.id_emprunteur;
+              // // this.borrowing.borrower.text = receivedBorrowing.emprunteur;
+              // this.borrowing.borrower.text = receivedBorrowing.emprunteur.first_name+" "+response.data.borrowing.emprunteur.family_name;
+              // this.borrowing.isBorrowed = receivedBorrowing.emprunte;
+              // this.borrowing.dateComebackExpected = receivedBorrowing.date_retour_prevu;
+              // this.borrowing.borrowingDate = receivedBorrowing.date_emprunt;
+              // this.borrowing.actualComebackDate = receivedBorrowing.date_retour_reel;
+              this.borrowing.givenBack = receivedBorrowing.rendu;
+              console.log("new value rendu: "+this.borrowing.givenBack);
+
               this.message = response.data.message;
             }
           }
