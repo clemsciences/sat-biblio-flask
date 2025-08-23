@@ -9,7 +9,7 @@ from flask import redirect, session, request
 
 import logging
 
-from managers.log_manager import LogEventManager
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.data.models import EmpruntLivre
 from sat_biblio_server.managers.mail_manager import send_new_borrowing_email
 from sat_biblio_server.sessions import UserSess

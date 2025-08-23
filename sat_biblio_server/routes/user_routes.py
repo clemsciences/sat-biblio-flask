@@ -11,7 +11,7 @@ from flask_jwt_extended import create_access_token, decode_token
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
-from managers.log_manager import LogEventManager
+from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.data.models import User
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
@@ -204,6 +204,8 @@ def set_new_password():
         db.session.commit()
         return json_result(True, message="Le nouveau mot de passe a été accepté."), 200
     return json_result(False, "La requête est incorrect"), 400
+
+
 # endregion
 
 
@@ -271,6 +273,8 @@ def valider_inscription(link):
     else:
         sm.Users.validate_user(user)
         return json_result(True)
+
+
 # endregion
 
 
@@ -303,6 +307,7 @@ def users_():
                  for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         return json_result(True, users=users), 200
 
+
 @sat_biblio.route("/users/<int:id_>/resend-confirmation-email/", methods=["GET"])
 @validation_connexion_et_retour_defaut("email", ["GET"])
 def resend_conformation_email(id_):
@@ -320,7 +325,7 @@ def resend_conformation_email(id_):
 
 
 @sat_biblio.route("/users/<int:id_>/", methods=["GET", "PUT", "DELETE"])
-@validation_connexion_et_retour_defaut("email", ["GET",  "PUT", "DELETE"])
+@validation_connexion_et_retour_defaut("email", ["GET", "PUT", "DELETE"])
 def user_(id_):
     user_db = UserDB.query.filter_by(id=id_).first()
     # connected_user_email_address = session["email"]

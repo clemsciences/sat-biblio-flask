@@ -13,8 +13,8 @@ from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
 import sat_biblio_server.data.validation as dv
-from managers.catalogue_manager import Catalogue2025, Catalogue2025Row
-from managers.export_manager import ExportCatalogueManager
+from sat_biblio_server.managers.catalogue_manager import Catalogue2025, Catalogue2025Row
+from sat_biblio_server.managers.export_manager import ExportCatalogueManager
 from sat_biblio_server import sat_biblio, Author2023DB
 from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibliographiqueLivre2023, Author2023, \
     EnregistrementComplet2023
