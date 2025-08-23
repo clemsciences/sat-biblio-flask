@@ -60,6 +60,8 @@ export default {
 
 html{
     width:100%;
+    scroll-padding-top: 72px; /* your fixed navbar height */
+
 
 }
 

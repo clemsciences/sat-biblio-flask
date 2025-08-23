@@ -58,6 +58,22 @@ Vue.use(VueRouter);
 
 let router = new VueRouter({
     mode: "history",
+    scrollBehavior(to, from, savedPosition) {
+        if (to.hash) {
+            return {
+                selector: to.hash,
+                offset: { x: 0, y: 0 }
+            }
+        }
+        if (savedPosition) {
+            return savedPosition;
+        }
+        if (to.path === from.path && JSON.stringify(to.query) !== JSON.stringify(from.query)) {
+          return false;
+        }
+
+        return { x: 0, y: 0 };
+    },
     routes: [
         {
             name: "recherche",
