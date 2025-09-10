@@ -7,7 +7,7 @@
     <EnregistrementCompletFormulaire
       :record-with-reference="recordWithReference"
       :save="save"
-      :disabled="!isManager"
+      :disabled="!canModify"
       :message="message"/>
 
 
@@ -19,9 +19,10 @@
 
 import Title from "../visuel/Title.vue";
 import {BookRecordWithReference} from "@/services/objectManager";
-import {canManage} from "@/services/rights";
+import {canContribute, canEdit} from "@/services/rights";
 import EnregistrementCompletFormulaire from "./EnregistrementCompletFormulaire.vue";
 import {createBookRecordWithReference} from "@/services/api";
+import {mapState} from "vuex";
 
 export default {
   name: "CreationEnregistrementComplet",
@@ -58,9 +59,13 @@ export default {
     }
   },
   computed: {
+    ...mapState(["connected", "connectionInfo"]),
     isManager: function() {
-      return canManage(this.$store.getters.getUserRight);
-    }
+      return canContribute(this.$store.getters.getUserRight);
+    },
+    canModify: function() {
+      return this.connected && canEdit(this.connectionInfo.right);
+    },
   }
 
 }

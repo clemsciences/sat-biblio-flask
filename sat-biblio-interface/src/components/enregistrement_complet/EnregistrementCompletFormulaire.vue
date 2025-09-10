@@ -80,7 +80,7 @@
                       ref="aide_a_la_recherche"/>
       </b-form-group>
       <b-form-group label="Observations">
-        <b-form-input v-model="recordWithReference.observations"
+        <b-form-input v-model="recordWithReference.observation"
                       :disabled="disabled"
                       ref="observations"/>
       </b-form-group>

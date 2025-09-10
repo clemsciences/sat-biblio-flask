@@ -20,7 +20,7 @@
 import Title from "../visuel/Title.vue";
 import EnregistrementCompletFormulaire from "./EnregistrementCompletFormulaire.vue";
 import {BookRecordWithReference, BookReference} from "@/services/objectManager";
-import {retrieveBookRecordWithReference, updateBookRecordWithReference} from "../../services/api";
+import {retrieveBookRecordWithReference, updateBookRecordWithReference} from "@/services/api";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
