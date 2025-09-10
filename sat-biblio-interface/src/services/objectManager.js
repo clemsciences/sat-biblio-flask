@@ -106,6 +106,7 @@ export class BookRecordWithReference {
         this.aide_a_la_recherche = "";
         // ARK name of the record
         this.record_ark_name = "";
+        this.observation = "";
 
         this.referenceId = -1;
     }
