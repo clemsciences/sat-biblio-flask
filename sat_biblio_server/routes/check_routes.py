@@ -41,18 +41,18 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_reque
             if request.method not in for_request_method:
                 return methode(*args, **kwargs)
             if type(pseudo) == str:
+                # Accept either a valid JWT or a valid session
                 try:
-                    # print("p")
                     verify_jwt_in_request()
-                    # print("oui :)")
+                    return methode(*args, **kwargs)
                 except FreshTokenRequired:
-                    # print("euh")
                     disconnect_user()
                     logging.log(logging.ERROR, "disconnected")
+                except Exception:
+                    # No valid JWT in the request, fall back to session check
+                    pass
                 if pseudo in session:
-                    # print("oui")
                     return methode(*args, **kwargs)
-                # print("jjj")
                 logging.log(logging.ERROR, "not connected")
                 return json_result(False, "Vous n'êtes pas connecté"), 401
             else:
