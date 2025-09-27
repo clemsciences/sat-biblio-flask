@@ -175,7 +175,14 @@ def create_app(config):
     lm.init_app(app)
     babel.init_app(app)
     csrf.init_app(app)
-    cors.init_app(app)
+    cors.init_app(app, resources={r"/*": {
+        "origins": app.config.get("CORS_ORIGINS", "*"),
+        "methods": app.config.get("CORS_METHODS", ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]),
+        "allow_headers": ["Content-Type", "Authorization", "X-CSRF-TOKEN-ACCESS", "X-CSRF-TOKEN-REFRESH"],
+        "expose_headers": app.config.get("CORS_EXPOSE_HEADERS", ["Content-Type"]),
+        "supports_credentials": True,
+        "send_wildcard": False
+    }})
     mail.init_app(app)
     jwt.init_app(app)
 
