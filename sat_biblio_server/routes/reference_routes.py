@@ -118,7 +118,7 @@ def book_reference(id_):
             ref_biblio_db.lieu_edition = data["lieu_edition"]
             ref_biblio_db.editeur = data["editeur"]
             ref_biblio_db.annee = data["annee"]
-            ref_biblio_db.nd_page = data["nb_page"]
+            ref_biblio_db.nb_page = data["nb_page"]
 
             db.session.commit()
             LogEventManager(db).add_update_event(ref_biblio_db.id, session.get("id", -1),
