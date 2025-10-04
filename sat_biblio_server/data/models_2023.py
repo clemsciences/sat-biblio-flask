@@ -254,23 +254,29 @@ class ReferenceBibliographiqueLivre2023:
         return reference_db
 
     @staticmethod
-    def from_db_to_data(reference: ReferenceBibliographiqueLivre2023DB):
-        if reference:
+    def from_db_to_data(reference_db: ReferenceBibliographiqueLivre2023DB):
+        if reference_db:
+            date_derniere_modification_str = ""
+            if reference_db.date_derniere_modification:
+                date_derniere_modification_str = DateHeureUtils.date_to_vue_str(
+                    reference_db.date_derniere_modification)
             return dict(
-                id=reference.id,
-                authors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
-                selectedAuthors=[Author2023.from_db_to_data(author_db) for author_db in reference.authors],
-                titre=reference.titre,
-                lieu_edition=reference.lieu_edition,
-                editeur=reference.editeur,
-                annee=reference.annee,
-                publication_annee=reference.annee,
-                nb_page=reference.nb_page,
-                ark_name=reference.ark_name,
+                id=reference_db.id,
+                authors=[Author2023.from_db_to_data(author_db) for author_db in reference_db.authors],
+                authors_form=reference_db.authors_form,
+                selectedAuthors=[Author2023.from_db_to_data(author_db) for author_db in reference_db.authors],
+                titre=reference_db.titre,
+                lieu_edition=reference_db.lieu_edition,
+                editeur=reference_db.editeur,
+                annee=reference_db.annee,
+                publication_annee=reference_db.annee,
+                nb_page=reference_db.nb_page,
+                ark_name=reference_db.ark_name,
+                date_derniere_modification=date_derniere_modification_str,
                 # region meta
                 # valide=reference.valide,
 
-                description=reference.description
+                description=reference_db.description
                 # endregion
             )
         else:
@@ -576,6 +582,8 @@ class EnregistrementComplet2023:
         # endregion
 
         # region reference
+        if "authors_form" in enregistrement_complet:
+            reference_db.authors_form = enregistrement_complet["authors_form"]
         if "titre" in enregistrement_complet:
             reference_db.titre = enregistrement_complet["titre"]
         if "lieu_edition" in enregistrement_complet:
@@ -661,6 +669,7 @@ class EnregistrementComplet2023:
                 row=enregistrement_db.row,
                 # endregion
                 reference=ReferenceBibliographiqueLivre2023.from_db_to_data(enregistrement_db.reference),
+                authors_form=reference_db.authors_form,
                 titre=reference_db.titre,
                 lieu_edition=reference_db.lieu_edition,
                 editeur=reference_db.editeur,

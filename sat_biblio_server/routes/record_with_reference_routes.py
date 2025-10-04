@@ -152,14 +152,14 @@ def book_record_with_reference(id_):
         record = None
         reference = None
         enregistrement_complet = None
-        enregistrement_db = Enregistrement2023DB.query.filter_by(id=id_).first()
-        if enregistrement_db:
+        previous_record_db = Enregistrement2023DB.query.filter_by(id=id_).first()
+        if previous_record_db:
             logging.warning(ReferenceBibliographiqueLivre2023.get_references_by_record(id_, 1, 10, ""))
             # logging.warning(Author.get_authors_by_record(id_, 1, 10, ""))
-            record = Enregistrement2023.from_db_to_data(enregistrement_db)
-            reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(id=enregistrement_db.reference.id).first()
+            record = Enregistrement2023.from_db_to_data(previous_record_db)
+            reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(id=previous_record_db.reference.id).first()
             if reference_db:
-                enregistrement_complet = EnregistrementComplet2023.from_db_to_data(reference_db, enregistrement_db)
+                enregistrement_complet = EnregistrementComplet2023.from_db_to_data(reference_db, previous_record_db)
                 # enregistrement["reference"] = ReferenceBibliographiqueLivre2023.from_db_to_data(reference_db)
                 # enregistrement["reference"]["text"] = enregistrement_db.reference.titre
                 # enregistrement["reference"]["value"] = enregistrement_db.id_reference
@@ -176,12 +176,12 @@ def book_record_with_reference(id_):
                                    record_with_reference=enregistrement_complet), 200
         return json_result(False), 404
     elif request.method == "DELETE":
-        enregistrement_db = Enregistrement2023DB.query.filter_by(id=id_).first()
-        if enregistrement_db:
-            record_data = Enregistrement2023.from_db_to_data(enregistrement_db)
-            db.session.delete(enregistrement_db)
+        previous_record_db = Enregistrement2023DB.query.filter_by(id=id_).first()
+        if previous_record_db:
+            record_data = Enregistrement2023.from_db_to_data(previous_record_db)
+            db.session.delete(previous_record_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(enregistrement_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(previous_record_db.id, session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(record_data))  # TODO
             return json_result(True), 204
@@ -189,33 +189,70 @@ def book_record_with_reference(id_):
             return json_result(False), 404
     elif request.method == "PUT":
         data = request.get_json()
-        enregistrement_db = Enregistrement2023DB.query.filter_by(id=id_).first()
-        if enregistrement_db:
-            previous_value = Enregistrement2023.from_db_to_data(enregistrement_db)
-            if "id_reference" in data:
-                enregistrement_db.id_reference = data["id_reference"]
-            if "description" in data:
-                enregistrement_db.description = data["description"]
-            if "cote" in data:
-                enregistrement_db.cote = data["cote"]
-            if "annnee" in data:
-                enregistrement_db.annee = data["annee"]
-            if "nb_exemplaire_supp" in data:
-                enregistrement_db.nb_exemplaire_supp = data["nb_exemplaire_supp"]
-            if "provenance" in data:
-                enregistrement_db.provenance = data["provenance"]
-            if "aide_a_la_recherche" in data:
-                enregistrement_db.aide_a_la_recherche = data["aide_a_la_recherche"]
+
+        if dv.check_enregistrement_complet(data):
+            previous_record_db = Enregistrement2023DB.query.filter_by(id=id_).first()
+            previous_reference_db = (ReferenceBibliographiqueLivre2023DB
+                                     .query
+                                     .filter_by(id=previous_record_db.id_reference)
+                                     .first())
+            previous_reference_data = ReferenceBibliographiqueLivre2023.from_db_to_data(previous_reference_db)
+            previous_record_data = Enregistrement2023.from_db_to_data(previous_record_db)
+            current_reference_db, current_record_db = EnregistrementComplet2023.from_data_to_db(data)
+
+            previous_record_db.observations = current_record_db.observations
+            previous_record_db.cote = current_record_db.cote
+            previous_record_db.annee_obtention = current_record_db.annee_obtention
+            # previous_record_db.nb_exemplaire_supp = current_record_db.nb_exemplaire_supp
+            previous_record_db.provenance = current_record_db.provenance
+            previous_record_db.aide_a_la_recherche = current_record_db.aide_a_la_recherche
+
+            previous_reference_db.authors = current_reference_db.authors
+            previous_reference_db.authors_form = current_reference_db.authors_form
+            previous_reference_db.titre = current_reference_db.titre
+            previous_reference_db.editeur = current_reference_db.editeur
+            previous_reference_db.lieu_edition = current_reference_db.lieu_edition
+            previous_reference_db.annee = current_reference_db.annee
+            previous_reference_db.nb_page = current_reference_db.nb_page
+            previous_reference_db.date_derniere_modification = current_reference_db.date_derniere_modification
+            previous_reference_db.description = current_reference_db.description
+
+            previous_record_db.reference = previous_reference_db
+
+
+            # if "id_reference" in data:
+            #     previous_record_db.id_reference = data["id_reference"]
+            # if "description" in data:
+            #     previous_record_db.description = data["description"]
+            # if "cote" in data:
+            #     previous_record_db.cote = data["cote"]
+            # if "annnee" in data:
+            #     previous_record_db.annee = data["annee"]
+            # if "nb_exemplaire_supp" in data:
+            #     previous_record_db.nb_exemplaire_supp = data["nb_exemplaire_supp"]
+            # if "provenance" in data:
+            #     previous_record_db.provenance = data["provenance"]
+            # if "aide_a_la_recherche" in data:
+            #     previous_record_db.aide_a_la_recherche = data["aide_a_la_recherche"]
+            #
+            # previous_record_db.
             db.session.commit()
+
+
 
             LogEventManager(db).add_update_event(id_,
                                                  session.get("id", -1),
+                                                 ReferenceBibliographiqueLivre2023DB.__tablename__,
+                                                 values=json.dumps(dict(previous=previous_reference_data,
+                                                                        new=ReferenceBibliographiqueLivre2023.from_db_to_data(current_reference_db))))
+            LogEventManager(db).add_update_event(id_,
+                                                 session.get("id", -1),
                                                  Enregistrement2023DB.__tablename__,
-                                                 values=json.dumps(dict(previous=previous_value,
-                                                                        new=Enregistrement2023.from_db_to_data(
-                                                                            enregistrement_db))))
+                                                 values=json.dumps(dict(previous=previous_record_data,
+                                                                        new=Enregistrement2023.from_db_to_data(current_record_db))))
             return json_result(True, "Enregistrement correctement mis à jour."), 200
-        return json_result(False, "Echec de la mis à jour de l'enregistrement."), 404
+        return json_result(False, "Echec de la mis à jour de l'enregistrement."), 500
+    return json_result(False, "Echec de la requête."), 404
 
 
 @sat_biblio.route("/book-records-with-reference/count/", methods=["GET"])

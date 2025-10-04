@@ -66,7 +66,8 @@
                       ref="annee_obtention"/>
       </b-form-group>
 <!--      <b-form-group label="Nombre d'exemplaires supplémentaires">-->
-<!--        <b-form-input v-model="record.nb_exemplaire_supp"-->
+<!--        <b-form-input v-model="recordWithReference.nb_exemplaire_supp"-->
+<!--                      ref="nb_exemplaire_supp"-->
 <!--                      :disabled="disabled"/>-->
 <!--      </b-form-group>-->
       <b-form-group label="Provenance">
@@ -80,7 +81,7 @@
                       ref="aide_a_la_recherche"/>
       </b-form-group>
       <b-form-group label="Observations">
-        <b-form-input v-model="recordWithReference.observation"
+        <b-form-input v-model="recordWithReference.observations"
                       :disabled="disabled"
                       ref="observations"/>
       </b-form-group>

@@ -102,11 +102,11 @@ export class BookRecordWithReference {
         this.nb_exemplaire_supp = 0;
         // where the book comes from
         this.provenance =  "";
-        // key words
+        // keywords
         this.aide_a_la_recherche = "";
         // ARK name of the record
         this.record_ark_name = "";
-        this.observation = "";
+        this.observations = "";
 
         this.referenceId = -1;
     }
