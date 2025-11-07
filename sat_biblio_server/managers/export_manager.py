@@ -333,6 +333,8 @@ class ExportCatalogueManager:
 
         for i, row_2025 in enumerate(catalogue_2025.rows):
             row = row_2025.to_raw_row()
+            if row_2025.row.reference is None:
+                logging.error(f"row reference is None {i}->{row}")
             current_sheet.row_dimensions[i].height = 40
             # print(row)
             if i % 1000 == 0:

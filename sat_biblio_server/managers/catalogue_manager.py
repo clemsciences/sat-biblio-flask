@@ -965,11 +965,11 @@ class Catalogue2025Row:
     def to_raw_row(self) -> List[str]:
         return [
             self.row.cote,
-            self.row.reference.titre,
+            self.row.reference.titre if self.row.reference else "",
             ", ".join([author.first_name + " " + author.family_name for author in self.row.reference.authors]),
-            self.row.reference.annee,
-            self.row.reference.editeur,
-            self.row.reference.lieu_edition,
+            self.row.reference.annee if self.row.reference else "",
+            self.row.reference.editeur if self.row.reference else "",
+            self.row.reference.lieu_edition if self.row.reference else "",
             self.row.observations,
             self.row.provenance,
             self.row.annee_obtention,
