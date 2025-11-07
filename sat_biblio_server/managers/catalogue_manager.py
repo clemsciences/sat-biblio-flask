@@ -966,7 +966,7 @@ class Catalogue2025Row:
         return [
             self.row.cote,
             self.row.reference.titre if self.row.reference else "",
-            ", ".join([author.first_name + " " + author.family_name for author in self.row.reference.authors]),
+            ", ".join([author.first_name + " " + author.family_name for author in self.row.reference.authors]) if self.row.reference else "",
             self.row.reference.annee if self.row.reference else "",
             self.row.reference.editeur if self.row.reference else "",
             self.row.reference.lieu_edition if self.row.reference else "",
