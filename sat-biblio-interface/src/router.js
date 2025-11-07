@@ -53,6 +53,7 @@ import ConceptionView from "@/components/ConceptionView";
 import CreationEnregistrementComplet from "./components/enregistrement_complet/CreationEnregistrementComplet.vue";
 import LireEnregistrementComplet from "./components/enregistrement_complet/LireEnregistrementComplet.vue";
 import ListeEnregistrementComplet from "./components/enregistrement_complet/ListeEnregistrementComplet.vue";
+import SatSubscription from "@/components/societaire/SatSubscription.vue";
 
 Vue.use(VueRouter);
 
@@ -388,6 +389,11 @@ let router = new VueRouter({
         //     component: ImageManager
         // },
         // endregion
+        {
+            name: "",
+            path: "/adhesion-sat",
+            component: SatSubscription
+        },
         // region page not found
         {
             name: "not-found",

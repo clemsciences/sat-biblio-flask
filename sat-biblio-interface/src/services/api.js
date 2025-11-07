@@ -483,3 +483,9 @@ export function generateArkForAllEntriesMissingOnes() {
     return api.get(`/ark/generate-for-all-entries-missing-ark/`);
 }
 // endregion
+
+// region societaire / adhesion SAT
+export function sendSatSubscription(formData) {
+  return api.post('/send-sat/', formData);
+}
+// endregion
