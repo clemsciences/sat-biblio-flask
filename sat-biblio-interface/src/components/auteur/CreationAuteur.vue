@@ -82,7 +82,7 @@ export default {
   methods: {
     onSubmit: function() {
       if (this.auteur.first_name.trim().length > 0 && this.auteur.family_name.trim().length > 0) {
-        createAuthor(this.auteur, this.$store.state.connectionInfo.token).then(
+        createAuthor(this.auteur.cleaned(), this.$store.state.connectionInfo.token).then(
             (response) => {
               if (response.data.success) {
                 this.message = `L'auteur ${this.auteur.first_name} ${this.auteur.family_name} a été correctement créé.`;

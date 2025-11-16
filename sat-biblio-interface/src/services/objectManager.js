@@ -14,6 +14,15 @@ export class Author {
         this.valide = false;
         this.ark_name = "";
     }
+
+    cleaned() {
+        return {
+            first_name: this.first_name.trim(),
+            family_name: this.family_name.trim(),
+            valide: this.valide,
+            ark_name: this.ark_name,
+        }
+    }
 }
 
 export class BookReference {
