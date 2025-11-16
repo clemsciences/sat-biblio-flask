@@ -104,10 +104,6 @@ export function getNotValidatedAuthorsCount(params) {
   return getAuthorsCount(`?valid=0&${params}`);
 }
 
-export function searchAuthors(params) {
-  return api.post("/authors/search/", params);
-}
-
 export function searchNearAuthors(params) {
   return api.get(`/authors/search-near/?${params}`);
 }
@@ -161,10 +157,6 @@ export function getNotValidatedBookReferencesCount(params) {
   return getBookReferencesCount(`?valid=0&${params}`);
 }
 
-export function searchBookReferences(params) {
-  return api.post("/book-references/search/", params)
-}
-
 export function searchNearBookReferences(params) {
   return api.get(`/book-references/search-near/?${params}`)
 }
@@ -215,10 +207,6 @@ export function getBookRecordsCount(params) {
 
 export function getNotValidatedBookRecordsCount(params) {
   return getBookRecordsCount(`?valid=0&${params}`);
-}
-
-export function searchBookRecords(params) {
-  return api.post("/book-records/search/", params);
 }
 
 export function searchNearBookRecords(params) {

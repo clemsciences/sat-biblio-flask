@@ -176,23 +176,6 @@ def chercher_reference_livre_plus_proches():
         references.append({"text": reference_db.titre,
                            "value": reference_db.id})
     return json_result(True, suggestedReferences=references), 200
-
-
-@sat_biblio.route("/book-references/search/", methods=["POST"])
-def chercher_reference_livre():
-    data = request.get_json()
-    the_query = ReferenceBibliographiqueLivre2023DB.query
-    if data is None:
-        return json_result(False), 400
-    if "titre" in data and data["titre"]:
-        the_query = the_query.filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{data['titre']}%"))
-        ref_livres_db = the_query.all()
-        results = [ReferenceBibliographiqueLivre2023.from_db_to_data(ref_livre_db)
-                   for ref_livre_db in ref_livres_db]
-        return json_result(True, results=results)
-    return json_result(True, results=[]), 200
-
-
 # endregion
 
 

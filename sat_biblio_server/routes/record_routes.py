@@ -202,37 +202,6 @@ def book_records_count():
     return json_result(True, total=total, filtered_total=filtered_total), 200
 
 
-@sat_biblio.route("/book-records/search/", methods=["POST"])
-def chercher_enregistrements():
-    data = request.get_json()
-    the_query = Enregistrement2023DB.query
-    filtered = False
-    if "description" in data and data["description"]:
-        the_query.filter_by(description=data["description"])
-        filtered = True
-    if "cote" in data and data["cote"]:
-        the_query.filter_by(cote=data["cote"])
-        filtered = True
-    if "annee" in data and data["annee"]:
-        the_query.filter_by(annee=data["annee"])
-        filtered = True
-    if "provenance" in data and data["provenance"]:
-        the_query.filter_by(provenance=data["provenance"])
-        filtered = True
-    if "aide_a_la_recherche" in data and data["aide_a_la_recherche"]:
-        the_query.filter_by(aide_a_la_recherche=data["aide_a_la_recherche"])
-        filtered = True
-    # if "valide" in data and data["valide"]:
-    #     the_query.filter_by(valide=data["valide"])
-    #     filtered = True
-    if filtered:
-        results_db = the_query.all()
-        results = [Enregistrement2023.from_db_to_data(res) for res in results_db]
-        return json_result(True, results=results), 200
-    else:
-        return json_result(True, results=[]), 200
-
-
 @sat_biblio.route("/book-records/search-near/", methods=["GET"])
 def chercher_enregistrements_proches():
     query_result = request.args.get("record")
