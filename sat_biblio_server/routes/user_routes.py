@@ -70,7 +70,8 @@ def connect_user(data):
                                "email": session["email"],
                                "first_name": session["first_name"],
                                "family_name": session["family_name"],
-                               "right": session["right"]
+                               "right": session["right"],
+                               "id": session["id"],
                            }), 200
 
 
@@ -86,6 +87,8 @@ def disconnect_user():
             del session["right"]
         if "token" in session:
             del session["token"]
+        if "id" in session:
+            del session["id"]
     else:
         print("strange")
 
@@ -110,7 +113,8 @@ def check_login():
                                email=session["email"],
                                first_name=session["first_name"],
                                family_name=session["family_name"],
-                               right=session["right"]),
+                               right=session["right"],
+                               id=session["id"]),
                            )
     else:
         return json_result(False,

@@ -11,6 +11,7 @@ import datetime
 import os
 
 from flask import request, session
+from flask_jwt_extended import get_jwt_identity
 
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
@@ -19,7 +20,7 @@ from sat_biblio_server.managers.catalogue_manager import Catalogue2023, Catalogu
 from sat_biblio_server.database import db, ImportDB
 from sat_biblio_server.managers.import_manager import ImportManager2023, CatalogueFileManager, CsvReader
 # from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement, Import
-from sat_biblio_server import sat_biblio, json_result
+from sat_biblio_server import sat_biblio, json_result, UserDB
 from sat_biblio_server.data.models_2023 import Import, User2023
 
 
@@ -188,6 +189,15 @@ def imports_ci_2023():
         first_rows_to_ignore_number = data.get("firstRowsToIgnoreNumber", 0)
         start_date = datetime.datetime.utcnow()
         id_user = session.get("id", -1)
+        if id_user == -1:
+            try:
+                email_identity = get_jwt_identity()
+            except Exception:
+                email_identity = None
+            if email_identity:
+                user_db = UserDB.query.filter_by(email=email_identity).first()
+                if user_db:
+                    id_user = user_db.id
 
         # selected_method = data.get("selected_method", "0")
         ignore_n_first_lines = data.get("ignore_n_first_lines", 1)
@@ -261,15 +271,15 @@ def import_ci_2023(import_id):
     :return: response
     """
     if request.method == "GET":
+        import_data = None
+        user_data= None
         # Get details of a previous import
         import_db = Import.get_import_db_by_id(import_id)
         if import_db:
             import_data = Import.from_db_to_data(import_db)
-            user_data = User2023.from_db_to_data(import_db.user)
+            if import_db.user is not None:
+                user_data = User2023.from_db_to_data(import_db.user)
             # import_data = Import.get_import_by_filename(import_id)
-        else:
-            import_data = None
-            user_data = None
         if import_data:
             return json_result(True, import_data=import_data, user_data=user_data)
         return json_result(False)

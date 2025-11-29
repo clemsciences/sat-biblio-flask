@@ -48,10 +48,17 @@ class Config:
 
     # region authentication
     WTF_CSRF_CHECK_DEFAULT = False
+    # Ensure cookies are accepted in cross-site context when using HTTPS
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SAMESITE = 'None'
+    REMEMBER_COOKIE_SECURE = True
+
     JWT_SECRET_KEY = jwt_secret_key
-    JWT_TOKEN_LOCATION = ['headers', 'cookies', "json", "query_string"]
+    JWT_TOKEN_LOCATION = ['headers', 'cookies']
     JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(hours=4)
     JWT_COOKIE_SECURE = True
+    JWT_COOKIE_SAMESITE = 'None'
     JWT_REFRESH_TOKEN_EXPIRES = datetime.timedelta(days=15)
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_ACCESS_CSRF_HEADER_NAME = "X-CSRF-TOKEN-ACCESS"
