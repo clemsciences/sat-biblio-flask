@@ -8,12 +8,14 @@ import csv
 import datetime
 import logging
 import os
+from typing import List
 
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Border, Side, Protection, Alignment, Color
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.protection import SheetProtection
 
+from sat_biblio_server.data.models_2023 import Enregistrement2023, Enregistrement2023DB
 from sat_biblio_server.managers.catalogue_manager import CatalogueHamelain1, CatalogueHamelain3, Catalogue2023, \
     Catalogue2025
 from sat_biblio_server.data.models import Enregistrement
@@ -22,8 +24,8 @@ from sat_biblio_server.data.models import Enregistrement
 class ExportCatalogueManager:
 
     @staticmethod
-    def export_catalogue_csv(path, filename_without_extension, records_db):
-        records = [Enregistrement.from_db_to_data(record_db) for record_db in records_db]
+    def export_catalogue_csv(path: str, filename_without_extension: str, records_db: List[Enregistrement2023DB]):
+        records = [Enregistrement2023.from_db_to_data(record_db) for record_db in records_db]
         # print(os.getcwd())
         complete_path = os.path.join(path, f"{filename_without_extension}.csv")
         with codecs.open(complete_path, "w", encoding="utf-8") as f:
@@ -37,7 +39,7 @@ class ExportCatalogueManager:
         return complete_path
 
     @staticmethod
-    def export_catalogue_xlsx(path, filename_without_extension, records_db):
+    def export_catalogue_xlsx(path: str, filename_without_extension: str, records_db: List[Enregistrement2023DB]):
         complete_path = os.path.join(path, f"{filename_without_extension}.xlsx")
         excel_catalogue = openpyxl.Workbook()
         current_sheet = excel_catalogue.active
@@ -70,8 +72,8 @@ class ExportCatalogueManager:
             c.border = border
 
         for i, record_db in enumerate(records_db):
-            record = Enregistrement.from_db_to_data(record_db)
-            row = Enregistrement.from_data_to_csv_row(record)
+            record = Enregistrement2023.from_db_to_data(record_db)
+            row = Enregistrement2023.from_data_to_csv_row(record)
             current_sheet.row_dimensions[i].height = 30
             if i % 1000 == 0:
                 logging.error(row)

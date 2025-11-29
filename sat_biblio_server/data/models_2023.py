@@ -466,23 +466,23 @@ class Enregistrement2023:
             return {}
 
     # region CSV & Excel
-    # @staticmethod
-    # def from_data_to_csv_row(data: dict):
-    #     return ReferenceBibliographiqueLivre2023.from_data_to_csv_row(data.get("reference")) + \
-    #         [
-    #             data.get("cote", ""),
-    #             data.get("observations", ""),
-    #             data.get("annee_obtention", ""),
-    #             data.get("date_desherbe", ""),
-    #             data.get("commentaire", ""),
-    #             data.get("nb_exemplaire_supp", ""),
-    #             data.get("provenance", ""),
-    #             data.get("origin", ""),
-    #             data.get("aide_a_la_recherche", ""),
-    #
-    #             # data.get("date_modification", ""),
-    #             data.get("row", "")
-    #            ]
+    @staticmethod
+    def from_data_to_csv_row(data: dict):
+        return ReferenceBibliographiqueLivre2023.from_data_to_csv_row(data.get("reference")) + \
+            [
+                data.get("cote", ""),
+                data.get("observations", ""),
+                data.get("annee_obtention", ""),
+                data.get("date_desherbe", ""),
+                data.get("commentaire", ""),
+                data.get("nb_exemplaire_supp", ""),
+                data.get("provenance", ""),
+                data.get("origin", ""),
+                data.get("aide_a_la_recherche", ""),
+
+                # data.get("date_modification", ""),
+                data.get("row", "")
+               ]
 
     # @staticmethod
     # def get_column_names():
