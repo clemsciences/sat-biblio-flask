@@ -78,7 +78,7 @@ class ArkManager:
         """
         generator = cls.ark_name_generator()
         for table in cls.RESOURCES_TABLES:
-            for resource in db.session.query(table).filter_by(ark_name=None):
+            for resource in db.session.query(table).filter_by(ark_name=""):
                 new_ark_name = next(generator)
                 resource.ark_name = new_ark_name
                 db.session.commit()
