@@ -2,6 +2,13 @@
   <b-container>
     <Title title="Enregistrement" info=""/>
 
+    <div class="d-flex justify-content-end mb-3">
+      <b-dropdown right text="Télécharger le Dublin Core" variant="primary">
+        <b-dropdown-item @click="downloadDublinCore('json')">JSON</b-dropdown-item>
+        <b-dropdown-item @click="downloadDublinCore('xml')">XML</b-dropdown-item>
+      </b-dropdown>
+    </div>
+
     <ReferenceLivrePrettyView :reference="reference"/>
 
     <EnregistrementCompletFormulaire
@@ -42,6 +49,12 @@ export default {
     this.retrieve();
   },
   methods: {
+    downloadDublinCore(format) {
+      const id = this.recordId;
+      const fmt = (format || 'json').toLowerCase();
+      const url = `${process.env.VUE_APP_SITE_API_URL}/book-records-with-reference/${id}/dublin-core/?format=${fmt}`;
+      window.open(url, '_blank');
+    },
     retrieve() {
       retrieveBookRecordWithReference(this.recordId).then(
           (response) => {

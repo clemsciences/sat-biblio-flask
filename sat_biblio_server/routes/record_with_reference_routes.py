@@ -23,6 +23,8 @@ from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, 
 from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
+from sat_biblio_server.data.dublin_core import from_data_to_dublin_core, dublin_core_dict_to_xml
+from flask import Response
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
@@ -311,6 +313,34 @@ def book_records_with_reference_count():
     return json_result(True, total=total, filtered_total=filtered_total), 200
 # endregion
 
+
+# region dublin core download
+@sat_biblio.route("/book-records-with-reference/<int:id_>/dublin-core/", methods=["GET"])
+def download_book_record_with_reference_dublin_core(id_):
+    export_format = request.args.get("format", "json").lower()
+    previous_record_db = Enregistrement2023DB.query.filter_by(id=id_).first()
+    if previous_record_db:
+        reference_db = ReferenceBibliographiqueLivre2023DB.query.filter_by(id=previous_record_db.reference.id).first()
+        if reference_db:
+            record_data = Enregistrement2023.from_db_to_data(previous_record_db)
+            reference_data = ReferenceBibliographiqueLivre2023.from_db_to_data(reference_db)
+            authors_data = [
+                dict(text=f"{author_db.first_name} {author_db.family_name}", value=author_db.id,
+                     family_name=author_db.family_name, first_name=author_db.first_name)
+                for author_db in reference_db.authors]
+            dublin_core = from_data_to_dublin_core(record_data, reference_data, authors_data)
+            if export_format == "xml":
+                content = dublin_core_dict_to_xml(dublin_core)
+                filename = f"dublin-core-enregistrement-{id_}.xml"
+                mimetype = "application/xml; charset=utf-8"
+            else:
+                content = json.dumps(dublin_core, ensure_ascii=False, indent=2)
+                filename = f"dublin-core-enregistrement-{id_}.json"
+                mimetype = "application/json; charset=utf-8"
+            return Response(content,
+                            mimetype=mimetype,
+                            headers={"Content-Disposition": f"attachment; filename={filename}"})
+    return json_result(False), 404
 
 # region entries
 @sat_biblio.route("/book-records-with-reference/<int:id_>/entries/", methods=["GET"])
