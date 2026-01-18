@@ -214,7 +214,7 @@ export default {
     getFilterParams() {
       let filterParams = "";
       if (this.coteFilter.length > 0) {
-        filterParams = `${filterParams}&cote=${encodeURI(this.coteFilter)}`;
+        filterParams = `cote=${encodeURI(this.coteFilter)}`;
       }
       // if(this.authorFilter.length > 0) {
       //   filterParams = `${filterParams}&author=${encodeURI(this.authorFilter)}`;
@@ -246,12 +246,19 @@ export default {
       return filterParams;
     },
     retrieveEnregistrementCompleteList: function (ctx, callback) {
-      const params = "?page=" + ctx.currentPage +
+      let params = "?page=" + ctx.currentPage +
           "&size=" + ctx.perPage +
           "&sortBy=" + ctx.sortBy;
       let filterParams = "";
-      filterParams = this.getFilterParams();
-      retrieveBookRecords(`${params}&${filterParams}`)
+      const remainingFilterParams = this.getFilterParams();
+      if(remainingFilterParams.length > 0) {
+        filterParams = `${filterParams}&${remainingFilterParams}`;
+      }
+      if(filterParams.length > 0) {
+        params = `${params}&${filterParams}`;
+      }
+
+      retrieveBookRecords(params)
           .then(
               (response) => {
                 if (response.data.success) {
@@ -268,7 +275,10 @@ export default {
     },
     getRecordTotalNumber: function () {
       let filterParams = "?result_type=number";
-      filterParams = `${filterParams}&${this.getFilterParams()}`;
+      const remainingFilterParams = this.getFilterParams();
+      if(remainingFilterParams.length > 0) {
+        filterParams = `${filterParams}&${remainingFilterParams}`;
+      }
 
       getBookRecordsCount(filterParams).then(
           (response) => {
@@ -429,6 +439,9 @@ export default {
         return `${this.prefixCoteFiler} 00${numValue}`;
       } else if (numValue >= 100 && numValue <= 999) {
         return `${this.prefixCoteFiler} 0${numValue}`;
+      }
+      if(this.prefixCoteFiler.length === 0 && this.numberCoteFilter.length === 0) {
+        return "";
       }
       return `${this.prefixCoteFiler} ${this.numberCoteFilter}`;
     },
