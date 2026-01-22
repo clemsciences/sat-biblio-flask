@@ -19,7 +19,8 @@ from flask_admin import Admin, AdminIndexView, expose, helpers
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
-from sat_biblio_server.database.db_manager import db
+from sqlalchemy import event
+from sat_biblio_server.database.db_manager import db, update_date_derniere_modification
 # from sat_biblio_server.database.books import EmpruntLivreDB, EnregistrementDB,
 # AuthorDB, ReferenceBibliographiqueLivreDB
 from sat_biblio_server.database.books_2023 import EmpruntLivre2023DB, Enregistrement2023DB, \
@@ -170,6 +171,10 @@ def create_app(config):
 
     # initialize extensions
     db.init_app(app)
+
+    event.listen(Author2023DB, 'before_update', update_date_derniere_modification)
+    event.listen(ReferenceBibliographiqueLivre2023DB, 'before_update', update_date_derniere_modification)
+    event.listen(Enregistrement2023DB, 'before_update', update_date_derniere_modification)
 
     # login manager for admin
     lm.init_app(app)

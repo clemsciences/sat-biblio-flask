@@ -234,12 +234,20 @@ class ReferenceBibliographiqueLivre2023:
             reference_db.id = reference["id"]
         if "titre" in reference:
             reference_db.titre = reference["titre"]
-        if "lieu_edition" in reference:
+        if "lieu_edition" in reference and reference["lieu_edition"]:
             reference_db.lieu_edition = reference["lieu_edition"]
-        if "editeur" in reference:
+        else:
+            reference_db.lieu_edition = "s. l."
+        if "editeur" in reference and reference["editeur"]:
             reference_db.editeur = reference["editeur"]
-        if "annee" in reference:
+        else:
+            reference_db.editeur = "s. ed."
+        if "publication_annee" in reference and reference["publication_annee"]:
+            reference_db.annee = reference["publication_annee"]
+        elif "annee" in reference and reference["annee"]:
             reference_db.annee = reference["annee"]
+        else:
+            reference_db.annee = "s. d."
         if "nb_page" in reference:
             reference_db.nb_page = reference["nb_page"]
         # if "valide" in reference:
@@ -398,8 +406,12 @@ class Enregistrement2023:
             enregistrement_db.id_reference = enregistrement["id_reference"]
         if "cote" in enregistrement:
             enregistrement_db.cote = enregistrement["cote"]
-        if "annee_obtention" in enregistrement:
+        if "annee_obtention" in enregistrement and enregistrement["annee_obtention"]:
             enregistrement_db.annee_obtention = enregistrement["annee_obtention"]
+        elif "annee" in enregistrement and enregistrement["annee"]:
+            enregistrement_db.annee_obtention = enregistrement["annee"]
+        else:
+            enregistrement_db.annee_obtention = ""
         # if "nb_exemplaire_supp" in enregistrement:
         #     enregistrement_db.nb_exemplaire_supp = enregistrement["nb_exemplaire_supp"]
         if "provenance" in enregistrement:
@@ -586,12 +598,20 @@ class EnregistrementComplet2023:
             reference_db.authors_form = enregistrement_complet["authors_form"]
         if "titre" in enregistrement_complet:
             reference_db.titre = enregistrement_complet["titre"]
-        if "lieu_edition" in enregistrement_complet:
+        if "lieu_edition" in enregistrement_complet and enregistrement_complet["lieu_edition"]:
             reference_db.lieu_edition = enregistrement_complet["lieu_edition"]
-        if "editeur" in enregistrement_complet:
+        else:
+            reference_db.lieu_edition = "s. l."
+        if "editeur" in enregistrement_complet and enregistrement_complet["editeur"]:
             reference_db.editeur = enregistrement_complet["editeur"]
-        if "publication_annee" in enregistrement_complet:
+        else:
+            reference_db.editeur = "s. ed."
+        if "publication_annee" in enregistrement_complet and enregistrement_complet["publication_annee"]:
             reference_db.annee = enregistrement_complet["publication_annee"]
+        elif "annee" in enregistrement_complet and enregistrement_complet["annee"]:
+            reference_db.annee = enregistrement_complet["annee"]
+        else:
+            reference_db.annee = "s. d."
         if "nb_page" in enregistrement_complet:
             reference_db.nb_page = enregistrement_complet["nb_page"]
         # if "valide" in reference:
@@ -607,8 +627,12 @@ class EnregistrementComplet2023:
         # region enregistrement
         if "cote" in enregistrement_complet:
             enregistrement_db.cote = enregistrement_complet["cote"]
-        if "annee_entree" in enregistrement_complet:
+        if "annee_entree" in enregistrement_complet and enregistrement_complet["annee_entree"]:
             enregistrement_db.annee_obtention = enregistrement_complet["annee_entree"]
+        elif "annee_obtention" in enregistrement_complet and enregistrement_complet["annee_obtention"]:
+            enregistrement_db.annee_obtention = enregistrement_complet["annee_obtention"]
+        else:
+            enregistrement_db.annee_obtention = ""
         # if "nb_exemplaire_supp" in enregistrement:
         #     enregistrement_db.nb_exemplaire_supp = enregistrement["nb_exemplaire_supp"]
         if "provenance" in enregistrement_complet:

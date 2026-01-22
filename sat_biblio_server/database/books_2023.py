@@ -109,9 +109,9 @@ class ReferenceBibliographiqueLivre2023DB(db.Model):
     # used to note authors as it is written on the book cover.
     authors_form = db.Column(db.String(1024), default="", nullable=False)
     titre = db.Column(db.String(200), nullable=False)
-    lieu_edition = db.Column(db.String(100), default="s.l.")
-    editeur = db.Column(db.String(50), default="s.n.")
-    annee = db.Column(db.String(10))
+    lieu_edition = db.Column(db.String(100), default="s. l.")
+    editeur = db.Column(db.String(50), default="s. ed.")
+    annee = db.Column(db.String(10), default="s. d.")
     nb_page = db.Column(db.String(10))
     # region meta
     origin = db.Column(db.String(50), default="")

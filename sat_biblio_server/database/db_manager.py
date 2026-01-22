@@ -5,12 +5,18 @@
 import datetime
 import json
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
 from sat_biblio_server.utils import UserRight, DateHeureUtils
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
 
 db = SQLAlchemy()
+
+
+def update_date_derniere_modification(mapper, connection, target):
+    if hasattr(target, 'date_derniere_modification'):
+        target.date_derniere_modification = datetime.datetime.now()
 
 
 class JsonEncodedDict(db.TypeDecorator):

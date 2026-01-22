@@ -75,12 +75,12 @@ def check_enregistrement_complet(enregistrement_avec_reference):
     elif not enregistrement_avec_reference["titre"]:
         print("titre is void")
         return False
-    elif not enregistrement_avec_reference["lieu_edition"]:
-        print("lieu_edition is void")
-        return False
-    elif not enregistrement_avec_reference["editeur"]:
-        print("editeur is void")
-        return False
+    # elif not enregistrement_avec_reference["lieu_edition"]:
+    #     print("lieu_edition is void")
+    #     return False
+    # elif not enregistrement_avec_reference["editeur"]:
+    #     print("editeur is void")
+    #     return False
     return True
 
 
@@ -104,9 +104,7 @@ def check_reference_bibliographique_livre(reference):
            "nb_page" in reference and \
            "description" in reference and \
            reference["auteurs"] and \
-           reference["titre"] and \
-           reference["lieu_edition"] and \
-           reference["editeur"]
+           reference["titre"]
 
 
 def check_user_connection(user_connection):
