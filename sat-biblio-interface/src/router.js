@@ -51,6 +51,7 @@ import ImportItem from "@/components/import/ImportItemView";
 import ArkView from "@/components/ark/ArkView";
 import LinkView from "@/components/LinkView";
 import ConceptionView from "@/components/ConceptionView";
+import ChangelogView from "@/components/ChangelogView";
 import CreationEnregistrementComplet from "./components/enregistrement_complet/CreationEnregistrementComplet.vue";
 import LireEnregistrementComplet from "./components/enregistrement_complet/LireEnregistrementComplet.vue";
 import ListeEnregistrementComplet from "./components/enregistrement_complet/ListeEnregistrementComplet.vue";
@@ -343,6 +344,12 @@ let router = new VueRouter({
             name: "conception-page",
             path: "/conception",
             component: ConceptionView,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "changelog-page",
+            path: "/notes-de-version",
+            component: ChangelogView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         // endregion

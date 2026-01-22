@@ -60,6 +60,7 @@
             <b-nav-item-dropdown text="Divers" class="titre-nav-item">
               <b-dropdown-item to="/liens">Liens utiles</b-dropdown-item>
               <b-dropdown-item to="/conception">Conception</b-dropdown-item>
+              <b-dropdown-item to="/notes-de-version">Notes de version</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
