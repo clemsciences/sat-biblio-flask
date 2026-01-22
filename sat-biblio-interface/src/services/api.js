@@ -213,6 +213,10 @@ export function searchNearBookRecords(params) {
   return api.get(`/book-records/search-near/?${params}`);
 }
 
+export function getBookRecordsKeywords() {
+  return api.get("/book-records/keywords/");
+}
+
 export function getEntryListAssociatedToBookRecords(bookRecordId, params) {
   return api.get(`/book-records/${bookRecordId}/entries/?${params}`);
 }

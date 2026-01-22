@@ -219,15 +219,9 @@ export default {
     // }
   },
   mounted() {
-    // if(this.$route.query.coteFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
-    // if(this.$route.query.titleFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
-    // if(this.$route.query.keywordsFilter.length > 0) {
-    //   this.coteFilter = decodeURIComponent(this.$route.query.coteFilter);
-    // }
+    if (this.$route.query.mot_clef) {
+      this.keywordsFilter = this.$route.query.mot_clef;
+    }
     this.getRecordTotalNumber();
   },
   watch: {

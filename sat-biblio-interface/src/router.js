@@ -27,6 +27,7 @@ import Contact from "@/components/Contact";
 import Emprunter from "@/components/emprunt/Emprunter";
 import ListeEmprunt from "@/components/emprunt/ListeEmprunt";
 import ListeAuteur from "@/components/auteur/ListeAuteur";
+import ListeMotsClefs from "@/components/enregistrement/ListeMotsClefs";
 import Admin from "./components/admin/Admin";
 import Gestionnaire from "./components/admin/Gestionnaire";
 import PageNotFound from "@/components/PageNotFound";
@@ -277,6 +278,12 @@ let router = new VueRouter({
             name: "enregistrement-liste",
             path: '/enregistrement/liste',
             component: ListeEnregistrement,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "mots-clefs",
+            path: '/mots-clefs',
+            component: ListeMotsClefs,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {

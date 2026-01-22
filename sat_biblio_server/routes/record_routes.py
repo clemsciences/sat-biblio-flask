@@ -225,6 +225,25 @@ def chercher_enregistrements_proches():
                             value=book_record_db.id))
 
     return json_result(True, suggestedRecords=res), 200
+
+
+@sat_biblio.route("/book-records/keywords/", methods=["GET"])
+def get_all_keywords():
+    all_keywords_raw = db.session.query(Enregistrement2023DB.aide_a_la_recherche).filter(Enregistrement2023DB.aide_a_la_recherche != "").all()
+    keywords_count = {}
+    for row in all_keywords_raw:
+        if row[0]:
+            # On suppose ici que les mots clés sont séparés par un ou plusieurs espaces
+            # car l'aperçu sqlite montrait des double espaces ou espaces simples.
+            parts = [p.strip() for p in re.split(r'\s+', row[0]) if p.strip()]
+            for p in parts:
+                keywords_count[p] = keywords_count.get(p, 0) + 1
+    
+    # On renvoie une liste d'objets avec le mot clé et sa fréquence
+    keywords_list = [{"text": k, "count": v} for k, v in keywords_count.items()]
+    return json_result(True, keywords=keywords_list), 200
+
+
 # endregion
 
 

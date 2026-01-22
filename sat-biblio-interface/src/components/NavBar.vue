@@ -25,6 +25,7 @@
             <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
               <b-dropdown-item to="/catalogue">Catalogue</b-dropdown-item>
 <!--              <b-dropdown-item to="/cotes">Cotes</b-dropdown-item>-->
+              <b-dropdown-item to="/mots-clefs">Mots clef</b-dropdown-item>
               <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</b-dropdown-item>
               <b-dropdown-item to="/auteur/liste">Auteurs</b-dropdown-item>
               <b-dropdown-item to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</b-dropdown-item>
