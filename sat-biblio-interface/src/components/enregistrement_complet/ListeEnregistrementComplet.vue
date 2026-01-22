@@ -108,6 +108,18 @@
         </b-form-group>
       </b-col>
     </b-row>
+    <b-row class="my-1">
+      <b-col lg="12">
+        <b-form-group label="Trier par" label-cols-sm="2" label-align-sm="right" label-size="sm" class="mb-0">
+          <b-form-radio-group
+              v-model="sortBy"
+              :options="sortByOptions"
+              class="pt-1"
+              @change="onSortChange"
+          ></b-form-radio-group>
+        </b-form-group>
+      </b-col>
+    </b-row>
     <b-row>
       <b-pagination
           v-model="currentPage"
@@ -118,9 +130,9 @@
       <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
     </b-row>
 
-    <b-table striped bordered hover :items="retrieveEnregistrementCompleteList" :fields="fields"
-             primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToEnregistrementComplet" :filter="onFilter">
+    <b-table striped bordered hover :items="retrieveEnregistrementCompleteList" :fields="filteredFields"
+             primary-key="id" :per-page="perPage" :current-page="currentPage" ref="my-table"
+             :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" @row-dblclicked="goToEnregistrementComplet" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </b-table>
 
@@ -136,7 +148,7 @@
   </b-container>
 </template>
 <script>
-import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecords} from "@/services/api";
+import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecordsWithReference} from "@/services/api";
 import Title from "../visuel/Title";
 import FilterCount from "@/components/visuel/FilterCount";
 
@@ -145,17 +157,19 @@ export default {
   components: {Title, FilterCount},
   data: function () {
     return {
+      isMounted: false,
       records: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "cote",
+      sortDesc: false,
       recordFilteredNumber: 0,
       recordTotalNumber: 0,
       fields: [
         {
           key: "cote",
           label: "Cote",
-          sortable: false
+          sortable: true
         },
         {
           key: "reference",
@@ -175,7 +189,7 @@ export default {
         {
           key: "annee_obtention",
           label: "Année d'obtention",
-          sortable: false
+          sortable: true
         },
         // {
         //   key: "nb_exemplaire_supp",
@@ -197,7 +211,11 @@ export default {
           label: "Observations",
           sortable: false
         },
-
+        {
+          key: "date_derniere_modification",
+          label: "Date dernière modification",
+          sortable: true
+        }
       ],
       prefixCoteFiler: "",
       numberCoteFilter: "",
@@ -246,9 +264,12 @@ export default {
       return filterParams;
     },
     retrieveEnregistrementCompleteList: function (ctx, callback) {
+      // console.log("ctx.sortBy", ctx.sortBy);
+      // console.log("ctx.sortDesc", ctx.sortDesc);
       let params = "?page=" + ctx.currentPage +
           "&size=" + ctx.perPage +
-          "&sortBy=" + ctx.sortBy;
+          "&sortBy=" + ctx.sortBy +
+          "&sortDesc=" + (ctx.sortDesc ? "true" : "false");
       let filterParams = "";
       const remainingFilterParams = this.getFilterParams();
       if(remainingFilterParams.length > 0) {
@@ -258,7 +279,7 @@ export default {
         params = `${params}&${filterParams}`;
       }
 
-      retrieveBookRecords(params)
+      retrieveBookRecordsWithReference(params)
           .then(
               (response) => {
                 if (response.data.success) {
@@ -294,17 +315,34 @@ export default {
     goToEnregistrementComplet: function (item) {
       this.$router.push(`/catalogue/lire/${item.id}`);
     },
+    onSortChange() {
+      this.currentPage = 1;
+      this.sortDesc = false;
+      this.reloadWithFilters();
+      this.$refs['my-table'].refresh();
+    },
     reloadWithFilters() {
-      if (this.onFilter.trim().length > 0) {
-        this.$router.replace({
-          query: {
-            author: encodeURIComponent(this.authorFilter),
-            cote: encodeURIComponent(this.coteFilter),
-            keywords: encodeURIComponent(this.keywordsFilter),
-            title: encodeURIComponent(this.titleFilter),
-          }
-        });
-      }
+      const query = {
+        author: encodeURIComponent(this.authorFilter),
+        cote: encodeURIComponent(this.coteFilter),
+        keywords: encodeURIComponent(this.keywordsFilter),
+        title: encodeURIComponent(this.titleFilter),
+        page: this.currentPage,
+        sortBy: this.sortBy,
+        sortDesc: this.sortDesc
+      };
+      // Remove empty or default values to keep URL clean
+      if (!this.authorFilter) delete query.author;
+      if (!this.coteFilter) delete query.cote;
+      if (!this.keywordsFilter) delete query.keywords;
+      if (!this.titleFilter) delete query.title;
+
+      this.$router.replace({ query }).catch(err => {
+        // Ignore the "NavigationDuplicated" error which happens when only query changes in some vue-router versions
+        if (err.name !== 'NavigationDuplicated' && !err.message.includes('Avoided redundant navigation')) {
+          throw err;
+        }
+      });
     },
     exportSearchResult() {
       this.isExporting = true;
@@ -403,27 +441,57 @@ export default {
     if (this.$route.query.keywords && this.$route.query.keywords.length > 0) {
       this.keywordsFilter = decodeURIComponent(this.$route.query.keywords);
     }
+    if (this.$route.query.page) {
+      this.currentPage = parseInt(this.$route.query.page);
+    }
+    if (this.$route.query.sortBy) {
+      this.sortBy = this.$route.query.sortBy;
+    }
+    if (this.$route.query.sortDesc !== undefined) {
+      this.sortDesc = this.$route.query.sortDesc === 'true';
+    }
     this.getRecordTotalNumber();
+    this.$nextTick(() => {
+      this.isMounted = true;
+    });
   },
   watch: {
     coteFilter: function () {
       this.getRecordTotalNumber();
-      this.currentPage = 1;
+      // Only reset to page 1 if this change was triggered by user input (not initial load)
+      if (this.isMounted) {
+        this.currentPage = 1;
+      }
       this.reloadWithFilters();
     },
     authorFilter() {
       this.getRecordTotalNumber();
-      this.currentPage = 1;
+      if (this.isMounted) {
+        this.currentPage = 1;
+      }
       this.reloadWithFilters();
     },
     keywordsFilter: function () {
       this.getRecordTotalNumber();
-      this.currentPage = 1;
+      if (this.isMounted) {
+        this.currentPage = 1;
+      }
       this.reloadWithFilters();
     },
     titleFilter: function () {
       this.getRecordTotalNumber();
-      this.currentPage = 1;
+      if (this.isMounted) {
+        this.currentPage = 1;
+      }
+      this.reloadWithFilters();
+    },
+    currentPage: function () {
+      this.reloadWithFilters();
+    },
+    sortBy: function () {
+      this.reloadWithFilters();
+    },
+    sortDesc: function () {
       this.reloadWithFilters();
     }
   },
@@ -447,6 +515,25 @@ export default {
     },
     searchFieldsUsed() {
       return this.coteFilter.length > 0 || this.authorFilter.length > 0 || this.keywordsFilter.length > 0 || this.titleFilter.length > 0;
+    },
+    isAdmin() {
+      return this.$store.getters.isAdmin;
+    },
+    filteredFields() {
+      if (this.isAdmin) {
+        return this.fields;
+      }
+      return this.fields.filter(f => f.key !== 'date_derniere_modification');
+    },
+    sortByOptions() {
+      const options = [
+        {text: 'Cote', value: 'cote'},
+        {text: 'Année d\'obtention', value: 'annee_obtention'},
+      ];
+      if (this.isAdmin) {
+        options.push({text: 'Date dernière modification', value: 'date_derniere_modification'});
+      }
+      return options;
     }
   }
 }

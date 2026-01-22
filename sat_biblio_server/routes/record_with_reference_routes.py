@@ -55,7 +55,7 @@ def book_records_with_reference():
                                message="L'enregistrement a correctement été sauvegardé."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'enregistrement."), 400
     elif request.method == "GET":
-        n_page, size, sort_by = get_pagination(request)
+        n_page, size, sort_by, sort_desc = get_pagination(request)
 
         # region filtre
         cote = request.args.get("cote", "")
@@ -85,9 +85,23 @@ def book_records_with_reference():
         # endregion
 
         if sort_by:
-            the_query = the_query.order_by(Enregistrement2023DB.cote)
+            if sort_by == "cote":
+                field = Enregistrement2023DB.cote
+            elif sort_by == "annee_obtention":
+                field = Enregistrement2023DB.annee_obtention
+            elif sort_by == "date_derniere_modification":
+                field = Enregistrement2023DB.date_derniere_modification
+            else:
+                field = Enregistrement2023DB.cote
+
+            if sort_desc:
+                the_query = the_query.order_by(field.desc(), Enregistrement2023DB.id.desc())
+            else:
+                the_query = the_query.order_by(field.asc(), Enregistrement2023DB.id.asc())
+        elif sort_desc:
+            the_query = the_query.order_by(Enregistrement2023DB.cote.desc(), Enregistrement2023DB.id.desc())
         else:
-            the_query = the_query.order_by(Enregistrement2023DB.cote)
+            the_query = the_query.order_by(Enregistrement2023DB.cote.asc(), Enregistrement2023DB.id.asc())
 
         enregistrements = []
         for record_db in the_query.paginate(page=n_page, per_page=size).items:
@@ -301,7 +315,7 @@ def book_records_with_reference_count():
 # region entries
 @sat_biblio.route("/book-records-with-reference/<int:id_>/entries/", methods=["GET"])
 def get_record_with_reference_entries(id_):
-    n_page, size, sort_by = get_pagination(request)
+    n_page, size, sort_by, sort_desc = get_pagination(request)
     entry_type = request.args.get("type", "")
     entries = []
     if entry_type == "author":

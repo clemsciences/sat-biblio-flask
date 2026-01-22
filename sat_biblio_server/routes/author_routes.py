@@ -36,7 +36,7 @@ def authors_():
     :return:
     """
     if request.method == "GET":
-        n_page, size, sort_by = get_pagination(request)
+        n_page, size, sort_by, sort_desc = get_pagination(request)
 
         the_query = Author2023DB.query
         # sort_desc = request.args.get("sortDesc")
@@ -56,9 +56,12 @@ def authors_():
         # the_query = the_query.filter(Author2023DB.valide == True)
 
         if sort_by:
-            the_query = the_query.order_by(sort_by)
+            if sort_desc:
+                the_query = the_query.order_by(db.desc(sort_by))
+            else:
+                the_query = the_query.order_by(db.asc(sort_by))
         else:
-            the_query = the_query.order_by("family_name")
+            the_query = the_query.order_by(Author2023DB.family_name.asc())
 
         authors = [Author2023.from_db_to_data(author)
                    for author in the_query.paginate(page=n_page, per_page=size).items]
@@ -244,7 +247,7 @@ def chercher_auteurs():
 # region entries
 @sat_biblio.route("/authors/<int:id_>/entries/")
 def author_entries_routes(id_):
-    n_page, size, sort_by = get_pagination(request)
+    n_page, size, sort_by, sort_desc = get_pagination(request)
     entry_type = request.args.get("type", "")
     entries = []
     if entry_type == "record":

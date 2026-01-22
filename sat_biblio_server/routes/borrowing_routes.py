@@ -31,7 +31,7 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 @validation_connexion_et_retour_defaut("email", ["DELETE", "PUT"])
 def borrowings():
     if request.method == "GET":
-        n_page, size, sort_by = get_pagination(request)
+        n_page, size, sort_by, sort_desc = get_pagination(request)
         borrowing_date_before_today = request.args.get("borrowing-date-before-today", None)
         query = EmpruntLivre2023DB.query
 

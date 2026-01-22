@@ -32,7 +32,7 @@ def log_events_request():
             return json_result(True, id=log_event_db.id, message="Log event."), 201
         return json_result(False, message="Erreur de la sauvegarde de l'événement."), 400
     elif request.method == "GET":
-        n_page, size, sort_by = get_pagination(request)
+        n_page, size, sort_by, sort_desc = get_pagination(request)
 
         # region filtre
         from_datetime_str = request.args.get("from_datetime", None)

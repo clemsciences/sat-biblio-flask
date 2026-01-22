@@ -182,7 +182,7 @@ def chercher_reference_livre_plus_proches():
 # region entries
 @sat_biblio.route("/book-references/<int:id_>/entries/", methods=["GET"])
 def get_reference_entries(id_):
-    n_page, size, sort_by = get_pagination(request)
+    n_page, size, sort_by, sort_desc = get_pagination(request)
     entry_type = request.args.get("type", "")
     entries = []
     if entry_type == "author":
