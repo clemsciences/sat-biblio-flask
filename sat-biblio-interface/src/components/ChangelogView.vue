@@ -40,6 +40,7 @@
 <script>
 import Title from "@/components/visuel/Title.vue";
 import axios from "axios";
+import { marked } from "marked";
 
 export default {
   name: "ChangelogView",
@@ -79,21 +80,7 @@ export default {
     },
     renderMarkdown(text) {
       if (!text) return "";
-      // Remplacement basique pour le rendu "riche" sans bibliothèque externe
-      // On convertit les titres, les listes et les retours à la ligne
-      let html = text
-        .replace(/^### (.*$)/gim, '<h5>$1</h5>')
-        .replace(/^## (.*$)/gim, '<h4>$1</h4>')
-        .replace(/^# (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
-        .replace(/^- (.*$)/gim, '<ul><li>$1</li></ul>')
-        .replace(/<\/ul>\s*<ul>/gim, '') // Fusionner les listes consécutives
-        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-        .replace(/\*(.*)\*/gim, '<em>$1</em>')
-        .replace(/`([^`]+)`/gim, '<code>$1</code>')
-        .replace(/\n/gim, '<br />');
-      
-      return html;
+      return marked(text);
     }
   }
 };
@@ -108,6 +95,21 @@ export default {
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   color: #005db6;
+}
+.release-body pre {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  overflow-x: auto;
+}
+.release-body code {
+  color: #d63384;
+  word-wrap: break-word;
+}
+.release-body pre code {
+  color: inherit;
+  word-wrap: normal;
 }
 .release-body ul {
   padding-left: 1.5rem;
