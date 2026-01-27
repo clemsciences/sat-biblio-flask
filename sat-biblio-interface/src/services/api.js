@@ -108,6 +108,10 @@ export function searchNearAuthors(params) {
   return api.get(`/authors/search-near/?${params}`);
 }
 
+export function mergeAuthors(idKeep, idDelete, token) {
+  return api.post("/authors/merge/", {id_keep: idKeep, id_delete: idDelete}, { headers: { Authorization: `Bearer ${token}` } });
+}
+
 
 export function getEntryListAssociatedToAuthor(authorId, params) {
   return api.get(`/authors/${authorId}/entries/?${params}`)

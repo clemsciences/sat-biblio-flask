@@ -27,6 +27,12 @@ __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 # region connection
 def connect_user_login(user: UserDB, token: str):
     if login_user(user):
+        print(user.email)
+        print(user.first_name)
+        print(user.family_name)
+        print(user.right.value)
+        print(user.id)
+        print(token)
         session["email"] = user.email
         session["first_name"] = user.first_name
         session["family_name"] = user.family_name
@@ -57,7 +63,8 @@ def connect_user(data):
         expires_duration = timedelta(hours=4)
         token = create_access_token(identity=user.email,
                                     fresh=True,
-                                    expires_delta=expires_duration)
+                                    expires_delta=expires_duration,
+                                    additional_claims={"right": user.right.value})
         # print("created_token", token)
         connect_user_login(user, token)
 
@@ -252,7 +259,8 @@ def confirmer_inscription_utilisateur(inscription_token):
     email = request.args.get("email")
     user_sess = sm.UserSess(email)
     if user_sess and user_sess.confirm_token(inscription_token):
-        token = create_access_token(identity=user_sess.user_db.email)
+        token = create_access_token(identity=user_sess.user_db.email,
+                                    additional_claims={"right": user_sess.user_db.right.value})
         connect_user_login(user_sess.user_db, token)
         return json_result(True,
                            message="Votre compte est validé.",

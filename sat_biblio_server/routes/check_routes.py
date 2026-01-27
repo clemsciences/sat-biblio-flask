@@ -7,12 +7,14 @@ import logging
 from typing import Union, List, AnyStr
 
 from flask import request, session, abort
-from flask_jwt_extended import verify_jwt_in_request
+from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from flask_jwt_extended.exceptions import FreshTokenRequired
 from flask_login import logout_user
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
+
+from utils import UserRight
 
 
 def disconnect_user():
@@ -58,5 +60,46 @@ def validation_connexion_et_retour_defaut(pseudo: Union[List, AnyStr], for_reque
             else:
                 logging.log(logging.ERROR, "not connected")
                 return json_result(False, "Vous n'êtes pas conencté"), 401
+        return fonction_modifiee
+    return deco
+
+
+def validation_droit_et_retour_defaut(required_right: UserRight, for_request_method=None):
+    """
+    Enforces authorization (not just authentication).
+
+    Checks, in order:
+    - If a valid JWT is present: looks for a 'right' claim in JWT (e.g. 'administrateur')
+    - Otherwise falls back to Flask session: session['right']
+
+    Returns 403 if authenticated but not allowed.
+    """
+    if not for_request_method:
+        for_request_method = ["POST", "PUT", "DELETE"]
+
+    def deco(methode):
+        @wraps(methode)
+        def fonction_modifiee(*args, **kwargs):
+            if request.method not in for_request_method:
+                return methode(*args, **kwargs)
+
+            # Prefer JWT if present/valid
+            try:
+                verify_jwt_in_request()
+                claims = get_jwt() or {}
+                jwt_right = claims.get("right")
+                print(jwt_right, required_right.value)
+                if jwt_right >= required_right.value:
+                    return methode(*args, **kwargs)
+                return json_result(False, message="Accès interdit."), 403
+            except Exception:
+                # No (valid) JWT -> fall back to session
+                pass
+
+            if session.get("right") == required_right:
+                return methode(*args, **kwargs)
+
+            return json_result(False, message="Accès interdit."), 403
+
         return fonction_modifiee
     return deco

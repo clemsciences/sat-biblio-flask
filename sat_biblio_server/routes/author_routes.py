@@ -17,11 +17,13 @@ from sat_biblio_server.data import validation
 from sat_biblio_server.data.models_2023 import Author2023, ReferenceBibliographiqueLivre2023, Enregistrement2023
 from sat_biblio_server.database import db
 from sat_biblio_server import sat_biblio, ReferenceBibliographiqueLivre2023DB, Author2023DB
-from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.routes import validation_connexion_et_retour_defaut, validation_droit_et_retour_defaut
 from sat_biblio_server.utils import json_result
 import sat_biblio_server.data.validation as dv
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
+
+from utils import UserRight
 
 
 # region auteur
@@ -240,6 +242,52 @@ def chercher_auteurs():
         results = []
     results = [Author2023.from_db_to_data(author_db) for author_db in results]
     return json_result(True, results=results), 200
+
+
+@sat_biblio.route("/authors/merge/", methods=["POST"])
+@validation_droit_et_retour_defaut(UserRight.administrateur, ["POST"])
+def merge_authors():
+    data = request.get_json()
+    id_keep = data.get("id_keep")
+    id_delete = data.get("id_delete")
+
+    if not id_keep or not id_delete:
+        return json_result(False, message="Les identifiants des auteurs sont requis."), 400
+
+    if id_keep == id_delete:
+        return json_result(False, message="Les auteurs à fusionner doivent être différents."), 400
+
+    author_keep = Author2023DB.query.get(id_keep)
+    author_delete = Author2023DB.query.get(id_delete)
+
+    if not author_keep or not author_delete:
+        return json_result(False, message="Un ou les deux auteurs n'existent pas."), 404
+
+    # Re-associate references
+    # Note: author_delete.reference_biblio_livres is the list of references for the author to delete
+    references_to_move = list(author_delete.reference_biblio_livres)
+    for ref in references_to_move:
+        if ref not in author_keep.reference_biblio_livres:
+            author_keep.reference_biblio_livres.append(ref)
+        author_delete.reference_biblio_livres.remove(ref)
+
+    db.session.commit()
+
+    # Log the merge
+    LogEventManager(db).add_update_event(id_keep, session.get("id", -1), Author2023DB.__tablename__,
+                                         values=json.dumps(dict(action="merge",
+                                                                merged_author_id=id_delete,
+                                                                merged_author_name=f"{author_delete.first_name} {author_delete.family_name}")))
+
+    # Delete the old author
+    author_delete_data = Author2023.from_db_to_data(author_delete)
+    db.session.delete(author_delete)
+    db.session.commit()
+
+    LogEventManager(db).add_delete_event(id_delete, session.get("id", -1), Author2023DB.__tablename__,
+                                         values=json.dumps(author_delete_data))
+
+    return json_result(True, message="Fusion effectuée avec succès."), 200
 
 
 # endregion

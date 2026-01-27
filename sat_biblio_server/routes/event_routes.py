@@ -59,7 +59,10 @@ def log_events_request():
         for log_event_db in the_query.paginate(page=n_page, per_page=size).items:
             log_event = LogEvent.from_db_to_data(log_event_db)
             event_owner_user = UserDB.query.filter_by(id=log_event_db.event_owner_id).first()
-            log_event["event_owner"] = event_owner_user.pretty_string()
+            if event_owner_user:
+                log_event["event_owner"] = event_owner_user.pretty_string()
+            else:
+                log_event["event_owner"] = "Unknown"
             # print(record)
             log_events.append(log_event)
         return json_result(True, log_events=log_events), 200

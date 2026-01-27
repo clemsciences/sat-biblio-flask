@@ -56,6 +56,7 @@ import CreationEnregistrementComplet from "./components/enregistrement_complet/C
 import LireEnregistrementComplet from "./components/enregistrement_complet/LireEnregistrementComplet.vue";
 import ListeEnregistrementComplet from "./components/enregistrement_complet/ListeEnregistrementComplet.vue";
 import SatSubscription from "@/components/societaire/SatSubscription.vue";
+import MergeAuthors from "@/components/admin/MergeAuthors.vue";
 
 Vue.use(VueRouter);
 
@@ -358,6 +359,12 @@ let router = new VueRouter({
             name: "administrateur",
             path: "/administrateur",
             component: Admin,
+            meta: {needAuth: true, reachableFrom: rights.administrateur}
+        },
+        {
+            name: "merge-authors",
+            path: '/administrateur/fusionner-auteurs',
+            component: MergeAuthors,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         {

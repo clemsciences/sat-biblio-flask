@@ -33,6 +33,9 @@
       <b-button to="/administrateur/imports" class="m-2">Gestionnaire d'importation</b-button>
     </b-row>
     <b-row>
+      <b-button to="/administrateur/fusionner-auteurs" class="m-2">Fusionner des auteurs</b-button>
+    </b-row>
+    <b-row>
       <b-button @click="generateArk" class="m-2">Générer ARK</b-button>
       <p v-if="message.length > 0">{{ message }}</p>
     </b-row>
