@@ -108,8 +108,16 @@ export function searchNearAuthors(params) {
   return api.get(`/authors/search-near/?${params}`);
 }
 
+export function searchAuthors(data) {
+  return api.post("/authors/search/", data);
+}
+
 export function mergeAuthors(idKeep, idDelete, token) {
   return api.post("/authors/merge/", {id_keep: idKeep, id_delete: idDelete}, { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export function getAuthorDuplicates(token) {
+  return api.get("/authors/duplicates/", { headers: { Authorization: `Bearer ${token}` } });
 }
 
 

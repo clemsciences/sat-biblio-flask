@@ -359,13 +359,13 @@ let router = new VueRouter({
             name: "administrateur",
             path: "/administrateur",
             component: Admin,
-            meta: {needAuth: true, reachableFrom: rights.administrateur}
+            meta: {needAuth: true, reachableFrom: rights.editeur}
         },
         {
             name: "merge-authors",
             path: '/administrateur/fusionner-auteurs',
             component: MergeAuthors,
-            meta: {needAuth: true, reachableFrom: rights.administrateur}
+            meta: {needAuth: true, reachableFrom: rights.editeur}
         },
         {
             name: "log-events",

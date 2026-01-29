@@ -5,7 +5,30 @@
       Fusionner des auteurs
     </Title>
 
+    <b-card v-if="duplicateAuthors.length > 1" title="Homonymes potentiels" class="mb-3">
+      <p>Voici les auteurs ayant le même nom de famille. Vous pouvez les sélectionner pour la fusion.</p>
+      <b-table striped hover :items="duplicateAuthors" :fields="duplicateFields">
+        <template #cell(name)="data">
+          {{ data.item.first_name }} {{ data.item.family_name }}
+        </template>
+        <template #cell(actions)="data">
+          <b-button size="sm" variant="info" class="mr-1" @click="setAsAuthor1(data.item)">
+            Auteur 1
+          </b-button>
+          <b-button size="sm" variant="info" @click="setAsAuthor2(data.item)">
+            Auteur 2
+          </b-button>
+          <b-button size="sm" variant="outline-primary" class="ml-1" @click="viewAuthor(data.item.id)">
+            Voir
+          </b-button>
+        </template>
+      </b-table>
+    </b-card>
+
     <b-card title="Sélection des auteurs">
+      <b-button size="sm" variant="outline-secondary" @click="fetchAllDuplicates" class="mb-3">
+        Chercher tous les homonymes de la base
+      </b-button>
       <b-row>
         <b-col md="6">
           <h5>Premier auteur</h5>
@@ -96,7 +119,7 @@
 
 <script>
 import Title from "../visuel/Title";
-import {searchNearAuthors, mergeAuthors, getEntryListAssociatedToAuthor} from "@/services/api";
+import {searchNearAuthors, mergeAuthors, getEntryListAssociatedToAuthor, searchAuthors, getAuthorDuplicates} from "@/services/api";
 
 export default {
   name: "MergeAuthors",
@@ -113,10 +136,16 @@ export default {
       books2: [],
       loadingBooks1: false,
       loadingBooks2: false,
+      duplicateAuthors: [],
       idKeep: null,
       loading: false,
       message: '',
-      messageVariant: 'info'
+      messageVariant: 'info',
+      duplicateFields: [
+        { key: 'name', label: 'Nom complet' },
+        { key: 'id', label: 'ID' },
+        { key: 'actions', label: 'Actions' }
+      ]
     }
   },
   computed: {
@@ -145,10 +174,69 @@ export default {
     selectAuthor1(event) {
       this.author1 = event;
       this.fetchBooks1(event.value);
+      this.fetchDuplicates(event.family_name);
     },
     selectAuthor2(event) {
       this.author2 = event;
       this.fetchBooks2(event.value);
+      this.fetchDuplicates(event.family_name);
+    },
+    setAsAuthor1(author) {
+      const event = {
+        text: `${author.first_name} ${author.family_name}`,
+        value: author.id,
+        family_name: author.family_name,
+        first_name: author.first_name
+      };
+      this.query1 = event.text;
+      this.selectAuthor1(event);
+    },
+    setAsAuthor2(author) {
+      const event = {
+        text: `${author.first_name} ${author.family_name}`,
+        value: author.id,
+        family_name: author.family_name,
+        first_name: author.first_name
+      };
+      this.query2 = event.text;
+      this.selectAuthor2(event);
+    },
+    fetchDuplicates(familyName) {
+      if (familyName && familyName !== "[collectif]" && familyName !== "[anonyme]") {
+        searchAuthors({family_name: familyName})
+          .then(response => {
+            if (response.data.success) {
+              this.duplicateAuthors = response.data.results;
+            }
+          })
+          .catch(error => console.error(error));
+      } else {
+        this.duplicateAuthors = [];
+      }
+    },
+    fetchAllDuplicates() {
+      this.loading = true;
+      getAuthorDuplicates(this.$store.state.connectionInfo.token)
+        .then(response => {
+          if (response.data.success) {
+            // response.data.duplicates is a list of {family_name, authors: []}
+            // We want to flatten it or just show them.
+            // For now, let's just take all authors from all groups.
+            const all = [];
+            response.data.duplicates.forEach(group => {
+              all.push(...group.authors);
+            });
+            this.duplicateAuthors = all;
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          this.message = "Erreur lors de la récupération des homonymes.";
+          this.messageVariant = "danger";
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     fetchBooks1(id) {
       this.loadingBooks1 = true;
@@ -217,6 +305,7 @@ export default {
       this.author2 = null;
       this.books1 = [];
       this.books2 = [];
+      this.duplicateAuthors = [];
       this.idKeep = null;
     }
   },

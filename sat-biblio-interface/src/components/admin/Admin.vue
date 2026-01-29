@@ -5,10 +5,10 @@
       Page d'administration
     </Title>
 
-    <b-row>
+    <b-row v-if="isAdmin">
       <b-button v-b-toggle.collapse-new-user class="m-2">Créer un utilisateur</b-button>
     </b-row>
-    <b-row>
+    <b-row v-if="isAdmin">
       <b-col cols="12">
         <b-collapse id="collapse-new-user">
           <b-card>
@@ -17,22 +17,22 @@
         </b-collapse>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row v-if="isAdmin">
       <b-button v-b-toggle.collapse-users class="m-2"
                 @click="forceUsersReload">
         Voir les utilisateurs
       </b-button>
     </b-row>
-    <b-row>
+    <b-row v-if="isAdmin">
       <b-collapse id="collapse-users">
         <liste-utilisateur ref="userList" />
       </b-collapse>
     </b-row>
 
-    <b-row>
+    <b-row v-if="isAdmin">
       <b-button to="/administrateur/imports" class="m-2">Gestionnaire d'importation</b-button>
     </b-row>
-    <b-row>
+    <b-row v-if="isEditor">
       <b-button to="/administrateur/fusionner-auteurs" class="m-2">Fusionner des auteurs</b-button>
     </b-row>
     <b-row>
@@ -61,6 +61,14 @@ import {deleteAllCatalogue, generateArkForAllEntriesMissingOnes, importAllCatalo
 export default {
   name: "Admin",
   components: {Title, CreationUtilisateur, ListeUtilisateur},
+  computed: {
+    isAdmin() {
+      return this.$store.getters.isAdmin;
+    },
+    isEditor() {
+      return this.$store.getters.canEdit;
+    }
+  },
   data: function() {
     return {
       message: '',

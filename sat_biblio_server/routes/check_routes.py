@@ -10,11 +10,7 @@ from flask import request, session, abort
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from flask_jwt_extended.exceptions import FreshTokenRequired
 from flask_login import logout_user
-from sat_biblio_server.utils import json_result
-
-__author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
-
-from utils import UserRight
+from sat_biblio_server.utils import json_result, UserRight
 
 
 def disconnect_user():

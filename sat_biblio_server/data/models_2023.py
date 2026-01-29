@@ -88,6 +88,29 @@ class Author2023:
             author_db.valide = False
         return author_db
 
+    @staticmethod
+    def get_duplicates():
+        """
+        Find authors who share the same family name.
+        Returns a list of dictionaries grouped by family name.
+        """
+        # Query to find family names that appear more than once
+        duplicate_family_names = db.session.query(Author2023DB.family_name) \
+            .group_by(Author2023DB.family_name) \
+            .having(db.func.count(Author2023DB.id) > 1) \
+            .all()
+
+        family_names = [name[0] for name in duplicate_family_names if name[0] not in ["[collectif]", "[anonyme]", ""]]
+
+        results = []
+        for family_name in family_names:
+            authors = Author2023DB.query.filter_by(family_name=family_name).all()
+            results.append({
+                "family_name": family_name,
+                "authors": [Author2023.from_db_to_data(a) for a in authors]
+            })
+        return results
+
     # region CSV & Excel
     @staticmethod
     def from_data_to_csv_row(data: dict):

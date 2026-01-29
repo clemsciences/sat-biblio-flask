@@ -23,7 +23,7 @@ import sat_biblio_server.data.validation as dv
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
-from utils import UserRight
+from sat_biblio_server.utils import UserRight
 
 
 # region auteur
@@ -244,8 +244,15 @@ def chercher_auteurs():
     return json_result(True, results=results), 200
 
 
+@sat_biblio.route("/authors/duplicates/", methods=["GET"])
+@validation_droit_et_retour_defaut(UserRight.editeur, ["GET"])
+def get_author_duplicates():
+    duplicates = Author2023.get_duplicates()
+    return json_result(True, duplicates=duplicates), 200
+
+
 @sat_biblio.route("/authors/merge/", methods=["POST"])
-@validation_droit_et_retour_defaut(UserRight.administrateur, ["POST"])
+@validation_droit_et_retour_defaut(UserRight.editeur, ["POST"])
 def merge_authors():
     data = request.get_json()
     id_keep = data.get("id_keep")
