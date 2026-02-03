@@ -19,3 +19,4 @@ sat_biblio_server/static/catalogue-*
 __pycache__
 **.egg-info
 **.zip
+/.aiignore

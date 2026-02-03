@@ -1,0 +1,34 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    volumes:
+      - sat_biblio_data:/app/data
+      - sat_biblio_uploads:/app/uploads
+    environment:
+      - DATA_DIR=/app/data
+      - UPLOAD_DIR=/app/uploads
+      - SQLALCHEMY_DATABASE_URI=sqlite:////app/data/data-prod.sqlite3
+      - SECRET_KEY=change-me-in-production
+      - JWT_SECRET_KEY=change-me-too
+      - EMAIL_ADDRESS=admin@example.com
+      - MAIL_PASSWORD=password
+    restart: always
+
+  interface:
+    build:
+      context: ./sat-biblio-interface
+      args:
+        - VUE_APP_SITE_API_URL=http://localhost:5000/api
+    ports:
+      - "80:8080"
+    restart: always
+    depends_on:
+      - api
+
+volumes:
+  sat_biblio_data:
+  sat_biblio_uploads:

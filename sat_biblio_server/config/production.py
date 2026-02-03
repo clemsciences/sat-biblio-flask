@@ -9,19 +9,18 @@ from sat_biblio_server.config.constants import *
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
 
-with open(os.path.join(PACKDIR, "email_address"), "r") as f:
-    email_address = f.read().strip()
-
-with open(os.path.join(PACKDIR, "mail_password"), "r") as f:
-    password = f.read().strip()
-
-secret_key = "SECRET"
-with open(os.path.join(PACKDIR, "secret_key"), "r") as f:
-    secret_key = f.read().strip()
+def get_secret(name, default=None):
+    path = os.path.join(PACKDIR, name)
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            return f.read().strip()
+    return os.environ.get(name.upper(), default)
 
 
-with open(os.path.join(PACKDIR, "jwt_secret_key"), "r") as f:
-    jwt_secret_key = f.read().strip()
+email_address = get_secret("email_address", "")
+password = get_secret("mail_password", "")
+secret_key = get_secret("secret_key", "SECRET")
+jwt_secret_key = get_secret("jwt_secret_key", "JWT_SECRET")
 
 
 class Config:
@@ -30,7 +29,7 @@ class Config:
     TESTING = False
     SECRET_KEY = secret_key
 
-    UPLOAD_FOLDER = "uploads"
+    UPLOAD_FOLDER = os.environ.get("UPLOAD_DIR") or "uploads"
     UPLOAD_CATALOGUE_FOLDER = "catalogues"
     ALLOWED_IMPORT_EXTENSIONS = {"csv", "xslx"}
     MAX_CONTENT_LENGTH = 64_000_000
@@ -42,7 +41,8 @@ class Config:
     VUE_SERVER_NAME = "bht.societearcheotouraine.fr"
 
     # region sqlalchemy
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite:////var/www/satbiblio.clementbesnier.eu/server/data-prod.sqlite3'
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or \
+                              f'sqlite:///{os.path.join(os.environ.get("DATA_DIR", "/var/www/satbiblio.clementbesnier.eu/server"), "data-prod.sqlite3")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     # endregion
 
