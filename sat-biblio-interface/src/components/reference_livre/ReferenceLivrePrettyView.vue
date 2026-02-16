@@ -1,6 +1,6 @@
 <template>
-  <b-card title="">
-    <b-card-body>
+  <BCard title="">
+    <BCardBody>
       <p v-if="rendering.length > 0" id="copy-btn" class="mx-1">
         <span v-if="reference.authorsForm && reference.authorsForm.length > 0">
           {{ reference.authorsForm }}
@@ -15,12 +15,12 @@
         <span>{{renderPages(reference)}}</span>
       </p>
       <input type="hidden" id="rendering" :value="rendering"/>
-      <b-tooltip target="copy-btn" placement="topleft" triggers="manual" :show="showingCopyMessage">
+      <BTooltip target="copy-btn" placement="topleft" triggers="manual" :show="showingCopyMessage">
         Copié !
-      </b-tooltip>
-      <b-button class="my-2" @click="copy">Copier</b-button>
-    </b-card-body>
-  </b-card>
+      </BTooltip>
+      <BButton class="my-2" @click="copy">Copier</BButton>
+    </BCardBody>
+  </BCard>
 
 </template>
 

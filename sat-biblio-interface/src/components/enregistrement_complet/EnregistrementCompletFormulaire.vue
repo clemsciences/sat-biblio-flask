@@ -1,98 +1,96 @@
 <template>
-  <b-container>
+  <BContainer>
     <JsonLdHeader :json-data="recordWithReference"/>
-    <b-form @submit.prevent>
+    <BForm @submit.prevent>
     <SuggestionAuteur
-        v-model="recordWithReference.authors" class="my-3"
+        v-model="authors" class="my-3"
         :disabled="disabled"
         ref="authors"/>
-    <b-form-group label="Auteurs tels qu'ils sont mentionnés dans le livre.">
-      <b-form-input v-model="recordWithReference.authorsForm"
+    <BFormGroup label="Auteurs tels qu'ils sont mentionnés dans le livre.">
+      <BFormInput v-model="authorsForm"
                     :disabled="disabled"
                     ref="authorsForm"/>
-    </b-form-group>
-    <b-form-group>
-      <b-button v-if="referenceId != null" @click="goToReference">
+    </BFormGroup>
+    <BFormGroup>
+      <BButton v-if="referenceId != null" @click="goToReference">
         Voir la fiche de la référence bibliographique
-      </b-button>
+      </BButton>
       <p v-else>pas de bouton</p>
-    </b-form-group>
-
-
-      <b-form-group label="Titre">
-      <b-form-input v-model="recordWithReference.titre"
+    </BFormGroup>
+<BFormGroup label="Titre">
+      <BFormInput v-model="titre"
                     :disabled="disabled"
                     ref="title"/>
 <!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
-    </b-form-group>
-    <b-form-group label="Lieu d'édition">
-      <b-form-input v-model="recordWithReference.lieu_edition"
+    </BFormGroup>
+    <BFormGroup label="Lieu d'édition">
+      <BFormInput v-model="lieu_edition"
                     :disabled="disabled"
                     ref="lieu_edition"/>
-    </b-form-group>
-    <b-form-group label="Editeurs">
-      <b-form-input v-model="recordWithReference.editeur"
+    </BFormGroup>
+    <BFormGroup label="Editeurs">
+      <BFormInput v-model="editeur"
                     :disabled="disabled"
                     ref="editeur"/>
-    </b-form-group>
-    <b-form-group label="Année">
-      <b-form-input v-model="recordWithReference.publication_annee"
+    </BFormGroup>
+    <BFormGroup label="Année">
+      <BFormInput v-model="publication_annee"
                     :disabled="disabled"
                     ref="annee"/>
-    </b-form-group>
-    <b-form-group label="Nombre de pages" :state="isNbPageValid">
-      <b-form-input v-if="recordWithReference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
-      <b-form-input v-else
-                    v-model="recordWithReference.nb_page"
+    </BFormGroup>
+    <BFormGroup label="Nombre de pages" :state="isNbPageValid">
+      <BFormInput v-if="recordWithReference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
+      <BFormInput v-else
+                    v-model="nb_page"
                     :disabled="disabled"
                     ref="nb_page"/>
-    </b-form-group>
-    <b-form-group label="Description" v-if="!disabled">
-      <b-form-textarea v-model="recordWithReference.reference_description"
+    </BFormGroup>
+    <BFormGroup label="Description" v-if="!disabled">
+      <BFormTextarea v-model="reference_description"
                        :disabled="disabled"
                        :rows="5" size="sm"
                        ref="description"/>
-    </b-form-group>
+    </BFormGroup>
 
-      <b-form-group label="Cote">
-        <b-form-input v-model="recordWithReference.cote"
+      <BFormGroup label="Cote">
+        <BFormInput v-model="cote"
                       :disabled="disabled"
                       ref="cote"
         />
-      </b-form-group>
-      <b-form-group label="Année d'obtention">
-        <b-form-input v-model="recordWithReference.annee_entree"
+      </BFormGroup>
+      <BFormGroup label="Année d'obtention">
+        <BFormInput v-model="annee_entree"
                       :disabled="disabled"
                       ref="annee_obtention"/>
-      </b-form-group>
-<!--      <b-form-group label="Nombre d'exemplaires supplémentaires">-->
-<!--        <b-form-input v-model="recordWithReference.nb_exemplaire_supp"-->
+      </BFormGroup>
+<!--      <BFormGroup label="Nombre d'exemplaires supplémentaires">-->
+<!--        <BFormInput v-model="recordWithReference.nb_exemplaire_supp"-->
 <!--                      ref="nb_exemplaire_supp"-->
 <!--                      :disabled="disabled"/>-->
-<!--      </b-form-group>-->
-      <b-form-group label="Provenance">
-        <b-form-input v-model="recordWithReference.provenance"
+<!--      </BFormGroup>-->
+      <BFormGroup label="Provenance">
+        <BFormInput v-model="provenance"
                       :disabled="disabled"
                       ref="provenance"/>
-      </b-form-group>
-      <b-form-group label="Aide à la recherche">
-        <b-form-input v-model="recordWithReference.aide_a_la_recherche"
+      </BFormGroup>
+      <BFormGroup label="Aide à la recherche">
+        <BFormInput v-model="aide_a_la_recherche"
                       :disabled="disabled"
                       ref="aide_a_la_recherche"/>
-      </b-form-group>
-      <b-form-group label="Observations">
-        <b-form-input v-model="recordWithReference.observations"
+      </BFormGroup>
+      <BFormGroup label="Observations">
+        <BFormInput v-model="observations"
                       :disabled="disabled"
                       ref="observations"/>
-      </b-form-group>
-      <b-button type="submit" v-if="!disabled"
+      </BFormGroup>
+      <BButton type="submit" v-if="!disabled"
                 :disabled="isInvalid() || disabled"
-                ref="submit" @click="save" >Enregistrer</b-button>
+                ref="submit" @click="save" >Enregistrer</BButton>
 
-    </b-form>
+    </BForm>
     <span class="mx-3">{{ message }}</span>
     
-  </b-container>
+  </BContainer>
 
 </template>
 
@@ -100,10 +98,11 @@
 import SuggestionAuteur from "../auteur/SuggestionAuteur.vue";
 import {BookRecordWithReference} from "@/services/objectManager";
 import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
+import {BButton, BContainer, BForm, BFormGroup, BFormInput, BFormTextarea} from "bootstrap-vue-next";
 
 export default {
   name: "EnregistrementCompletFormulaire",
-  components: {JsonLdHeader, SuggestionAuteur},
+  components: {BButton, BFormTextarea, BFormInput, BContainer, BFormGroup, BForm, JsonLdHeader, SuggestionAuteur},
   props: {
     recordWithReference: {
       type: BookRecordWithReference
@@ -138,6 +137,110 @@ export default {
 
   },
   computed: {
+    authors: {
+      get() {
+        return this.recordWithReference.authors;
+      },
+      set(value) {
+        this.$emit('update:authors', value);
+      }
+    },
+    authorsForm: {
+      get() {
+        return this.recordWithReference.authorsForm;
+      },
+      set(value) {
+        this.$emit('update:authorsForm', value);
+      }
+    },
+    titre: {
+      get() {
+        return this.recordWithReference.titre;
+      },
+      set(value) {
+        this.$emit('update:titre', value);
+      }
+    },
+    lieu_edition: {
+      get() {
+        return this.recordWithReference.lieu_edition;
+      },
+      set(value) {
+        this.$emit('update:lieu_edition', value);
+      }
+    },
+    editeur: {
+      get() {
+        return this.recordWithReference.editeur;
+      },
+      set(value) {
+        this.$emit('update:editeur', value);
+      }
+    },
+    publication_annee: {
+      get() {
+        return this.recordWithReference.publication_annee;
+      },
+      set(value) {
+        this.$emit('update:publication_annee', value);
+      }
+    },
+    nb_page: {
+      get() {
+        return this.recordWithReference.nb_page;
+      },
+      set(value) {
+        this.$emit('update:nb_page', value);
+      }
+    },
+    reference_description: {
+      get() {
+        return this.recordWithReference.reference_description;
+      },
+      set(value) {
+        this.$emit('update:reference_description', value);
+      }
+    },
+    cote: {
+      get() {
+        return this.recordWithReference.cote;
+      },
+      set(value) {
+        this.$emit('update:cote', value);
+      }
+    },
+    annee_entree: {
+      get() {
+        return this.recordWithReference.annee_entree;
+      },
+      set(value) {
+        this.$emit('update:annee_entree', value);
+      }
+    },
+    provenance: {
+      get() {
+        return this.recordWithReference.provenance;
+      },
+      set(value) {
+        this.$emit('update:provenance', value);
+      }
+    },
+    aide_a_la_recherche: {
+      get() {
+        return this.recordWithReference.aide_a_la_recherche;
+      },
+      set(value) {
+        this.$emit('update:aide_a_la_recherche', value);
+      }
+    },
+    observations: {
+      get() {
+        return this.recordWithReference.observations;
+      },
+      set(value) {
+        this.$emit('update:observations', value);
+      }
+    },
     isNbPageValid: function() {
       if(typeof this.recordWithReference.nb_page === "string") {
         if(this.recordWithReference.nb_page.length === 0) {

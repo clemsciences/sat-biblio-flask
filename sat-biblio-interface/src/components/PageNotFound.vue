@@ -1,12 +1,12 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Page non trouvée</h2>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 export default {
-  name: "PageNotFound"
+  name: "PageNotFoundView"
 }
 </script>
 

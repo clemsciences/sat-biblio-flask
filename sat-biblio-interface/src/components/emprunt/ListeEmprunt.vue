@@ -1,47 +1,47 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Liste d'emprunts</h2>
     <p>Double-cliquez sur la ligne pour voir les détails sur un emprunt.</p>
-<!--    <b-row class="my-1">-->
-<!--      <b-col lg="4">-->
-<!--        <b-form-group label="Prénom" label-cols-sm="3"-->
+<!--    <BRow class="my-1">-->
+<!--      <BCol lg="4">-->
+<!--        <BFormGroup label="Prénom" label-cols-sm="3"-->
 <!--          label-align-sm="right" label-size="sm" class="mb-0">-->
-<!--          <b-input type="search" v-model="firstNameFiltre"-->
+<!--          <BFormInput type="search" v-model="firstNameFiltre"-->
 <!--                   placeholder="Filtrer en fonction du prénom"/>-->
 
-<!--        </b-form-group>-->
-<!--      </b-col>-->
-<!--      <b-col lg="4">-->
-<!--        <b-form-group label="Nom de famille" label-cols-sm="3"-->
+<!--        </BFormGroup>-->
+<!--      </BCol>-->
+<!--      <BCol lg="4">-->
+<!--        <BFormGroup label="Nom de famille" label-cols-sm="3"-->
 <!--          label-align-sm="right" label-size="sm" class="mb-0">-->
-<!--          <b-input type="search" v-model="familyNameFiltre"-->
+<!--          <BFormInput type="search" v-model="familyNameFiltre"-->
 <!--                   placeholder="Filtrer en fonction du nom de famille"/>-->
-<!--        </b-form-group>-->
-<!--      </b-col>-->
-<!--    </b-row>-->
-    <b-row>
-      <b-form-group label="Filtrer par retard" v-slot="{ ariaDescribedby }">
-      <b-form-radio-group
+<!--        </BFormGroup>-->
+<!--      </BCol>-->
+<!--    </BRow>-->
+    <BRow>
+      <BFormGroup label="Filtrer par retard" v-slot="{ ariaDescribedby }">
+      <BFormRadio-group
         id="radio-group-1"
         v-model="lateStateSelected"
         :options="lateStateOptions"
         :aria-describedby="ariaDescribedby"
-      ></b-form-radio-group>
-    </b-form-group>
+      ></BFormRadio-group>
+    </BFormGroup>
 
-    </b-row>
-    <b-row>
+    </BRow>
+    <BRow>
 
-    <b-pagination v-model="currentPage"
+    <BPagination v-model="currentPage"
       :total-rows="borrowingTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
-      <filter-count :filtered-item-count="borrowingFilteredNumber" :total-item-count="borrowingTotalNumber"/>
+      <FilterCount :filtered-item-count="borrowingFilteredNumber" :total-item-count="borrowingTotalNumber"/>
 
-    </b-row>
+    </BRow>
 
 
-    <b-table striped bordered hover :items="retrieveBorrowings" :fields="fields"
+    <BTable striped bordered hover :items="retrieveBorrowings" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToBorrowing" :filter="onFilter">
       <template #table-caption>La liste des emprunts dans la base.</template>
@@ -73,14 +73,14 @@ Object { comment: "Oui", date_emprunt: "2022-01-19", emprunte: true, … }
       <template #cell(date_retour_reel)="data">
         {{ fromISOtoFrenchDateFormat(data.item.date_retour_reel) }}
       </template>
-    </b-table>
-  </b-container>
+    </BTable>
+  </BContainer>
 </template>
 
 <script>
 
-import {getBorrowingsCount, retrieveBorrowings} from "@/services/api";
-import FilterCount from "@/components/visuel/FilterCount";
+import {getBorrowingsCount, retrieveBorrowings} from "@/services/api.js";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 
 export default {
   name: "ListeEmprunt",

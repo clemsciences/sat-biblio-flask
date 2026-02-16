@@ -1,10 +1,10 @@
 <template>
-  <b-container>
+  <BContainer>
     <ListEntriesOfEntry>
 
     </ListEntriesOfEntry>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

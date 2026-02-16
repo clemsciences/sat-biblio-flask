@@ -1,6 +1,6 @@
 <template>
-  <b-container>
-    <Title
+  <BContainer>
+    <AppTitle
         id="id-emprunt-lire"
         info="Fiche d'un emprunt de livre."
         title="Emprunt"/>
@@ -10,30 +10,36 @@
       :message="message"
       :disabled="!canModify"
       :is-update="true"
+      @update:record="borrowing.record = $event"
+      @update:borrower="borrowing.borrower = $event"
+      @update:borrowingDate="borrowing.borrowingDate = $event"
+      @update:dateComebackExpected="borrowing.dateComebackExpected = $event"
+      @update:actualComebackDate="borrowing.actualComebackDate = $event"
+      @update:comment="borrowing.comment = $event"
     />
-    <b-button class="my-3" v-if="canModify" :disabled="!canModify"
-              v-b-modal.suppression>
+    <BButton class="my-3" v-if="canModify" :disabled="!canModify"
+              v-b-toggle.suppression>
       Supprimer
-    </b-button>
-    <b-modal id="suppression" title="Suppression de l'emprunt"
+    </BButton>
+    <BModal id="suppression" title="Suppression de l'emprunt"
         cancel-title="Annuler" ok-title="Supprimer" @ok="deleteBorrowing">
         <p>Êtes-vous sûr de supprimer cet emprunt ?</p>
-      </b-modal>
-  </b-container>
+      </BModal>
+  </BContainer>
 
 </template>
 
 <script>
-import {deleteBorrowing, retrieveBorrowing, updateBorrowing} from "@/services/api";
-import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire";
-import Title from "@/components/visuel/Title";
+import {deleteBorrowing, retrieveBorrowing, updateBorrowing} from "@/services/api.js";
+import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire.vue";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 import {mapState} from "vuex";
-import {canEdit} from "@/services/rights";
-import {BookBorrowing} from "@/services/objectManager";
+import {canEdit} from "@/services/rights.js";
+import {BookBorrowing} from "@/services/objectManager.js";
 
 export default {
   name: "LireEmprunt",
-  components: {EmpruntFormulaire, Title},
+  components: {EmpruntFormulaire, AppTitle},
   data: function () {
     return {
       borrowing: new BookBorrowing(),

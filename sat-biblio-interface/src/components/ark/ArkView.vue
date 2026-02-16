@@ -1,12 +1,12 @@
 <template>
-  <b-container>
+  <BContainer>
     <div v-if="replied">
       {{ message }}
     </div>
 
-    <b-spinner v-else />
+    <BSpinner v-else />
 
-  </b-container>
+  </BContainer>
 
 </template>
 <script>

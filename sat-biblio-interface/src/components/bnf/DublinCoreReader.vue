@@ -1,21 +1,21 @@
 <template>
-  <b-container>
+  <BContainer>
     <h3>{{ record.title }}</h3>
-    <b-list-group>
-      <b-list-group-item>{{ record.description }}</b-list-group-item>
-      <b-list-group-item>{{ record.creator }}</b-list-group-item>
-      <b-list-group-item>{{ record.publisher }}</b-list-group-item>
-      <b-list-group-item>{{ record.date }}</b-list-group-item>
-      <b-list-group-item>{{ record.subject }}</b-list-group-item>
-      <b-list-group-item>{{ record.type }}</b-list-group-item>
-      <b-list-group-item>{{ record.format }}</b-list-group-item>
-      <b-list-group-item>{{ record.source }}</b-list-group-item>
-      <b-list-group-item>{{ record.relation }}</b-list-group-item>
-      <b-list-group-item>{{ record.rights }}</b-list-group-item>
+    <BListGroup>
+      <BListGroupItem>{{ record.description }}</BListGroupItem>
+      <BListGroupItem>{{ record.creator }}</BListGroupItem>
+      <BListGroupItem>{{ record.publisher }}</BListGroupItem>
+      <BListGroupItem>{{ record.date }}</BListGroupItem>
+      <BListGroupItem>{{ record.subject }}</BListGroupItem>
+      <BListGroupItem>{{ record.type }}</BListGroupItem>
+      <BListGroupItem>{{ record.format }}</BListGroupItem>
+      <BListGroupItem>{{ record.source }}</BListGroupItem>
+      <BListGroupItem>{{ record.relation }}</BListGroupItem>
+      <BListGroupItem>{{ record.rights }}</BListGroupItem>
 
-    </b-list-group>
+    </BListGroup>
 
-  </b-container>
+  </BContainer>
 
 </template>
 

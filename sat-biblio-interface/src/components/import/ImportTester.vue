@@ -1,36 +1,46 @@
 <template>
-  <b-container>
-    <b-row>
-      <b-col cols="8">
-        <b-pagination
+  <BContainer>
+    <BRow>
+      <BCol cols="8">
+        <BPagination
           v-model="currentPage"
           :total-rows="rowTotalNumber"
           :per-page="perPage"
           aria-controls="my-table"/>
-        <b-table striped bordered hover :items="loadRows" :fields="fields"
+        <BTable striped bordered hover :items="loadRows" :fields="fields"
                  primary-key="id" :per-page="perPage" :current-page="currentPage"
                  @row-dblclicked="showRowProcessing">
           <template #table-caption>La liste des entrées dans la base actuelle.</template>
-        </b-table>
-      </b-col>
-      <b-col cols="4">
+        </BTable>
+      </BCol>
+      <BCol cols="4">
         <AuteurFormulaire v-for="author in authors"
                           :key="`${author.first_name}_${author.family_name}`"
                           :auteur="author"
-                          :on-submit="saveAuthor"/>
+                          :on-submit="saveAuthor"
+                          @update:first_name="author.first_name = $event"
+                          @update:family_name="author.family_name = $event"/>
         <ReferenceLivreFormulaire :on-submit="saveReference" :reference="reference"/>
-        <EnregistrementFormulaire :on-submit="saveRecord" :record="record"/>
-      </b-col>
-    </b-row>
-  </b-container>
+        <EnregistrementFormulaire :on-submit="saveRecord" :record="record"
+                                  @update:selectedReference="record.selectedReference = $event"
+                                  @update:cote="record.cote = $event"
+                                  @update:annee_obtention="record.annee_obtention = $event"
+                                  @update:provenance="record.provenance = $event"
+                                  @update:aide_a_la_recherche="record.aide_a_la_recherche = $event"
+                                  @update:observations="record.observations = $event"
+                                  @update:row="record.row = $event"
+        />
+      </BCol>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
 import axios from "axios";
-import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
-import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
-import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
-import {Author, BookReference, Record} from "@/services/objectManager";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire.vue";
+import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire.vue";
+import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire.vue";
+import {Author, BookReference, Record} from "@/services/objectManager.js";
 
 export default {
   name: "ImportTester",

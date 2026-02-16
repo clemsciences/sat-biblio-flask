@@ -1,51 +1,52 @@
 <template>
-  <b-container>
-    <Title info="Cette page permet de fusionner deux auteurs qui sont des doublons."
+  <BContainer>
+    <AppTitle info="Cette page permet de fusionner deux auteurs qui sont des doublons."
            id="id-merge-authors">
       Fusionner des auteurs
-    </Title>
+    </AppTitle>
 
-    <b-card v-if="duplicateAuthors.length > 1" title="Homonymes potentiels" class="mb-3">
+    <BCard v-if="duplicateAuthors.length > 1" title="Homonymes potentiels" class="mb-3">
       <p>Voici les auteurs ayant le même nom de famille. Vous pouvez les sélectionner pour la fusion.</p>
-      <b-table striped hover :items="duplicateAuthors" :fields="duplicateFields">
+      <BTable striped hover :items="duplicateAuthors" :fields="duplicateFields">
         <template #cell(name)="data">
           {{ data.item.first_name }} {{ data.item.family_name }}
         </template>
         <template #cell(actions)="data">
-          <b-button size="sm" variant="info" class="mr-1" @click="setAsAuthor1(data.item)">
+          <BButton size="sm" variant="info" class="me-1" @click="setAsAuthor1(data.item)">
             Auteur 1
-          </b-button>
-          <b-button size="sm" variant="info" @click="setAsAuthor2(data.item)">
+          </BButton>
+          <BButton size="sm" variant="info" @click="setAsAuthor2(data.item)">
             Auteur 2
-          </b-button>
-          <b-button size="sm" variant="outline-primary" class="ml-1" @click="viewAuthor(data.item.id)">
+          </BButton>
+          <BButton size="sm" variant="outline-primary" class="ms-1" @click="viewAuthor(data.item.id)">
             Voir
-          </b-button>
+          </BButton>
         </template>
-      </b-table>
-    </b-card>
+      </BTable>
+    </BCard>
 
-    <b-card title="Sélection des auteurs">
-      <b-button size="sm" variant="outline-secondary" @click="fetchAllDuplicates" class="mb-3">
+    <BCard title="Sélection des auteurs">
+      <BButton size="sm" variant="outline-secondary" @click="fetchAllDuplicates" class="mb-3">
         Chercher tous les homonymes de la base
-      </b-button>
-      <b-row>
-        <b-col md="6">
+      </BButton>
+      <BRow>
+        <BCol md="6">
           <h5>Premier auteur</h5>
-          <b-form-group label="Rechercher l'auteur 1">
+          <BFormGroup label="Rechercher l'auteur 1">
             <vue-typeahead-bootstrap
               v-model="query1"
               :data="suggestions1"
               :serializer="s => s.text"
               placeholder="Tapez le nom de l'auteur"
+              @update:model-value="getSuggestions($event, 'suggestions1')"
               @hit="selectAuthor1($event)"
             />
-          </b-form-group>
+          </BFormGroup>
           <div v-if="author1">
             <p><strong>Sélectionné :</strong> {{ author1.text }} (ID: {{ author1.value }})</p>
-            <b-button size="sm" variant="outline-primary" @click="viewAuthor(author1.value)" class="mb-2">
+            <BButton size="sm" variant="outline-primary" @click="viewAuthor(author1.value)" class="mb-2">
               Voir la fiche de l'auteur
-            </b-button>
+            </BButton>
             <div v-if="books1.length > 0">
               <h6>Livres associés :</h6>
               <ul>
@@ -57,23 +58,24 @@
             <p v-else-if="loadingBooks1">Chargement des livres...</p>
             <p v-else>Aucun livre associé.</p>
           </div>
-        </b-col>
-        <b-col md="6">
+        </BCol>
+        <BCol md="6">
           <h5>Deuxième auteur</h5>
-          <b-form-group label="Rechercher l'auteur 2">
+          <BFormGroup label="Rechercher l'auteur 2">
             <vue-typeahead-bootstrap
               v-model="query2"
               :data="suggestions2"
               :serializer="s => s.text"
               placeholder="Tapez le nom de l'auteur"
+              @update:model-value="getSuggestions($event, 'suggestions2')"
               @hit="selectAuthor2($event)"
             />
-          </b-form-group>
+          </BFormGroup>
           <div v-if="author2">
             <p><strong>Sélectionné :</strong> {{ author2.text }} (ID: {{ author2.value }})</p>
-            <b-button size="sm" variant="outline-primary" @click="viewAuthor(author2.value)" class="mb-2">
+            <BButton size="sm" variant="outline-primary" @click="viewAuthor(author2.value)" class="mb-2">
               Voir la fiche de l'auteur
-            </b-button>
+            </BButton>
             <div v-if="books2.length > 0">
               <h6>Livres associés :</h6>
               <ul>
@@ -85,45 +87,57 @@
             <p v-else-if="loadingBooks2">Chargement des livres...</p>
             <p v-else>Aucun livre associé.</p>
           </div>
-        </b-col>
-      </b-row>
-    </b-card>
+        </BCol>
+      </BRow>
+    </BCard>
 
-    <b-card v-if="author1 && author2" title="Action" class="mt-3">
+    <BCard v-if="author1 && author2" title="Action" class="mt-3">
       <p>Lequel souhaitez-vous <strong>conserver</strong> ? L'autre sera supprimé et ses références seront rattachées à celui conservé.</p>
-      <b-form-group>
-        <b-form-radio v-model="idKeep" :value="author1.value">{{ author1.text }}</b-form-radio>
-        <b-form-radio v-model="idKeep" :value="author2.value">{{ author2.text }}</b-form-radio>
-      </b-form-group>
+      <BFormGroup>
+        <BFormRadio v-model="idKeep" :value="author1.value">{{ author1.text }}</BFormRadio>
+        <BFormRadio v-model="idKeep" :value="author2.value">{{ author2.text }}</BFormRadio>
+      </BFormGroup>
 
-      <b-button variant="danger" :disabled="!idKeep || loading" @click="confirmMerge">
-        <b-spinner small v-if="loading"></b-spinner>
+      <BButton variant="danger" :disabled="!idKeep || loading" @click="confirmMerge">
+        <BSpinner small v-if="loading"></BSpinner>
         Fusionner les auteurs
-      </b-button>
-    </b-card>
+      </BButton>
+    </BCard>
 
-    <b-alert v-if="message" :variant="messageVariant" show class="mt-3" dismissible @dismissed="message=''">
+    <BAlert v-if="message" :variant="messageVariant" show class="mt-3" dismissible @dismissed="message=''">
       {{ message }}
-    </b-alert>
+    </BAlert>
 
-    <b-modal id="modal-confirm-merge" title="Confirmer la fusion" @ok="doMerge">
+    <BModal id="modal-confirm-merge" v-model="showConfirmModal" title="Confirmer la fusion" @ok="doMerge">
       <p v-if="authorToKeep && authorToDelete">
         Êtes-vous sûr de vouloir fusionner ces auteurs ?<br>
         L'auteur <strong>{{ authorToKeep.text }}</strong> sera conservé.<br>
         L'auteur <strong>{{ authorToDelete.text }}</strong> sera <strong>supprimé</strong> et ses références seront transférées.
       </p>
       <p class="text-danger">Cette action est irréversible.</p>
-    </b-modal>
-  </b-container>
+    </BModal>
+  </BContainer>
 </template>
 
 <script>
-import Title from "../visuel/Title";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 import {searchNearAuthors, mergeAuthors, getEntryListAssociatedToAuthor, searchAuthors, getAuthorDuplicates} from "@/services/api";
+import {
+  BAlert,
+  BButton,
+  BCard,
+  BCol,
+  BContainer,
+  BFormGroup,
+  BFormRadio,
+  BModal,
+  BRow,
+  BSpinner
+} from "bootstrap-vue-next";
 
 export default {
   name: "MergeAuthors",
-  components: {Title},
+  components: {BRow, BFormGroup, BFormRadio, BCol, BModal, BAlert, BSpinner, BButton, BCard, BContainer, AppTitle},
   data() {
     return {
       query1: '',
@@ -141,6 +155,7 @@ export default {
       loading: false,
       message: '',
       messageVariant: 'info',
+      showConfirmModal: false,
       duplicateFields: [
         { key: 'name', label: 'Nom complet' },
         { key: 'id', label: 'ID' },
@@ -271,7 +286,7 @@ export default {
       window.open(routeData.href, '_blank');
     },
     confirmMerge() {
-      this.$bvModal.show('modal-confirm-merge');
+      this.showConfirmModal = true;
     },
     doMerge() {
       this.loading = true;
@@ -310,12 +325,12 @@ export default {
     }
   },
   watch: {
-    query1(val) {
-      this.getSuggestions(val, 'suggestions1');
-    },
-    query2(val) {
-      this.getSuggestions(val, 'suggestions2');
-    }
+    // query1(val) {
+    //   this.getSuggestions(val, 'suggestions1');
+    // },
+    // query2(val) {
+    //   this.getSuggestions(val, 'suggestions2');
+    // }
   }
 }
 </script>

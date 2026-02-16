@@ -1,57 +1,57 @@
 <template>
-  <b-container>
+  <BContainer>
     <b-navbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
       <b-navbar-brand to="/" id="accueil-tooltip">
         <h1 class="navbar-brand-title titre-nav-item" style="margin: 0; font-weight: normal; display: inline;">SAT -
           Biblio</h1>
 <!--        <h1 class="navbar-brand-title titre-nav-item">SAT - Biblio</h1>-->
-        <b-tooltip target="accueil-tooltip" triggers="hover" class="my-tooltip">
+        <BTooltip target="accueil-tooltip" triggers="hover" class="my-tooltip">
               Accueil
-        </b-tooltip>
+        </BTooltip>
       </b-navbar-brand>
       <b-navbar-toggle target="navbarSupportedContent"></b-navbar-toggle>
-      <b-collapse is-nav style="height: 1px;" id="navbarSupportedContent">
+      <BCollapse is-nav style="height: 1px;" id="navbarSupportedContent">
         <b-navbar-nav>
 <!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
           <b-nav-item v-if="connected && isContributor">
             <b-nav-item-dropdown text="Créer" class="titre-nav-item">
-              <b-dropdown-item to="/catalogue/creer">Nouvelle entrée</b-dropdown-item>
-              <b-dropdown-item to="/auteur/creer" v-if="isAdmin">Auteur</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/creer" v-if="isAdmin">Référence bibliographique</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/creer" v-if="isAdmin">Enregistrement dans le catalogue</b-dropdown-item>
+              <BDropdownItem to="/catalogue/creer">Nouvelle entrée</BDropdownItem>
+              <BDropdownItem to="/auteur/creer" v-if="isAdmin">Auteur</BDropdownItem>
+              <BDropdownItem to="/reference-livre/creer" v-if="isAdmin">Référence bibliographique</BDropdownItem>
+              <BDropdownItem to="/enregistrement/creer" v-if="isAdmin">Enregistrement dans le catalogue</BDropdownItem>
             </b-nav-item-dropdown>
           </b-nav-item>
           <b-nav-item class="active" active>
             <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
-              <b-dropdown-item to="/catalogue">Catalogue</b-dropdown-item>
-<!--              <b-dropdown-item to="/cotes">Cotes</b-dropdown-item>-->
-              <b-dropdown-item to="/mots-clefs">Mots clef</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</b-dropdown-item>
-              <b-dropdown-item to="/auteur/liste">Auteurs</b-dropdown-item>
-              <b-dropdown-item to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</b-dropdown-item>
-              <b-dropdown-item to="/enregistrement/liste" v-if="isAdmin">Catalogue</b-dropdown-item>
+              <BDropdownItem to="/catalogue">Catalogue</BDropdownItem>
+<!--              <BDropdownItem to="/cotes">Cotes</BDropdownItem>-->
+              <BDropdownItem to="/mots-clefs">Mots clef</BDropdownItem>
+              <BDropdownItem to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</BDropdownItem>
+              <BDropdownItem to="/auteur/liste">Auteurs</BDropdownItem>
+              <BDropdownItem to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</BDropdownItem>
+              <BDropdownItem to="/enregistrement/liste" v-if="isAdmin">Catalogue</BDropdownItem>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
             </b-nav-item-dropdown>
           </b-nav-item>
 <!--          <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>-->
           <b-nav-item v-if="isManager">
             <b-nav-item-dropdown text="Autres" class="titre-nav-item">
-              <b-dropdown-group v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
-                <b-dropdown-item to="/emprunt/livre">Nouvel emprunt</b-dropdown-item>
-                <b-dropdown-item to="/emprunt/liste">Livres empruntés</b-dropdown-item>
-                <b-dropdown-item to="/gestionnaire">Gestionnaire</b-dropdown-item>
-                <b-dropdown-item v-if="isAdmin" to="/evenements">Logs</b-dropdown-item>
-                <b-dropdown-item v-if="isAdmin" to="/dublin-core">Dublin Core</b-dropdown-item>
-              </b-dropdown-group>
-              <b-dropdown-group v-if="isEditor" id="group-editor" header="Editeur">
-                <b-dropdown-item to="/exporter">Exporter</b-dropdown-item>
-                <b-dropdown-item to="/rechercher/bulletins">Recherche bulletin</b-dropdown-item>
-                <b-dropdown-item to="/administrateur/fusionner-auteurs">Fusionner des auteurs</b-dropdown-item>
-              </b-dropdown-group>
-              <b-dropdown-group v-if="isEditor" id="group-admin" header="Admin" class="my-nav-group">
-                <b-dropdown-item to="/administrateur">Admin</b-dropdown-item>
-<!--                <b-dropdown-item to="/gestionnaire-importation">Gestionnaire d'importation</b-dropdown-item>-->
-              </b-dropdown-group>
+              <BDropdownGroup v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
+                <BDropdownItem to="/emprunt/livre">Nouvel emprunt</BDropdownItem>
+                <BDropdownItem to="/emprunt/liste">Livres empruntés</BDropdownItem>
+                <BDropdownItem to="/gestionnaire">Gestionnaire</BDropdownItem>
+                <BDropdownItem v-if="isAdmin" to="/evenements">Logs</BDropdownItem>
+                <BDropdownItem v-if="isAdmin" to="/dublin-core">Dublin Core</BDropdownItem>
+              </BDropdownGroup>
+              <BDropdownGroup v-if="isEditor" id="group-editor" header="Editeur">
+                <BDropdownItem to="/exporter">Exporter</BDropdownItem>
+                <BDropdownItem to="/rechercher/bulletins">Recherche bulletin</BDropdownItem>
+                <BDropdownItem to="/administrateur/fusionner-auteurs">Fusionner des auteurs</BDropdownItem>
+              </BDropdownGroup>
+              <BDropdownGroup v-if="isEditor" id="group-admin" header="Admin" class="my-nav-group">
+                <BDropdownItem to="/administrateur">Admin</BDropdownItem>
+<!--                <BDropdownItem to="/gestionnaire-importation">Gestionnaire d'importation</BDropdownItem>-->
+              </BDropdownGroup>
             </b-nav-item-dropdown>
           </b-nav-item>
 
@@ -59,34 +59,38 @@
 
           <b-nav-item class="active" active>
             <b-nav-item-dropdown text="Divers" class="titre-nav-item">
-              <b-dropdown-item to="/liens">Liens utiles</b-dropdown-item>
-              <b-dropdown-item to="/conception">Conception</b-dropdown-item>
-              <b-dropdown-item to="/notes-de-version">Notes de version</b-dropdown-item>
+              <BDropdownItem to="/liens">Liens utiles</BDropdownItem>
+              <BDropdownItem to="/conception">Conception</BDropdownItem>
+              <BDropdownItem to="/notes-de-version">Notes de version</BDropdownItem>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item id="connection-tooltip" class="nav-link space-around titre-nav-item ml-auto">
-            <!-- v-b-tooltip.hover.bottomleft="connectionTooltipHints" -->
+        <b-navbar-nav class="ms-auto">
+          <b-nav-item id="connection-tooltip" class="nav-link space-around titre-nav-item ms-auto">
+            <template v-if="connected">
+              <BTooltip target="connection-tooltip" triggers="hover" class="my-tooltip">
+                {{ connectionTooltipHints }}
+              </BTooltip>
+            </template>
             <b-nav-item-dropdown v-if="connected" text="Mon profil" class="titre-nav-item">
-              <b-dropdown-item to="/utilisateur/reinitialiser-mot-de-passe">
+              <BDropdownItem to="/utilisateur/reinitialiser-mot-de-passe">
                 Changer <br/> de mot de passe
-              </b-dropdown-item>
-              <b-dropdown-item to="/utilisateur/deconnexion">Se déconnecter</b-dropdown-item>
+              </BDropdownItem>
+              <BDropdownItem to="/utilisateur/deconnexion">Se déconnecter</BDropdownItem>
             </b-nav-item-dropdown>
             <b-nav-item-dropdown v-else text="Connexion" class="titre-nav-item">
-              <b-dropdown-item :to="{name: 'utilisateur-connexion'}">
+              <BDropdownItem :to="{name: 'utilisateur-connexion'}">
                 Se connecter
-              </b-dropdown-item>
-              <b-dropdown-item to="/utilisateur/creer">
+              </BDropdownItem>
+              <BDropdownItem to="/utilisateur/creer">
                 Nouveau compte
-              </b-dropdown-item>
+              </BDropdownItem>
             </b-nav-item-dropdown>
           </b-nav-item>
         </b-navbar-nav>
-      </b-collapse>
+      </BCollapse>
     </b-navbar>
-  </b-container>
+  </BContainer>
 
 </template>
 

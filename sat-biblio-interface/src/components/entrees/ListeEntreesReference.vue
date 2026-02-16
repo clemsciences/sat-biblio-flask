@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry.vue";
 import {
   getEntryListAssociatedToReference,
   getEntryListAssociatedToReferenceCount

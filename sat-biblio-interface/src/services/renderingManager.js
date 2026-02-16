@@ -121,7 +121,7 @@ export function renderRecord(record) {
     result += `${record.cote}, `
     if(record.selectedReference.value !== -1) {
         result += renderReference(record.selectedReference);
-    } else if(record.selectedReference.value !== -1) {
+    } else if(record.reference.value !== -1) {
         result += renderReference(record.reference);
     }
     return result;

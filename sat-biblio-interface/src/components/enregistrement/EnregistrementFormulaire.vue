@@ -1,67 +1,67 @@
 <template>
-  <b-form @submit.prevent>
-      <SuggestionReference v-if="record.selectedReference"
-                           v-model="record.selectedReference"
+  <BForm @submit.prevent>
+      <SuggestionReference v-if="selectedReference"
+                           v-model="selectedReference"
                            :disabled="disabled"
                            ref="reference"
       />
       <!-- Recherche assisté de la référence -->
-      <b-form-group label="Cote">
-        <b-form-input v-model="record.cote"
+      <BFormGroup label="Cote">
+        <BFormInput v-model="cote"
                       :disabled="disabled"
                       ref="cote"
         />
-      </b-form-group>
-      <b-form-group label="Année d'obtention">
-        <b-form-input v-model="record.annee_obtention"
+      </BFormGroup>
+      <BFormGroup label="Année d'obtention">
+        <BFormInput v-model="annee_obtention"
                       :disabled="disabled"
                       ref="annee_obtention"
         />
-      </b-form-group>
-<!--      <b-form-group label="Nombre d'exemplaires supplémentaires">-->
-<!--        <b-form-input v-model="record.nb_exemplaire_supp"-->
+      </BFormGroup>
+<!--      <BFormGroup label="Nombre d'exemplaires supplémentaires">-->
+<!--        <BFormInput v-model="record.nb_exemplaire_supp"-->
 <!--                      :disabled="disabled"/>-->
-<!--      </b-form-group>-->
-      <b-form-group label="Provenance">
-        <b-form-input v-model="record.provenance"
+<!--      </BFormGroup>-->
+      <BFormGroup label="Provenance">
+        <BFormInput v-model="provenance"
                       :disabled="disabled"
                       ref="provenance"
         />
-      </b-form-group>
-      <b-form-group label="Aide à la recherche">
-        <b-form-input v-model="record.aide_a_la_recherche"
+      </BFormGroup>
+      <BFormGroup label="Aide à la recherche">
+        <BFormInput v-model="aide_a_la_recherche"
                       :disabled="disabled"
                       ref="aide_a_la_recherche"
         />
-      </b-form-group>
-      <b-form-group label="Observations">
-        <b-form-input v-model="record.observations"
+      </BFormGroup>
+      <BFormGroup label="Observations">
+        <BFormInput v-model="observations"
                       :disabled="disabled"
                       ref="observations"
         />
-      </b-form-group>
-<!--      </b-form-group><b-form-group label="Commentaire">-->
-<!--        <b-form-input v-model="record.commentaire"-->
+      </BFormGroup>
+<!--      </BFormGroup><BFormGroup label="Commentaire">-->
+<!--        <BFormInput v-model="record.commentaire"-->
 <!--                      :disabled="disabled"/>-->
-<!--      </b-form-group>-->
+<!--      </BFormGroup>-->
 
-      <b-form-group label="Ligne" v-if="!disabled">
-        <b-form-textarea v-model="record.row"
+      <BFormGroup label="Ligne" v-if="!disabled">
+        <b-form-textarea v-model="row"
                          :disabled="disabled"
                          :rows="5" size="sm"
                          row="ligne" ref="ligne"
                          />
-      </b-form-group>
+      </BFormGroup>
 
-      <b-button type="submit" v-if="!disabled"
+      <BButton type="submit" v-if="!disabled"
                 :disabled="isIncorrect || disabled"
-                ref="submit" @click="onSubmit" >Enregistrer</b-button>
+                ref="submit" @click="onSubmit" >Enregistrer</BButton>
       <span class="mx-3">{{ message }}</span>
-    </b-form>
+    </BForm>
 </template>
 
 <script>
-import SuggestionReference from "@/components/reference_livre/SuggestionReference";
+import SuggestionReference from "@/components/reference_livre/SuggestionReference.vue";
 
 export default {
   name: "EnregistrementFormulaire",
@@ -76,6 +76,62 @@ export default {
     }
   },
   computed: {
+    selectedReference: {
+      get() {
+        return this.record.selectedReference;
+      },
+      set(value) {
+        this.$emit('update:selectedReference', value);
+      }
+    },
+    cote: {
+      get() {
+        return this.record.cote;
+      },
+      set(value) {
+        this.$emit('update:cote', value);
+      }
+    },
+    annee_obtention: {
+      get() {
+        return this.record.annee_obtention;
+      },
+      set(value) {
+        this.$emit('update:annee_obtention', value);
+      }
+    },
+    provenance: {
+      get() {
+        return this.record.provenance;
+      },
+      set(value) {
+        this.$emit('update:provenance', value);
+      }
+    },
+    aide_a_la_recherche: {
+      get() {
+        return this.record.aide_a_la_recherche;
+      },
+      set(value) {
+        this.$emit('update:aide_a_la_recherche', value);
+      }
+    },
+    observations: {
+      get() {
+        return this.record.observations;
+      },
+      set(value) {
+        this.$emit('update:observations', value);
+      }
+    },
+    row: {
+      get() {
+        return this.record.row;
+      },
+      set(value) {
+        this.$emit('update:row', value);
+      }
+    },
     isIncorrect: function () {
       return this.record.cote.length === 0 ||
           (this.record.selectedReference && this.record.selectedReference.value < 0);

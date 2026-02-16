@@ -1,70 +1,70 @@
 <template>
-  <b-form @submit.prevent>
+  <BForm @submit.prevent>
     <SuggestionAuteur
-        v-if="reference.selectedAuthors"
-        v-model="reference.selectedAuthors" class="my-3"
+        v-if="selectedAuthors"
+        v-model="selectedAuthors" class="my-3"
         :disabled="disabled"
         ref="authors"
     />
-    <b-form-group label="Auteurs tels qu'ils sont mentionnés dans le livre."
-    v-if="reference.authorsForm.length > 0 || !disabled">
-      <b-form-input v-model="reference.authorsForm"
+    <BFormGroup label="Auteurs tels qu'ils sont mentionnés dans le livre."
+    v-if="authorsForm.length > 0 || !disabled">
+      <BFormInput v-model="authorsForm"
                     :disabled="disabled"
                     ref="authorsForm"
       />
-    </b-form-group>
-    <b-form-group label="Titre">
-      <b-form-input v-model="reference.titre"
+    </BFormGroup>
+    <BFormGroup label="Titre">
+      <BFormInput v-model="titre"
                     :disabled="disabled"
                     ref="title"
       />
 <!--      <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
-    </b-form-group>
-    <b-form-group label="Lieu d'édition">
-      <b-form-input v-model="reference.lieu_edition"
+    </BFormGroup>
+    <BFormGroup label="Lieu d'édition">
+      <BFormInput v-model="lieu_edition"
                     :disabled="disabled"
                     ref="lieu_edition"
       />
-    </b-form-group>
-    <b-form-group label="Editeurs">
-      <b-form-input v-model="reference.editeur"
+    </BFormGroup>
+    <BFormGroup label="Editeurs">
+      <BFormInput v-model="editeur"
                     :disabled="disabled"
                     ref="editeur"
       />
-    </b-form-group>
-    <b-form-group label="Année">
-      <b-form-input v-model="reference.annee"
+    </BFormGroup>
+    <BFormGroup label="Année">
+      <BFormInput v-model="annee"
                     :disabled="disabled"
                     ref="annee"
       />
-    </b-form-group>
-    <b-form-group label="Nombre de pages" :state="isNbPageValid">
-      <b-form-input v-if="reference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
-      <b-form-input v-else
-                    v-model="reference.nb_page"
+    </BFormGroup>
+    <BFormGroup label="Nombre de pages" :state="isNbPageValid">
+      <BFormInput v-if="reference.nb_page == -1" value="Inconnu" :disabled="disabled"/>
+      <BFormInput v-else
+                    v-model="nb_page"
                     :disabled="disabled"
                     ref="nb_page"
       />
-    </b-form-group>
-    <b-form-group label="Description" v-if="!disabled">
-      <b-form-textarea v-model="reference.description"
+    </BFormGroup>
+    <BFormGroup label="Description" v-if="!disabled">
+      <b-form-textarea v-model="description"
                        :disabled="disabled"
                        :rows="5" size="sm"
                        ref="description"
       />
-    </b-form-group>
-    <b-button type="submit"
+    </BFormGroup>
+    <BButton type="submit"
               v-if="!disabled"
               :disabled="isIncorrect || disabled"
               @click="onSubmit"
-              ref="submit">Enregistrer</b-button>
+              ref="submit">Enregistrer</BButton>
     <span class="mx-3">{{ message }}</span>
-  </b-form>
+  </BForm>
 </template>
 
 <script>
-import SuggestionAuteur from "@/components/auteur/SuggestionAuteur";
-import {BookReference} from "@/services/objectManager";
+import SuggestionAuteur from "@/components/auteur/SuggestionAuteur.vue";
+import {BookReference} from "@/services/objectManager.js";
 // import BNFSearchBadge from "@/components/badges/BNFSearchBadge";
 
 export default {
@@ -83,6 +83,70 @@ export default {
     }
   },
   computed: {
+    selectedAuthors: {
+      get() {
+        return this.reference.selectedAuthors;
+      },
+      set(value) {
+        this.$emit('update:selectedAuthors', value);
+      }
+    },
+    authorsForm: {
+      get() {
+        return this.reference.authorsForm;
+      },
+      set(value) {
+        this.$emit('update:authorsForm', value);
+      }
+    },
+    titre: {
+      get() {
+        return this.reference.titre;
+      },
+      set(value) {
+        this.$emit('update:titre', value);
+      }
+    },
+    lieu_edition: {
+      get() {
+        return this.reference.lieu_edition;
+      },
+      set(value) {
+        this.$emit('update:lieu_edition', value);
+      }
+    },
+    editeur: {
+      get() {
+        return this.reference.editeur;
+      },
+      set(value) {
+        this.$emit('update:editeur', value);
+      }
+    },
+    annee: {
+      get() {
+        return this.reference.annee;
+      },
+      set(value) {
+        this.$emit('update:annee', value);
+      }
+    },
+    nb_page: {
+      get() {
+        return this.reference.nb_page;
+      },
+      set(value) {
+        this.$emit('update:nb_page', value);
+      }
+    },
+    description: {
+      get() {
+        return this.reference.description;
+      },
+      set(value) {
+        this.$emit('update:description', value);
+      }
+    },
     isIncorrect: function () {
       return (this.reference.selectedAuthors && this.reference.selectedAuthors.length === 0) ||
           this.reference.titre.length === 0 ||

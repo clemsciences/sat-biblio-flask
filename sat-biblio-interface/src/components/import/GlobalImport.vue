@@ -1,23 +1,23 @@
 <template>
-  <b-container>
-    <Title info="Importation globale"
+  <BContainer>
+    <AppTitle info="Importation globale"
            id="id-global-import">
       Importation globale
-    </Title>
-    <b-row>
-      <b-button @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV au format Schweitz</b-button>
+    </AppTitle>
+    <BRow>
+      <BButton @click="importAllRows" class="m-2">Importer le catalogue depuis le CSV au format Schweitz</BButton>
       <p>{{ importMessage }}</p>
-    </b-row>
-  </b-container>
+    </BRow>
+  </BContainer>
 
 </template>
 
 <script>
-import {importAllCatalogue} from "@/services/api";
-import Title from "../visuel/Title";
+import {importAllCatalogue} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 export default {
   name: "GlobalImport",
-  components: {Title},
+  components: {AppTitle},
   data: function() {
     return {
       importMessage: ''

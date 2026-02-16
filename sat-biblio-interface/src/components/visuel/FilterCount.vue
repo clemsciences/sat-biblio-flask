@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-badge id="filter-count" variant="secondary" class="m-3">{{ filteredItemCount }}/{{ totalItemCount }}</b-badge>
-    <b-tooltip target="filter-count" triggers="hover" style="text-justify: auto;">
+    <BBadge id="filter-count" variant="secondary" class="m-3">{{ filteredItemCount }}/{{ totalItemCount }}</BBadge>
+    <BTooltip target="filter-count" triggers="hover" style="text-justify: auto;">
       Il y a {{ filteredItemCount }} éléments qui ont été filtrés parmi les {{ totalItemCount }} élements au total.
-    </b-tooltip>
+    </BTooltip>
   </div>
 </template>
 

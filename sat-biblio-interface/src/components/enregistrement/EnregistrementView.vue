@@ -1,24 +1,32 @@
 <template>
-  <b-container>
-    <Title title="Nouvel enregistrement"
+  <BContainer>
+    <AppTitle title="Nouvel enregistrement"
            info="Un enregistrement désigne les informations sur un livre tel qu'il est enregistré dans la bibliothèque."
            id="id-record"/>
     <EnregistrementFormulaire
         :record="record"
         :on-submit="saveRecord"
-        :message="message"/>
-  </b-container>
+        :message="message"
+        @update:selectedReference="record.selectedReference = $event"
+        @update:cote="record.cote = $event"
+        @update:annee_obtention="record.annee_obtention = $event"
+        @update:provenance="record.provenance = $event"
+        @update:aide_a_la_recherche="record.aide_a_la_recherche = $event"
+        @update:observations="record.observations = $event"
+        @update:row="record.row = $event"
+    />
+  </BContainer>
 </template>
 
 <script>
-import {createBookRecord} from "@/services/api";
-import Title from "../visuel/Title";
-import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
-import {canManage} from "@/services/rights";
+import {createBookRecord} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire.vue";
+import {canManage} from "@/services/rights.js";
 
 export default {
-  name: "Enregistrement",
-  components: {EnregistrementFormulaire, Title},
+  name: "EnregistrementView",
+  components: {EnregistrementFormulaire, AppTitle},
   data: function () {
     return {
       record: {

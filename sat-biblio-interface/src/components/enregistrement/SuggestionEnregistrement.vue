@@ -1,22 +1,23 @@
 <template>
 
-  <b-form-group label="Enregistrement">
+  <BFormGroup label="Enregistrement">
     <vue-typeahead-bootstrap
       v-if="!disabled"
       v-model="recordQuery"
       :data="suggestedRecords"
       :serializer="s => s.text"
       placeholder="Tapez la cote ou le titre de l'enregistrement"
+      @update:model-value="getSuggestedRecords"
       @hit="addRecord($event)"
       :disabled="disabled"
     />
-    <b-form-input v-model="value.text" readonly/>
+    <BFormInput :model-value="modelValue.text" readonly/>
 
     <div v-if="!disabled">
-      <b-button v-if="value.value > 0" @click="removeRecord" class="m-1">Enlever enregistrement</b-button>
-      <b-button v-if="value.value > 0" @click="goToRecord" class="m-1">Voir enregistrement</b-button>
+      <BButton v-if="modelValue.value > 0" @click="removeRecord" class="m-1">Enlever enregistrement</BButton>
+      <BButton v-if="modelValue.value > 0" @click="goToRecord" class="m-1">Voir enregistrement</BButton>
     </div>
-  </b-form-group>
+  </BFormGroup>
 
 </template>
 
@@ -24,9 +25,9 @@
 import {searchNearBookRecords} from "@/services/api";
 
 export default {
-  name: "SuggestionEnregistrement",
+  name: "RecordSuggestion",
   props: {
-    value: Object, // selectedReference
+    modelValue: Object, // selectedReference
     disabled: {
       type: Boolean,
       default: false
@@ -42,17 +43,16 @@ export default {
   },
   methods: {
     removeRecord: function() {
-      this.value.value = -1;
-      this.value.text = "";
-      this.$emit('input', this.value);
+      const newValue = { ...this.modelValue, value: -1, text: "" };
+      this.$emit('update:modelValue', newValue);
     },
     goToRecord: function() {
-      let routeData = this.$router.resolve(`/enregistrement/lire/${this.value.value}`);
+      let routeData = this.$router.resolve(`/enregistrement/lire/${this.modelValue.value}`);
       window.open(routeData.href, '_blank');
     },
     addRecord: function (event) {
       this.recordQuery = "";
-      this.$emit('input', event);
+      this.$emit('update:modelValue', event);
     },
     getSuggestedRecords: function (query) {
       if(query.length >= 2) {
@@ -67,10 +67,10 @@ export default {
     },
   },
   watch: {
-    recordQuery: function (newValue) {
-      this.getSuggestedRecords(newValue);
-    },
-    value: function(newValue) {
+    // recordQuery: function (newValue) {
+    //   this.getSuggestedRecords(newValue);
+    // },
+    modelValue: function(newValue) {
       console.log(newValue);
     }
   }

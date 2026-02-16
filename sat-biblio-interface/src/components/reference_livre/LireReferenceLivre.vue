@@ -1,55 +1,63 @@
 <template>
-  <b-container>
-    <Title
+  <BContainer>
+    <AppTitle
       title="Référence bibliographique"
       id="id-ref-biblio-lecture"
       info=""/>
     <JsonLdHeader :json-data="reference"/>
-    <b-card>
-      <b-card-title title="Fiche"/>
-      <b-card-body>
+    <BCard>
+      <BCardTitle title="Fiche"/>
+      <BCardBody>
 <!--        <ValidEntry v-if="canManage" :approved="reference.valide"/>-->
-        <b-card-header>
+        <BCardHeader>
           <ReferenceLivrePrettyView :reference="reference"/>
-        </b-card-header>
+        </BCardHeader>
         <ReferenceLivreFormulaire
             :message="message"
             :on-submit="updateReference"
             :reference="reference"
             :disabled="!canModify"
+            @update:selectedAuthors="reference.selectedAuthors = $event"
+            @update:authorsForm="reference.authorsForm = $event"
+            @update:titre="reference.titre = $event"
+            @update:lieu_edition="reference.lieu_edition = $event"
+            @update:editeur="reference.editeur = $event"
+            @update:annee="reference.annee = $event"
+            @update:nb_page="reference.nb_page = $event"
+            @update:description="reference.description = $event"
         />
-        <b-button class="my-3" v-b-modal.suppression v-if="canModify" :disabled="!canModify">Supprimer</b-button>
-        <b-modal id="suppression" title="Suppression de la référence"
+        <BButton class="my-3" v-b-toggle.suppression v-if="canModify" :disabled="!canModify">Supprimer</BButton>
+        <BModal id="suppression" title="Suppression de la référence"
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteReference">
           <p>Êtes-vous sûr de supprimer cette référence ?</p>
-        </b-modal>
+        </BModal>
         <ArkInput :ark-name="reference.ark_name"/>
-      </b-card-body>
-    </b-card>
+      </BCardBody>
+    </BCard>
 
-    <b-card>
-        <b-card-title title="Entrées liées"/>
-        <b-card-body>
-          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
-          <b-collapse id="collapse-bound" class="my-2">
+    <BCard>
+        <BCardTitle title="Entrées liées"/>
+        <BCardBody>
+          <BButton v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</BButton>
+          <BCollapse id="collapse-bound" class="my-2">
             <liste-entrees-reference :reference-id="referenceId"/>
-          </b-collapse>
-        </b-card-body>
-      </b-card>
-  </b-container>
+          </BCollapse>
+        </BCardBody>
+      </BCard>
+  </BContainer>
 </template>
 
 <script>
 import axios from "axios";
-import {deleteBookReference, retrieveBookReference, updateBookReference} from "../../services/api";
-import Title from "@/components/visuel/Title";
-import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
+import {deleteBookReference, retrieveBookReference, updateBookReference} from "@/services/api";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire.vue";
 import {canEdit} from "@/services/rights";
 import {mapState} from "vuex";
 // import ValidEntry from "@/components/visuel/ValidEntry";
-import ListeEntreesReference from "@/components/entrees/ListeEntreesReference";
+import ListeEntreesReference from "@/components/entrees/ListeEntreesReference.vue";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
-import {BookReference} from "@/services/objectManager";
+import {BookReference} from "@/services/objectManager.js";
 import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 import ArkInput from "@/components/ark/ArkInput.vue";
 
@@ -62,7 +70,7 @@ name: "LireReferenceLivre",
     ListeEntreesReference,
     // ValidEntry,
     ReferenceLivreFormulaire,
-    Title},
+    AppTitle},
   data: function () {
     return {
       suggestedAuthors: [],

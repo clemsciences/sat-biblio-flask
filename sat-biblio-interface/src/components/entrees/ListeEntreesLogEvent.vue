@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <BContainer>
     <ListEntriesOfEntry
         :retrieve-list-request="getLogEventListByUser"
         :perPage="perPage"
@@ -9,7 +9,7 @@
     :entry-id="userId">
 
     </ListEntriesOfEntry >
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

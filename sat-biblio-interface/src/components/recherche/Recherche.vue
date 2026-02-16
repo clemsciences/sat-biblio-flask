@@ -1,34 +1,34 @@
 <template>
   <div>
     <h2>Recherche</h2>
-    <b-form @submit.prevent="search">
-      <b-form-group label="Prénom">
-        <b-form-input v-model="first_name" type="text"/>
-      </b-form-group>
-      <b-form-group label="Nom de famille">
-        <b-form-input v-model="family_name" type="text"/>
-      </b-form-group>
-      <b-form-group label="Année">
-        <b-form-input v-model="annee" type="text"/>
-      </b-form-group>
-      <b-form-group label="Editeur">
-        <b-form-input v-model="editor" type="text"/>
-      </b-form-group>
-      <b-form-group label="Titre">
-        <b-form-input v-model="titre" type="text"/>
-      </b-form-group>
-      <b-form-group label="Cote">
-      <b-form-input v-model="cote" type="text"/>
-      </b-form-group>
-      <b-form-group label="Provenance">
-      <b-form-input v-model="provenance" type="text"/>
-      </b-form-group>
-      <b-form-group label="Mots-clef">
-        <b-form-input v-model="keywords" type="text"/>
-      </b-form-group>
-      <b-button type="submit">Rechercher</b-button>
+    <BForm @submit.prevent="search">
+      <BFormGroup label="Prénom">
+        <BFormInput v-model="first_name" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Nom de famille">
+        <BFormInput v-model="family_name" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Année">
+        <BFormInput v-model="annee" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Editeur">
+        <BFormInput v-model="editor" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Titre">
+        <BFormInput v-model="titre" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Cote">
+      <BFormInput v-model="cote" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Provenance">
+      <BFormInput v-model="provenance" type="text"/>
+      </BFormGroup>
+      <BFormGroup label="Mots-clef">
+        <BFormInput v-model="keywords" type="text"/>
+      </BFormGroup>
+      <BButton type="submit">Rechercher</BButton>
       <span class="mx-3">{{ message }}</span>
-    </b-form>
+    </BForm>
 
     <p v-for="resAuthor in researchedAuthors" :key="resAuthor.id">{{ resAuthor }}</p>
 
@@ -41,7 +41,7 @@
 import axios from "axios";
 
 export default {
-  name: "Recherche",
+  name: "RechercheView",
   data: function () {
     return {
       first_name: "",

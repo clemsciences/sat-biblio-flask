@@ -1,12 +1,12 @@
 <template>
-  <b-row>
-    <b-col>
-      <b-badge pill :variant="borrowingColor" :id="`${recordId}`">{{ message }}</b-badge>
-      <b-tooltip :target="`${recordId}`" triggers="hover" class="my-tooltip">
+  <BRow>
+    <BCol>
+      <BBadge pill :variant="borrowingColor" :id="`${recordId}`">{{ message }}</BBadge>
+      <BTooltip :target="`${recordId}`" triggers="hover" class="my-tooltip">
         {{ message }}
-      </b-tooltip>
-    </b-col>
-  </b-row>
+      </BTooltip>
+    </BCol>
+  </BRow>
 </template>
 
 <script>

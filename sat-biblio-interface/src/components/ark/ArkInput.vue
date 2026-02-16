@@ -36,21 +36,21 @@ export default {
 
 <template>
   <div class="mt-3">
-    <b-form-group label="Permalien (alpha)">
+    <BFormGroup label="Permalien (alpha)">
       <b-input-group>
-        <b-form-input id="copy-btn" :value="url"/>
+        <BFormInput id="copy-btn" :value="url"/>
         <input type="hidden" id="rendering" :value="url"/>
-        <b-tooltip target="copy-btn" placement="bottom" triggers="manual" :show="showingCopyMessage">
+        <BTooltip target="copy-btn" placement="bottom" triggers="manual" :show="showingCopyMessage">
           Copié !
-        </b-tooltip>
+        </BTooltip>
         <b-input-group-append>
-          <b-button @click="copy">Copier</b-button>
-<!--          <b-button variant="outline-success">Button</b-button>-->
-<!--          <b-button variant="info">Button</b-button>-->
+          <BButton @click="copy">Copier</BButton>
+<!--          <BButton variant="outline-success">Button</BButton>-->
+<!--          <BButton variant="info">Button</BButton>-->
         </b-input-group-append>
 
       </b-input-group>
-    </b-form-group>
+    </BFormGroup>
 
   </div>
 

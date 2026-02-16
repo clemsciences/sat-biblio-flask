@@ -14,7 +14,7 @@ import {
   getNotValidatedAuthorsCount,
   retrieveNotValidatedAuthors,
 } from "@/services/api";
-import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees";
+import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees.vue";
 export default {
   name: "ListeAuteursNonApprouves",
   components: {ListeEntreesNonApprouvees},

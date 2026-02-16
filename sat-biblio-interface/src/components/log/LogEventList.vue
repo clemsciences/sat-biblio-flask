@@ -1,43 +1,43 @@
 <template>
-    <b-container>
-    <Title title="Liste des logs"
+    <BContainer>
+    <AppTitle title="Liste des logs"
        info=""
        id="id-liste-logs"/>
-    <b-row class="my-1">
-      <b-col lg="4">
-        <b-form-group label="Nom de la table" label-cols-sm="3"
+    <BRow class="my-1">
+      <BCol lg="4">
+        <BFormGroup label="Nom de la table" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="tableNameFilter" size="sm"
+          <BFormInput type="search" v-model="tableNameFilter" size="sm"
                    placeholder="Filtrer en fonction du nom de la table"/>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-pagination
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BPagination
       v-model="currentPage"
       :total-rows="logEventsTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
-    <b-table striped bordered hover :items="retrieveLogEvents" :fields="fields"
+    <BTable striped bordered hover :items="retrieveLogEvents" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToLogEvent" :filter="onFilter">
       <template #table-caption>La liste des événements dans la base.</template>
       <template #cell(values)="data">
         <vue-json-pretty :data="JSON.parse(data.item.values)"/>
       </template>
-    </b-table>
-  </b-container>
+    </BTable>
+  </BContainer>
 </template>
 
 <script>
-import Title from "@/components/visuel/Title";
-import {getLogEventsCount, retrieveLogEvents} from "@/services/api";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import {getLogEventsCount, retrieveLogEvents} from "@/services/api.js";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
 export default {
-  name: "LogEventList",
+  name: "LogEventListView",
 
-  components: {Title, VueJsonPretty},
+  components: {AppTitle, VueJsonPretty},
   data: function () {
     return {
       logEvents: [],

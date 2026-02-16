@@ -1,36 +1,37 @@
 <template>
-  <b-container>
-    <Title title="Se connecter"
+  <BContainer>
+    <AppTitle title="Se connecter"
            info="Il est nécessaire de se connecter si on veut faire des modifications. A contrario, la lecture est accessible par tout le monde."
            id="id-connexion"/>
-    <b-form @submit.prevent="login">
-      <b-form-group label="Adresse email">
-        <b-form-input v-model="email"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Mot de passe">
-        <b-row>
-          <b-col cols="9">
-            <b-form-input :type="passwordType" v-model="password"></b-form-input>
-          </b-col>
-          <b-col cols="3">
-            <b-button @click="togglePasswordType">{{ passwordAction }}</b-button>
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-button type="submit" :disabled="isIncorrect">Se connecter</b-button> <span class="mx-3">{{ message }}</span>
-    </b-form>
-    <p class="my-3"><b-button to="/utilisateur/mot-de-passe-oublie">Mot de passe oublié ?</b-button></p>
+    <BForm @submit.prevent="login">
+      <BFormGroup label="Adresse email">
+        <BFormInput v-model="email"></BFormInput>
+      </BFormGroup>
+      <BFormGroup label="Mot de passe">
+        <BRow>
+          <BCol cols="9">
+            <BFormInput :type="passwordType" v-model="password"></BFormInput>
+          </BCol>
+          <BCol cols="3">
+            <BButton @click="togglePasswordType">{{ passwordAction }}</BButton>
+          </BCol>
+        </BRow>
+      </BFormGroup>
+      <BButton type="submit" :disabled="isIncorrect">Se connecter</BButton> <span class="mx-3">{{ message }}</span>
+    </BForm>
+    <p class="my-3"><BButton to="/utilisateur/mot-de-passe-oublie">Mot de passe oublié ?</BButton></p>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 import {connectUser} from "@/services/api";
-import Title from "@/components/visuel/Title";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import {BButton, BCol, BFormGroup, BFormInput, BForm, BRow, BContainer} from "bootstrap-vue-next";
 
 export default {
-  name: "Connexion",
-  components: {Title},
+  name: "ConnexionView",
+  components: {BButton, BCol, BRow, BFormGroup, BFormInput, BForm, BContainer, AppTitle},
   data: function () {
     return {
       email: "",

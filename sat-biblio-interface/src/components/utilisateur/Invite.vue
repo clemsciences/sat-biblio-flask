@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "Invite"
+  name: "InviteView"
 }
 </script>
 

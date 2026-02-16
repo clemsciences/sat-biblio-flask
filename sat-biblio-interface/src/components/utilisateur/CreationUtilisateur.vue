@@ -1,59 +1,59 @@
 <template>
-  <b-container>
-    <Title info="Un utilisateur"
-           id="id-user">Création d'un compte utilisateur</Title>
-    <b-form @submit.prevent="sendUserCreation" v-if="inForm">
-      <b-form-group label="Prénom">
-        <b-form-input v-model="first_name"/>
-      </b-form-group>
-      <b-form-group label="Nom">
-        <b-form-input v-model="family_name"/>
-      </b-form-group>
-      <b-form-group label="Adresse email">
-        <b-form-input v-model="email"/>
-      </b-form-group>
-      <b-form-group label="Mot de passe">
-        <b-row>
-          <b-col cols="9">
-            <b-form-input :type="passwordType1" v-model="password1"/>
-          </b-col>
-          <b-col cols="3">
-            <b-button @click="togglePasswordType1">{{ this.passwordAction(this.passwordType1) }}</b-button>
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-form-group label="Confirmation du mot de passe">
-        <b-row>
-          <b-col cols="9">
-            <b-form-input :type="passwordType2" v-model="password2"/>
-          </b-col>
-          <b-col cols="3">
-            <b-button @click="togglePasswordType2">{{ this.passwordAction(this.passwordType2) }}</b-button>
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-button type="submit">Enregistrer</b-button>
+  <BContainer>
+    <AppTitle info="Un utilisateur"
+           id="id-user">Création d'un compte utilisateur</AppTitle>
+    <BForm @submit.prevent="sendUserCreation" v-if="inForm">
+      <BFormGroup label="Prénom">
+        <BFormInput v-model="first_name"/>
+      </BFormGroup>
+      <BFormGroup label="Nom">
+        <BFormInput v-model="family_name"/>
+      </BFormGroup>
+      <BFormGroup label="Adresse email">
+        <BFormInput v-model="email"/>
+      </BFormGroup>
+      <BFormGroup label="Mot de passe">
+        <BRow>
+          <BCol cols="9">
+            <BFormInput :type="passwordType1" v-model="password1"/>
+          </BCol>
+          <BCol cols="3">
+            <BButton @click="togglePasswordType1">{{ this.passwordAction(this.passwordType1) }}</BButton>
+          </BCol>
+        </BRow>
+      </BFormGroup>
+      <BFormGroup label="Confirmation du mot de passe">
+        <BRow>
+          <BCol cols="9">
+            <BFormInput :type="passwordType2" v-model="password2"/>
+          </BCol>
+          <BCol cols="3">
+            <BButton @click="togglePasswordType2">{{ this.passwordAction(this.passwordType2) }}</BButton>
+          </BCol>
+        </BRow>
+      </BFormGroup>
+      <BButton type="submit">Enregistrer</BButton>
       <span class="mx-3">{{ message }}</span>
 
-    </b-form>
+    </BForm>
     <div v-else>
       <p>
         Le compte de <i>{{ first_name }} {{ family_name }}</i> a été créé.
         Un courriel a été envoyé à <b>{{ email }}</b>.
         Il faudra valider le compte en cliquant sur le lien donné.
       </p>
-      <b-button @click="resetForm">Créer un nouveau compte utilisateur</b-button>
+      <BButton @click="resetForm">Créer un nouveau compte utilisateur</BButton>
     </div>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 import {createUser} from "@/services/api";
-import Title from "@/components/visuel/Title";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 
 export default {
   name: "CreationUtilisateur",
-  components: {Title},
+  components: {AppTitle},
   data: function() {
     return {
       first_name: "",

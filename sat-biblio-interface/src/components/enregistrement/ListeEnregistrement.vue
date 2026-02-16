@@ -1,76 +1,76 @@
 <template>
-  <b-container>
-    <Title info="Le catalogue est la liste des enregistrements dans la bibliothèque."
+  <BContainer>
+    <AppTitle info="Le catalogue est la liste des enregistrements dans la bibliothèque."
     id="id-catalogue">
       Catalogue
-    </Title>
+    </AppTitle>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
-    <b-row class="my-1">
-      <b-col lg="4">
-        <b-form-group label="Cote" label-cols-sm="3"
+    <BRow class="my-1">
+      <BCol lg="4">
+        <BFormGroup label="Cote" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="coteFilter" size="sm"
+          <BFormInput v-model="coteFilter" size="sm"
                    placeholder="Filtrer en fonction de la cote"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Auteur" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Auteur" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="authorFilter" size="sm"
+          <BFormInput v-model="authorFilter" size="sm"
                    placeholder="Filtrer en fonction de l'auteur"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Aide à la recherche" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Aide à la recherche" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="keywordsFilter" size="sm"
+          <BFormInput v-model="keywordsFilter" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Titre" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titleFilter" size="sm"
+          <BFormInput v-model="titleFilter" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-    <b-pagination
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow>
+    <BPagination
         v-model="currentPage"
         :total-rows="recordFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
-      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-    </b-row>
+      <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </BRow>
 
-    <b-table striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
+    <BTable striped bordered hover :items="retrieveEnregistrementList" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToEnregistrement" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
-    </b-table>
+    </BTable>
 
-    <b-row>
-    <b-pagination
+    <BRow>
+    <BPagination
         v-model="currentPage"
         :total-rows="recordFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
-      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-    </b-row>
-  </b-container>
+      <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
 import {getBookRecordsCount, retrieveBookRecords} from "@/services/api";
-import Title from "../visuel/Title";
-import FilterCount from "@/components/visuel/FilterCount";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 
 export default {
   name: "ListeEnregistrement",
-  components: {Title, FilterCount},
+  components: {AppTitle, FilterCount},
   data: function () {
     return {
       records: [],

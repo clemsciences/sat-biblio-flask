@@ -1,15 +1,15 @@
 <template>
 
 
-  <b-container>
-    <b-form-group label="Auteurs" v-if="!disabled">
+  <BContainer>
+    <BFormGroup label="Auteurs" v-if="!disabled">
       <vue-typeahead-bootstrap
         v-model="author_query"
         :data="suggestedAuthors"
         :serializer="s => s.text"
         :disabled="disabled"
         placeholder="Tapez le prénom ou le nom de l'auteur"
-
+        @update:model-value="getSuggestedAuthors"
       />
       <div v-if="suggestedAuthors.length > 0">
         <p>{{suggestedAuthors}}</p>
@@ -17,8 +17,8 @@
       <div v-else>
         <p>C'est un nouvel auteur.</p>
       </div>
-    </b-form-group>
-  </b-container>
+    </BFormGroup>
+  </BContainer>
 
 </template>
 
@@ -30,7 +30,7 @@ export default {
   name: "AuthorCheck",
 
   props: {
-    value: Author,  // selectedAuthors
+    modelValue: Author,  // selectedAuthors
     disabled: {
       type: Boolean,
       default: false
@@ -61,14 +61,14 @@ export default {
       this.selectedAuthorId = event;
       this.selectedAuthors.push(event);
       this.author_query = "";
-      this.$emit("input", this.selectedAuthors);
+      this.$emit("update:modelValue", this.selectedAuthors);
     },
   },
   watch: {
-    author_query: function (newValue) {
-      this.getSuggestedAuthors(newValue);
-    },
-    value: {
+    // author_query: function (newValue) {
+    //   this.getSuggestedAuthors(newValue);
+    // },
+    modelValue: {
       handler(newValue) {
         this.author_query = ""
         console.log("youhou")

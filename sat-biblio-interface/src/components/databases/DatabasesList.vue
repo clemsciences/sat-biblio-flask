@@ -1,7 +1,7 @@
 <template>
-<b-list-group>
+<BListGroup>
 
-</b-list-group>
+</BListGroup>
 </template>
 
 <script>

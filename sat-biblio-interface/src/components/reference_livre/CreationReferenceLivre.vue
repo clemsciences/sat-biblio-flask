@@ -1,6 +1,6 @@
 <template>
-  <b-container>
-    <Title title="Nouvelle référence bibliographique - livre"
+  <BContainer>
+    <AppTitle title="Nouvelle référence bibliographique - livre"
            info="Une référence bibliographique désigne les informations propres à un livre"
            id="id-ref"/>
     <div v-if="reference">
@@ -10,23 +10,31 @@
           :reference="reference"
           :on-submit="saveReference"
           :message="message"
+          @update:selectedAuthors="reference.selectedAuthors = $event"
+          @update:authorsForm="reference.authorsForm = $event"
+          @update:titre="reference.titre = $event"
+          @update:lieu_edition="reference.lieu_edition = $event"
+          @update:editeur="reference.editeur = $event"
+          @update:annee="reference.annee = $event"
+          @update:nb_page="reference.nb_page = $event"
+          @update:description="reference.description = $event"
       />
     </div>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
-import {createBookReference} from "@/services/api";
-import Title from "../visuel/Title";
-import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
-import {canManage} from "@/services/rights";
-import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView";
-import {BookReference} from "@/services/objectManager";
+import {createBookReference} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire.vue";
+import {canManage} from "@/services/rights.js";
+import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
+import {BookReference} from "@/services/objectManager.js";
 
 export default {
   name: "ReferenceLivre",
-  components: {ReferenceLivrePrettyView, ReferenceLivreFormulaire, Title},
+  components: {ReferenceLivrePrettyView, ReferenceLivreFormulaire, AppTitle},
   data: function () {
     return {
       reference: null,

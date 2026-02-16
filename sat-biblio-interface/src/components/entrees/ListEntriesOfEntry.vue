@@ -1,20 +1,20 @@
 <template>
-  <b-container>
+  <BContainer>
     <div v-if="totalNumber > 0">
-      <b-pagination
+      <BPagination
           v-model="currentPage"
           :total-rows="totalNumber"
           :per-page="perPage"
           aria-controls="my-table"
           class="my-3"/>
-      <b-table striped bordered hover :items="retrieveList" :fields="fields"
+      <BTable striped bordered hover :items="retrieveList" :fields="fields"
                primary-key="uniqueId" :per-page="perPage" :current-page="currentPage"
                :sort-by="sortBy" @row-dblclicked="goTo">
         <template #table-caption v-if="caption.length > 0">{{ caption }}</template>
-      </b-table>
+      </BTable>
     </div>
     <p v-else>Il n'y a aucune entrée.</p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

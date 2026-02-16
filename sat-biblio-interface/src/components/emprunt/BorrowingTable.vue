@@ -1,12 +1,12 @@
 <template>
-  <b-container>
-    <b-row>
-    <b-pagination v-model="currentPage"
+  <BContainer>
+    <BRow>
+    <BPagination v-model="currentPage"
       :total-rows="borrowings.length"
       :per-page="perPage"
       aria-controls="my-table"/>
-    </b-row>
-    <b-table striped bordered hover :items="borrowings" :fields="fields"
+    </BRow>
+    <BTable striped bordered hover :items="borrowings" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              @row-dblclicked="goToBorrowing">
       <template #table-caption>La liste des emprunts dans la base.</template>
@@ -36,14 +36,14 @@
       <template #cell(date_retour_reel)="data">
         {{ fromISOtoFrenchDateFormat(data.item.date_retour_reel) }}
       </template>
-    </b-table>
-    <b-row>
-    <b-pagination v-model="currentPage"
+    </BTable>
+    <BRow>
+    <BPagination v-model="currentPage"
       :total-rows="borrowings.length"
       :per-page="perPage"
       aria-controls="my-table"/>
-    </b-row>
-  </b-container>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>

@@ -11,8 +11,8 @@
 
 <script>
 
-import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
-import {getEntryListAssociatedToBookRecords, getEntryListAssociatedToBookRecordsCount} from "@/services/api";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry.vue";
+import {getEntryListAssociatedToBookRecords, getEntryListAssociatedToBookRecordsCount} from "@/services/api.js";
 import {goToEntryView} from "@/services/entries";
 
 export default {

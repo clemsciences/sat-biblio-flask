@@ -1,22 +1,22 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Annotation des ouvrages publiés</h2>
-    <b-form-group label="Titre">
-      <b-form-input type="text" v-model="updatedData.title" />
-    </b-form-group>
-    <b-form-group label="Lien">
-      <b-form-input type="url" v-model="updatedData.link"/>
-    </b-form-group>
-    <b-form-group label="Type de publication">
-      <b-form-input type="text" v-model="updatedData.publicationType"/>
-    </b-form-group>
-    <b-form-group label="Année ou numéro">
-      <b-form-input type="text" v-model="updatedData.yearOrNumber"/>
-    </b-form-group>
+    <BFormGroup label="Titre">
+      <BFormInput type="text" v-model="updatedData.title" />
+    </BFormGroup>
+    <BFormGroup label="Lien">
+      <BFormInput type="url" v-model="updatedData.link"/>
+    </BFormGroup>
+    <BFormGroup label="Type de publication">
+      <BFormInput type="text" v-model="updatedData.publicationType"/>
+    </BFormGroup>
+    <BFormGroup label="Année ou numéro">
+      <BFormInput type="text" v-model="updatedData.yearOrNumber"/>
+    </BFormGroup>
 <!--    <b-textarea v-model="text" rows="10" max-rows="30"/>-->
 
-    <b-button type="save" @click="save" :disabled="isEqual">Sauver</b-button>
-  </b-container>
+    <BButton type="save" @click="save" :disabled="isEqual">Sauver</BButton>
+  </BContainer>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ import {getPublishedWork, updatePublishedWork} from "@/services/api";
 import {mapState} from "vuex";
 
 export default {
-  name: "WorkAnnotation",
+  name: "WorkAnnotationView",
   data: function() {
     return {
       savedData: {

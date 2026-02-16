@@ -1,23 +1,23 @@
 <template>
 <!--  -->
-  <b-container>
+  <BContainer>
     <h2>Imports</h2>
 
-    <b-row>
+    <BRow>
       <UploadCatalogueView @upload-finished="refreshImportList"/>
-<!--      <b-button @click="uploadCatalogue">Téléverser un catalogue</b-button>-->
-    </b-row>
-    <b-row>
+<!--      <BButton @click="uploadCatalogue">Téléverser un catalogue</BButton>-->
+    </BRow>
+    <BRow>
 
-    <b-col cols="6">
-      <b-card>
-        <b-card-body>
+    <BCol cols="6">
+      <BCard>:
+        <BCardBody>
           <div v-if="catalogueNumber > 0">
             <p>Cliquez sur la ligne pour voir les détails.</p>
-<!--              <b-list-group v-for="item in importList" :key="`id-${item.id}`">-->
-<!--                <b-list-group-item>{{ item }}</b-list-group-item>-->
-<!--              </b-list-group>-->
-            <b-table ref="importsTable" responsive striped bordered hover :items="loadImports"
+<!--              <BListGroup v-for="item in importList" :key="`id-${item.id}`">-->
+<!--                <BListGroupItem>{{ item }}</BListGroupItem>-->
+<!--              </BListGroup>-->
+            <BTable ref="importsTable" responsive striped bordered hover :items="loadImports"
                      :fields="fields" primary-key="key"
                      :per-page="perPage" :current-page="currentPage"
                      :sort-by="sortBy" selectable select-mode="single"
@@ -28,20 +28,20 @@
               </template>
               <template #cell(actions)="row">
 
-                <b-button :disabled="row.item.key !== selectedKey"
-                          size="sm" class="mr-1"
-                          v-b-modal.suppression :id="`delete-${row.item.key}`">
+                <BButton :disabled="row.item.key !== selectedKey"
+                          size="sm" class="me-1"
+                          v-b-toggle.suppression :id="`delete-${row.item.key}`">
                   Supprimer
-                </b-button>
-                <b-tooltip :target="`delete-${row.item.key}`" triggers="hover"
+                </BButton>
+                <BTooltip :target="`delete-${row.item.key}`" triggers="hover"
                            style="text-justify: auto;">
                   Supprimer le fichier <b>{{ row.item.filename }}</b>.
                   &Ccedil;a ne supprime pas l'import associé.
-                </b-tooltip>
+                </BTooltip>
               </template>
 
-            </b-table>
-            <b-pagination
+            </BTable>
+            <BPagination
               v-model="currentPage"
               :total-rows="catalogueNumber"
               :per-page="perPage"
@@ -52,14 +52,14 @@
           <div v-else>
             <h5>Aucun import n'a été fait.</h5>
           </div>
-        </b-card-body>
-      </b-card>
-<!--    </b-row>-->
-<!--    <b-row>-->
-    </b-col>
-    <b-col cols="6">
-        <b-card>
-          <b-card-body>
+        </BCardBody>
+      </BCard>
+<!--    </BRow>-->
+<!--    <BRow>-->
+    </BCol>
+    <BCol cols="6">
+        <BCard>
+          <BCardBody>
             <div v-if="selectedImportId === null">
               <p>Sélectionnez un catalogue</p>
             </div>
@@ -69,16 +69,16 @@
             <div v-else>
               <ImportItemView :import-item-id="selectedImportId"/>
             </div>
-          </b-card-body>
-        </b-card>
-    </b-col>
-    </b-row>
-    <b-modal id="suppression" title="Suppression de l'import"
+          </BCardBody>
+        </BCard>
+    </BCol>
+    </BRow>
+    <BModal id="suppression" title="Suppression de l'import"
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteFile">
       <p>Êtes-vous sûr de supprimer le fichier <b>{{ selectedFilename }}</b>?</p>
-    </b-modal>
+    </BModal>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
@@ -91,10 +91,11 @@ import {
 import ImportItemCreation from "@/components/import/ImportItemCreation.vue";
 import UploadCatalogueView from "@/components/import/UploadCatalogueView.vue";
 import ImportItemView from "@/components/import/ImportItemView.vue";
+import {BCard, BCardBody, BCol, BContainer, BRow} from "bootstrap-vue-next";
 
 export default {
   name: "ImportList",
-  components: {UploadCatalogueView, ImportItemCreation, ImportItemView},
+  components: {BCardBody, BCard, BRow, BContainer, BCol, UploadCatalogueView, ImportItemCreation, ImportItemView},
   data: function() {
     return {
       // region list

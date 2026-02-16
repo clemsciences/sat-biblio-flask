@@ -1,16 +1,16 @@
 <template>
-  <b-card>
-    <b-card-body>
+  <BCard>
+    <BCardBody>
       <p v-if="rendering.length > 0" id="copy-btn">
         <span>{{ renderRecord(record) }}</span>
 <!--        <span>{{ renderReference(record.se)}}</span>-->
 <!--        <span>{{ record. }}</span>-->
       </p>
       <input type="hidden" id="rendering" :value="rendering"/>
-      <b-tooltip target="copy-btn" triggers="manual" :show="showingCopyMessage">Copié !</b-tooltip>
-      <b-button class="mx-2" @click="copy">Copier</b-button>
-    </b-card-body>
-  </b-card>
+      <BTooltip target="copy-btn" triggers="manual" :show="showingCopyMessage">Copié !</BTooltip>
+      <BButton class="mx-2" @click="copy">Copier</BButton>
+    </BCardBody>
+  </BCard>
 </template>
 
 <script>

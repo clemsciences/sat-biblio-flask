@@ -1,7 +1,7 @@
 <template>
-  <b-container>
-    <b-form @submit.prevent="saveCatalogueItem">
-      <b-form-group label="Fichier">
+  <BContainer>
+    <BForm @submit.prevent="saveCatalogueItem">
+      <BFormGroup label="Fichier">
       <b-form-file
           browse-text="Explorer"
           v-model="file"
@@ -11,17 +11,17 @@
           ref="file-input"
           accept=".csv, .xlsx, .xls"
       />
-        <b-button @click="removeFile" :disabled="file === null">Annuler</b-button>
-        <b-button type="submit" :disabled="file === null">{{ file ? `Téléverser ${file.name}` : "Téléverser"}}</b-button>
+        <BButton @click="removeFile" :disabled="file === null">Annuler</BButton>
+        <BButton type="submit" :disabled="file === null">{{ file ? `Téléverser ${file.name}` : "Téléverser"}}</BButton>
         <div v-if="isUploading">
-          <b-spinner label="Importation en cours..." class="m-2"/>
+          <BSpinner label="Importation en cours..." class="m-2"/>
         </div>
 
     <p>{{ file ? file.name : ""}}</p>
 
-  </b-form-group>
-    </b-form>
-  </b-container>
+  </BFormGroup>
+    </BForm>
+  </BContainer>
 
 </template>
 
