@@ -1,59 +1,59 @@
 <template>
-  <b-container>
-    <Title v-if="managerCanUse && !isMyProfile" title="Page de gestion de l'utilisateur"
+  <BContainer>
+    <AppTitle v-if="managerCanUse && !isMyProfile" title="Page de gestion de l'utilisateur"
            info="Cette page permet au gestionnaire de modifier les droits à un utilisateur."
            id="id-gestionnaire-utilisateur">
-    </Title>
-    <Title v-else-if="isMyProfile" title="Mon profil"
+    </AppTitle>
+    <AppTitle v-else-if="isMyProfile" title="Mon profil"
            info="Cette page permet à l'utilisateur de modifier des informations le concernant."
            id="id-profil-utilisateur">
-    </Title>
+    </AppTitle>
 
-    <b-row>
-      <b-form @submit.prevent="updateUser">
-      <b-form-group label="Prénom">
-        <b-form-input type="text" v-model="first_name" :disabled="!isMyProfile"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Nom">
-        <b-form-input type="text" v-model="family_name" :disabled="!isMyProfile"></b-form-input>
-      </b-form-group>
-      <b-form-group label="Droit">
-        <b-form-select :disabled="!managerCanUse || (isMyProfile && managerCanUse)"
+    <BRow>
+      <BForm @submit.prevent="updateUser">
+      <BFormGroup label="Prénom">
+        <BFormInput type="text" v-model="first_name" :disabled="!isMyProfile"></BFormInput>
+      </BFormGroup>
+      <BFormGroup label="Nom">
+        <BFormInput type="text" v-model="family_name" :disabled="!isMyProfile"></BFormInput>
+      </BFormGroup>
+      <BFormGroup label="Droit">
+        <BFormSelect :disabled="!managerCanUse || (isMyProfile && managerCanUse)"
                        v-model="right" :options="limitedRightsForSelect"
                        :select-size="1" size="sm"/>
-      </b-form-group>
-      <b-form-group label="Adresse email">
-        <b-form-input type="text" v-model="emailAddress" disabled/>
-      </b-form-group>
-      <b-form-group>
+      </BFormGroup>
+      <BFormGroup label="Adresse email">
+        <BFormInput type="text" v-model="emailAddress" disabled/>
+      </BFormGroup>
+      <BFormGroup>
         <b-form-checkbox :disabled="true" :checked="emailConfirmed">Email confirmé</b-form-checkbox>
-      </b-form-group>
-      <b-form-group>
-        <b-button @click="resendConfirmationEmail" :disabled="emailConfirmed">Renvoyer un email de confirmation</b-button>
-      </b-form-group>
-      <b-button type="submit" :disabled="isIncorrect">Enregistrer</b-button>
+      </BFormGroup>
+      <BFormGroup>
+        <BButton @click="resendConfirmationEmail" :disabled="emailConfirmed">Renvoyer un email de confirmation</BButton>
+      </BFormGroup>
+      <BButton type="submit" :disabled="isIncorrect">Enregistrer</BButton>
       <span class="mx-3">{{ message }}</span>
-    </b-form>
-    </b-row>
-    <b-row>
-      <b-button class="my-3" :disabled="(isAdmin && isMyProfile) || (!isAdmin && !isMyProfile)"
-                v-b-modal.suppression>Supprimer</b-button>
-      <b-modal id="suppression" title="Suppression de l'enregistrement"
+    </BForm>
+    </BRow>
+    <BRow>
+      <BButton class="my-3" :disabled="(isAdmin && isMyProfile) || (!isAdmin && !isMyProfile)"
+                v-b-toggle.suppression>Supprimer</BButton>
+      <BModal id="suppression" title="Suppression de l'enregistrement"
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteUser">
           <p>Êtes-vous sûr de supprimer votre compte ?</p>
-        </b-modal>
-    </b-row>
-  </b-container>
+        </BModal>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
 import {rights} from "@/services/rights";
 import {deleteUser, resendConfirmationEmail, retrieveUser, updateUser} from "@/services/api";
-import Title from "@/components/visuel/Title";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 
 export default {
-  name: "Utilisateur",
-  components: {Title},
+  name: "UtilisateurView",
+  components: {AppTitle},
   data: function() {
     return {
       first_name: '',

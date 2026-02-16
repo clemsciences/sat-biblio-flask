@@ -1,31 +1,31 @@
 <template>
-  <b-form @submit.prevent="onSubmit">
-    <b-form-group label="Nom du fichier">
-      <b-form-input v-model="importItem.filename" :disabled="true"/>
-    </b-form-group>
-    <b-form-group label="Date de debut">
-      <b-form-input v-model="importItem.startDate" :disabled="true"/>
-    </b-form-group>
-    <b-form-group label="Date de fin">
-      <b-form-input v-model="importItem.endDate" :disabled="true"/>
-    </b-form-group>
-    <b-form-group label="Description">
-      <b-form-textarea v-model="importItem.description" :disabled="disabled"/>
-    </b-form-group>
-    <b-form-group label="Etat">
-      <b-form-textarea v-model="importItem.status" :disabled="disabled"/>
-    </b-form-group>
-    <b-form-group label="Utilisateur">
+  <BForm @submit.prevent="onSubmit">
+    <BFormGroup label="Nom du fichier">
+      <BFormInput v-model="filename" :disabled="true"/>
+    </BFormGroup>
+    <BFormGroup label="Date de debut">
+      <BFormInput v-model="startDate" :disabled="true"/>
+    </BFormGroup>
+    <BFormGroup label="Date de fin">
+      <BFormInput v-model="endDate" :disabled="true"/>
+    </BFormGroup>
+    <BFormGroup label="Description">
+      <b-form-textarea v-model="description" :disabled="disabled"/>
+    </BFormGroup>
+    <BFormGroup label="Etat">
+      <b-form-textarea v-model="status" :disabled="disabled"/>
+    </BFormGroup>
+    <BFormGroup label="Utilisateur">
       <div v-if="importItem.user" >
         <b-form-textarea :value="`${importItem.user.firstName} ${importItem.user.familyName}`" :disabled="true"/>
       </div>
       <div v-else>
-        <b-form-textarea v-model="importItem.user" :disabled="true"/>
+        <b-form-textarea v-model="user" :disabled="true"/>
       </div>
-    </b-form-group>
-    <b-button type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</b-button>
+    </BFormGroup>
+    <BButton type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</BButton>
     <span class="mx-3">{{ message }}</span>
-  </b-form>
+  </BForm>
 </template>
 
 <script>
@@ -45,11 +45,59 @@ export default {
     },
     onSubmit: Function,
     disabled: {
-      Boolean,
+      type: Boolean,
       default: false
     }
   },
   computed: {
+    filename: {
+      get() {
+        return this.importItem.filename;
+      },
+      set(value) {
+        this.$emit('update:filename', value);
+      }
+    },
+    startDate: {
+      get() {
+        return this.importItem.startDate;
+      },
+      set(value) {
+        this.$emit('update:startDate', value);
+      }
+    },
+    endDate: {
+      get() {
+        return this.importItem.endDate;
+      },
+      set(value) {
+        this.$emit('update:endDate', value);
+      }
+    },
+    description: {
+      get() {
+        return this.importItem.description;
+      },
+      set(value) {
+        this.$emit('update:description', value);
+      }
+    },
+    status: {
+      get() {
+        return this.importItem.status;
+      },
+      set(value) {
+        this.$emit('update:status', value);
+      }
+    },
+    user: {
+      get() {
+        return this.importItem.user;
+      },
+      set(value) {
+        this.$emit('update:user', value);
+      }
+    },
     isIncorrect() {
       return this.importItem.description.length === 0 ||
           this.importItem.filename.length === 0;

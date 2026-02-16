@@ -1,55 +1,57 @@
 <template>
-  <b-container>
-    <Title id="id-lecture-auteur"
+  <BContainer>
+    <AppTitle id="id-lecture-auteur"
            info="Fiche d'un auteur. Attention, les homonymes ne sont pas gérés."
            title="Auteur"/>
     <JsonLdHeader :json-data="auteur"/>
-    <b-card>
-      <b-card-title title="Fiche"/>
-      <b-card-body>
+    <BCard>
+      <BCardTitle title="Fiche"/>
+      <BCardBody>
 <!--        <ValidEntry v-if="canManage" :approved="auteur.valide"/>-->
-        <b-card-header>
+        <BCardHeader>
           <AuteurPrettyView :author="auteur" mode="sat"/>
-        </b-card-header>
+        </BCardHeader>
         <AuteurFormulaire
             :on-submit="updateAuthor"
             :auteur="auteur"
             :message="message"
             :disabled="!canModify"
+            @update:first_name="auteur.first_name = $event"
+            @update:family_name="auteur.family_name = $event"
         />
       <ArkInput :ark-name="auteur.ark_name"/>
-      <b-button class="my-3" v-if="canModify" v-b-modal.suppression :disabled="!canModify">Supprimer</b-button>
+      <BButton class="my-3" v-if="canModify" @click="showSuppressionModal = true" :disabled="!canModify">Supprimer</BButton>
 
-      <b-modal id="suppression" title="Suppression de l'auteur"
+      <BModal id="suppression" v-model="showSuppressionModal" title="Suppression de l'auteur"
         cancel-title="Annuler" ok-title="Supprimer" @ok="deleteAuthor">
         <p>Êtes-vous sûr de supprimer cet auteur ?</p>
-      </b-modal>
-      </b-card-body>
-    </b-card>
+      </BModal>
+      </BCardBody>
+    </BCard>
 
-    <b-card>
-      <b-card-title title="Entrées liées"/>
-      <b-card-body>
-        <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
-        <b-collapse id="collapse-bound" class="my-2">
+    <BCard>
+      <BCardTitle title="Entrées liées"/>
+      <BCardBody>
+        <BButton v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</BButton>
+        <BCollapse id="collapse-bound" class="my-2">
           <ListeEntreesAuteur :author-id="authorId"/>
-        </b-collapse>
-      </b-card-body>
-    </b-card>
+        </BCollapse>
+      </BCardBody>
+    </BCard>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 import {deleteAuthor, retrieveAuthor, updateAuthor} from "@/services/api";
-import Title from "@/components/visuel/Title";
-import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire.vue";
 import {mapState} from "vuex";
-import {canEdit} from "@/services/rights";
+import {canEdit} from "@/services/rights.js";
 // import ValidEntry from "@/components/visuel/ValidEntry";
-import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur";
+import ListeEntreesAuteur from "@/components/entrees/ListeEntreesAuteur.vue";
 import AuteurPrettyView from "@/components/auteur/AuteurPrettyView.vue";
-import {Author} from "@/services/objectManager";
+import {Author} from "@/services/objectManager.js";
 import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 import ArkInput from "@/components/ark/ArkInput.vue";
 
@@ -60,13 +62,14 @@ export default {
     AuteurPrettyView,
     // ValidEntry,
     AuteurFormulaire,
-    Title,
+    AppTitle,
     ListeEntreesAuteur},
   data: function () {
     return {
       auteur: new Author(),
       message: '',
       authorId: parseInt(this.$route.params.id),
+      showSuppressionModal: false,
     }
   },
   mounted() {

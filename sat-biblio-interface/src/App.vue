@@ -1,31 +1,54 @@
 <template>
   <div id="app">
+    <BOrchestrator />
     <NavBar/>
-    <router-view/>
-    <b-modal id="modal-session"
-             ref="modalSession"
+    <RouterView/>
+    <BModal id="modal-session"
+             v-model="showSessionModal"
              centered
              title="Session expirée"
              size="xl">
-      <b-button block @click="goToLoginPage">Compris</b-button>
-      <p class="my-4">
-      Vous êtes déconnecté.
-      Veuillez vous reconnecter pour continuer
-      à travailler sur vos données.
-      </p>
-<!--      <b-button v-b-modal.modal-session></b-button>-->
-    </b-modal>
+      <template #default>
+        <BButton class="w-100" @click="goToLoginPage">Compris</BButton>
+        <p class="my-4">
+        Vous êtes déconnecté.
+        Veuillez vous reconnecter pour continuer
+        à travailler sur vos données.
+        </p>
+      </template>
+      <template #footer>
+        <span></span>
+      </template>
+    </BModal>
   </div>
 </template>
 
 <script>
 
-import NavBar from "./components/NavBar";
-import {checkUserLogin} from "./services/api";
+import NavBar from "@/components/NavBar.vue";
+
+import {BOrchestrator} from 'bootstrap-vue-next'
+import {checkUserLogin} from "@/services/api";
+import { useHead } from '@vueuse/head'
+
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    BOrchestrator
+  },
+  setup() {
+    useHead({
+      title: 'SAT Biblio',
+      meta: [
+        { name: 'description', content: 'SAT Biblio Application' }
+      ]
+    })
+  },
+  data() {
+    return {
+      showSessionModal: false
+    }
   },
   methods: {
     checkLogin: function() {
@@ -37,20 +60,21 @@ export default {
                   const right = response.data.right;
                   if(response.data.connected) {
                     this.$store.commit("connect", {connectionInfo, right});
-                    this.$refs.modalSession.hide();
+                    this.showSessionModal = false;
                   } else {
                     this.$store.commit("disconnect");
-                    this.$refs.modalSession.show();
+                    this.showSessionModal = true;
                   }
                 } else {
                   this.$store.commit("disconnect");
-                  this.$refs.modalSession.show();
+                  this.showSessionModal = true;
                 }
               }
           );
     },
     goToLoginPage() {
-      
+      this.showSessionModal = false;
+      this.$router.push({name: 'utilisateur-connexion'});
     }
   },
 }

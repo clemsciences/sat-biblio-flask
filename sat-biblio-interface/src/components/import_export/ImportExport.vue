@@ -1,15 +1,15 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Importation - Exportation</h2>
 
-    <b-row v-if="!isProcessing">
-      <b-col>
-      <b-card title="Transformation du catalogue">
-        <b-card-text>
+    <BRow v-if="!isProcessing">
+      <BCol>
+      <BCard title="Transformation du catalogue">
+        <BCardText>
 
-        </b-card-text>
-      <b-form>
-        <b-form-group>
+        </BCardText>
+      <BForm>
+        <BFormGroup>
           <b-form-file
               browse-text="Explorer"
               v-model="file"
@@ -21,34 +21,34 @@
           />
 
         <p>{{ file ? file.name : ""}}</p>
-      </b-form-group>
-      <b-form-group>
+      </BFormGroup>
+      <BFormGroup>
 
-        <b-form-radio-group
+        <BFormRadio-group
           v-model="selectedModel"
           :options="options"
           />
-      </b-form-group>
+      </BFormGroup>
 
-      <b-button @click="importExport">Traiter</b-button>
+      <BButton @click="importExport">Traiter</BButton>
 
-    </b-form>
-    </b-card>
-        </b-col>
-    </b-row>
-<!--    <b-card title="Anciennces importation">-->
-<!--      <b-row class="my-3">-->
-<!--          <b-button to="/importation">Importation fine</b-button>-->
-<!--      </b-row>-->
-<!--      <b-row>-->
-<!--          <b-button to="/importation-globale">Importation globale</b-button>-->
-<!--      </b-row>-->
-<!--    </b-card>-->
+    </BForm>
+    </BCard>
+        </BCol>
+    </BRow>
+<!--    <BCard title="Anciennces importation">-->
+<!--      <BRow class="my-3">-->
+<!--          <BButton to="/importation">Importation fine</BButton>-->
+<!--      </BRow>-->
+<!--      <BRow>-->
+<!--          <BButton to="/importation-globale">Importation globale</BButton>-->
+<!--      </BRow>-->
+<!--    </BCard>-->
 
     <div v-if="isProcessing">
-      <b-spinner label="chargement"  class="m-2"/>
+      <BSpinner label="chargement"  class="m-2"/>
     </div>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

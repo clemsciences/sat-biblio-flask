@@ -1,29 +1,30 @@
 <template>
-  <b-form-group :label="label">
+  <BFormGroup :label="label">
     <vue-typeahead-bootstrap
         v-if="!disabled"
       v-model="userQuery"
       :data="suggestedUsers"
       :serializer="s => s.text"
       placeholder="Tapez le prénom ou le nom d'un utilisateur"
+      @update:model-value="getSuggestedUsers"
       @hit="addUser($event)"
     />
-    <b-form-input v-model="value.text" readonly :disabled="disabled"/>
+    <BFormInput :model-value="modelValue.text" readonly :disabled="disabled"/>
     <div v-if="!disabled">
-      <b-button v-if="value.value > 0" @click="removeUser" :disabled="disabled" class="m-1">Enlever utilisateur</b-button>
-      <b-button v-if="value.value > 0" @click="goToUser" :disabled="disabled" class="m-1">Voir utilisateur</b-button>
+      <BButton v-if="modelValue.value > 0" @click="removeUser" :disabled="disabled" class="m-1">Enlever utilisateur</BButton>
+      <BButton v-if="modelValue.value > 0" @click="goToUser" :disabled="disabled" class="m-1">Voir utilisateur</BButton>
     </div>
 
-  </b-form-group>
+  </BFormGroup>
 </template>
 
 <script>
 import {searchNearUsers} from "@/services/api";
 
 export default {
-  name: "SuggestionUtilisateur",
+  name: "UserSuggestion",
   props: {
-    value: Object, // selectedReference
+    modelValue: Object, // selectedReference
     label: String,
     disabled: {
       type: Boolean,
@@ -41,15 +42,14 @@ export default {
   methods: {
     addUser: function (event) {
       this.userQuery = "";
-      this.$emit('input', event);      // this.selectedReference = event;
+      this.$emit('update:modelValue', event);      // this.selectedReference = event;
     },
     removeUser: function () {
-      this.value.value = -1;
-      this.value.text = "";
-      this.$emit('input', this.value);
+      const newValue = { ...this.modelValue, value: -1, text: "" };
+      this.$emit('update:modelValue', newValue);
     },
     goToUser: function() {
-      let routeData = this.$router.resolve(`/utilisateur/lire/${this.value.value}`);
+      let routeData = this.$router.resolve(`/utilisateur/lire/${this.modelValue.value}`);
       window.open(routeData.href, '_blank');
     },
     getSuggestedUsers: function (query) {
@@ -64,9 +64,9 @@ export default {
     },
   },
   watch: {
-    userQuery: function (newValue) {
-      this.getSuggestedUsers(newValue);
-    },
+    // userQuery: function (newValue) {
+    //   this.getSuggestedUsers(newValue);
+    // },
   }
 }
 </script>

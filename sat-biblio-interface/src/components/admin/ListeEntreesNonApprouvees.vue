@@ -1,27 +1,27 @@
 <template>
-  <b-container>
+  <BContainer>
     <div v-if="entryTotalNumber > 0">
 
-      <b-pagination
+      <BPagination
         v-model="currentPage"
         :total-rows="entryTotalNumber"
         :per-page="perPage"
         aria-controls="my-table"
         class="my-3"/>
-      <b-table striped bordered hover :items="loadEntries" :fields="fields"
+      <BTable striped bordered hover :items="loadEntries" :fields="fields"
                primary-key="description" :per-page="perPage" :current-page="currentPage"
                @row-dblclicked="goToEntry"
                ref="userTable">
         <template #table-caption>La liste des entrées pas encore approuvées.</template>
         <template #cell(actions)="entry">
-          <b-button size="sm" @click="approve(entry)" class="mr-1" v-if="isManager">
+          <BButton size="sm" @click="approve(entry)" class="me-1" v-if="isManager">
             Approuver
-          </b-button>
+          </BButton>
         </template>
-      </b-table>
+      </BTable>
     </div>
     <p v-else>Il n'y a aucune entrée de type {{ entryType }} à valider.</p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

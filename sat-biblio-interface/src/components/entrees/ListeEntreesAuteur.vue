@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <BContainer>
     <ListEntriesOfEntry
         :retrieve-list-request="getEntryListAssociatedToAuthor"
         :perPage="perPage"
@@ -10,14 +10,14 @@
         entry-type="reference">
 
     </ListEntriesOfEntry >
-  </b-container>
+  </BContainer>
 
 </template>
 
 <script>
-import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
-import {getEntryListAssociatedToAuthor, getEntryListAssociatedToAuthorCount} from "@/services/api";
-import {goToEntryView} from "@/services/entries";
+import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry.vue";
+import {getEntryListAssociatedToAuthor, getEntryListAssociatedToAuthorCount} from "@/services/api.js";
+import {goToEntryView} from "@/services/entries.js";
 
 export default {
   name: "ListeEntreesAuteur",

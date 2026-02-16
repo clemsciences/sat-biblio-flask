@@ -1,6 +1,6 @@
 <template>
-  <b-container>
-    <Title title="Emprunter"
+  <BContainer>
+    <AppTitle title="Emprunter"
            info="Un emprunt permet à un emprunteur enregistré de ramener un enregistrement chez lui. Lors de l'emprunt, il faut se mettre d'accord sur la date de retour."
            id="id-borrowing"/>
     <EmpruntFormulaire
@@ -8,22 +8,28 @@
         :on-submit="saveBorrowing"
         :message="message"
         :is-update="false"
+        @update:record="borrowing.record = $event"
+        @update:borrower="borrowing.borrower = $event"
+        @update:borrowingDate="borrowing.borrowingDate = $event"
+        @update:dateComebackExpected="borrowing.dateComebackExpected = $event"
+        @update:actualComebackDate="borrowing.actualComebackDate = $event"
+        @update:comment="borrowing.comment = $event"
     />
-    <b-button class="my-3" v-if="message.length > 0 || !isIncorrect" @click="reinit">Réinitialiser</b-button>
+    <BButton class="my-3" v-if="message.length > 0 || !isIncorrect" @click="reinit">Réinitialiser</BButton>
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 
-import {createBorrowing} from "@/services/api";
-import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire";
-import Title from "../visuel/Title";
-import {BookBorrowing} from "@/services/objectManager";
+import {createBorrowing} from "@/services/api.js";
+import EmpruntFormulaire from "@/components/emprunt/EmpruntFormulaire.vue";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import {BookBorrowing} from "@/services/objectManager.js";
 
 export default {
-  name: "Emprunter",
-  components: {Title, EmpruntFormulaire},
+  name: "EmprunterView",
+  components: {AppTitle, EmpruntFormulaire},
   data: function () {
     return {
       borrowing: new BookBorrowing(),

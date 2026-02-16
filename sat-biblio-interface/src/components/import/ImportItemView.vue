@@ -1,35 +1,41 @@
 <template>
-  <b-container>
-    <Title
+  <BContainer>
+    <AppTitle
       title="Import de catalogue"
       id="id-import"
       info=""
     />
-    <b-card v-if="importItem != null">
-      <b-card-title title="Fiche"/>
-      <b-card-body>
+    <BCard v-if="importItem != null">
+      <BCardTitle title="Fiche"/>
+      <BCardBody>
         <ImportItemForm
          :message="message"
          :disabled="!canModify"
          :import-item="importItem"
          :onSubmit="updateImport"
+         @update:filename="importItem.filename = $event"
+         @update:startDate="importItem.startDate = $event"
+         @update:endDate="importItem.endDate = $event"
+         @update:description="importItem.description = $event"
+         @update:status="importItem.status = $event"
+         @update:user="importItem.user = $event"
         />
-        <b-button @click="deleteImport">Supprimer</b-button>
-      </b-card-body>
-    </b-card>
+        <BButton @click="deleteImport">Supprimer</BButton>
+      </BCardBody>
+    </BCard>
     <p v-else>Sélectionner une fiche</p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
 import {getOneImportRequest} from "@/services/api";
 import ImportItemForm from "@/components/import/ImportItemForm.vue";
-import Title from "@/components/visuel/Title.vue";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 import {ImportItem, User} from "../../services/objectManager";
 
 export default {
-  name: "ImportItem",
-  components: {ImportItemForm, Title},
+  name: "ImportItemView",
+  components: {ImportItemForm, AppTitle},
   props: {
     importItemId: {
       type: Number

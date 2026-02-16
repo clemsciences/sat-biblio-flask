@@ -1,50 +1,50 @@
 <template>
-  <b-container>
-    <Title info="Liste des mots clefs définis dans les enregistrements du catalogue.">
+  <BContainer>
+    <AppTitle info="Liste des mots clefs définis dans les enregistrements du catalogue.">
       Mots clefs
-    </Title>
-    <b-row class="mt-4">
-      <b-col lg="12">
-        <b-form-group label="Trier par :">
-          <b-form-radio-group
+    </AppTitle>
+    <BRow class="mt-4">
+      <BCol lg="12">
+        <BFormGroup label="Trier par :">
+          <BFormRadio-group
             v-model="sortBy"
             :options="sortOptions"
             name="radio-sorting"
-          ></b-form-radio-group>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row class="mt-2">
-      <b-col lg="12">
+          ></BFormRadio-group>
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow class="mt-2">
+      <BCol lg="12">
         <div class="d-flex flex-wrap">
-          <b-button
+          <BButton
             v-for="keyword in sortedKeywords"
             :key="keyword.text"
             variant="outline-primary"
             class="m-1"
             @click="goToRecords(keyword.text)"
           >
-            {{ keyword.text }} <b-badge v-if="sortBy === 'frequency'" variant="light">{{ keyword.count }}</b-badge>
-          </b-button>
+            {{ keyword.text }} <BBadge v-if="sortBy === 'frequency'" variant="light">{{ keyword.count }}</BBadge>
+          </BButton>
         </div>
-      </b-col>
-    </b-row>
-    <b-row v-if="loading" class="justify-content-center mt-4">
-      <b-spinner label="Chargement..."></b-spinner>
-    </b-row>
-    <b-row v-if="error" class="justify-content-center mt-4 text-danger">
+      </BCol>
+    </BRow>
+    <BRow v-if="loading" class="justify-content-center mt-4">
+      <BSpinner label="Chargement..."></BSpinner>
+    </BRow>
+    <BRow v-if="error" class="justify-content-center mt-4 text-danger">
       {{ error }}
-    </b-row>
-  </b-container>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
-import { getBookRecordsKeywords } from "@/services/api";
-import Title from "../visuel/Title";
+import { getBookRecordsKeywords } from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 
 export default {
   name: "ListeMotsClefs",
-  components: { Title },
+  components: { AppTitle },
   data() {
     return {
       keywords: [],

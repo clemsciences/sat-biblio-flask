@@ -1,36 +1,37 @@
 <template>
-  <b-container>
-    <Title title="Liens utiles" info=""/>
+  <BContainer>
+    <AppTitle title="Liens utiles" info=""/>
 
-    <b-row v-for="item in rows" :key="item.link" class="p-2">
-<!--      <b-col cols="10">-->
+    <BRow v-for="item in rows" :key="item.link" class="p-2">
+<!--      <BCol cols="10">-->
       <span>{{item.description}}<br/></span>
       <br/>
       <a :href="item.link">{{item.link}}</a>
-        <b-button size="sm" class="ml-3" @click="goToInANewTab(item.link)">
-          <b-icon icon="box-arrow-up-right"/>
-        </b-button>
+        <BButton size="sm" class="ms-3" @click="goToInANewTab(item.link)">
+          <IBiBoxArrowUpRight/>
+        </BButton>
 
-<!--      </b-col>-->
-<!--      <b-col cols="2">-->
+<!--      </BCol>-->
+<!--      <BCol cols="2">-->
 
-<!--      </b-col>-->
-    </b-row>
+<!--      </BCol>-->
+    </BRow>
 
-<!--    <b-list-group>-->
-<!--      <b-list-group-item v-for="item in rows" :key="item.link">-->
+<!--    <BListGroup>-->
+<!--      <BListGroupItem v-for="item in rows" :key="item.link">-->
 <!--        {{item.description}}-->
 <!--        <a :href="item.link">{{item.link}}</a>-->
-<!--        <b-button class="ml-3" @click="goToInANewTab(item.link)">Ouvrir dans un nouvel onglet</b-button>-->
-<!--      </b-list-group-item>-->
-<!--    </b-list-group>-->
-  </b-container>
+<!--        <BButton class="ms-3" @click="goToInANewTab(item.link)">Ouvrir dans un nouvel onglet</BButton>-->
+<!--      </BListGroupItem>-->
+<!--    </BListGroup>-->
+  </BContainer>
 </template>
 
 
 <script>
 
-import Title from "@/components/visuel/Title.vue";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import {BButton, BContainer, BRow} from "bootstrap-vue-next";
 
 class LinkRow {
    constructor(description, link) {
@@ -40,7 +41,7 @@ class LinkRow {
 }
 export default {
   name: "LinkView",
-  components: {Title},
+  components: {BButton, BRow, BContainer, AppTitle},
   data: function() {
     return {
       rows: [
@@ -51,7 +52,7 @@ export default {
               "Le site internet Gallica pour voir les bulletins de la Société Archéologique de Touraine",
               'https://gallica.bnf.fr/ark:/12148/cb34429572f/date.item'),
           new LinkRow("Lire la documentation de ce site internet",
-              `${process.env.VUE_APP_SITE_API_URL}/static/sat_biblio_documentation-1.pdf`),
+              `${import.meta.env.VITE_APP_SITE_API_URL}/static/sat_biblio_documentation-1.pdf`),
           new LinkRow("Catalogue SUDOC en ligne",
               "https://www.sudoc.abes.fr/"),
           new LinkRow("Catalogue de la BNF (Bibliothèque nationale de France",

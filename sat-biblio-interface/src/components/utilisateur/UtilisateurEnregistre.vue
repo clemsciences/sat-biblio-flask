@@ -1,8 +1,8 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Utilisateur enregistré</h2>
     <p>{{ message }}</p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

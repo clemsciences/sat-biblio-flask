@@ -1,19 +1,19 @@
 <template>
-  <b-container>
-    <Title title="Déconnexion"
+  <BContainer>
+    <AppTitle title="Déconnexion"
       info=""
       id="id-deconnexion"/>
     <p>La déconnexion s'est correctement déroulée.</p>
-    <b-button to="/">Retourner à l'accueil</b-button>
-  </b-container>
+    <BButton to="/">Retourner à l'accueil</BButton>
+  </BContainer>
 </template>
 
 <script>
 import {disconnectUser} from "@/services/api";
-import Title from "@/components/visuel/Title";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 export default {
-  name: "Deconnexion",
-  components: {Title},
+  name: "DeconnexionView",
+  components: {AppTitle},
   data: function() {
     return {
       message: "",

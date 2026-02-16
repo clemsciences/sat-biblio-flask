@@ -1,22 +1,22 @@
 <template>
-  <b-container>
-    <Title info="Le catalogue est la liste des ouvrages dans la bibliothèque."
+  <BContainer>
+    <AppTitle info="Le catalogue est la liste des ouvrages dans la bibliothèque."
            id="id-catalogue">
       Catalogue
-    </Title>
+    </AppTitle>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
-    <b-row class="my-1">
-      <b-col lg="4">
-        <b-form-group label-cols-sm="3"
+    <BRow class="my-1">
+      <BCol lg="4">
+        <BFormGroup label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button v-b-modal.modal-cote class="d-inline-block">
+          <BButton v-b-toggle.modal-cote class="d-inline-block">
             {{ prefixCoteFiler.length > 0 || numberCoteFilter.length > 0 ? coteFilter : 'Choisir une cote' }}
-          </b-button>
+          </BButton>
 
-          <b-modal id="modal-cote" title="Sélection de la cote"
+          <BModal id="modal-cote" title="Sélection de la cote"
                    ok-title="Valider" cancel-title="Annuler">
-            <b-form-group label="Préfixe">
-              <b-form-select
+            <BFormGroup label="Préfixe">
+              <BFormSelect
                   v-model="prefixCoteFiler"
                   :options="[
                   { value: '', text: 'Choix de la cote' },
@@ -33,10 +33,10 @@
                   { value: 'MM', text: 'MM' }
                 ]"
                   @change="updatePrefixCoteFilter">
-              </b-form-select>
-            </b-form-group>
-            <b-form-group label="Numéro">
-              <b-form-input
+              </BFormSelect>
+            </BFormGroup>
+            <BFormGroup label="Numéro">
+              <BFormInput
                   v-model="numberCoteFilter"
                   type="text"
                   pattern="[0-9]*"
@@ -46,115 +46,114 @@
                   @paste.prevent="sanitizeDigitsPaste"
                   @input="stripNonDigits"
                   placeholder="Entrez un numéro">
-              </b-form-input>
-            </b-form-group>
-          </b-modal>
+              </BFormInput>
+            </BFormGroup>
+          </BModal>
 
           <template #label>
             Cote
-            <b-icon icon="info-circle" v-b-tooltip.hover
-                    title="La cote est le numéro permettant de localiser l'ouvrage dans la bibliothèque"
+            <IBiInfoCircle v-b-tooltip="'La cote est le numéro permettant de localiser l\'ouvrage dans la bibliothèque'"
                     variant="dark"/>
           </template>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Auteur" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Auteur" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="authorFilter" size="sm"
+          <BInput v-model="authorFilter" size="sm"
                    placeholder="Filtrer en fonction de l'auteur"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Aide à la recherche" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Aide à la recherche" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="keywordsFilter" size="sm"
+          <BFormInput v-model="keywordsFilter" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Titre" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Titre" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titleFilter" size="sm"
+          <BFormInput v-model="titleFilter" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="exportSearchResult" :disabled="isExporting" v-b-tooltip.hover
-                    title="Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucun filtre n'est mis, alors le catalogue entier est exporté.">
+          <BButton @click="exportSearchResult" :disabled="isExporting" v-b-tooltip="'Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucun filtre n\'est mis, alors le catalogue entier est exporté.'">
             {{ isExporting ? 'Export en cours...' : 'Exporter' }}
-          </b-button>
+          </BButton>
           <template #label>
-            <b-icon icon="info-circle" v-b-tooltip.hover
-                    title="Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucune filtre n'est mis, alors le catalogue entier est exporté."
+            <IBiInfoCircle v-b-tooltip="'Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucune filtre n\'est mis, alors le catalogue entier est exporté.'"
                     variant="dark"/>
           </template>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="clearSearchFields" v-b-tooltip.hover
-                    title="Réinitialise les filtres de recherche.">
+          <BButton @click="clearSearchFields" v-b-tooltip="'Réinitialise les filtres de recherche.'">
             Réinitialiser
-          </b-button>
+          </BButton>
           <template #label>
-            <b-icon icon="info-circle" v-b-tooltip.hover
-                    title="Réinitialise les filtres de recherche."
+            <IBiInfoCircle v-b-tooltip="'Réinitialise les filtres de recherche.'"
                     variant="dark"/>
           </template>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row class="my-1">
-      <b-col lg="12">
-        <b-form-group label="Trier par" label-cols-sm="2" label-align-sm="right" label-size="sm" class="mb-0">
-          <b-form-radio-group
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow class="my-1">
+      <BCol lg="12">
+        <BFormGroup label="Trier par" label-cols-sm="2" label-align-sm="right" label-size="sm" class="mb-0">
+          <BFormRadioGroup
               v-model="sortBy"
               :options="sortByOptions"
               class="pt-1"
               @change="onSortChange"
-          ></b-form-radio-group>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-pagination
+          ></BFormRadioGroup>
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow>
+      <BPagination
           v-model="currentPage"
           :total-rows="recordFilteredNumber"
           :per-page="perPage"
           aria-controls="my-table"
           class="my-3"/>
-      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-    </b-row>
+      <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </BRow>
 
-    <b-table striped bordered hover :items="retrieveEnregistrementCompleteList" :fields="filteredFields"
-             primary-key="id" :per-page="perPage" :current-page="currentPage" ref="my-table"
-             :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" @row-dblclicked="goToEnregistrementComplet" :filter="onFilter">
+    <BTable striped bordered hover
+            :items="records"
+            :fields="filteredFields"
+            primary-key="id"
+            ref="my-table"
+            :sort-desc="sortDesc">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
-    </b-table>
+    </BTable>
 
-    <b-row>
-      <b-pagination
+    <BRow>
+      <BPagination
           v-model="currentPage"
           :total-rows="recordFilteredNumber"
           :per-page="perPage"
           aria-controls="my-table"
           class="my-3"/>
-      <filter-count :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
-    </b-row>
-  </b-container>
+      <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
+    </BRow>
+  </BContainer>
 </template>
 <script>
-import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecordsWithReference} from "@/services/api";
-import Title from "../visuel/Title";
-import FilterCount from "@/components/visuel/FilterCount";
+import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecordsWithReference} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import FilterCount from "@/components/visuel/FilterCount.vue";
+import {BButton, BCol, BContainer, BFormGroup, BFormInput, BFormRadioGroup, BFormSelect, BInput, BModal, BPagination, BRow, BTable} from "bootstrap-vue-next";
 
 export default {
   name: "ListeEnregistrementComplet",
-  components: {Title, FilterCount},
+  components: {BButton, BContainer, BRow, BPagination, BInput, BCol, BFormGroup, BFormInput, BFormRadioGroup, BFormSelect, BModal, BTable, AppTitle, FilterCount},
   data: function () {
     return {
       isMounted: false,
@@ -263,13 +262,13 @@ export default {
       }
       return filterParams;
     },
-    retrieveEnregistrementCompleteList: function (ctx, callback) {
-      // console.log("ctx.sortBy", ctx.sortBy);
+    retrieveEnregistrementCompleteList: async function () {
+      console.log("ctx.sortBy", this.sortBy);
       // console.log("ctx.sortDesc", ctx.sortDesc);
-      let params = "?page=" + ctx.currentPage +
-          "&size=" + ctx.perPage +
-          "&sortBy=" + ctx.sortBy +
-          "&sortDesc=" + (ctx.sortDesc ? "true" : "false");
+      let params = "?page=" + this.currentPage +
+          "&size=" + this.perPage +
+          "&sortBy=" + this.sortBy +
+          "&sortDesc=" + (this.sortDesc ? "true" : "false");
       let filterParams = "";
       const remainingFilterParams = this.getFilterParams();
       if(remainingFilterParams.length > 0) {
@@ -279,20 +278,19 @@ export default {
         params = `${params}&${filterParams}`;
       }
 
-      retrieveBookRecordsWithReference(params)
-          .then(
-              (response) => {
-                if (response.data.success) {
-                  this.records = response.data.enregistrements;
-                  callback(this.records);
-                }
-              }
-          ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
+      try {
+        var response = await retrieveBookRecordsWithReference(params);
+        console.log(response);
+        if (response.data.success) {
+          this.records = response.data.enregistrements;
+          console.log("records", this.records);
+          // return this.records || [];
+        }
+        return [];
+      } catch (reason) {
+        console.log(reason);
+        // return [];
+      }
     },
     getRecordTotalNumber: function () {
       let filterParams = "?result_type=number";
@@ -319,6 +317,7 @@ export default {
       this.currentPage = 1;
       this.sortDesc = false;
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
       this.$refs['my-table'].refresh();
     },
     reloadWithFilters() {
@@ -454,6 +453,7 @@ export default {
     this.$nextTick(() => {
       this.isMounted = true;
     });
+    this.retrieveEnregistrementCompleteList();
   },
   watch: {
     coteFilter: function () {
@@ -463,6 +463,7 @@ export default {
         this.currentPage = 1;
       }
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     authorFilter() {
       this.getRecordTotalNumber();
@@ -470,6 +471,7 @@ export default {
         this.currentPage = 1;
       }
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     keywordsFilter: function () {
       this.getRecordTotalNumber();
@@ -477,6 +479,7 @@ export default {
         this.currentPage = 1;
       }
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     titleFilter: function () {
       this.getRecordTotalNumber();
@@ -484,21 +487,22 @@ export default {
         this.currentPage = 1;
       }
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     currentPage: function () {
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     sortBy: function () {
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     },
     sortDesc: function () {
       this.reloadWithFilters();
+      this.retrieveEnregistrementCompleteList();
     }
   },
   computed: {
-    onFilter() {
-      return `${this.coteFilter} ${this.titleFilter} ${this.keywordsFilter} ${this.authorFilter}`;
-    },
     coteFilter() {
       const numValue = parseInt(this.numberCoteFilter);
       if (numValue >= 1 && numValue <= 9) {

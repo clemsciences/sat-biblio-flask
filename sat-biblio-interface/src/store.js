@@ -1,12 +1,9 @@
-import Vuex from "vuex";
-import Vue from "vue";
+import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import {isValidJwt} from "@/services/authentication";
-import {canContribute, canManage, rights} from "@/services/rights";
+import {isValidJwt} from "./services/authentication";
+import {canContribute, canManage, rights} from "./services/rights";
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
+const store = createStore({
     plugins: [createPersistedState()],
     state: {
         connected: false,

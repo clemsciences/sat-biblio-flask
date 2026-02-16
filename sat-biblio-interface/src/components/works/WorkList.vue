@@ -1,11 +1,11 @@
 <template>
-  <b-container>
-    <b-list-group>
-      <b-list-group-item v-for="item in works" :key="item.id_">
+  <BContainer>
+    <BListGroup>
+      <BListGroupItem v-for="item in works" :key="item.id_">
         <router-link :to="{ name: 'works-item', params: {id: item.id_}}">{{ item.publication_type }} {{ item.year }}</router-link>
-      </b-list-group-item>
-    </b-list-group>
-  </b-container>
+      </BListGroupItem>
+    </BListGroup>
+  </BContainer>
 
 </template>
 
@@ -13,7 +13,7 @@
 import {getPublishedWorks} from "@/services/api";
 
 export default {
-  name: "WorkList",
+  name: "WorkListView",
   data: function() {
     return {
       works: []

@@ -11,7 +11,7 @@
 
 <script>
 import {getNotValidatedBookRecordsCount, retrieveNotValidatedBookRecords} from "@/services/api";
-import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees";
+import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees.vue";
 
 export default {
   name: "ListeEnregistrementsNonApprouves",

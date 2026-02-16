@@ -1,23 +1,25 @@
 <template>
-  <b-container>
-    <b-form-group label="Recherche">
+  <BContainer>
+    <BFormGroup label="Recherche">
       <vue-typeahead-bootstrap
           v-model="namedEntityQuery"
         :data="suggestedNamedEntities"
         :serializer="s => s"
         placeholder="Tapez le nom d'un lieu, d'une personne, etc"
+        @update:model-value="getSuggestedNamedEntities"
         @hit="addNamedEntity($event)"
       />
-    </b-form-group>
-  </b-container>
+    </BFormGroup>
+  </BContainer>
 
 </template>
 
 <script>
-import {searchApproximateNamedEntities} from "@/services/api";
+import {searchApproximateNamedEntities} from "@/services/api.js";
 
 export default {
-  name: "SuggestionBulletin",
+  name: "BulletinSuggestion",
+  props: ['modelValue'],
   data: function() {
     return {
       namedEntityQuery: '',
@@ -30,7 +32,7 @@ export default {
     addNamedEntity: function (event) {
       // this.selectedNamedEntityId = event;
       this.namedEntityQuery = event;
-      this.$emit("input", this.namedEntityQuery);
+      this.$emit("update:modelValue", this.namedEntityQuery);
     },
 
     getSuggestedNamedEntities(query) {
@@ -50,9 +52,9 @@ export default {
     }
   },
   watch: {
-    namedEntityQuery: function(newValue) {
-      this.getSuggestedNamedEntities(newValue);
-    }
+    // namedEntityQuery: function(newValue) {
+    //   this.getSuggestedNamedEntities(newValue);
+    // }
   }
 
 }

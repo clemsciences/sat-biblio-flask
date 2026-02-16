@@ -1,7 +1,7 @@
 <template>
-  <b-container>
-    <b-form @submit.prevent="saveImportItem">
-<!--    <b-form-group label="Fichier">-->
+  <BContainer>
+    <BForm @submit.prevent="saveImportItem">
+<!--    <BFormGroup label="Fichier">-->
 <!--      <b-form-file-->
 <!--          browse-text="Explorer"-->
 <!--          v-model="file"-->
@@ -13,67 +13,67 @@
 <!--      />-->
 
 <!--    <p>{{ file ? file.name : ""}}</p>-->
-<!--  </b-form-group>-->
-    <b-form-group label="Nom du fichier">
-      <b-form-input v-model="importItem.filename" :disabled="true"/>
-    </b-form-group>
-      <b-form-group label="Nombre de lignes à ignorer au début du fichier">
-        <b-form-input v-model="importItem.firstRowsToIgnoreNumber" type="number" min="0"/>
-      </b-form-group>
-      <b-form-group label="Nombre de lignes à afficher après les lignes ignorées">
-        <b-form-input v-model="importItem.rowsToPreviewNumber" type="number" min="0"/>
-      </b-form-group>
-      <b-form-group label="Ne conserver que les entrées vérifiées">
+<!--  </BFormGroup>-->
+    <BFormGroup label="Nom du fichier">
+      <BFormInput v-model="importItem.filename" :disabled="true"/>
+    </BFormGroup>
+      <BFormGroup label="Nombre de lignes à ignorer au début du fichier">
+        <BFormInput v-model="importItem.firstRowsToIgnoreNumber" type="number" min="0"/>
+      </BFormGroup>
+      <BFormGroup label="Nombre de lignes à afficher après les lignes ignorées">
+        <BFormInput v-model="importItem.rowsToPreviewNumber" type="number" min="0"/>
+      </BFormGroup>
+      <BFormGroup label="Ne conserver que les entrées vérifiées">
         <b-form-checkbox v-model="importItem.filterByVerifiedEntry"/>
-      </b-form-group>
-<!--    <b-form-group>-->
-    <b-row class="m-2">
-      <b-button @click="checkImport">Vérifier</b-button>
+      </BFormGroup>
+<!--    <BFormGroup>-->
+    <BRow class="m-2">
+      <BButton @click="checkImport">Vérifier</BButton>
       <div v-if="checked" class="mx-2">
         <div v-if="columnFitness">
-          <b-icon icon="hand-thumbs-up"/>
+          <IBiHandThumbsUp/>
         </div>
         <div v-else>
-          <b-icon icon="hand-thumbs-down"/>
+          <IBiHandThumbsDown/>
         </div>
       </div>
-    </b-row>
-<!--    </b-form-group>-->
-    <b-form-group class="m-2">
-      <b-button @click="previewImport">Prévisualiser</b-button>
+    </BRow>
+<!--    </BFormGroup>-->
+    <BFormGroup class="m-2">
+      <BButton @click="previewImport">Prévisualiser</BButton>
       <div v-if="isPreviewing">
-        <b-button @click="downloadCatalogueToFix">Télécharger le catalogue à corriger</b-button>
+        <BButton @click="downloadCatalogueToFix">Télécharger le catalogue à corriger</BButton>
         <p>La <b>première ligne</b> correspond aux colonnes de référence qu'il faut suivre.
           <br/>La <b>deuxième ligne</b> correspond aux colonnes du fichier importé.
           <br/>Le <b>reste des lignes</b> correspond à des exemples.
         </p>
         <p>Nombre de lignes ajoutées {{ numberOfImportedRows }}</p>
-        <b-table responsive striped bordered hover
+        <BTable responsive striped bordered hover
                  :items="previewedRows"
                  :busy="isPreviewLoading">
           <template #table-busy>
             <div class="text-center text-danger my-2">
-              <b-spinner class="align-middle"></b-spinner>
+              <BSpinner class="align-middle"></BSpinner>
               <strong>Chargement...</strong>
             </div>
           </template>
-        </b-table>
+        </BTable>
 
       </div>
-    </b-form-group>
-    <b-form-group label="Description" v-if="columnFitness">
+    </BFormGroup>
+    <BFormGroup label="Description" v-if="columnFitness">
       <b-form-textarea v-model="importItem.description" :disabled="disabled"/>
-    </b-form-group>
-    <b-row class="m-2" v-if="columnFitness">
+    </BFormGroup>
+    <BRow class="m-2" v-if="columnFitness">
 <!--      <p>{{ isIncorrect }} {{ disabled }}</p>-->
-      <b-button type="submit" :disabled="isIncorrect || disabled">Enregistrer</b-button>
+      <BButton type="submit" :disabled="isIncorrect || disabled">Enregistrer</BButton>
       <div v-if="isImporting">
-        <b-spinner label="Importation en cours..." class="m-2"/>
+        <BSpinner label="Importation en cours..." class="m-2"/>
       </div>
       <span class="mx-3">{{ message }}</span>
-    </b-row>
-  </b-form>
-  </b-container>
+    </BRow>
+  </BForm>
+  </BContainer>
 </template>
 
 <script>
@@ -85,7 +85,7 @@ import {
 } from "@/services/api";
 
 import {canManage} from "@/services/rights";
-import {downloadCatalogueToFix} from "../../services/api";
+import {downloadCatalogueToFix} from "@/services/api";
 
 export default {
   name: "ImportItemCreation",

@@ -8,7 +8,7 @@
 
 <script>
 import {getBorrowingStateOfRecord} from "@/services/api";
-import BorrowingTable from "@/components/emprunt/BorrowingTable";
+import BorrowingTable from "@/components/emprunt/BorrowingTable.vue";
 
 export default {
   name: "ListBorrowingsOfRecord",

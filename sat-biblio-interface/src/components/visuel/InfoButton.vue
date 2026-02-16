@@ -7,9 +7,9 @@
       </svg>
       Info
     </button>
-    <b-tooltip :target="id" triggers="hover" class="my-tooltip">
+    <BTooltip :target="id" triggers="hover" class="my-tooltip">
       {{ label }}
-    </b-tooltip>
+    </BTooltip>
   </div>
 </template>
 

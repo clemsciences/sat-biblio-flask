@@ -1,37 +1,37 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Export</h2>
-    <b-row class="m-3">
-<!--      <b-button class="mx-3" @click="exporterPDF" :disabled="downloading">-->
+    <BRow class="m-3">
+<!--      <BButton class="mx-3" @click="exporterPDF" :disabled="downloading">-->
 <!--        Exporter au format PDF-->
-<!--      </b-button>-->
-      <b-button class="m-2" @click="exporterExcel" :disabled="generating">
+<!--      </BButton>-->
+      <BButton class="m-2" @click="exporterExcel" :disabled="generating">
         Générer un export au format Excel (.xlsx)
-      </b-button>
+      </BButton>
 
-      <b-button class="m-2" @click="exporterCSV" :disabled="generating">
+      <BButton class="m-2" @click="exporterCSV" :disabled="generating">
         Générer un export au format CSV (.csv)
-      </b-button>
+      </BButton>
       <b-checkbox v-model="withWeed">Ajouter les ouvrages désherbés</b-checkbox>
       <b-checkbox v-model="withAuxiliaryColumns">Ajouter les colonnes auxiliaires</b-checkbox>
-    </b-row>
-<!--    <b-row>-->
+    </BRow>
+<!--    <BRow>-->
       <div v-if="generating"  class="d-flex justify-content-center">
-        <b-spinner label="chargement"  class="m-2"/>
+        <BSpinner label="chargement"  class="m-2"/>
         <p class="m-2">{{ message }}</p>
       </div>
       <div v-else>
         <div v-if="linkToDownload.length > 0" class="d-flex justify-content-center">
-          <b-button-group>
-            <b-button @click="download" class="m-2">Télécharger le document</b-button>
-            <b-button @click="cancelDownload">Annuler</b-button>
-          </b-button-group>
+          <BButton-group>
+            <BButton @click="download" class="m-2">Télécharger le document</BButton>
+            <BButton @click="cancelDownload">Annuler</BButton>
+          </BButton-group>
         </div>
       </div>
-<!--    </b-row>-->
+<!--    </BRow>-->
 
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
@@ -40,7 +40,7 @@
 import {exportCSVRequest, exportXLSXRequest} from "@/services/api";
 
 export default {
-  name: "Export",
+  name: "ExportView",
   data: function() {
     return {
       generating: false,

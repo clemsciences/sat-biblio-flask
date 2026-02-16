@@ -1,9 +1,8 @@
 <script>
 
-import Teleport from 'vue2-teleport';
 export default {
   name: "JsonLdHeader",
-  components: {Teleport},
+  components: {},
   props: {
       jsonData: {
         type: Object,
@@ -14,11 +13,11 @@ export default {
 </script>
 
 <template>
-  <Teleport to="head">
+  <teleport to="head">
     <component :is="'script'" type="application/ld+json">
       {{ jsonData }}
     </component>
-  </Teleport>
+  </teleport>
 
 </template>
 

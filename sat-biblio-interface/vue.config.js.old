@@ -1,0 +1,9 @@
+module.exports = {
+    transpileDependencies: [
+        'marked',
+        'bootstrap-vue-next'  // <-- Ajoute cette ligne
+    ],
+    devServer: {
+        // proxy: 'http://localhost:5000'
+    }
+}

@@ -1,12 +1,12 @@
 <template>
-  <b-container>
-    <Title title="Enregistrement" info=""/>
+  <BContainer>
+    <AppTitle title="Enregistrement" info=""/>
 
     <div class="d-flex justify-content-end mb-3">
-      <b-dropdown right text="Télécharger le Dublin Core" variant="primary">
-        <b-dropdown-item @click="downloadDublinCore('json')">JSON</b-dropdown-item>
-        <b-dropdown-item @click="downloadDublinCore('xml')">XML</b-dropdown-item>
-      </b-dropdown>
+      <BDropdown right text="Télécharger le Dublin Core" variant="primary">
+        <BDropdownItem @click="downloadDublinCore('json')">JSON</BDropdownItem>
+        <BDropdownItem @click="downloadDublinCore('xml')">XML</BDropdownItem>
+      </BDropdown>
     </div>
 
     <ReferenceLivrePrettyView :reference="reference"/>
@@ -17,24 +17,37 @@
         :disabled="!canModify"
         :save="update"
         :message="message"
+        @update:authors="bookRecordWithReference.authors = $event"
+        @update:authorsForm="bookRecordWithReference.authorsForm = $event"
+        @update:titre="bookRecordWithReference.titre = $event"
+        @update:lieu_edition="bookRecordWithReference.lieu_edition = $event"
+        @update:editeur="bookRecordWithReference.editeur = $event"
+        @update:publication_annee="bookRecordWithReference.publication_annee = $event"
+        @update:nb_page="bookRecordWithReference.nb_page = $event"
+        @update:reference_description="bookRecordWithReference.reference_description = $event"
+        @update:cote="bookRecordWithReference.cote = $event"
+        @update:annee_entree="bookRecordWithReference.annee_entree = $event"
+        @update:provenance="bookRecordWithReference.provenance = $event"
+        @update:aide_a_la_recherche="bookRecordWithReference.aide_a_la_recherche = $event"
+        @update:observations="bookRecordWithReference.observations = $event"
     />
 
-  </b-container>
+  </BContainer>
 
 </template>
 
 <script>
-import Title from "../visuel/Title.vue";
+import AppTitle from "../visuel/AppTitle.vue";
 import EnregistrementCompletFormulaire from "./EnregistrementCompletFormulaire.vue";
-import {BookRecordWithReference, BookReference} from "@/services/objectManager";
-import {retrieveBookRecordWithReference, updateBookRecordWithReference} from "@/services/api";
+import {BookRecordWithReference, BookReference} from "@/services/objectManager.js";
+import {retrieveBookRecordWithReference, updateBookRecordWithReference} from "@/services/api.js";
 import {mapState} from "vuex";
 import {canEdit} from "@/services/rights";
 import ReferenceLivrePrettyView from "@/components/reference_livre/ReferenceLivrePrettyView.vue";
 
 export default {
   name: "LireEnregistrementComplet",
-  components: {ReferenceLivrePrettyView, EnregistrementCompletFormulaire, Title},
+  components: {ReferenceLivrePrettyView, EnregistrementCompletFormulaire, AppTitle},
   data() {
     return {
       bookRecordWithReference: new BookRecordWithReference(),

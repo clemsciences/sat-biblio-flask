@@ -1,51 +1,53 @@
 <template>
-  <b-container>
-    <b-form-group label="Auteurs" v-if="!disabled">
+  <BContainer>
+    <BFormGroup label="Auteurs" v-if="!disabled">
       <vue-typeahead-bootstrap
         v-model="author_query"
         :data="suggestedAuthors"
         :serializer="s => s.text"
         :disabled="disabled"
         placeholder="Tapez le prénom ou le nom de l'auteur"
+        @update:model-value="getSuggestedAuthors"
         @hit="addAuthor($event)"
       />
-  <!--        <b-form-input readonly v-if="selectedAuthor" v-model="selectedAuthor"/> &lt;!&ndash; pour chercher l'auteur &ndash;&gt;-->
-    </b-form-group>
-    <b-form-group :label="disabled ? 'Auteurs' : selectedAuthorsMessage">
-      <b-form-select
-          v-model="selectedAuthorId"
-          :options="value"
+  <!--        <BFormInput readonly v-if="selectedAuthor" v-model="selectedAuthor"/> &lt;!&ndash; pour chercher l'auteur &ndash;&gt;-->
+    </BFormGroup>
+    <BFormGroup :label="disabled ? 'Auteurs' : selectedAuthorsMessage">
+      <BFormSelect
+          :model-value="selectedAuthorId"
+          @update:model-value="selectedAuthorId = $event"
+          :options="modelValue"
           :select-size="5"
           size="sm"/>
-    </b-form-group>
-    <b-button class="m-3" v-if="!disabled" :disabled="value.length === 0 || disabled" @click="removeLastAuthor">
+    </BFormGroup>
+    <BButton class="m-3" v-if="!disabled" :disabled="modelValue.length === 0 || disabled" @click="removeLastAuthor">
       Enlever auteur
-    </b-button>
-    <b-button class="m-3" v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>
-    <b-button class="m-3" v-if="!disabled" @click="goToNewAuthor">Créer auteur</b-button>
-<!--    <b-form-group :label="selectedAuthorsMessage">-->
-<!--      <b-form-select v-model="selectedAuthorId" -->
+    </BButton>
+    <BButton class="m-3" v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</BButton>
+    <BButton class="m-3" v-if="!disabled" @click="goToNewAuthor">Créer auteur</BButton>
+<!--    <BFormGroup :label="selectedAuthorsMessage">-->
+<!--      <BFormSelect v-model="selectedAuthorId" -->
 <!--                     :options="selectedAuthors" -->
 <!--                     :select-size="5" size="sm"/>-->
-<!--    </b-form-group>-->
-<!--    <b-button v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</b-button>-->
-<!--    <b-button class="mx-3"-->
+<!--    </BFormGroup>-->
+<!--    <BButton v-if="selectedAuthorId > 0" @click="goToAuthor">Voir auteur</BButton>-->
+<!--    <BButton class="mx-3"-->
 <!--              v-if="selectedAuthorId > 0"-->
-<!--              @click="removeSelectedAuthor">Enlever auteur</b-button>-->
+<!--              @click="removeSelectedAuthor">Enlever auteur</BButton>-->
 
-<!--    <b-form-group label="Titre">-->
-<!--      <b-form-input class="mx-3" v-if="selectedAuthorId >= 0" v-model="titre"></b-form-input>-->
-<!--    </b-form-group>-->
-  </b-container>
+<!--    <BFormGroup label="Titre">-->
+<!--      <BFormInput class="mx-3" v-if="selectedAuthorId >= 0" v-model="titre"></BFormInput>-->
+<!--    </BFormGroup>-->
+  </BContainer>
 </template>
 
 <script>
 import {searchNearAuthors} from "@/services/api";
 
 export default {
-name: "SuggestionAuteur",
+name: "AuthorSuggestion",
   props: {
-    value: Array,  // selectedAuthors
+    modelValue: Array,  // selectedAuthors
     disabled: {
       type: Boolean,
       default: false
@@ -73,10 +75,10 @@ name: "SuggestionAuteur",
     },
     addAuthor: function(event) {
       // TODO check that chosen Author is not already in selectedAuthors
-      this.selectedAuthorId = event;
-      this.selectedAuthors.push(event);
+      this.selectedAuthorId = event.value;
+      const newValue = [...this.modelValue, event];
       this.author_query = "";
-      this.$emit("input", this.selectedAuthors);
+      this.$emit("update:modelValue", newValue);
     },
     goToAuthor: function() {
       console.log(this.selectedAuthorId);
@@ -88,25 +90,20 @@ name: "SuggestionAuteur",
       window.open(routeData.href, '_blank');
     },
     removeLastAuthor: function() {
-      // const indexOfAuthor = this.selectedAuthors.indexOf(event);
-      // this.selectedAuthors.pop()  // splice(indexOfAuthor, 1);
-      this.selectedAuthors = this.selectedAuthors.filter(
+      const newValue = this.modelValue.filter(
           (author) => {
             return author.value !== this.selectedAuthorId;
           }
       );
       this.selectedAuthorId = -1;
-      this.$emit("input", this.selectedAuthors);
+      this.$emit("update:modelValue", newValue);
     }
   },
   watch: {
-    author_query: function (newValue) {
-      this.getSuggestedAuthors(newValue);
-    },
-    value: function(newValue) {
-      Object.assign(this.selectedAuthors, newValue);
-    },
-    selectedAuthors: function (newValue) {
+    // author_query: function (newValue) {
+    //   this.getSuggestedAuthors(newValue);
+    // },
+    modelValue: function (newValue) {
       if(newValue.length > 1) {
         this.selectedAuthorsMessage = "Auteurs sélectionnés"
       } else {

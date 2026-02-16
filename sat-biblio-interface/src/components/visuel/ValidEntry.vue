@@ -1,13 +1,13 @@
 <template>
-  <b-row align-h="between">
-    <b-col cols="8"></b-col>
-    <b-col cols="2">
-      <b-badge pill :variant="approvedVariant" :id="id">{{ message }}</b-badge>
-      <b-tooltip :target="id" triggers="hover" class="my-tooltip">
+  <BRow align-h="between">
+    <BCol cols="8"></BCol>
+    <BCol cols="2">
+      <BBadge pill :variant="approvedVariant" :id="id">{{ message }}</BBadge>
+      <BTooltip :target="id" triggers="hover" class="my-tooltip">
         {{ message }} par le gestionnaire de la bibliothèque.
-      </b-tooltip>
-    </b-col>
-  </b-row>
+      </BTooltip>
+    </BCol>
+  </BRow>
 </template>
 
 <script>

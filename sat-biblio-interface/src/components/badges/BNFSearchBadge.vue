@@ -1,11 +1,11 @@
 <template>
-  <b-container>
-    <b-button @click="search" id="bnf-search-button">BNF {{ labelPrefix }}</b-button>
+  <BContainer>
+    <BButton @click="search" id="bnf-search-button">BNF {{ labelPrefix }}</BButton>
 
-    <b-tooltip target="bnf-search-button" triggers="hover" style="text-justify: auto;">
+    <BTooltip target="bnf-search-button" triggers="hover" style="text-justify: auto;">
       Chercher dans le catalogue de la BNF
-    </b-tooltip>
-  </b-container>
+    </BTooltip>
+  </BContainer>
 
 </template>
 

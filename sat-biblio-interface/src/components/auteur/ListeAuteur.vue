@@ -1,72 +1,71 @@
 <template>
-  <b-container>
-    <Title title="Liste des auteurs"
+  <BContainer>
+    <AppTitle title="Liste des auteurs"
        info=""
        id="id-liste-auteurs"/>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
-    <b-row class="my-1">
-      <b-col lg="4">
-        <b-form-group label="Prénom" label-cols-sm="3"
+    <BRow class="my-1">
+      <BCol lg="4">
+        <BFormGroup label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="firstNameFiltre" size="sm"
+          <BFormInput type="search" v-model="firstNameFiltre" size="sm"
                    placeholder="Filtrer en fonction du prénom"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Nom de famille" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="familyNameFiltre" size="sm"
+          <BFormInput type="search" v-model="familyNameFiltre" size="sm"
                    placeholder="Filtrer en fonction du nom de famille"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <b-button @click="clearSearchFields"  v-b-tooltip.hover
-                    title="Réinitialise les filtres de recherche.">
+          <BButton @click="clearSearchFields"  v-b-tooltip="'Réinitialise les filtres de recherche.'">
             Réinitialiser
-          </b-button>
+          </BButton>
           <template #label>
-            <b-icon icon="info-circle" v-b-tooltip.hover
-                    title="Réinitialise les filtres de recherche."
+
+            <IBiInfoCircle v-b-tooltip="'Réinitialise les filtres de recherche.'"
                     variant="dark"/>
           </template>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-pagination
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow>
+      <BPagination
         v-model="currentPage"
         :total-rows="authorFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table" />
-      <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
-    </b-row>
-    <b-table striped bordered hover :items="retrieveAuthors" :fields="fields"
+      <FilterCount :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
+    </BRow>
+    <BTable striped bordered hover :items="retrieveAuthors" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToAuthor" :filter="onFilter">
+             :sort-by="sortBy" @row-dblclicked="goToAuthor">
       <template #table-caption>La liste des auteurs dans la base.</template>
-    </b-table>
-    <b-row>
-      <b-pagination
+    </BTable>
+    <BRow>
+      <BPagination
         v-model="currentPage"
         :total-rows="authorFilteredNumber"
         :per-page="perPage"
         aria-controls="my-table" />
-      <filter-count :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
-    </b-row>
-  </b-container>
+      <FilterCount :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
 
-import {getAuthorsCount, retrieveAuthors} from "@/services/api";
-import Title from "@/components/visuel/Title";
-import FilterCount from "@/components/visuel/FilterCount";
+import {getAuthorsCount, retrieveAuthors} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 
 export default {
   name: "ListeAuteur",
-  components: {Title, FilterCount},
+  components: {AppTitle, FilterCount},
   data: function () {
     return {
       authors: [],
@@ -104,7 +103,7 @@ export default {
       return filterparams;
     },
     reloadWithFilters() {
-      if (this.onFilter.trim().length > 0) {
+      if (this.searchFieldsUsed) {
         this.$router.replace({
           query: {
             firstName: encodeURIComponent(this.firstNameFiltre),
@@ -212,9 +211,6 @@ export default {
     }
   },
   computed: {
-    onFilter: function() {
-      return `${this.firstNameFiltre} ${this.familyNameFiltre}`;
-    },
     searchFieldsUsed() {
       return this.firstNameFiltre.length > 0 || this.familyNameFiltre.length > 0;
     }

@@ -1,12 +1,14 @@
 <template>
-  <b-container>
-    <Title title="Nouvel auteur"
+  <BContainer>
+    <AppTitle title="Nouvel auteur"
            info="Un auteur est un individu qui a participé à la rédaction d'au moins un ouvrage."
            id="id-auteur"/>
     <AuteurFormulaire
         :auteur="auteur"
         :on-submit="onSubmit"
-        :message="message"/>
+        :message="message"
+        @update:first_name="auteur.first_name = $event"
+        @update:family_name="auteur.family_name = $event"/>
 
 <!--    <AuthorCheck v-model="auteur" :disabled="false"/>-->
 
@@ -25,10 +27,10 @@
         <p>C'est un nouvel auteur.</p>
       </div>
       <div v-if="suggested.length > 0">
-      <b-table striped bordered hover :items="suggested" :fields="fields"
+      <BTable striped bordered hover :items="suggested" :fields="fields"
              primary-key="id" >
         <template #table-caption>Correspondances possibles</template>
-      </b-table>
+      </BTable>
 <!--      <div v-for="value in suggested" :key="value.value">-->
 <!--        <p>{{ value.first_name }} {{ value.family_name }}</p>-->
 <!--      </div>-->
@@ -42,20 +44,20 @@
 
 
 
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
-import {createAuthor, searchNearAuthors} from "@/services/api";
-import Title from "../visuel/Title";
-import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
-import {canManage} from "@/services/rights";
-import {Author} from "@/services/objectManager";
+import {createAuthor, searchNearAuthors} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire.vue";
+import {canManage} from "@/services/rights.js";
+import {Author} from "@/services/objectManager.js";
 // import AuthorCheck from "@/components/auteur/AuthorCheck.vue";
 
 export default {
-  name: "Auteur",
-  components: {AuteurFormulaire, Title},
+  name: "CreationAuteur",
+  components: {AuteurFormulaire, AppTitle},
   data: function () {
     return {
       auteur: new Author(),

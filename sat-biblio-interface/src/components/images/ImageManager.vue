@@ -1,8 +1,8 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Gestion des images</h2>
-    <b-row>
-      <b-col cols="6">
+    <BRow>
+      <BCol cols="6">
         <b-form-file v-model="files"
                      :state="Boolean(files)"
                      placeholder="Choisissez une image ou une archive compressée d'images en .zip"
@@ -11,38 +11,38 @@
                      ref="file-input"
                      accept=".jpg, .png, .gif, .zip"
         />
-        <b-list-group>
-          <b-list-group-item v-for="file in files" :key="file.name">{{ file ? file.name : ""}}</b-list-group-item>
-<!--          <b-list-group-item></b-list-group-item>-->
-        </b-list-group>
+        <BListGroup>
+          <BListGroupItem v-for="file in files" :key="file.name">{{ file ? file.name : ""}}</BListGroupItem>
+<!--          <BListGroupItem></BListGroupItem>-->
+        </BListGroup>
 
-        <b-button @click="clearFiles">Remettre à zéro</b-button>
+        <BButton @click="clearFiles">Remettre à zéro</BButton>
 
 
-      </b-col>
-      <b-col cols="6">
+      </BCol>
+      <BCol cols="6">
 
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="6">
+      </BCol>
+    </BRow>
+    <BRow>
+      <BCol cols="6">
 
-        <b-form-radio-group
+        <BFormRadio-group
         v-model="selectedModel"
         :options="options"
 
         />
 
-        <b-button @click="processFiles">Traiter</b-button>
+        <BButton @click="processFiles">Traiter</BButton>
 
 
 
-      </b-col>
-      <b-col cols="6">
+      </BCol>
+      <BCol cols="6">
 
-      </b-col>
-    </b-row>
-  </b-container>
+      </BCol>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>

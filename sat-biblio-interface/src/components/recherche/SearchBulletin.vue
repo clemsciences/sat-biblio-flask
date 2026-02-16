@@ -1,63 +1,63 @@
 <template>
-  <b-container>
+  <BContainer>
 
     <router-link :to="{ name: 'works'}">Liste des ouvrages</router-link>
 
-    <SuggestionBulletin v-model="selectedNamedEntity" class="my-3"/>
+    <BulletinSuggestion v-model="selectedNamedEntity" class="my-3"/>
 <!--    <h3>{{ selectedNamedEntity }}</h3>-->
-    <b-list-group>
-      <b-list-group-item v-for="item in citedWorks.result" :key="`${item.published_work.id_}-${item.citation_published_work.text}`">
-        <b-card>
-          <b-card-title :title="`${item.published_work.publication_type} ${item.published_work.year}`"/>
-          <b-card-body>
+    <BListGroup>
+      <BListGroupItem v-for="item in citedWorks.result" :key="`${item.published_work.id_}-${item.citation_published_work.text}`">
+        <BCard>
+          <BCardTitle :title="`${item.published_work.publication_type} ${item.published_work.year}`"/>
+          <BCardBody>
             <span>{{ item.citation_published_work.text }}</span>
 <!--            <a :href=""></a>-->
-          </b-card-body>
-        </b-card>
-      </b-list-group-item>
-    </b-list-group>
+          </BCardBody>
+        </BCard>
+      </BListGroupItem>
+    </BListGroup>
 
-    <b-list-group>
-      <b-list-group-item v-for="item in citedWorks.result" :key="`${item.published_work.id_}-${item.citation_published_work.text}`">
-        <b-card>
-          <b-card-title :title="`${item.published_work.publication_type} ${item.published_work.year}`"/>
-          <b-card-body>
+    <BListGroup>
+      <BListGroupItem v-for="item in citedWorks.result" :key="`${item.published_work.id_}-${item.citation_published_work.text}`">
+        <BCard>
+          <BCardTitle :title="`${item.published_work.publication_type} ${item.published_work.year}`"/>
+          <BCardBody>
             <span>{{ item.citation_published_work.text }}</span>
 <!--            <a :href=""></a>-->
-          </b-card-body>
-        </b-card>
-      </b-list-group-item>
-    </b-list-group>
+          </BCardBody>
+        </BCard>
+      </BListGroupItem>
+    </BListGroup>
 
 
 
 
 
-<!--    <b-pagination-->
+<!--    <BPagination-->
 <!--      v-model="currentPage"-->
 <!--      :total-rows="totalNumber"-->
 <!--      :per-page="perPage"-->
 <!--      aria-controls="my-table"/>-->
 <!--&lt;!&ndash;    :sort-by="sortBy" @row-dblclicked="goToUser" :filter="onFilter"&ndash;&gt;-->
-<!--    <b-table striped bordered hover :items="search" :fields="fields"-->
+<!--    <BTable striped bordered hover :items="search" :fields="fields"-->
 <!--             primary-key="id" :per-page="perPage" :current-page="currentPage"-->
 
 <!--             ref="userTable">-->
 <!--      <template #table-caption>La liste des résultats correspondant à votre requête dans la base.</template>-->
 
-<!--    </b-table>-->
+<!--    </BTable>-->
 
-  </b-container>
+  </BContainer>
 
 </template>
 
 <script>
-import {getPublishedWorks, searchWorks} from "@/services/api";
-import SuggestionBulletin from "@/components/recherche/SuggestionBulletin";
+import {getPublishedWorks, searchWorks} from "@/services/api.js";
+import BulletinSuggestion from "@/components/recherche/SuggestionBulletin.vue";
 
 export default {
   name: "SearchBulletin",
-  components: {SuggestionBulletin},
+  components: {BulletinSuggestion},
   data: function() {
     return {
       query: '',

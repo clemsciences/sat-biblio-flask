@@ -1,50 +1,50 @@
 <template>
-  <b-container>
-    <Title title="Notes de version" info="Historique des modifications du projet SAT-Biblio."/>
+  <BContainer>
+    <AppTitle title="Notes de version" info="Historique des modifications du projet SAT-Biblio."/>
 
-    <b-row v-if="loading" class="justify-content-center my-5">
-      <b-spinner label="Chargement des notes de version..."></b-spinner>
-    </b-row>
+    <BRow v-if="loading" class="justify-content-center my-5">
+      <BSpinner label="Chargement des notes de version..."></BSpinner>
+    </BRow>
 
-    <b-row v-if="error" class="justify-content-center my-5 text-danger">
+    <BRow v-if="error" class="justify-content-center my-5 text-danger">
       <p>{{ error }}</p>
-      <b-button variant="outline-primary" @click="fetchReleases" class="ml-3">Réessayer</b-button>
-    </b-row>
+      <BButton variant="outline-primary" @click="fetchReleases" class="ms-3">Réessayer</BButton>
+    </BRow>
 
     <div v-if="!loading && !error">
-      <b-card v-for="release in releases" :key="release.id" class="mb-4 shadow-sm">
+      <BCard v-for="release in releases" :key="release.id" class="mb-4 shadow-sm">
         <template #header>
           <div class="d-flex justify-content-between align-items-center">
             <h3 class="mb-0">{{ release.name || release.tag_name }}</h3>
-            <b-badge variant="info">{{ formatDate(release.published_at) }}</b-badge>
+            <BBadge variant="info">{{ formatDate(release.published_at) }}</BBadge>
           </div>
         </template>
 
-        <b-card-text>
+        <BCardText>
           <div class="release-body" v-html="renderMarkdown(release.body)"></div>
-        </b-card-text>
+        </BCardText>
 
         <template #footer>
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">Tag: {{ release.tag_name }}</small>
-            <b-button :href="release.html_url" target="_blank" variant="outline-secondary" size="sm">
-              Voir sur GitHub <b-icon icon="box-arrow-up-right" class="ml-1"/>
-            </b-button>
+            <BButton :href="release.html_url" target="_blank" variant="outline-secondary" size="sm">
+              Voir sur GitHub <IBiBoxArrowUpRight class="ms-1"/>
+            </BButton>
           </div>
         </template>
-      </b-card>
+      </BCard>
     </div>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
-import Title from "@/components/visuel/Title.vue";
+import AppTitle from "@/components/visuel/AppTitle.vue";
 import axios from "axios";
 import { marked } from "marked";
 
 export default {
   name: "ChangelogView",
-  components: { Title },
+  components: { AppTitle },
   data() {
     return {
       releases: [],

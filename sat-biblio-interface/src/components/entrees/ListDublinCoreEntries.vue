@@ -1,63 +1,63 @@
 <template>
-  <b-container>
+  <BContainer>
   <h2>Recherche dans la BNF</h2>
     <br/>
-    <b-row class="my-3">
-      <b-col cols="3">
-    <b-form @submit.prevent="reloadWithUrlQueries">
-<!--      <b-form-group>-->
-<!--        <b-form-group label="Critère de recherche">-->
-<!--          <b-form-radio v-model="researchType" value="author">Auteur</b-form-radio>-->
-<!--          <b-form-radio v-model="researchType" value="title">Titre</b-form-radio>-->
-<!--          <b-form-radio v-model="researchType" value="isbn">ISBN</b-form-radio>-->
-<!--          <b-form-radio v-model="researchType" value="publisher">Editeur</b-form-radio>-->
+    <BRow class="my-3">
+      <BCol cols="3">
+    <BForm @submit.prevent="reloadWithUrlQueries">
+<!--      <BFormGroup>-->
+<!--        <BFormGroup label="Critère de recherche">-->
+<!--          <BFormRadio v-model="researchType" value="author">Auteur</BFormRadio>-->
+<!--          <BFormRadio v-model="researchType" value="title">Titre</BFormRadio>-->
+<!--          <BFormRadio v-model="researchType" value="isbn">ISBN</BFormRadio>-->
+<!--          <BFormRadio v-model="researchType" value="publisher">Editeur</BFormRadio>-->
 <!--          -->
-<!--        </b-form-group>-->
-<!--      </b-form-group>-->
-      <b-form-group label="Auteur" label-for="search-bnf-author-block" class="my-3">
-        <b-form-input type="search" v-model="authorQuery" aria-describedby="search-bnf-author-block"/>
+<!--        </BFormGroup>-->
+<!--      </BFormGroup>-->
+      <BFormGroup label="Auteur" label-for="search-bnf-author-block" class="my-3">
+        <BFormInput type="search" v-model="authorQuery" aria-describedby="search-bnf-author-block"/>
         <b-form-text id="search-bnf-author-block">
           Entrez le prénom et/ou le nom d'un auteur pour retrouver les fiches que vous cherchez.
         </b-form-text>
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group label="Titre" label-for="search-bnf-title-block" class="my-3">
-        <b-form-input type="search" v-model="titleQuery" aria-describedby="search-bnf-title-block"/>
+      <BFormGroup label="Titre" label-for="search-bnf-title-block" class="my-3">
+        <BFormInput type="search" v-model="titleQuery" aria-describedby="search-bnf-title-block"/>
         <b-form-text id="search-bnf-title-block">
           Entrez un titre ou une partie d'un titre pour retrouver les fiches que vous cherchez.
         </b-form-text>
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group label="ISBN" label-for="search-bnf-isbn-block" class="my-3">
-        <b-form-input type="search" v-model="isbnQuery" aria-describedby="search-bnf-isbn-block"/>
+      <BFormGroup label="ISBN" label-for="search-bnf-isbn-block" class="my-3">
+        <BFormInput type="search" v-model="isbnQuery" aria-describedby="search-bnf-isbn-block"/>
         <b-form-text id="search-bnf-isbn-block">
           Entrez un ISBN pour retrouver les fiches que vous cherchez.
         </b-form-text>
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group label="Editeur" label-for="search-bnf-publisher-block" class="my-3">
-        <b-form-input type="search" v-model="publisherQuery" aria-describedby="search-bnf-publisher-block"/>
+      <BFormGroup label="Editeur" label-for="search-bnf-publisher-block" class="my-3">
+        <BFormInput type="search" v-model="publisherQuery" aria-describedby="search-bnf-publisher-block"/>
         <b-form-text id="search-bnf-publisher-block">
           Entrez un éditeur pour retrouver les fiches que vous cherchez.
         </b-form-text>
-      </b-form-group>
-      <b-form-group>
-        <b-button type="submit">Rechercher</b-button>
-      </b-form-group>
-    </b-form>
-        </b-col>
-    <b-col cols="9" v-if="loading" align-self="center">
-<!--      <b-col></b-col>-->
-      <b-spinner label="chargement" class="my-center"/>
-      </b-col>
-      <b-col cols="9" v-else-if="totalNumber > 0">
-      <b-pagination
+      </BFormGroup>
+      <BFormGroup>
+        <BButton type="submit">Rechercher</BButton>
+      </BFormGroup>
+    </BForm>
+        </BCol>
+    <BCol cols="9" v-if="loading" align-self="center">
+<!--      <BCol></BCol>-->
+      <BSpinner label="chargement" class="my-center"/>
+      </BCol>
+      <BCol cols="9" v-else-if="totalNumber > 0">
+      <BPagination
           v-model="currentPage"
           :total-rows="totalNumber"
           :per-page="perPage"
           aria-controls="my-table"
           class="my-3"/>
-      <b-table striped bordered hover :items="retrieveList" :fields="fields"
+      <BTable striped bordered hover :items="retrieveList" :fields="fields"
                primary-key="identifier" :per-page="perPage" :current-page="currentPage"
                @row-dblclicked="goTo">
         <template #table-caption v-if="caption.length > 0">{{ caption }}</template>
@@ -69,12 +69,12 @@
           {{ restOfExtraction(data.item.identifier) }}
           </span>
         </template>
-      </b-table>
-      </b-col>
-    <b-col cols="9" v-else class="my-center"><p>Il n'y a aucune entrée.</p></b-col>
+      </BTable>
+      </BCol>
+    <BCol cols="9" v-else class="my-center"><p>Il n'y a aucune entrée.</p></BCol>
 
-    </b-row>
-  </b-container>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
@@ -82,7 +82,7 @@
 import {getDublinCoreEntries} from "@/services/api";
 
 export default {
-  name: "ListDublinCoreEntries",
+  name: "ListDublinCoreEntriesView",
   // components: {ListEntries},
   props: {
     initialAuthorQuery: {
@@ -315,7 +315,7 @@ export default {
 </script>
 
 <style scoped>
-  /*b-form-group {*/
+  /*BFormGroup {*/
   /*  margin-: 30em;*/
   /*}*/
 

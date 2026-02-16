@@ -1,28 +1,28 @@
 <template>
-  <b-container>
-    <Title title="Liste des références"
+  <BContainer>
+    <AppTitle title="Liste des références"
            info=""
            id="id-liste-ref"/>
     <p>Double-cliquez sur la ligne pour voir les détails.</p>
-    <b-row class="my-3">
-      <b-col lg="4">
-        <b-form-group label="Titre" label-cols-sm="3"
+    <BRow class="my-3">
+      <BCol lg="4">
+        <BFormGroup label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input v-model="titreFiltre" size="sm"
+          <BFormInput v-model="titreFiltre" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row>
-    <b-pagination
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BRow>
+    <BPagination
       v-model="currentPage"
       :total-rows="refFilteredNumber"
       :per-page="perPage"
       aria-controls="my-table"
       class="my-3"/>
-      <filter-count :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
-    </b-row>
-    <b-table striped bordered hover :items="retrieveRef" :fields="fields"
+      <FilterCount :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
+    </BRow>
+    <BTable striped bordered hover :items="retrieveRef" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToReference" :filter="onFilter">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
@@ -50,27 +50,27 @@
       <template #cell(nb_page)="data">
         <div v-if="data.item.nb_page === '-1' || data.item.nb_page === ''">Inconnu</div><div v-else>{{ data.item.nb_page }}</div>
       </template>
-    </b-table>
-    <b-row>
-    <b-pagination
+    </BTable>
+    <BRow>
+    <BPagination
       v-model="currentPage"
       :total-rows="refFilteredNumber"
       :per-page="perPage"
       aria-controls="my-table"
       class="my-3"/>
-      <filter-count :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
-    </b-row>
-  </b-container>
+      <FilterCount :filtered-item-count="refFilteredNumber" :total-item-count="refTotalNumber"/>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
-import {getBookReferencesCount, retrieveBookReferences} from "@/services/api";
-import Title from "@/components/visuel/Title";
-import FilterCount from "@/components/visuel/FilterCount";
+import {getBookReferencesCount, retrieveBookReferences} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 
 export default {
   name: "ListeReferenceLivre",
-  components: {Title, FilterCount},
+  components: {AppTitle, FilterCount},
   data: function () {
     return {
       references: [],

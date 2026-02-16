@@ -1,60 +1,67 @@
 <template>
-  <b-container>
-    <Title title="Enregistrement"
+  <BContainer>
+    <AppTitle title="Enregistrement"
            info=""
            id=""/>
     <JsonLdHeader :json-data="record"/>
 
-    <b-card>
-      <b-card-title title="Fiche"/>
-      <b-card-body>
+    <BCard>
+      <BCardTitle title="Fiche"/>
+      <BCardBody>
 <!--        <BNFSearchBadge :title="reference.titre" labelPrefix=" - Titre"/>-->
 <!--      <ValidEntry v-if="false" :approved="record.valide"/>-->
       <BorrowingState v-if="isConnected" :recordId="recordId"/>
-      <b-card-header>
+      <BCardHeader>
         <EnregistrementPrettyView :record="record"/>
-      </b-card-header>
+      </BCardHeader>
       <EnregistrementFormulaire
           :message="message"
           :on-submit="updateRecord"
           :record="record"
           :disabled="!canModify"
+          @update:selectedReference="record.selectedReference = $event"
+          @update:cote="record.cote = $event"
+          @update:annee_obtention="record.annee_obtention = $event"
+          @update:provenance="record.provenance = $event"
+          @update:aide_a_la_recherche="record.aide_a_la_recherche = $event"
+          @update:observations="record.observations = $event"
+          @update:row="record.row = $event"
       />
-      <b-button v-b-modal.suppression class="my-3" v-if="canModify" :disabled="!canModify">Supprimer</b-button>
-      <b-modal id="suppression" title="Suppression de l'enregistrement"
+      <BButton @click="showSuppressionModal = true" class="my-3" v-if="canModify" :disabled="!canModify">Supprimer</BButton>
+      <BModal id="suppression" v-model="showSuppressionModal" title="Suppression de l'enregistrement"
           cancel-title="Annuler" ok-title="Supprimer" @ok="deleteRecord">
           <p>Êtes-vous sûr de supprimer cet enregistrement ?</p>
-      </b-modal>
+      </BModal>
       <ArkInput :ark-name="record.ark_name"/>
-      </b-card-body>
-    </b-card>
+      </BCardBody>
+    </BCard>
 
 
-    <b-card>
-        <b-card-title title="Entrées liées"/>
-        <b-card-body>
-          <b-button v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</b-button>
-          <b-collapse id="collapse-bound" class="my-2">
+    <BCard>
+        <BCardTitle title="Entrées liées"/>
+        <BCardBody>
+          <BButton v-b-toggle.collapse-bound class="my-2">Voir les entrées liées</BButton>
+          <BCollapse id="collapse-bound" class="my-2">
             <liste-entrees-enregistrement :record-id="recordId"/>
             <list-borrowings-of-record :record-id="recordId"/>
-          </b-collapse>
-        </b-card-body>
-    </b-card>
-  </b-container>
+          </BCollapse>
+        </BCardBody>
+    </BCard>
+  </BContainer>
 </template>
 
 <script>
-import {deleteBookRecord, retrieveBookRecord, updateBookRecord} from "@/services/api";
-import Title from "../visuel/Title";
-import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
+import {deleteBookRecord, retrieveBookRecord, updateBookRecord} from "@/services/api.js";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire.vue";
 import {mapState} from "vuex";
-import {canEdit} from "@/services/rights";
+import {canEdit} from "@/services/rights.js";
 // import ValidEntry from "@/components/visuel/ValidEntry";
-import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement";
-import BorrowingState from "@/components/emprunt/BorrowingState";
-import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord";
+import ListeEntreesEnregistrement from "@/components/entrees/ListeEntreesEnregistrement.vue";
+import BorrowingState from "@/components/emprunt/BorrowingState.vue";
+import ListBorrowingsOfRecord from "@/components/emprunt/ListBorrowingsOfRecord.vue";
 import EnregistrementPrettyView from "@/components/enregistrement/EnregistrementPrettyView.vue";
-import {Record} from "@/services/objectManager";
+import {Record} from "@/services/objectManager.js";
 import ArkInput from "@/components/ark/ArkInput.vue";
 import JsonLdHeader from "@/components/web_semantics/JsonLdHeader.vue";
 
@@ -67,7 +74,7 @@ export default {
     ListeEntreesEnregistrement,
     // ValidEntry,
     EnregistrementFormulaire,
-    Title,
+    AppTitle,
     BorrowingState,
     ListBorrowingsOfRecord},
   data: function () {
@@ -75,6 +82,7 @@ export default {
       record: new Record(),
       message: "",
       recordId: parseInt(this.$route.params.id),
+      showSuppressionModal: false,
     }
   },
   methods: {

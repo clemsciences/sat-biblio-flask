@@ -1,16 +1,16 @@
 <template>
-  <b-form @submit.prevent="onSubmit">
+  <BForm @submit.prevent="onSubmit">
 
-    <SuggestionEnregistrement v-model="borrowing.record"
+    <SuggestionEnregistrement v-model="record"
                               :disabled="disabled || isUpdate"/>
     <div v-if="borrowing.record.value > 0 ">
       <BorrowingState :rendu="isUpdate ? borrowing.givenBack : null" :record-id="borrowing.record.value"/>
     </div>
     <SuggestionUtilisateur label="Emprunteur"
-                           v-model="borrowing.borrower"
+                           v-model="borrower"
                            :disabled="disabled || isUpdate"/>
-    <b-form-group label="Date d'emprunt">
-      <b-form-datepicker v-model="borrowing.borrowingDate"
+    <BFormGroup label="Date d'emprunt">
+      <b-form-datepicker v-model="borrowingDate"
                          placeholder="Date de l'emprunt"
                          :disabled="true"
                          label-close-button="Fermer"
@@ -26,9 +26,9 @@
                          start-weekday="1"
                          size="sm"
       />
-    </b-form-group>
-    <b-form-group label="Date de retour prévue">
-      <b-form-datepicker v-model="borrowing.dateComebackExpected"
+    </BFormGroup>
+    <BFormGroup label="Date de retour prévue">
+      <b-form-datepicker v-model="dateComebackExpected"
                          placeholder="Choisissez une date"
                          label-close-button="Fermer"
                          label-no-date-selected="Aucune date sélectionnée"
@@ -48,10 +48,10 @@
                          label-reset-button="Réinitialiser"
                          :reset-button="true"
       />
-    </b-form-group>
+    </BFormGroup>
     <div v-if="isUpdate">
-      <b-form-group label="Date de retour réel">
-        <b-form-datepicker v-model="borrowing.actualComebackDate"
+      <BFormGroup label="Date de retour réel">
+        <b-form-datepicker v-model="actualComebackDate"
                            placeholder="Choisissez une date"
                            label-close-button="Fermer"
                            label-no-date-selected="Aucune date sélectionnée"
@@ -71,20 +71,20 @@
                            style="z-index: 900"
                            :reset-button="true"
         />
-      </b-form-group>
+      </BFormGroup>
     </div>
-    <b-form-group label="Commentaire">
-      <b-form-textarea size="3" v-model="borrowing.comment" :disabled="disabled"/>
-    </b-form-group>
-    <b-button type="submit" :disabled="isIncorrect || disabled">Enregistrer</b-button>
+    <BFormGroup label="Commentaire">
+      <b-form-textarea size="3" v-model="comment" :disabled="disabled"/>
+    </BFormGroup>
+    <BButton type="submit" :disabled="isIncorrect || disabled">Enregistrer</BButton>
     <span class="mx-3">{{ message }}</span>
-  </b-form>
+  </BForm>
 </template>
 
 <script>
-import SuggestionUtilisateur from "@/components/utilisateur/SuggestionUtilisateur";
-import SuggestionEnregistrement from "@/components/enregistrement/SuggestionEnregistrement";
-import {BookBorrowing} from "@/services/objectManager";
+import SuggestionUtilisateur from "@/components/utilisateur/SuggestionUtilisateur.vue";
+import SuggestionEnregistrement from "@/components/enregistrement/SuggestionEnregistrement.vue";
+import {BookBorrowing} from "@/services/objectManager.js";
 import BorrowingState from "@/components/emprunt/BorrowingState.vue";
 
 
@@ -121,6 +121,54 @@ export default {
   },
   methods: {},
   computed: {
+    record: {
+      get() {
+        return this.borrowing.record;
+      },
+      set(value) {
+        this.$emit('update:record', value);
+      }
+    },
+    borrower: {
+      get() {
+        return this.borrowing.borrower;
+      },
+      set(value) {
+        this.$emit('update:borrower', value);
+      }
+    },
+    borrowingDate: {
+      get() {
+        return this.borrowing.borrowingDate;
+      },
+      set(value) {
+        this.$emit('update:borrowingDate', value);
+      }
+    },
+    dateComebackExpected: {
+      get() {
+        return this.borrowing.dateComebackExpected;
+      },
+      set(value) {
+        this.$emit('update:dateComebackExpected', value);
+      }
+    },
+    actualComebackDate: {
+      get() {
+        return this.borrowing.actualComebackDate;
+      },
+      set(value) {
+        this.$emit('update:actualComebackDate', value);
+      }
+    },
+    comment: {
+      get() {
+        return this.borrowing.comment;
+      },
+      set(value) {
+        this.$emit('update:comment', value);
+      }
+    },
     isIncorrect: function () {
       return this.borrowing.record.value < 0 ||
           this.borrowing.borrower.value < 0 ||

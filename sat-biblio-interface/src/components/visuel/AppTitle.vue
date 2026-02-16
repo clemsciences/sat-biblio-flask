@@ -1,18 +1,18 @@
 <template>
-  <b-row align-h="between" class="my-2">
-    <b-col cols="8">
+  <BRow align-h="between" class="my-2">
+    <BCol cols="8">
       <h2><slot>{{ title }}</slot></h2>
-    </b-col>
-    <b-col cols="2" v-if="info.length > 0">
+    </BCol>
+    <BCol cols="2" v-if="info.length > 0">
       <InfoButton :label="info" :id="id"/>
-    </b-col>
-  </b-row>
+    </BCol>
+  </BRow>
 </template>
 
 <script>
-import InfoButton from "./InfoButton";
+import InfoButton from "./InfoButton.vue";
 export default {
-  name: "Title",
+  name: "AppTitle",
   components: {InfoButton},
   props: {
     title: String,

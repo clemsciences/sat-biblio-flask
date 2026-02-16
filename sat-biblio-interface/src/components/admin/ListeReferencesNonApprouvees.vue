@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees";
-import {getNotValidatedBookReferencesCount, retrieveNotValidatedBookReferences} from "@/services/api";
+import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees.vue";
+import {getNotValidatedBookReferencesCount, retrieveNotValidatedBookReferences} from "@/services/api.js";
 export default {
   name: "ListeReferencesNonApprouvees",
   components: {ListeEntreesNonApprouvees},

@@ -1,5 +1,5 @@
 <template>
-  <b-container class="text-center my-5">
+  <BContainer class="text-center my-5">
     <h2 class="mb-4">Catalogue en ligne de la Bibliothèque d'Histoire de la Touraine - BHT</h2>
 
     <!-- Connection Info -->
@@ -20,15 +20,16 @@
     </p>
 
     <!-- Bouton central -->
-    <b-button
+    <BButton
       variant="primary"
       size="lg"
       href="/catalogue"
       class="my-4"
     >
-      <b-icon icon="book"></b-icon>
+<!--      <b-icon icon="book"></b-icon>-->
+      <IBiBook/>
       Consulter le catalogue
-    </b-button>
+    </BButton>
 
     <div>
       <a href="#new-tool" class="mx-2">Raisons de ce nouvel outil</a>
@@ -37,18 +38,18 @@
       <a href="/liens" class="mx-2">Liens utiles</a>
     </div>
 
-    <b-button variant="secondary"
-    size="mg"
+    <BButton variant="secondary"
+    size="md"
     href="#video-introduction"
     class="my-4">
-      <b-icon icon="file-play"></b-icon>
+      <IBiFilePlay />
       Voir la vidéo d'introduction
 
-    </b-button>
+    </BButton>
 
     <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
 
-    <b-img
+    <BImgf
         class="m-3 img-fluid"
     sizes="(max-width: 200px) 100vw, 200px"
     srcset="
@@ -75,7 +76,7 @@
     alt=""/>
 
 
-    <b-img
+    <BImg
         class="m-3 img-fluid"
     sizes="(max-width: 200px) 100vw, 200px"
     srcset="
@@ -103,7 +104,7 @@
 
 
 
-    <b-img
+    <BImg
         class="m-3 img-fluid"
     sizes="(max-width: 200px) 100vw, 200px"
     srcset="
@@ -130,7 +131,7 @@
     alt=""/>
 
 
-    <b-img
+    <BImg
         class="m-3 img-fluid"
     sizes="(max-width: 200px) 100vw, 200px"
     srcset="
@@ -167,25 +168,25 @@
 
     <!-- Bouton toggle et collapsible (placé plus bas à gauche) -->
     <div class="text-start mt-5" id="new-tool">
-<!--      <b-button v-b-toggle.collapse-why variant="info" size="sm">-->
+<!--      <BButton v-b-toggle.collapse-why variant="info" size="sm">-->
         <h5>Pourquoi passer à ce nouvel outil ?</h5>
-<!--      </b-button>-->
-<!--      <b-collapse id="collapse-why" class="mt-3">-->
-      <b-list-group>
-        <b-list-group-item>
+<!--      </BButton>-->
+<!--      <BCollapse id="collapse-why" class="mt-3">-->
+      <BListGroup>
+        <BListGroupItem>
           Le catalogue est <b>centralisé</b>.<br/> <span class="detail">Si quelqu'un fait une modification, celle-ci est directement accessible par tous les utilisateurs, évitant ainsi d'avoir différentes versions.</span>
-        </b-list-group-item>
-        <b-list-group-item>
+        </BListGroupItem>
+        <BListGroupItem>
           Le catalogue est <b>accessible</b> à tous.<br/> <span class="detail">Des droits spécifiques permettent de gérer et de modifier le catalogue.</span>
-        </b-list-group-item>
-        <b-list-group-item>
+        </BListGroupItem>
+        <BListGroupItem>
           Le catalogue est <b>indépendant</b> du format.<br/> <span class="detail">Les données peuvent être exportées dans le format souhaité.</span>
-        </b-list-group-item>
-        <b-list-group-item>
+        </BListGroupItem>
+        <BListGroupItem>
           Le système permet la <b>gestion des emprunts</b> et l'envoi automatique d'emails aux retardataires.
-        </b-list-group-item>
-      </b-list-group>
-<!--      </b-collapse>-->
+        </BListGroupItem>
+      </BListGroup>
+<!--      </BCollapse>-->
     </div>
 
     <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
@@ -193,7 +194,7 @@
 <!--             class="m-auto img-fluid"-->
 <!--             style="max-width: 1000px"-->
 <!--             alt="Photo du rez-de-chaussée de la bibliothèque."/>-->
-<b-img
+<BImg
     class="m-3 img-fluid"
 sizes="(max-width: 1000px) 100vw, 1000px"
 srcset="
@@ -215,22 +216,23 @@ alt=""/>
 <!--    <iframe width="560" height="315" src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>-->
 
     <div id="video-introduction">
-      <b-embed
+      <embed
         type="iframe"
         aspect="16by9"
         src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX"
         allowfullscreen
-      ></b-embed>
+      />
     </div>
-  </b-container>
+  </BContainer>
 </template>
 <script>
 
 import {mapState} from "vuex";
 import {getRightString} from "@/services/rights";
+import {BButton, BContainer, BImg, BListGroup, BListGroupItem} from "bootstrap-vue-next";
 export default {
-name: "Accueil",
-  components: {},
+name: "AccueilView",
+  components: {BListGroupItem, BListGroup, BImg, BButton, BContainer},
   computed: {
     ...mapState(["connected", "connectionInfo"]),
     rightString: function () {

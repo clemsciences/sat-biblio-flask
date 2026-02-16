@@ -1,81 +1,91 @@
 <template>
-  <b-container>
+  <BContainer>
     <h2>Importation fine</h2>
-    <b-row class="m-1">
-      <b-col cols="3">
-        <b-button-toolbar>
-          <b-button-group>
-            <b-button @click="goToPreviousRow">&lsaquo;</b-button>
-          </b-button-group>
+    <BRow class="m-1">
+      <BCol cols="3">
+        <BButton-toolbar>
+          <BButton-group>
+            <BButton @click="goToPreviousRow">&lsaquo;</BButton>
+          </BButton-group>
           <b-input-group>
-            <b-form-input style="width: 100px" readonly v-model="currentRow"
+            <BFormInput style="width: 100px" readonly v-model="currentRow"
             class="text-center"/>
           </b-input-group>
-          <b-button-group>
-            <b-button @click="goToNextRow">&rsaquo;</b-button>
-          </b-button-group>
-        </b-button-toolbar>
-      </b-col>
-      <b-col cols="2">
-        <b-btn @click="goToNextNotMarkedRow" size="sm">Aller au prochain<br/>non marqué</b-btn>
-      </b-col>
-      <b-col cols="2">
-        <b-button class="m-2" size="sm" @click="saveRow">Sauvegarder la ligne</b-button>
-      </b-col>
-      <b-col cols="1">
+          <BButton-group>
+            <BButton @click="goToNextRow">&rsaquo;</BButton>
+          </BButton-group>
+        </BButton-toolbar>
+      </BCol>
+      <BCol cols="2">
+        <BButton @click="goToNextNotMarkedRow" size="sm">Aller au prochain<br/>non marqué</BButton>
+      </BCol>
+      <BCol cols="2">
+        <BButton class="m-2" size="sm" @click="saveRow">Sauvegarder la ligne</BButton>
+      </BCol>
+      <BCol cols="1">
         <p :style="colorAlreadyStored" class="m-1" >{{ textAlreadyStored }}</p>
-      </b-col>
-      <b-col cols="4">
-        <b-row>
-          <b-button class="m-1" @click="markAsNotProcessed" size="sm">Marquer comme non traité</b-button>
-          <b-button class="m-1" @click="markAsProcessed" size="sm">Marquer comme traité</b-button>
-        </b-row>
-      </b-col>
+      </BCol>
+      <BCol cols="4">
+        <BRow>
+          <BButton class="m-1" @click="markAsNotProcessed" size="sm">Marquer comme non traité</BButton>
+          <BButton class="m-1" @click="markAsProcessed" size="sm">Marquer comme traité</BButton>
+        </BRow>
+      </BCol>
 
-    </b-row>
-    <b-row>
+    </BRow>
+    <BRow>
 
-      <b-col cols="4">
-        <b-row>
+      <BCol cols="4">
+        <BRow>
         <h4>Auteurs</h4>
-        </b-row>
-        <b-row>
-          <b-col>
-            <b-button @click="saveAuthors" size="sm">Enregistrer</b-button>
-          </b-col>
-          <b-col>
-            <b-button @click="addAuthor" size="sm">Ajouter</b-button>
-          </b-col>
-          <b-button @click="removeAuthor" size="sm">Supprimer</b-button>
-        </b-row>
-        <b-row>
+        </BRow>
+        <BRow>
+          <BCol>
+            <BButton @click="saveAuthors" size="sm">Enregistrer</BButton>
+          </BCol>
+          <BCol>
+            <BButton @click="addAuthor" size="sm">Ajouter</BButton>
+          </BCol>
+          <BButton @click="removeAuthor" size="sm">Supprimer</BButton>
+        </BRow>
+        <BRow>
           <AuteurFormulaire v-for="author in authors"
                             :key="`author-${authors.indexOf(author)}`"
                             :auteur="author"
-                            :on-submit="saveAuthor"/>
-        </b-row>
-      </b-col>
-      <b-col cols="4">
+                            :on-submit="saveAuthor"
+                            @update:first_name="author.first_name = $event"
+                            @update:family_name="author.family_name = $event"/>
+        </BRow>
+      </BCol>
+      <BCol cols="4">
         <h4>Références</h4>
         <!-- Saved authors -->
-        <b-button @click="saveReference" :disabled="!refSaved">Sauvegarder référence</b-button>
+        <BButton @click="saveReference" :disabled="!refSaved">Sauvegarder référence</BButton>
         <ReferenceLivreFormulaire :on-submit="saveReference" :reference="reference"/>
-      </b-col>
-      <b-col cols="4">
+      </BCol>
+      <BCol cols="4">
         <h4>Enregistrements</h4>
-        <b-button @click="saveRecord" :disabled="!recordSaved">Sauvegarder enregistrement</b-button>
-        <EnregistrementFormulaire :on-submit="saveRecord" :record="record"/>
-      </b-col>
-    </b-row>
-  </b-container>
+        <BButton @click="saveRecord" :disabled="!recordSaved">Sauvegarder enregistrement</BButton>
+        <EnregistrementFormulaire :on-submit="saveRecord" :record="record"
+                                  @update:selectedReference="record.selectedReference = $event"
+                                  @update:cote="record.cote = $event"
+                                  @update:annee_obtention="record.annee_obtention = $event"
+                                  @update:provenance="record.provenance = $event"
+                                  @update:aide_a_la_recherche="record.aide_a_la_recherche = $event"
+                                  @update:observations="record.observations = $event"
+                                  @update:row="record.row = $event"
+        />
+      </BCol>
+    </BRow>
+  </BContainer>
 </template>
 
 <script>
 import axios from "axios";
-import AuteurFormulaire from "@/components/auteur/AuteurFormulaire";
-import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire";
-import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire";
-import {Author, BookReference, Record} from "@/services/objectManager";
+import AuteurFormulaire from "@/components/auteur/AuteurFormulaire.vue";
+import ReferenceLivreFormulaire from "@/components/reference_livre/ReferenceLivreFormulaire.vue";
+import EnregistrementFormulaire from "@/components/enregistrement/EnregistrementFormulaire.vue";
+import {Author, BookReference, Record} from "@/services/objectManager.js";
 import {
   createAuthor,
   createBookRecord,
@@ -86,7 +96,7 @@ import {
 } from "@/services/api";
 
 export default {
-  name: "ImportTester2",
+  name: "ImportTesterView",
   components: {
     EnregistrementFormulaire,
     ReferenceLivreFormulaire,

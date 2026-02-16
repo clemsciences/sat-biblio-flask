@@ -1,72 +1,68 @@
 
 
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Recherche from "@/components/recherche/Recherche";
-import Accueil from "@/components/Accueil";
-import Export from "@/components/export/Export";
-import CreationUtilisateur from "@/components/utilisateur/CreationUtilisateur";
-import UtilisateurEnregistre from "@/components/utilisateur/UtilisateurEnregistre";
-import MotDePasseOublie from "@/components/mot_de_passe/MotDePasseOublie";
-import ReinitialisationMotDePasse from "@/components/mot_de_passe/ReinitialisationMotDePasse";
-import MotDePasseEmail from "@/components/mot_de_passe/MotDePasseEmail";
-import MotDePasseReinitialise from "@/components/mot_de_passe/MotDePasseReinitialise";
-import Invite from "@/components/utilisateur/Invite";
-import Connexion from "@/components/connexion/Connexion";
-import Deconnexion from "@/components/connexion/Deconnexion";
-import ResultatsRecherche from "@/components/recherche/ResultatsRecherche";
-import CreationAuteur from "@/components/auteur/CreationAuteur";
-import LireAuteur from "@/components/auteur/LireAuteur";
-import CreationReferenceLivre from "@/components/reference_livre/CreationReferenceLivre";
-import LireReferenceLivre from "@/components/reference_livre/LireReferenceLivre";
-import Enregistrement from "@/components/enregistrement/Enregistrement";
-import LireEnregistrement from "@/components/enregistrement/LireEnregistrement";
-import ListeEnregistrement from "@/components/enregistrement/ListeEnregistrement";
-import ListeReferenceLivre from "@/components/reference_livre/ListeReferenceLivre";
-import Contact from "@/components/Contact";
-import Emprunter from "@/components/emprunt/Emprunter";
-import ListeEmprunt from "@/components/emprunt/ListeEmprunt";
-import ListeAuteur from "@/components/auteur/ListeAuteur";
-import ListeMotsClefs from "@/components/enregistrement/ListeMotsClefs";
-import Admin from "./components/admin/Admin";
-import Gestionnaire from "./components/admin/Gestionnaire";
-import PageNotFound from "@/components/PageNotFound";
-import {isValidJwt} from "@/services/authentication";
-import {rights} from "@/services/rights";
-import store from "@/store";
-import Utilisateur from "@/components/utilisateur/Utilisateur";
-// import ImportTester from "@/components/import/ImportTester";
-import ImportTester2 from "@/components/import/ImportTester2";
-import LireEmprunt from "@/components/emprunt/LireEmprunt";
-import LogEventList from "@/components/log/LogEventList";
-import GlobalImport from "@/components/import/GlobalImport";
-import ListDublinCoreEntries from "@/components/entrees/ListDublinCoreEntries";
-// import ImageManager from "@/components/images/ImageManager";
-import ImportExport from "@/components/import_export/ImportExport";
-import SearchBulletin from "@/components/recherche/SearchBulletin";
-import WorkList from "@/components/works/WorkList";
-import WorkAnnotation from "@/components/works/WorkAnnotation";
-import ImportList from "@/components/import/ImportList";
-import ImportItem from "@/components/import/ImportItemView";
-import ArkView from "@/components/ark/ArkView";
-import LinkView from "@/components/LinkView";
-import ConceptionView from "@/components/ConceptionView";
-import ChangelogView from "@/components/ChangelogView";
+import { createRouter, createWebHistory } from "vue-router";
+import RechercheView from "@/components/recherche/Recherche.vue";
+import AccueilView from "@/components/AccueilView.vue";
+import ExportView from "@/components/export/ExportView.vue";
+import CreationUtilisateur from "@/components/utilisateur/CreationUtilisateur.vue";
+import UtilisateurEnregistre from "@/components/utilisateur/UtilisateurEnregistre.vue";
+import MotDePasseOublie from "@/components/mot_de_passe/MotDePasseOublie.vue";
+import ReinitialisationMotDePasse from "@/components/mot_de_passe/ReinitialisationMotDePasse.vue";
+import MotDePasseEmail from "@/components/mot_de_passe/MotDePasseEmail.vue";
+import MotDePasseReinitialise from "@/components/mot_de_passe/MotDePasseReinitialise.vue";
+import InviteView from "@/components/utilisateur/Invite.vue";
+import ConnexionView from "@/components/connexion/ConnexionView.vue";
+import DeconnexionView from "@/components/connexion/DeconnexionView.vue";
+import ResultatsRecherche from "@/components/recherche/ResultatsRecherche.vue";
+import CreationAuteur from "@/components/auteur/CreationAuteur.vue";
+import LireAuteur from "@/components/auteur/LireAuteur.vue";
+import CreationReferenceLivre from "@/components/reference_livre/CreationReferenceLivre.vue";
+import LireReferenceLivre from "@/components/reference_livre/LireReferenceLivre.vue";
+import EnregistrementView from "@/components/enregistrement/EnregistrementView.vue";
+import LireEnregistrement from "@/components/enregistrement/LireEnregistrement.vue";
+import ListeEnregistrement from "@/components/enregistrement/ListeEnregistrement.vue";
+import ListeReferenceLivre from "@/components/reference_livre/ListeReferenceLivre.vue";
+import Contact from "@/components/ContactView.vue";
+import Emprunter from "@/components/emprunt/Emprunter.vue";
+import ListeEmprunt from "@/components/emprunt/ListeEmprunt.vue";
+import ListeAuteur from "@/components/auteur/ListeAuteur.vue";
+import ListeMotsClefs from "@/components/enregistrement/ListeMotsClefs.vue";
+import AdminView from "@/components/admin/AdminView.vue";
+import GestionnaireView from "@/components/admin/GestionnaireView.vue";
+import PageNotFoundView from "@/components/PageNotFound.vue";
+import {isValidJwt} from "@/services/authentication.js";
+import {rights} from "@/services/rights.js";
+import store from "@/store.js";
+import UtilisateurView from "@/components/utilisateur/UtilisateurView.vue";
+// import ImportTester from "@/components/import/ImportTester.vue";
+import ImportTester2 from "@/components/import/ImportTester2.vue";
+import LireEmprunt from "@/components/emprunt/LireEmprunt.vue";
+import LogEventListView from "@/components/log/LogEventList.vue";
+import GlobalImport from "@/components/import/GlobalImport.vue";
+import ListDublinCoreEntriesView from "@/components/entrees/ListDublinCoreEntries.vue";
+// import ImageManager from "@/components/images/ImageManager.vue";
+import ImportExport from "@/components/import_export/ImportExport.vue";
+import SearchBulletin from "@/components/recherche/SearchBulletin.vue";
+import WorkListView from "@/components/works/WorkList.vue";
+import WorkAnnotationView from "@/components/works/WorkAnnotation.vue";
+import ImportList from "@/components/import/ImportList.vue";
+import ImportItem from "@/components/import/ImportItemView.vue";
+import ArkView from "@/components/ark/ArkView.vue";
+import LinkView from "@/components/LinkView.vue";
+import ConceptionView from "@/components/ConceptionView.vue";
+import ChangelogView from "@/components/ChangelogView.vue";
 import CreationEnregistrementComplet from "./components/enregistrement_complet/CreationEnregistrementComplet.vue";
 import LireEnregistrementComplet from "./components/enregistrement_complet/LireEnregistrementComplet.vue";
 import ListeEnregistrementComplet from "./components/enregistrement_complet/ListeEnregistrementComplet.vue";
 import SatSubscription from "@/components/societaire/SatSubscription.vue";
 import MergeAuthors from "@/components/admin/MergeAuthors.vue";
 
-Vue.use(VueRouter);
-
-let router = new VueRouter({
-    mode: "history",
+const router = createRouter({
+    history: createWebHistory(),
     scrollBehavior(to, from, savedPosition) {
         if (to.hash) {
             return {
-                selector: to.hash,
-                offset: { x: 0, y: 0 }
+                el: to.hash,
             }
         }
         if (savedPosition) {
@@ -76,24 +72,24 @@ let router = new VueRouter({
           return false;
         }
 
-        return { x: 0, y: 0 };
+        return { top: 0, left: 0 };
     },
     routes: [
         {
             name: "recherche",
             path: '/recherche',
-            component: Recherche,
+            component: RechercheView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             path: '/',
-            component: Accueil,
+            component: AccueilView,
             name: 'accueil',
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             path: '/exporter',
-            component: Export,
+            component: ExportView,
             meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         // region utilisateurs
@@ -136,25 +132,25 @@ let router = new VueRouter({
         {
             name: "utilisateur-invite",
             path: '/utilisateur/invite',
-            component: Invite,
+            component: InviteView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-connexion",
             path: '/utilisateur/connexion',
-            component: Connexion,
+            component: ConnexionView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-deconnexion",
             path: '/utilisateur/deconnexion',
-            component: Deconnexion,
+            component: DeconnexionView,
             meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-lecture",
             path: '/utilisateur/lire/:id',
-            component: Utilisateur,
+            component: UtilisateurView,
             meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
         // endregion
@@ -163,7 +159,7 @@ let router = new VueRouter({
         {
             name: "utilisateur-rechercher",
             path: '/rechercher',
-            component: Recherche,
+            component: RechercheView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
@@ -181,13 +177,13 @@ let router = new VueRouter({
         {
             name: 'works',
             path: '/works/published/',
-            component: WorkList,
+            component: WorkListView,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         {
             name: 'works-item',
             path: '/works/published/:id',
-            component: WorkAnnotation,
+            component: WorkAnnotationView,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         // endregion
@@ -267,7 +263,7 @@ let router = new VueRouter({
         {
             name: "enregistrement-creer",
             path: '/enregistrement/creer',
-            component: Enregistrement,
+            component: EnregistrementView,
             meta: {needAuth: true, reachableFrom: rights.contributeur}
         },
         {
@@ -358,7 +354,7 @@ let router = new VueRouter({
         {
             name: "administrateur",
             path: "/administrateur",
-            component: Admin,
+            component: AdminView,
             meta: {needAuth: true, reachableFrom: rights.editeur}
         },
         {
@@ -370,13 +366,13 @@ let router = new VueRouter({
         {
             name: "log-events",
             path: "/evenements",
-            component: LogEventList,
+            component: LogEventListView,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
         },
         {
             name: "gestionnaire",
             path: "/gestionnaire",
-            component: Gestionnaire,
+            component: GestionnaireView,
             meta: {needAuth: true, reachableFrom: rights.gestionnaire}
         },
         // {
@@ -388,7 +384,7 @@ let router = new VueRouter({
         {
             name: "dublin-core",
             path: "/dublin-core",
-            component: ListDublinCoreEntries
+            component: ListDublinCoreEntriesView
         },
         {
             name: "dublin-core-entry",
@@ -418,8 +414,8 @@ let router = new VueRouter({
         // region page not found
         {
             name: "not-found",
-            path: "*",
-            component: PageNotFound,
+            path: "/:pathMatch(.*)*",
+            component: PageNotFoundView,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         }
         // endregion

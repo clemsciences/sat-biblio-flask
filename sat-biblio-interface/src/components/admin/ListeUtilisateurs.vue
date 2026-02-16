@@ -1,60 +1,60 @@
 <template>
-  <b-container>
+  <BContainer>
     <!-- liste des dernières actions faites sur le catalogue-->
     <p>Double-cliquez sur la ligne pour voir les détails de l'utilisateur.</p>
-    <b-row class="my-1">
-      <b-col lg="4">
-        <b-form-group label="Prénom" label-cols-sm="3"
+    <BRow class="my-1">
+      <BCol lg="4">
+        <BFormGroup label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="firstNameFiltre"
+          <BFormInput type="search" v-model="firstNameFiltre"
                    placeholder="Filtrer en fonction du prénom"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Nom de famille" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="familyNameFiltre"
+          <BFormInput type="search" v-model="familyNameFiltre"
                    placeholder="Filtrer en fonction du nom de famille"/>
-        </b-form-group>
-      </b-col>
-      <b-col lg="4">
-        <b-form-group label="Rôle" label-cols-sm="3"
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
+        <BFormGroup label="Rôle" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <b-input type="search" v-model="rightFiltre"
+          <BFormInput type="search" v-model="rightFiltre"
                    placeholder="Filtrer en fonction du rôle"/>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-pagination
+        </BFormGroup>
+      </BCol>
+    </BRow>
+    <BPagination
       v-model="currentPage"
       :total-rows="userTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
-    <b-table striped bordered hover :items="loadUsers" :fields="fields"
+    <BTable striped bordered hover :items="loadUsers" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToUser" :filter="onFilter"
              ref="userTable">
       <template #table-caption>La liste des utilisateurs dans la base.</template>
       <template #cell(actions)="user">
-        <b-button size="sm" @click="openDeletionUserModal(user)" class="mr-1" v-if="isAdmin">
+        <BButton size="sm" @click="openDeletionUserModal(user)" class="me-1" v-if="isAdmin">
           Supprimer
-        </b-button>
+        </BButton>
       </template>
 
-    </b-table>
+    </BTable>
 
-    <b-modal ref="userDeletionModal" title="Suppression d'un utilisateur"
+    <BModal ref="userDeletionModal" title="Suppression d'un utilisateur"
       cancel-title="Annuler" ok-title="Supprimer" @ok="deleteUser(selectedUser)">
       <p>Êtes-vous sûr de supprimer l'utilisateur {{ deletionMessage }} ?</p>
-    </b-modal>
-  </b-container>
+    </BModal>
+  </BContainer>
 </template>
 
 <script>
 import {deleteUser, getUsersCount, retrieveUsers} from "@/services/api";
 
 export default {
-  name: "Liste-Utilisateur",
+  name: "ListeUtilisateurss",
   props: {
     forceUsersReload: {
       type: Boolean,
