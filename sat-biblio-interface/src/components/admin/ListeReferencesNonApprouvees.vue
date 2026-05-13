@@ -2,7 +2,6 @@
   <ListeEntreesNonApprouvees
       :go-to="goTo"
       :retrieve-list-request="retrieveNotValidatedBookReferences"
-      :get-total-number-request="getNotValidatedBookReferencesCount"
       :per-page="perPage"
       entry-type="référence bibliographique"
     />
@@ -22,7 +21,6 @@ export default {
   },
   methods: {
     retrieveNotValidatedBookReferences: retrieveNotValidatedBookReferences,
-    getNotValidatedBookReferencesCount: getNotValidatedBookReferencesCount,
     goTo() {
 
     }

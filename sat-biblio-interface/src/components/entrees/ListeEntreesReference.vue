@@ -3,7 +3,6 @@
                 :go-to="goTo"
                 caption="Enregistrement"
                 :per-page="perPage"
-                :get-total-number-request="getEntryListAssociatedToReferenceCount"
                 :entry-id="referenceId"
                 entry-type="record"
   />
@@ -27,16 +26,13 @@ export default {
   },
   data: function() {
     return {
-      entryCount: 0,
-      entries: [],
       perPage: 20,
     }
   },
   methods: {
     getEntryListAssociatedToReference: getEntryListAssociatedToReference,
-    getEntryListAssociatedToReferenceCount: getEntryListAssociatedToReferenceCount,
     goTo(row) {
-      this.$router.push(goToEntryView(row.id, row.type_string));
+      this.$router.push(goToEntryView(row.item.id, row.item.type_string));
     }
   }
 }

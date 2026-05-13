@@ -57,7 +57,7 @@
           :per-page="perPage"
           aria-controls="my-table"
           class="my-3"/>
-      <BTable striped bordered hover :items="retrieveList" :fields="fields"
+      <BTable striped bordered hover :provider="retrieveList" :fields="fields"
                primary-key="identifier" :per-page="perPage" :current-page="currentPage"
                @row-dblclicked="goTo">
         <template #table-caption v-if="caption.length > 0">{{ caption }}</template>
@@ -80,9 +80,25 @@
 <script>
 // import ListEntries from "@/components/entrees/ListEntries";
 import {getDublinCoreEntries} from "@/services/api";
-
+import {
+  BButton,
+  BCol,
+  BContainer,
+  BFormGroup,
+  BFormInput, BFormRadioGroup, BFormSelect, BModal,
+  BPagination,
+  BRow,
+  BTable
+} from "bootstrap-vue-next";
+import AppTitle from "@/components/visuel/AppTitle.vue";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 export default {
   name: "ListDublinCoreEntriesView",
+  components: {
+    BButton, BContainer, BRow, BPagination, BCol,
+    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
+    BModal, BTable, AppTitle, FilterCount
+  },
   // components: {ListEntries},
   props: {
     initialAuthorQuery: {
@@ -243,44 +259,38 @@ export default {
       console.log("query "+this.query);
       this.loading = true;
       let params = `query=${this.query}&perPage=${this.perPage}`;
-      getDublinCoreEntries(params).then(
-          (response) => {
-            this.loading = false;
-            if(response.data.success) {
-              this.totalNumber = response.data.total;
-              this.entries = response.data.entries.records.map((entry) => entry.recordData);
-              console.log(this.totalNumber);
-              console.log(this.entries);
-            }
-          }
-      ).catch(
-          (reason) => {
-            this.loading = false;
-            console.log(reason);
-          }
-      );
+      try {
+        const response = getDublinCoreEntries(params);
+        this.loading = false;
+        if(response.data.success) {
+          this.totalNumber = response.data.total;
+          this.entries = response.data.entries.records.map((entry) => entry.recordData);
+          console.log(this.totalNumber);
+          console.log(this.entries);
+        }
+      } catch(reason) {
+        this.loading = false;
+        console.log(reason);
+      }
     },
-    retrieveList(ctx, callback) {
+    async retrieveList(ctx) {
       let params = "page="+ctx.currentPage+
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy+`&query=${this.query}&perPage=${this.perPage}`;
       console.log(params);
 
-      getDublinCoreEntries(params).then(
-          (response) => {
-            if(response.data.success) {
-              this.totalNumber = response.data.total;
-              this.entries = response.data.entries.records.map((entry) => entry.recordData);
-              console.log(this.entries);
-              callback(this.entries);
-            }
-          }
-      ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
+      try {
+        const response = getDublinCoreEntries(params);
+        if(response.data.success) {
+          this.totalNumber = response.data.total;
+          this.entries = response.data.entries.records.map((entry) => entry.recordData);
+          console.log(this.entries);
+          return this.entries;
+        }
+      } catch (reason) {
+        console.log(reason);
+        return [];
+      }
       return null;
     },
     goTo: function() {

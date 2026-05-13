@@ -12,13 +12,13 @@
       <BCol cols="12">
         <BCollapse id="collapse-new-user">
           <BCard>
-            <creation-utilisateur/>
+            <CreationUtilisateur/>
           </BCard>
         </BCollapse>
       </BCol>
     </BRow>
     <BRow v-if="isAdmin">
-      <BButton vb--toggle.collapse-users class="m-2"
+      <BButton v-b-toggle.collapse-users class="m-2"
                 @click="forceUsersReload">
         Voir les utilisateurs
       </BButton>
@@ -27,6 +27,7 @@
       <BCollapse id="collapse-users">
         <ListeUtilisateurs ref="userList" />
       </BCollapse>
+      <p></p>
     </BRow>
 
     <BRow v-if="isAdmin">
@@ -76,8 +77,8 @@ export default {
   },
   methods: {
     forceUsersReload() {
-      this.$refs.userList.getUserTotalNumber();
-      this.$refs.userList.$refs.userTable.refresh();
+      // this.$refs.userList.getUserTotalNumber();
+      this.$refs.userList.refreshTable();
     },
     deleteAllRows() {
       this.message = "En cours de suppression"

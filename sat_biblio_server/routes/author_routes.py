@@ -67,8 +67,24 @@ def authors_():
 
         authors = [Author2023.from_db_to_data(author)
                    for author in the_query.paginate(page=n_page, per_page=size).items]
+        # region count
+        the_filtered_query = Author2023DB.query
+        # region filtre
+        if "first_name" in request.args:
+            the_filtered_query = the_filtered_query.filter(
+                Author2023DB.first_name.like(f"%{request.args.get('first_name')}%"))
+
+        if "family_name" in request.args:
+            the_filtered_query = the_filtered_query.filter(
+                Author2023DB.family_name.like(f"%{request.args.get('family_name')}%"))
+        # endregion
+        the_total_query = Author2023DB.query.filter()
+
+        filtered_total = the_filtered_query.count()
+        total = the_total_query.count()
+        # endregion
         logging.error(len(authors))
-        return json_result(True, authors=authors), 200
+        return json_result(True, authors=authors, total=total, filtered_total=filtered_total), 200
     elif request.method == "POST":
         data = request.get_json()
 

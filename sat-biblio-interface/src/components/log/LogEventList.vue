@@ -17,7 +17,7 @@
       :total-rows="logEventsTotalNumber"
       :per-page="perPage"
       aria-controls="my-table"/>
-    <BTable striped bordered hover :items="retrieveLogEvents" :fields="fields"
+    <BTable striped bordered hover :provider="retrieveLogEvents" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
              :sort-by="sortBy" @row-dblclicked="goToLogEvent" :filter="onFilter">
       <template #table-caption>La liste des événements dans la base.</template>
@@ -33,11 +33,22 @@ import AppTitle from "@/components/visuel/AppTitle.vue";
 import {getLogEventsCount, retrieveLogEvents} from "@/services/api.js";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-
+import {
+  BButton,
+  BCol,
+  BContainer,
+  BFormGroup,
+  BFormInput, BFormRadioGroup, BFormSelect, BModal,
+  BPagination,
+  BRow,
+  BTable
+} from "bootstrap-vue-next";
+import FilterCount from "@/components/visuel/FilterCount.vue";
 export default {
   name: "LogEventListView",
-
-  components: {AppTitle, VueJsonPretty},
+  components: {VueJsonPretty, BButton, BContainer, BRow, BPagination, BCol,
+    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
+    BModal, BTable, AppTitle, FilterCount},
   data: function () {
     return {
       logEvents: [],
@@ -83,36 +94,33 @@ export default {
     }
   },
   methods: {
-    retrieveLogEvents: function(ctx, callback) {
+    async retrieveLogEvents(ctx) {
       let params = "?page="+ctx.currentPage+
           "&size="+ctx.perPage+
           "&sortBy="+ctx.sortBy;
 
       let filterParams = "";
       if(this.tableNameFilter.length > 0) {
-        filterParams = filterParams+"&first_name="+this.firstNameFiltre;
+        filterParams = filterParams+"&first_name="+this.firstNameFilter;
       }
 
       if(filterParams.length > 0) {
         params = params + filterParams;
       }
-      retrieveLogEvents(params).then(
-          (response) => {
-            if(response.data.success) {
-              this.logEvents = response.data.log_events;
-              // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
-              //   this.currentPage = 1;
-              // }
-              callback(this.logEvents);
-            }
-          }
-      ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
-      return null;
+      try {
+        const response = await retrieveLogEvents(params);
+        if(response.data.success) {
+          this.logEvents = response.data.log_events;
+          this.logEventsTotalNumber = response.data.total;
+          // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
+          //   this.currentPage = 1;
+          // }
+          return this.logEvents;
+        }
+      } catch(reason){
+        console.log(reason);
+        return [];
+      }
     },
     getLogEventsTotalNumber: function() {
       let filterParams = "";

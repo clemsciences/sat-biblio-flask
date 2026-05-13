@@ -1,11 +1,11 @@
 <template>
-  <ListEntriesOfEntry :retrieve-list-request="getEntryListAssociatedToBookRecords"
-                :go-to="goTo"
-                caption="Enregistrement"
-                :per-page="perPage"
-                :get-total-number-request="getEntryListAssociatedToBookRecordsCount"
-                :entry-id="recordId"
-                entry-type="reference"
+  <ListEntriesOfEntry
+      :retrieve-list-request="getEntryListAssociatedToBookRecords"
+      :go-to="goTo"
+      caption="Enregistrement"
+      :per-page="perPage"
+      :entry-id="recordId"
+      entry-type="reference"
   />
 </template>
 
@@ -25,8 +25,6 @@ export default {
   },
   data: function() {
     return {
-      entryCount: 0,
-      entries: [],
       perPage: 20,
     }
   },

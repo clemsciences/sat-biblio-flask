@@ -25,6 +25,75 @@ from sqlalchemy import or_
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
+class BorrowingsHelper:
+
+    @staticmethod
+    def compute_count(args):
+        # region count
+        the_query = EmpruntLivre2023DB.query
+        the_total_query = EmpruntLivre2023DB.query
+
+        id_emprunteur = args.get("id_emprunteur", -1)
+        if id_emprunteur > 0:
+            the_query = the_query.filter(EmpruntLivre2023DB.id_emprunteur == id_emprunteur)
+
+        id_enregistrement = args.get("id_enregistrement", -1)
+        if id_enregistrement > 0:
+            the_query = the_query.filter(EmpruntLivre2023DB.id_enregistrement == id_enregistrement)
+
+        id_gestionnaire = args.get("id_gestionnaire", -1)
+        if id_gestionnaire > 0:
+            the_query = the_query.filter(EmpruntLivre2023DB.id_enregistrement == id_gestionnaire)
+
+        commentaire = args.get("commentaire")
+        if commentaire:
+            the_query = the_query.filter(EmpruntLivre2023DB.commentaire.like(commentaire))
+
+        in_commantaire = args.get("in_commentaire")
+        if in_commantaire:
+            the_query = the_query.filter(EmpruntLivre2023DB.commentaire.like(f"%{commentaire}%"))
+
+        emprunte = args.get("emprunte")
+        if emprunte:
+            the_query = the_query.filter(EmpruntLivre2023DB.emprunte == emprunte)
+
+        date_emprunt = args.get("date_emprunt")
+        if date_emprunt:
+            the_query = filter(EmpruntLivre2023DB.date_emprunt == date_emprunt)
+
+        date_retour_prevu = args.get("date_retour_prevu")
+        if date_retour_prevu:
+            the_query = the_query.filter(EmpruntLivre2023DB.date_retour_prevu == date_retour_prevu)
+
+        date_retour_reel = args.get("date_retour_reel")
+        if date_retour_reel:
+            the_query = the_query.filter(EmpruntLivre2023DB.date_retour_reel == date_retour_reel)
+
+        on_time = args.get("on_time")
+        late = args.get("late")
+        _all_about_late = args.get("all")
+        if _all_about_late == "true":
+            pass
+        elif on_time == "true":
+            the_query = the_query.filter(
+                or_(EmpruntLivre2023DB.date_retour_prevu > datetime.date.today(),
+                    EmpruntLivre2023DB.rendu == True))
+        elif late == "true":
+            the_query = the_query.filter(EmpruntLivre2023DB.date_retour_prevu <= datetime.date.today())
+
+        rendu = request.args.get("rendu")
+        if rendu:
+            if rendu == "true":
+                rendu = True
+            else:
+                rendu = False
+            the_query = the_query.filter(EmpruntLivre2023DB.rendu == rendu)
+
+        filtered_total = the_query.count()
+        total = the_total_query.count()
+        return total, filtered_total
+
+
 
 # region borrowing
 @sat_biblio.route("/borrowings/", methods=["POST", "GET"])
@@ -100,7 +169,9 @@ def borrowings():
         query = query.paginate(page=n_page, per_page=size)
         borrowings_db = query.items
         borrowings_data = [EmpruntLivre.from_db_to_data(borrowing_db) for borrowing_db in borrowings_db]
-        return json_result(True, borrowings=borrowings_data), 200
+        total, filtered_total = BorrowingsHelper.compute_count(request.args)
+        # endregion
+        return json_result(True, borrowings=borrowings_data, total=total, filtered_total=filtered_total), 200
     elif request.method == "POST":
         data = request.get_json()
         # logging.log(logging.DEBUG, data)
@@ -253,69 +324,9 @@ def borrowings_count():
 
     :return:
     """
-    the_query = EmpruntLivre2023DB.query
-    the_total_query = EmpruntLivre2023DB.query
-
-    id_emprunteur = request.args.get("id_emprunteur", -1)
-    if id_emprunteur > 0:
-        the_query = the_query.filter(EmpruntLivre2023DB.id_emprunteur == id_emprunteur)
-
-    id_enregistrement = request.args.get("id_enregistrement", -1)
-    if id_enregistrement > 0:
-        the_query = the_query.filter(EmpruntLivre2023DB.id_enregistrement == id_enregistrement)
-
-    id_gestionnaire = request.args.get("id_gestionnaire", -1)
-    if id_gestionnaire > 0:
-        the_query = the_query.filter(EmpruntLivre2023DB.id_enregistrement == id_gestionnaire)
-
-    commentaire = request.args.get("commentaire")
-    if commentaire:
-        the_query = the_query.filter(EmpruntLivre2023DB.commentaire.like(commentaire))
-
-    in_commantaire = request.args.get("in_commentaire")
-    if in_commantaire:
-        the_query = the_query.filter(EmpruntLivre2023DB.commentaire.like(f"%{commentaire}%"))
-
-    emprunte = request.args.get("emprunte")
-    if emprunte:
-        the_query = the_query.filter(EmpruntLivre2023DB.emprunte == emprunte)
-
-    date_emprunt = request.args.get("date_emprunt")
-    if date_emprunt:
-        the_query = the_query.filter(EmpruntLivre2023DB.date_emprunt == date_emprunt)
-
-    date_retour_prevu = request.args.get("date_retour_prevu")
-    if date_retour_prevu:
-        the_query = the_query.filter(EmpruntLivre2023DB.date_retour_prevu == date_retour_prevu)
-
-    date_retour_reel = request.args.get("date_retour_reel")
-    if date_retour_reel:
-        the_query = the_query.filter(EmpruntLivre2023DB.date_retour_reel == date_retour_reel)
-
-    on_time = request.args.get("on_time")
-    late = request.args.get("late")
-    _all_about_late = request.args.get("all")
-    if _all_about_late == "true":
-        pass
-    elif on_time == "true":
-        the_query = the_query.filter(
-            or_(EmpruntLivre2023DB.date_retour_prevu > datetime.date.today(),
-                EmpruntLivre2023DB.rendu == True))
-    elif late == "true":
-        the_query = the_query.filter(EmpruntLivre2023DB.date_retour_prevu <= datetime.date.today())
-
-    rendu = request.args.get("rendu")
-    if rendu:
-        if rendu == "true":
-            rendu = True
-        else:
-            rendu = False
-        the_query = the_query.filter(EmpruntLivre2023DB.rendu == rendu)
-
-    filtered_count = the_query.count()
-    total_count = the_total_query.count()
+    total, filtered_total = BorrowingsHelper.compute_count(request.args)
 
     # borrowing_db.id_emprunteur =
 
-    return json_result(True, total=total_count, filtered_number=filtered_count), 200
+    return json_result(True, total=total, filtered_total=filtered_total), 200
 # endregion

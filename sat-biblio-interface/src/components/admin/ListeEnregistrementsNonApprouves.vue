@@ -4,7 +4,6 @@
       :go-to="goTo"
       caption="Enregistrements non validés"
       :per-page="perPage"
-      :get-total-number-request="getNotValidatedBookRecordsCount"
       entry-type="enregistrement"
   />
 </template>
@@ -23,7 +22,6 @@ export default {
   },
   methods: {
     retrieveNotValidatedBookRecords: retrieveNotValidatedBookRecords,
-    getNotValidatedBookRecordsCount: getNotValidatedBookRecordsCount,
     goTo() {
 
     }

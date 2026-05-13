@@ -22,6 +22,48 @@ from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
+class RecordHelper:
+
+    @staticmethod
+    def compute_count(args):
+        cote = args.get("cote", "")
+        titre = args.get("titre", "")
+        mot_clef = args.get("mot_clef", "")
+        author = args.get("author", "")
+
+        the_filtered_query = Enregistrement2023DB.query
+        the_total_query = Enregistrement2023DB.query
+        if cote:
+            the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.cote.like(f"%{cote}%"))
+        if titre:
+            the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
+                .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
+        if mot_clef:
+            the_filtered_query = the_filtered_query.filter(
+                Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
+        if author:
+            the_filtered_query = (the_filtered_query
+                                  .join(ReferenceBibliographiqueLivre2023DB)
+                                  .join(ReferenceBibliographiqueLivre2023DB.authors)
+                                  .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
+                                              Author2023DB.family_name.ilike(f"%{author}%"))
+                                          )
+                                  ).options(
+                joinedload(Enregistrement2023DB.reference)
+                .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
+            )
+
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
+        #     the_total_query = the_total_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
+        # else:
+        #     the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.valide == True)
+        #     the_total_query = the_total_query.filter(Enregistrement2023DB.valide == True)
+
+        filtered_total = the_filtered_query.count()
+        total = the_total_query.count()
+        return total, filtered_total
 
 # region enregistrement
 @sat_biblio.route("/book-records/", methods=["GET", "POST"])
@@ -110,7 +152,8 @@ def book_records():
             else:
                 logging.error(f"record id = {record_db.id} record found "
                               f"but no bound reference")
-        return json_result(True, enregistrements=enregistrements), 200
+        total, filtered_total = RecordHelper.compute_count(request.args)
+        return json_result(True, enregistrements=enregistrements, total=total, filtered_total=filtered_total), 200
 
 
 @sat_biblio.route("/book-records/<int:id_>/", methods=["GET", "DELETE", "PUT"])
@@ -175,42 +218,7 @@ def book_record(id_):
 
 @sat_biblio.route("/book-records/count/", methods=["GET"])
 def book_records_count():
-    cote = request.args.get("cote", "")
-    titre = request.args.get("titre", "")
-    mot_clef = request.args.get("mot_clef", "")
-    author = request.args.get("author", "")
-
-    the_filtered_query = Enregistrement2023DB.query
-    the_total_query = Enregistrement2023DB.query
-    if cote:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.cote.like(f"%{cote}%"))
-    if titre:
-        the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
-            .filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
-    if mot_clef:
-        the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
-    if author:
-        the_filtered_query = (the_filtered_query
-                     .join(ReferenceBibliographiqueLivre2023DB)
-                     .join(ReferenceBibliographiqueLivre2023DB.authors)
-                     .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
-                                 Author2023DB.family_name.ilike(f"%{author}%"))
-                             )
-                     ).options(
-                        joinedload(Enregistrement2023DB.reference)
-                        .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
-                    )
-
-    # valid = request.args.get("valid", "1")
-    # if valid in ["1", "0"]:
-    #     the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
-    #     the_total_query = the_total_query.filter(Enregistrement2023DB.valide == int_to_bool(valid))
-    # else:
-    #     the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.valide == True)
-    #     the_total_query = the_total_query.filter(Enregistrement2023DB.valide == True)
-
-    filtered_total = the_filtered_query.count()
-    total = the_total_query.count()
+    total, filtered_total = RecordHelper.compute_count(request.args)
     logging.debug(filtered_total)
     return json_result(True, total=total, filtered_total=filtered_total), 200
 

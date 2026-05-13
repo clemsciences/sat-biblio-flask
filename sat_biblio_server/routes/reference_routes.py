@@ -8,6 +8,8 @@ from flask import redirect, request, session
 
 import logging
 
+from sqlalchemy import text
+
 from sat_biblio_server.managers.log_manager import LogEventManager
 from sat_biblio_server.routes.utils import get_pagination, int_to_bool
 from sat_biblio_server.data.models_2023 import ReferenceBibliographiqueLivre2023, Author2023, Enregistrement2023, \
@@ -20,6 +22,28 @@ import sat_biblio_server.data.validation as dv
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
+
+class ReferenceHelper:
+
+    @staticmethod
+    def compute_count(args):
+        titre = args.get("titre", "")
+        the_filtered_query = ReferenceBibliographiqueLivre2023DB.query
+        the_total_query = ReferenceBibliographiqueLivre2023DB.query
+        if titre:
+            the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivre2023DB.titre.like(f"%{titre}%"))
+
+        # valid = request.args.get("valid", "1")
+        # if valid in ["1", "0"]:
+        #     the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivre2023DB.valide == int_to_bool(valid))
+        #     the_total_query = the_total_query.filter(ReferenceBibliographiqueLivre2023DB.valide == int_to_bool(valid))
+        # else:
+        #     the_filtered_query = the_filtered_query.filter(ReferenceBibliographiqueLivre2023DB.valide == True)
+        #     the_total_query = the_total_query.filter(ReferenceBibliographiqueLivre2023DB.valide == True)
+
+        filtered_total = the_filtered_query.count()
+        total = the_total_query.count()
+        return total, filtered_total
 
 # region références
 @sat_biblio.route("/book-references/", methods=["GET", "POST"])
@@ -37,7 +61,7 @@ def book_references():
             return json_result(True, id=reference_db.id, message="La référence a été sauvegardée"), 201
         return json_result(False, message="La sauvegarde de la référence a échoué."), 400
     elif request.method == "GET":
-        n_page, size, sort_by = get_pagination(request)
+        n_page, size, sort_by, sort_desc = get_pagination(request)
         titre = request.args.get("titre", "")
         # print("titre", titre)
 
@@ -60,8 +84,8 @@ def book_references():
         #            .query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
         if sort_by:
             the_query = the_query.order_by(sort_by)
-        else:
-            the_query = the_query.order_by("title")
+        # else:
+        #     the_query = the_query.order_by(text("title"))
 
         references = []
         for reference_db in the_query.paginate(page=n_page, per_page=size).items:
@@ -77,8 +101,9 @@ def book_references():
 
             reference["authors"] = authors[:-2].strip()
             references.append(reference)
+        total, filtered_total = ReferenceHelper.compute_count(request.args)
         logging.debug(len(references))
-        return json_result(True, references=references), 200
+        return json_result(True, references=references, total=total, filtered_total=filtered_total), 200
 
 
 @sat_biblio.route("/book-references/<int:id_>/", methods=["GET", "PUT", "DELETE"])
