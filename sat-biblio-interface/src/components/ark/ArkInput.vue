@@ -1,6 +1,9 @@
 <script>
+import {BInputGroupText} from "bootstrap-vue-next";
+
 export default {
   name: 'ArkInput',
+  components: {BInputGroupText},
   props: {
     arkName: {
       type: String,
@@ -37,19 +40,19 @@ export default {
 <template>
   <div class="mt-3">
     <BFormGroup label="Permalien (alpha)">
-      <b-input-group>
+      <BInputGroup>
         <BFormInput id="copy-btn" :value="url"/>
         <input type="hidden" id="rendering" :value="url"/>
         <BTooltip target="copy-btn" placement="bottom" triggers="manual" :show="showingCopyMessage">
           Copié !
         </BTooltip>
-        <b-input-group-append>
+        <BInputGroupText>
           <BButton @click="copy">Copier</BButton>
 <!--          <BButton variant="outline-success">Button</BButton>-->
 <!--          <BButton variant="info">Button</BButton>-->
-        </b-input-group-append>
+        </BInputGroupText>
 
-      </b-input-group>
+      </BInputGroup>
     </BFormGroup>
 
   </div>

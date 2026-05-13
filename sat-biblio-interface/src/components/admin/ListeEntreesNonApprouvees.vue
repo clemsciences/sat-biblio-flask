@@ -1,39 +1,50 @@
 <template>
   <BContainer>
-    <div v-if="entryTotalNumber > 0">
+    <BPagination
+      v-if="entryTotalNumber > 0"
+      v-model="currentPage"
+      :total-rows="entryTotalNumber"
+      :per-page="perPage"
+      aria-controls="my-table"
+      class="my-3"/>
 
-      <BPagination
-        v-model="currentPage"
-        :total-rows="entryTotalNumber"
-        :per-page="perPage"
-        aria-controls="my-table"
-        class="my-3"/>
-      <BTable striped bordered hover :items="loadEntries" :fields="fields"
-               primary-key="description" :per-page="perPage" :current-page="currentPage"
-               @row-dblclicked="goToEntry"
-               ref="userTable">
-        <template #table-caption>La liste des entrées pas encore approuvées.</template>
-        <template #cell(actions)="entry">
-          <BButton size="sm" @click="approve(entry)" class="me-1" v-if="isManager">
-            Approuver
-          </BButton>
-        </template>
-      </BTable>
-    </div>
-    <p v-else>Il n'y a aucune entrée de type {{ entryType }} à valider.</p>
+    <!-- ✅ BTable toujours présent pour que le provider puisse s'exécuter -->
+    <BTable striped bordered hover
+            :provider="loadEntries"
+            :fields="fields"
+            primary-key="description"
+            ref="entriesTable"
+            :per-page="perPage"
+            :current-page="currentPage"
+            @row-dblclicked="goToEntry">
+      <template #table-caption>La liste des entrées pas encore approuvées.</template>
+      <template #cell(actions)="entry">
+        <BButton size="sm" @click="approve(entry)" class="me-1" v-if="isManager">
+          Approuver
+        </BButton>
+      </template>
+    </BTable>
+
+    <p v-if="entryTotalNumber === 0 && !isLoading">
+      Il n'y a aucune entrée de type {{ entryType }} à valider.
+    </p>
   </BContainer>
 </template>
 
 <script>
 import {canManage} from "@/services/rights";
+import {
+  BButton,
+  BContainer,
+  BPagination,
+  BTable
+} from "bootstrap-vue-next";
 
 export default {
   name: "ListeEntreesNonApprouvees",
+  components: { BButton, BContainer, BPagination, BTable },
   props: {
     retrieveListRequest: {
-      type: Function,
-    },
-    getTotalNumberRequest: {
       type: Function,
     },
     perPage: {
@@ -46,94 +57,87 @@ export default {
     entryType: {
       type: String,
       default: "",
-    }
+    },
   },
-  data: function() {
+  data() {
     return {
+      isMounted: false,
+      isLoading: true,
       entryTotalNumber: 0,
       currentPage: 1,
-      entries: [],
       fields: [
-        {
-          key: 'contributor',
-          label: 'Contributeur',
-          sortable: false
-        },
-        {
-          key: 'type',
-          label: "Type",
-          sortable: false
-        },
-        {
-          key: 'description',
-          label: "Description",
-          sortable: false,
-        },
-        {
-          key: 'actions',
-          label: 'Actions',
-          sortable: false
-        }
+        { key: 'contributor', label: 'Contributeur', sortable: false },
+        { key: 'type',        label: 'Type',         sortable: false },
+        { key: 'description', label: 'Description',  sortable: false },
+        { key: 'actions',     label: 'Actions',      sortable: false },
       ],
     }
   },
-  mounted() {
-    this.getTotalNumber();
-  },
-  methods: {
-    approve: function(entry) {
-      // TODO
-      console.log(entry);
-    },
-    goToEntry: function(entry) {
-      // TODO
-      console.log(entry);
-    },
-    loadEntries(ctx, callback) {
-      let params = "page="+ctx.currentPage+
-          "&size="+ctx.perPage;
 
-      this.retrieveListRequest(params).then(
-          (response) => {
-            if(response.data.success) {
-              this.entries = response.data.entries;
-              // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
-              //   this.currentPage = 1;
-              // }
-              callback(this.entries);
-            }
-          }
-      ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
-      return null;
-    },
-    getTotalNumber() {
-      this.getTotalNumberRequest("").then(
-          (response) => {
-            if(response.data.success) {
-              this.entryTotalNumber = response.data.total;
-            }
-          }
-      ).catch(
-          (reason) => {
-            console.error(reason);
-      }
-      );
-    }
-  },
   computed: {
-    isManager: function() {
+    isManager() {
       return canManage(this.$store.getters.getUserRight);
-    }
-  }
+    },
+  },
 
+  methods: {
+    approve(entry) {
+      // TODO
+      console.log(entry);
+    },
+    goToEntry(entry) {
+      // TODO
+      console.log(entry);
+    },
+
+    // -----------------------------------------------------------------------
+    // Provider — currentPage et perPage ne sont pas dans ctx : on utilise this.*
+    // ✅ await ajouté sur retrieveListRequest
+    // -----------------------------------------------------------------------
+    async loadEntries() {
+      this.isLoading = true;
+      const params = `page=${this.currentPage}&size=${this.perPage}`;
+      try {
+        const response = await this.retrieveListRequest(params);
+        if (response.data.success) {
+          const entries = response.data.entries ?? [];
+          // ✅ Total mis à jour avant le return pour que BPagination se recalcule
+          this.entryTotalNumber = response.data.total ?? entries.length;
+          return entries;
+        }
+        this.entryTotalNumber = 0;
+        return [];
+      } catch (reason) {
+        console.error(reason);
+        this.entryTotalNumber = 0;
+        return [];
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    refreshTable() {
+      this.$refs.entriesTable?.refresh();
+    },
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+      this.isMounted = true;
+    });
+  },
+
+  watch: {
+    currentPage() {
+      this.refreshTable();
+    },
+    entryType() {
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+  },
 }
 </script>
 
 <style scoped>
-
 </style>

@@ -60,7 +60,7 @@
       <BCol lg="4">
         <BFormGroup label="Auteur" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <BInput v-model="authorFilter" size="sm"
+          <BFormInput v-model="authorFilter" size="sm"
                    placeholder="Filtrer en fonction de l'auteur"/>
         </BFormGroup>
       </BCol>
@@ -120,17 +120,20 @@
           v-model="currentPage"
           :total-rows="recordFilteredNumber"
           :per-page="perPage"
-          aria-controls="my-table"
+          aria-controls="myTable"
           class="my-3"/>
       <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
     </BRow>
 
     <BTable striped bordered hover
-            :items="records"
+            :provider="retrieveEnregistrementCompleteList"
             :fields="filteredFields"
             primary-key="id"
-            ref="my-table"
-            :sort-desc="sortDesc">
+            ref="myTable"
+            :current-page="currentPage"
+            :per-page="perPage"
+            :sort-by="tableSortBy"
+            @row-dblclicked="goToEnregistrementComplet">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </BTable>
 
@@ -139,25 +142,41 @@
           v-model="currentPage"
           :total-rows="recordFilteredNumber"
           :per-page="perPage"
-          aria-controls="my-table"
+          aria-controls="myTable"
           class="my-3"/>
       <FilterCount :filtered-item-count="recordFilteredNumber" :total-item-count="recordTotalNumber"/>
     </BRow>
   </BContainer>
 </template>
+
 <script>
 import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecordsWithReference} from "@/services/api.js";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
-import {BButton, BCol, BContainer, BFormGroup, BFormInput, BFormRadioGroup, BFormSelect, BInput, BModal, BPagination, BRow, BTable} from "bootstrap-vue-next";
+import {
+  BButton,
+  BCol,
+  BContainer,
+  BFormGroup,
+  BFormInput,
+  BFormRadioGroup,
+  BFormSelect,
+  BModal,
+  BPagination,
+  BRow,
+  BTable
+} from "bootstrap-vue-next";
 
 export default {
   name: "ListeEnregistrementComplet",
-  components: {BButton, BContainer, BRow, BPagination, BInput, BCol, BFormGroup, BFormInput, BFormRadioGroup, BFormSelect, BModal, BTable, AppTitle, FilterCount},
-  data: function () {
+  components: {
+    BButton, BContainer, BRow, BPagination, BCol,
+    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
+    BModal, BTable, AppTitle, FilterCount
+  },
+  data() {
     return {
       isMounted: false,
-      records: [],
       currentPage: 1,
       perPage: 50,
       sortBy: "cote",
@@ -165,344 +184,29 @@ export default {
       recordFilteredNumber: 0,
       recordTotalNumber: 0,
       fields: [
-        {
-          key: "cote",
-          label: "Cote",
-          sortable: true
-        },
-        {
-          key: "reference",
-          label: "Titre",
-          sortable: false
-        },
-        {
-          key: "authors",
-          label: "Auteurs",
-          sortable: false
-        },
-        /*{
-          key: "description",
-          label: "Description",
-          sortable: false
-        },*/
-        {
-          key: "annee_obtention",
-          label: "Année d'obtention",
-          sortable: true
-        },
-        // {
-        //   key: "nb_exemplaire_supp",
-        //   label: "N° d'exemplaires supplémentaires",
-        //   sortable: false
-        // },
-        {
-          key: "provenance",
-          label: "Provenance",
-          sortable: false
-        },
-        {
-          key: "aide_a_la_recherche",
-          label: "Aide à la recherche",
-          sortable: false
-        },
-        {
-          key: "observations",
-          label: "Observations",
-          sortable: false
-        },
-        {
-          key: "date_derniere_modification",
-          label: "Date dernière modification",
-          sortable: true
-        }
+        { key: "cote", label: "Cote", sortable: true },
+        { key: "reference", label: "Titre", sortable: false },
+        { key: "authors", label: "Auteurs", sortable: false },
+        { key: "annee_obtention", label: "Année d'obtention", sortable: true },
+        { key: "provenance", label: "Provenance", sortable: false },
+        { key: "aide_a_la_recherche", label: "Aide à la recherche", sortable: false },
+        { key: "observations", label: "Observations", sortable: false },
+        { key: "date_derniere_modification", label: "Date dernière modification", sortable: true }
       ],
       prefixCoteFiler: "",
       numberCoteFilter: "",
-      //coteFilter: "",
       authorFilter: "",
       keywordsFilter: "",
       titleFilter: "",
-      noChangeIn: 0,
       isExporting: false,
     }
   },
-  methods: {
 
-    getFilterParams() {
-      let filterParams = "";
-      if (this.coteFilter.length > 0) {
-        filterParams = `cote=${encodeURI(this.coteFilter)}`;
-      }
-      // if(this.authorFilter.length > 0) {
-      //   filterParams = `${filterParams}&author=${encodeURI(this.authorFilter)}`;
-      // }
-      if (this.authorFilter.length > 0) {
-        if (filterParams.length > 0) {
-          filterParams = `${filterParams}&`;
-        }
-        filterParams = `${filterParams}author=${encodeURI(this.authorFilter)}`;
-      }
-      // if(this.titleFilter.length > 0) {
-      //   filterParams = `${filterParams}&titre=${encodeURI(this.titleFilter)}`;
-      // }
-      if (this.titleFilter.length > 0) {
-        if (filterParams.length > 0) {
-          filterParams = `${filterParams}&`;
-        }
-        filterParams = `${filterParams}titre=${encodeURI(this.titleFilter)}`;
-      }
-      // if(this.keywordsFilter.length > 0) {
-      //   filterParams = `${filterParams}&mot_clef=${encodeURI(this.keywordsFilter)}`;
-      // }
-      if (this.keywordsFilter.length > 0) {
-        if (filterParams.length > 0) {
-          filterParams = `${filterParams}&`;
-        }
-        filterParams = `${filterParams}mot_clef=${encodeURI(this.keywordsFilter)}`;
-      }
-      return filterParams;
-    },
-    retrieveEnregistrementCompleteList: async function () {
-      console.log("ctx.sortBy", this.sortBy);
-      // console.log("ctx.sortDesc", ctx.sortDesc);
-      let params = "?page=" + this.currentPage +
-          "&size=" + this.perPage +
-          "&sortBy=" + this.sortBy +
-          "&sortDesc=" + (this.sortDesc ? "true" : "false");
-      let filterParams = "";
-      const remainingFilterParams = this.getFilterParams();
-      if(remainingFilterParams.length > 0) {
-        filterParams = `${filterParams}&${remainingFilterParams}`;
-      }
-      if(filterParams.length > 0) {
-        params = `${params}&${filterParams}`;
-      }
-
-      try {
-        var response = await retrieveBookRecordsWithReference(params);
-        console.log(response);
-        if (response.data.success) {
-          this.records = response.data.enregistrements;
-          console.log("records", this.records);
-          // return this.records || [];
-        }
-        return [];
-      } catch (reason) {
-        console.log(reason);
-        // return [];
-      }
-    },
-    getRecordTotalNumber: function () {
-      let filterParams = "?result_type=number";
-      const remainingFilterParams = this.getFilterParams();
-      if(remainingFilterParams.length > 0) {
-        filterParams = `${filterParams}&${remainingFilterParams}`;
-      }
-
-      getBookRecordsCount(filterParams).then(
-          (response) => {
-            if (response.data.success) {
-              this.recordFilteredNumber = response.data.filtered_total;
-              this.recordTotalNumber = response.data.total;
-            } else {
-              console.error(response.data);
-            }
-          }
-      );
-    },
-    goToEnregistrementComplet: function (item) {
-      this.$router.push(`/catalogue/lire/${item.id}`);
-    },
-    onSortChange() {
-      this.currentPage = 1;
-      this.sortDesc = false;
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-      this.$refs['my-table'].refresh();
-    },
-    reloadWithFilters() {
-      const query = {
-        author: encodeURIComponent(this.authorFilter),
-        cote: encodeURIComponent(this.coteFilter),
-        keywords: encodeURIComponent(this.keywordsFilter),
-        title: encodeURIComponent(this.titleFilter),
-        page: this.currentPage,
-        sortBy: this.sortBy,
-        sortDesc: this.sortDesc
-      };
-      // Remove empty or default values to keep URL clean
-      if (!this.authorFilter) delete query.author;
-      if (!this.coteFilter) delete query.cote;
-      if (!this.keywordsFilter) delete query.keywords;
-      if (!this.titleFilter) delete query.title;
-
-      this.$router.replace({ query }).catch(err => {
-        // Ignore the "NavigationDuplicated" error which happens when only query changes in some vue-router versions
-        if (err.name !== 'NavigationDuplicated' && !err.message.includes('Avoided redundant navigation')) {
-          throw err;
-        }
-      });
-    },
-    exportSearchResult() {
-      this.isExporting = true;
-      let filterParams = this.getFilterParams();
-
-      exportBookRecordsWithReference(filterParams
-      ).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `catalogue_export-${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.xlsx`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }).catch((error) => {
-        console.error('Export failed:', error);
-      }).finally(() => {
-        this.isExporting = false;
-      });
-    },
-    clearSearchFields() {
-      //this.coteFilter = "";
-      this.prefixCoteFiler = "";
-      this.numberCoteFilter = "";
-      this.authorFilter = "";
-      this.keywordsFilter = "";
-      this.titleFilter = "";
-      localStorage.clear();
-      this.$router.replace({
-        query: {}
-      });
-    },
-    updatePrefixCoteFilter(event) {
-      console.log("event: ", event);
-      this.prefixCoteFiler = event;
-    },
-    // region only digits
-    /** Allow only digits and necessary control/navigation keys
-     *
-     * @param e event
-     */
-    onlyDigitsKeydown(e) {
-      // Allow shortcuts like Ctrl/Cmd+A/C/X/V/Z/Y
-      if (e.ctrlKey || e.metaKey) return;
-      const allowed = [
-        'Backspace', 'Tab', 'Enter',
-        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-        'Delete', 'Home', 'End'
-      ];
-      if (allowed.includes(e.key)) return;
-      // Allow digits 0-9 (top row and numpad)
-      if (/^\d$/.test(e.key)) return;
-      // Block everything else (e, E, +, -, ., etc.)
-      e.preventDefault();
-    },
-    /** Clean pasted content to digits only (limit to 4 digits for 1..9999)
-     *
-     * @param e event
-     */
-    sanitizeDigitsPaste(e) {
-      const raw = (e.clipboardData || window.clipboardData).getData('text') || '';
-      const digits = raw.replace(/\D/g, '').slice(0, 4);
-      e.target.value = digits;
-      this.numberCoteFilter = digits;
-    },
-
-    /** Ensure input stays digits-only and within length limit even if injected
-     *
-     * @param e event
-     */
-    stripNonDigits(e) {
-      const cleaned = String(e.target.value || '').replace(/\D/g, '').slice(0, 4);
-      if (cleaned !== e.target.value) {
-        e.target.value = cleaned;
-      }
-      this.numberCoteFilter = cleaned;
-    }
-    // endregion
-  },
-
-  mounted() {
-    if (this.$route.query.cote && this.$route.query.cote.length > 0) {
-      const cote = decodeURIComponent(this.$route.query.cote);
-      const coteParts = cote.split(' ');
-      if (coteParts.length === 2) {
-        this.prefixCoteFiler = coteParts[0];
-        this.numberCoteFilter = coteParts[1];
-      }
-    }
-    if (this.$route.query.title && this.$route.query.title.length > 0) {
-      this.titleFilter = decodeURIComponent(this.$route.query.title);
-    }
-    if (this.$route.query.author && this.$route.query.author.length > 0) {
-      this.authorFilter = decodeURIComponent(this.$route.query.author);
-    }
-    if (this.$route.query.keywords && this.$route.query.keywords.length > 0) {
-      this.keywordsFilter = decodeURIComponent(this.$route.query.keywords);
-    }
-    if (this.$route.query.page) {
-      this.currentPage = parseInt(this.$route.query.page);
-    }
-    if (this.$route.query.sortBy) {
-      this.sortBy = this.$route.query.sortBy;
-    }
-    if (this.$route.query.sortDesc !== undefined) {
-      this.sortDesc = this.$route.query.sortDesc === 'true';
-    }
-    this.getRecordTotalNumber();
-    this.$nextTick(() => {
-      this.isMounted = true;
-    });
-    this.retrieveEnregistrementCompleteList();
-  },
-  watch: {
-    coteFilter: function () {
-      this.getRecordTotalNumber();
-      // Only reset to page 1 if this change was triggered by user input (not initial load)
-      if (this.isMounted) {
-        this.currentPage = 1;
-      }
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    authorFilter() {
-      this.getRecordTotalNumber();
-      if (this.isMounted) {
-        this.currentPage = 1;
-      }
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    keywordsFilter: function () {
-      this.getRecordTotalNumber();
-      if (this.isMounted) {
-        this.currentPage = 1;
-      }
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    titleFilter: function () {
-      this.getRecordTotalNumber();
-      if (this.isMounted) {
-        this.currentPage = 1;
-      }
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    currentPage: function () {
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    sortBy: function () {
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    },
-    sortDesc: function () {
-      this.reloadWithFilters();
-      this.retrieveEnregistrementCompleteList();
-    }
-  },
   computed: {
+    // bootstrap-vue-next attend un tableau [{ key, order }] pour le prop sort-by
+    tableSortBy() {
+      return [{ key: this.sortBy, order: this.sortDesc ? 'desc' : 'asc' }];
+    },
     coteFilter() {
       const numValue = parseInt(this.numberCoteFilter);
       if (numValue >= 1 && numValue <= 9) {
@@ -512,36 +216,260 @@ export default {
       } else if (numValue >= 100 && numValue <= 999) {
         return `${this.prefixCoteFiler} 0${numValue}`;
       }
-      if(this.prefixCoteFiler.length === 0 && this.numberCoteFilter.length === 0) {
+      if (this.prefixCoteFiler.length === 0 && this.numberCoteFilter.length === 0) {
         return "";
       }
       return `${this.prefixCoteFiler} ${this.numberCoteFilter}`;
     },
     searchFieldsUsed() {
-      return this.coteFilter.length > 0 || this.authorFilter.length > 0 || this.keywordsFilter.length > 0 || this.titleFilter.length > 0;
+      return this.coteFilter.length > 0 || this.authorFilter.length > 0
+          || this.keywordsFilter.length > 0 || this.titleFilter.length > 0;
     },
     isAdmin() {
       return this.$store.getters.isAdmin;
     },
     filteredFields() {
-      if (this.isAdmin) {
-        return this.fields;
-      }
+      if (this.isAdmin) return this.fields;
       return this.fields.filter(f => f.key !== 'date_derniere_modification');
     },
     sortByOptions() {
       const options = [
-        {text: 'Cote', value: 'cote'},
-        {text: 'Année d\'obtention', value: 'annee_obtention'},
+        { text: 'Cote', value: 'cote' },
+        { text: "Année d'obtention", value: 'annee_obtention' },
       ];
       if (this.isAdmin) {
-        options.push({text: 'Date dernière modification', value: 'date_derniere_modification'});
+        options.push({ text: 'Date dernière modification', value: 'date_derniere_modification' });
       }
       return options;
+    }
+  },
+
+  methods: {
+    getFilterParams() {
+      const parts = [];
+      if (this.coteFilter.length > 0) {
+        parts.push(`cote=${encodeURI(this.coteFilter)}`);
+      }
+      if (this.authorFilter.length > 0) {
+        parts.push(`author=${encodeURI(this.authorFilter)}`);
+      }
+      if (this.titleFilter.length > 0) {
+        parts.push(`titre=${encodeURI(this.titleFilter)}`);
+      }
+      if (this.keywordsFilter.length > 0) {
+        parts.push(`mot_clef=${encodeURI(this.keywordsFilter)}`);
+      }
+      return parts.join('&');
+    },
+
+    // -----------------------------------------------------------------------
+    // Provider BTable — bootstrap-vue-next passe un contexte avec :
+    //   context.sortBy   → tableau [{ key, order }]
+    //   context.filter   → valeur du prop filter (non utilisé ici)
+    // currentPage et perPage ne sont PAS dans le contexte : on utilise this.*
+    // -----------------------------------------------------------------------
+    async retrieveEnregistrementCompleteList(context) {
+      // Extraire le premier élément du tableau sortBy fourni par bvn
+      const sortEntry = Array.isArray(context.sortBy) && context.sortBy.length > 0
+          ? context.sortBy[0]
+          : { key: this.sortBy, order: this.sortDesc ? 'desc' : 'asc' };
+
+      const sortKey = sortEntry.key || this.sortBy;
+      const sortDescValue = sortEntry.order === 'desc';
+
+      let params = `?page=${this.currentPage}`
+          + `&size=${this.perPage}`
+          + `&sortBy=${sortKey}`
+          + `&sortDesc=${sortDescValue ? 'true' : 'false'}`;
+
+      const filterParams = this.getFilterParams();
+      if (filterParams.length > 0) {
+        params = `${params}&${filterParams}`;
+      }
+
+      try {
+        const response = await retrieveBookRecordsWithReference(params);
+        if (response.data.success) {
+          const records = response.data.enregistrements;
+          this.recordFilteredNumber = response.data.filtered_total ?? records.length;
+          this.recordTotalNumber = response.data.total ?? records.length;
+          return records || [];
+        }
+        return [];
+      } catch (reason) {
+        console.error(reason);
+        return [];
+      }
+    },
+
+    getRecordTotalNumber() {
+      let filterParams = "?result_type=number";
+      const remainingFilterParams = this.getFilterParams();
+      if (remainingFilterParams.length > 0) {
+        filterParams = `${filterParams}&${remainingFilterParams}`;
+      }
+      getBookRecordsCount(filterParams).then((response) => {
+        if (response.data.success) {
+          this.recordFilteredNumber = response.data.filtered_total;
+          this.recordTotalNumber = response.data.total;
+        } else {
+          console.error(response.data);
+        }
+      });
+    },
+
+    goToEnregistrementComplet(event) {
+      this.$router.push(`/catalogue/lire/${event.item.id}`);
+    },
+
+    refreshTable() {
+      this.$refs.myTable?.refresh();
+    },
+
+    onSortChange() {
+      this.currentPage = 1;
+      this.sortDesc = false;
+      this.reloadWithFilters();
+      this.refreshTable();
+    },
+
+    reloadWithFilters() {
+      const query = {};
+      if (this.authorFilter) query.author = encodeURIComponent(this.authorFilter);
+      if (this.coteFilter)   query.cote   = encodeURIComponent(this.coteFilter);
+      if (this.keywordsFilter) query.keywords = encodeURIComponent(this.keywordsFilter);
+      if (this.titleFilter)  query.title  = encodeURIComponent(this.titleFilter);
+      if (this.currentPage > 1) query.page = this.currentPage;
+      query.sortBy   = this.sortBy;
+      query.sortDesc = this.sortDesc;
+
+      this.$router.replace({ query }).catch(err => {
+        if (err.name !== 'NavigationDuplicated'
+            && !err.message.includes('Avoided redundant navigation')) {
+          throw err;
+        }
+      });
+    },
+
+    exportSearchResult() {
+      this.isExporting = true;
+      const filterParams = this.getFilterParams();
+      exportBookRecordsWithReference(filterParams).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute(
+            'download',
+            `catalogue_export-${new Date().toISOString().slice(0, 19).replace(/[:-]/g, '')}.xlsx`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }).catch((error) => {
+        console.error('Export failed:', error);
+      }).finally(() => {
+        this.isExporting = false;
+      });
+    },
+
+    clearSearchFields() {
+      this.prefixCoteFiler  = "";
+      this.numberCoteFilter = "";
+      this.authorFilter     = "";
+      this.keywordsFilter   = "";
+      this.titleFilter      = "";
+      this.$router.replace({ query: {} });
+    },
+
+    updatePrefixCoteFilter(event) {
+      this.prefixCoteFiler = event;
+    },
+
+    onlyDigitsKeydown(e) {
+      if (e.ctrlKey || e.metaKey) return;
+      const allowed = [
+        'Backspace', 'Tab', 'Enter',
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+        'Delete', 'Home', 'End'
+      ];
+      if (allowed.includes(e.key)) return;
+      if (/^\d$/.test(e.key)) return;
+      e.preventDefault();
+    },
+
+    sanitizeDigitsPaste(e) {
+      const raw    = (e.clipboardData || window.clipboardData).getData('text') || '';
+      const digits = raw.replace(/\D/g, '').slice(0, 4);
+      e.target.value       = digits;
+      this.numberCoteFilter = digits;
+    },
+
+    stripNonDigits(e) {
+      const cleaned = String(e.target.value || '').replace(/\D/g, '').slice(0, 4);
+      if (cleaned !== e.target.value) {
+        e.target.value = cleaned;
+      }
+      this.numberCoteFilter = cleaned;
+    }
+  },
+
+  mounted() {
+    const q = this.$route.query;
+
+    if (q.cote && q.cote.length > 0) {
+      const cote = decodeURIComponent(q.cote);
+      const parts = cote.split(' ');
+      if (parts.length === 2) {
+        this.prefixCoteFiler  = parts[0];
+        this.numberCoteFilter = parts[1];
+      }
+    }
+    if (q.title    && q.title.length > 0)    this.titleFilter    = decodeURIComponent(q.title);
+    if (q.author   && q.author.length > 0)   this.authorFilter   = decodeURIComponent(q.author);
+    if (q.keywords && q.keywords.length > 0) this.keywordsFilter = decodeURIComponent(q.keywords);
+    if (q.page)    this.currentPage = parseInt(q.page);
+    if (q.sortBy)  this.sortBy      = q.sortBy;
+    if (q.sortDesc !== undefined) this.sortDesc = q.sortDesc === 'true';
+
+    this.getRecordTotalNumber();
+    this.$nextTick(() => {
+      this.isMounted = true;
+    });
+  },
+
+  watch: {
+    coteFilter() {
+      this.getRecordTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+    authorFilter() {
+      this.getRecordTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+    keywordsFilter() {
+      this.getRecordTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+    titleFilter() {
+      this.getRecordTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+    currentPage() {
+      this.refreshTable();
+    },
+    sortBy() {
+      this.refreshTable();
+    },
+    sortDesc() {
+      this.refreshTable();
     }
   }
 }
 </script>
-<style scoped>
 
+<style scoped>
 </style>

@@ -8,25 +8,24 @@
       <BCol lg="4">
         <BFormGroup label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <BFormInput type="search" v-model="firstNameFiltre" size="sm"
-                   placeholder="Filtrer en fonction du prénom"/>
+          <BFormInput type="search" v-model="firstNameFilter" size="sm"
+                      placeholder="Filtrer en fonction du prénom"/>
         </BFormGroup>
       </BCol>
       <BCol lg="4">
         <BFormGroup label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
-          <BFormInput type="search" v-model="familyNameFiltre" size="sm"
-                   placeholder="Filtrer en fonction du nom de famille"/>
+          <BFormInput type="search" v-model="familyNameFilter" size="sm"
+                      placeholder="Filtrer en fonction du nom de famille"/>
         </BFormGroup>
       </BCol>
       <BCol lg="4">
         <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <BButton @click="clearSearchFields"  v-b-tooltip="'Réinitialise les filtres de recherche.'">
+          <BButton @click="clearSearchFields" v-b-tooltip="'Réinitialise les filtres de recherche.'">
             Réinitialiser
           </BButton>
           <template #label>
-
             <IBiInfoCircle v-b-tooltip="'Réinitialise les filtres de recherche.'"
                     variant="dark"/>
           </template>
@@ -38,12 +37,19 @@
         v-model="currentPage"
         :total-rows="authorFilteredNumber"
         :per-page="perPage"
-        aria-controls="my-table" />
+        aria-controls="authorTable"
+        />
       <FilterCount :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
     </BRow>
-    <BTable striped bordered hover :items="retrieveAuthors" :fields="fields"
-             primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToAuthor">
+    <BTable striped bordered hover
+            :provider="retrieveAuthors"
+            :fields="fields"
+            ref="authorTable"
+            primary-key="id"
+            :per-page="perPage"
+            :current-page="currentPage"
+            :sort-by="tableSortBy"
+            @row-dblclicked="goToAuthor">
       <template #table-caption>La liste des auteurs dans la base.</template>
     </BTable>
     <BRow>
@@ -51,24 +57,35 @@
         v-model="currentPage"
         :total-rows="authorFilteredNumber"
         :per-page="perPage"
-        aria-controls="my-table" />
+        aria-controls="authorTable" />
       <FilterCount :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
     </BRow>
   </BContainer>
 </template>
 
 <script>
-
 import {getAuthorsCount, retrieveAuthors} from "@/services/api.js";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import {
+  BButton,
+  BCol,
+  BContainer,
+  BFormGroup,
+  BFormInput,
+  BPagination,
+  BRow,
+  BTable
+} from "bootstrap-vue-next";
 
 export default {
   name: "ListeAuteur",
-  components: {AppTitle, FilterCount},
-  data: function () {
+  components: {BButton, BContainer, BRow, BPagination, BCol,
+    BFormGroup, BFormInput, BTable, AppTitle, FilterCount
+  },
+  data() {
     return {
-      authors: [],
+      isMounted: false,
       currentPage: 1,
       perPage: 50,
       sortBy: "family_name",
@@ -86,87 +103,90 @@ export default {
           sortable: false
         }
       ],
-      firstNameFiltre: '',
-      familyNameFiltre: ''
+      firstNameFilter: '',
+      familyNameFilter: '',
     }
   },
   methods: {
     // region filtering
     getFilterParams() {
       let filterparams = "";
-      if(this.firstNameFiltre.length > 0) {
-        filterparams = filterparams+"&first_name="+this.firstNameFiltre;
+      if(this.firstNameFilter.length > 0) {
+        filterparams = filterparams+"&first_name="+this.firstNameFilter;
       }
-      if(this.familyNameFiltre.length > 0) {
-        filterparams = filterparams+"&family_name="+this.familyNameFiltre;
+      if(this.familyNameFilter.length > 0) {
+        filterparams = filterparams+"&family_name="+this.familyNameFilter;
       }
       return filterparams;
     },
+    refreshTable() {
+      this.$refs.authorTable?.refresh();
+    },
     reloadWithFilters() {
-      if (this.searchFieldsUsed) {
-        this.$router.replace({
-          query: {
-            firstName: encodeURIComponent(this.firstNameFiltre),
-            familyName: encodeURIComponent(this.familyNameFiltre),
-          }
-        });
-      }
+      this.refreshTable();
+      // if (this.searchFieldsUsed) {
+      //   this.$router.replace({
+      //     query: {
+      //       firstName: encodeURIComponent(this.firstNameFilter),
+      //       familyName: encodeURIComponent(this.familyNameFilter),
+      //     }
+      //   });
+      // }
     },
     clearSearchFields() {
-      this.firstNameFiltre = "";
-      this.familyNameFiltre = "";
+      this.firstNameFilter = "";
+      this.familyNameFilter = "";
       localStorage.clear();
       this.$router.replace({
         query: {}
       });
-      
+
     },
     // endregion
-    retrieveAuthors: function(ctx, callback) {
-      let params = "?page="+ctx.currentPage+
-          "&size="+ctx.perPage+
-          "&sortBy="+ctx.sortBy;
+    async retrieveAuthors(ctx) {
+      const sortEntry = Array.isArray(ctx.sortBy) && ctx.sortBy.length > 0
+          ? ctx.sortBy[0]
+          : { key: this.sortBy, order: 'asc' };
 
-      let filterParams = "";
-      if(this.firstNameFiltre.length > 0) {
-        filterParams = filterParams+"&first_name="+this.firstNameFiltre;
-      }
-      if(this.familyNameFiltre.length > 0) {
-        filterParams = filterParams+"&family_name="+this.familyNameFiltre;
-      }
+      const sortKey = sortEntry.key || this.sortBy;
+      let params = `?page=${this.currentPage}&size=${this.perPage}&sortBy=${sortKey}`;
+      const filterParams = this.getFilterParams();
 
       if(filterParams.length > 0) {
-        params = params + filterParams;
+        params += filterParams;
       }
-      retrieveAuthors(params).then(
-          (response) => {
-            if(response.data.success) {
-              this.authors = response.data.authors;
-              // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
-              //   this.currentPage = 1;
-              // }
-              callback(this.authors);
-            }
-          }
-      ).catch(
-          (reason) => {
-            console.log(reason);
-            callback([]);
-          }
-      );
-      return null;
+      try {
+        const response = await retrieveAuthors(params);
+        if (response.data.success) {
+          this.authors = response.data.authors ?? [];
+          this.authorFilteredNumber = response.data.filtered_total ?? this.authors.length;
+          this.authorTotalNumber = response.data.total ?? this.authors.length;
+          // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
+          //   this.currentPage = 1;
+          // }
+          return this.authors
+        }
+      } catch (reason) {
+        console.log(reason);
+        this.authorTotalNumber = 0;
+        this.authorFilteredNumber = 0;
+        return [];
+      }
+      this.authorTotalNumber = 0;
+      this.authorFilteredNumber = 0;
+      return [];
     },
     getAuthorTotalNumber: function() {
       let filterParams = "";
-      if(this.firstNameFiltre.length > 0) {
+      if(this.firstNameFilter.length > 0) {
 
-        filterParams = filterParams + "first_name=" + encodeURI(this.firstNameFiltre);
+        filterParams = filterParams + "first_name=" + encodeURI(this.firstNameFilter);
       }
-      if(this.familyNameFiltre.length > 0) {
+      if(this.familyNameFilter.length > 0) {
         if(filterParams.length > 0) {
           filterParams = filterParams+"&";
         }
-        filterParams = filterParams + "family_name="+encodeURI(this.familyNameFiltre);
+        filterParams = filterParams + "family_name="+encodeURI(this.familyNameFilter);
       }
       if(filterParams.length > 0) {
         filterParams = "?" + filterParams;
@@ -180,39 +200,49 @@ export default {
           }
       )
     },
-    goToAuthor: function(item) {
-      this.$router.push(`/auteur/lire/${item.id}`);
-    }
-  },
-  beforeMount() {
-    this.getAuthorTotalNumber();
-  },
-  mounted() {
-    if(this.$route.query.firstName && this.$route.query.firstName.length > 0) {
-      this.firstNameFiltre = decodeURIComponent(this.$route.query.firstName);
-    }
-    if(this.$route.query.familyName && this.$route.query.familyName.length > 0) {
-      this.familyNameFiltre = decodeURIComponent(this.$route.query.familyName);
+    goToAuthor: function(event) {
+      this.$router.push(`/auteur/lire/${event.item.id}`);
+    },
 
+  },
+  //beforeMount() {
+  //  this.getAuthorTotalNumber();
+  //},
+  mounted() {
+    const query = this.$route.query;
+    if(query.firstName && query.firstName.length > 0) {
+      this.firstNameFilter = decodeURIComponent(query.firstName);
     }
+    if(query.familyName && query.familyName.length > 0) {
+      this.familyNameFilter = decodeURIComponent(query.familyName);
+    }
+    this.$nextTick(() => {
+      this.isMounted = true;
+    });
   },
   watch: {
-    firstNameFiltre: function (newValue, oldValue) {
+    firstNameFilter: function (newValue, oldValue) {
       if(newValue !== oldValue) {
-        this.getAuthorTotalNumber();
-        this.currentPage = 1;
+        //this.getAuthorTotalNumber();
+        if (this.isMounted) this.currentPage = 1;
         this.reloadWithFilters();
       }
     },
-    familyNameFiltre: function () {
-      this.getAuthorTotalNumber();
-      this.currentPage = 1
+    familyNameFilter: function () {
+      //this.getAuthorTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
       this.reloadWithFilters();
+    },
+    currentPage() {
+      this.refreshTable();
     }
   },
   computed: {
+    tableSortBy() {
+      return [{ key: this.sortBy, order: this.sortDesc ? 'desc' : 'asc' }];
+    },
     searchFieldsUsed() {
-      return this.firstNameFiltre.length > 0 || this.familyNameFiltre.length > 0;
+      return this.firstNameFilter.length > 0 || this.familyNameFilter.length > 0;
     }
   }
 }

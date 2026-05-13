@@ -4,7 +4,6 @@
         :retrieve-list-request="getLogEventListByUser"
         :perPage="perPage"
         :caption="caption"
-        :get-total-number-request="getLogEventListCountByUser"
         :go-to="goTo"
     :entry-id="userId">
 
@@ -28,16 +27,11 @@ export default {
     return {
       perPage: 20,
       caption: "",
-      entryCount: 0,
-      entries: []
     }
   },
   methods: {
     getLogEventListByUser() {
       retrieveLogEvents()
-    },
-    getLogEventListCountByUser() {
-      getLogEventsCount()
     },
     goTo(row) {
       console.log(row);

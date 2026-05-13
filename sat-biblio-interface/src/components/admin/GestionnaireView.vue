@@ -31,9 +31,9 @@
           <BCollapse id="collapse-non-approved-entries"
                       accordion="manager-accordion"
                       role="tabpanel">
-            <liste-auteurs-non-approuves/>
-            <liste-references-non-approuvees/>
-            <liste-enregistrements-non-approuves/>
+            <ListeAuteursNonApprouves/>
+            <ListeReferencesNonApprouvees/>
+            <ListeEnregistrementsNonApprouves/>
         </BCollapse>
         </BRow>
 

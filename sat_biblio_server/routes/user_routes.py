@@ -317,7 +317,7 @@ def users_():
                       confirmed=user.confirmed
                       )
                  for user in the_query.order_by(sort_by).paginate(page=n_page, per_page=size).items]
-        return json_result(True, users=users), 200
+        return json_result(True, users=users, total=len(users)), 200
 
 
 @sat_biblio.route("/users/<int:id_>/resend-confirmation-email/", methods=["GET"])

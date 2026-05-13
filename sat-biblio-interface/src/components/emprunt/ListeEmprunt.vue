@@ -2,61 +2,44 @@
   <BContainer>
     <h2>Liste d'emprunts</h2>
     <p>Double-cliquez sur la ligne pour voir les détails sur un emprunt.</p>
-<!--    <BRow class="my-1">-->
-<!--      <BCol lg="4">-->
-<!--        <BFormGroup label="Prénom" label-cols-sm="3"-->
-<!--          label-align-sm="right" label-size="sm" class="mb-0">-->
-<!--          <BFormInput type="search" v-model="firstNameFiltre"-->
-<!--                   placeholder="Filtrer en fonction du prénom"/>-->
-
-<!--        </BFormGroup>-->
-<!--      </BCol>-->
-<!--      <BCol lg="4">-->
-<!--        <BFormGroup label="Nom de famille" label-cols-sm="3"-->
-<!--          label-align-sm="right" label-size="sm" class="mb-0">-->
-<!--          <BFormInput type="search" v-model="familyNameFiltre"-->
-<!--                   placeholder="Filtrer en fonction du nom de famille"/>-->
-<!--        </BFormGroup>-->
-<!--      </BCol>-->
-<!--    </BRow>-->
     <BRow>
       <BFormGroup label="Filtrer par retard" v-slot="{ ariaDescribedby }">
-      <BFormRadio-group
-        id="radio-group-1"
-        v-model="lateStateSelected"
-        :options="lateStateOptions"
-        :aria-describedby="ariaDescribedby"
-      ></BFormRadio-group>
-    </BFormGroup>
-
+        <BFormRadioGroup
+          id="radio-group-1"
+          v-model="lateStateSelected"
+          :options="lateStateOptions"
+          :aria-describedby="ariaDescribedby"
+        ></BFormRadioGroup>
+      </BFormGroup>
     </BRow>
     <BRow>
-
-    <BPagination v-model="currentPage"
-      :total-rows="borrowingTotalNumber"
-      :per-page="perPage"
-      aria-controls="my-table"/>
+      <BPagination
+        v-model="currentPage"
+        :total-rows="borrowingFilteredNumber"
+        :per-page="perPage"
+        aria-controls="my-table"/>
       <FilterCount :filtered-item-count="borrowingFilteredNumber" :total-item-count="borrowingTotalNumber"/>
-
     </BRow>
 
-
-    <BTable striped bordered hover :items="retrieveBorrowings" :fields="fields"
-             primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToBorrowing" :filter="onFilter">
+    <BTable striped bordered hover
+            :provider="retrieveBorrowings"
+            :fields="fields"
+            primary-key="id"
+            ref="myTable"
+            :per-page="perPage"
+            :current-page="currentPage"
+            :sort-by="tableSortBy"
+            @row-dblclicked="goToBorrowing">
       <template #table-caption>La liste des emprunts dans la base.</template>
-
-Object { comment: "Oui", date_emprunt: "2022-01-19", emprunte: true, … }
 
       <template #cell(emprunteur)="data">
         {{ data.item.emprunteur.first_name }} {{ data.item.emprunteur.family_name }}
       </template>
-
       <template #cell(enregistrement)="data">
-        {{ data.item.enregistrement.reference.titre }} ({{ data.item.enregistrement.cote}})
+        {{ data.item.enregistrement.reference.titre }} ({{ data.item.enregistrement.cote }})
       </template>
       <template #cell(gestionnaire)="data">
-        {{ data.item.gestionnaire.first_name }} {{ data.item.gestionnaire.family_name}}
+        {{ data.item.gestionnaire.first_name }} {{ data.item.gestionnaire.family_name }}
       </template>
       <template #cell(rendu)="data">
         <div v-if="data.item.rendu">Oui</div><div v-else>Non</div>
@@ -74,219 +57,160 @@ Object { comment: "Oui", date_emprunt: "2022-01-19", emprunte: true, … }
         {{ fromISOtoFrenchDateFormat(data.item.date_retour_reel) }}
       </template>
     </BTable>
+
+    <BRow>
+      <BPagination
+        v-model="currentPage"
+        :total-rows="borrowingFilteredNumber"
+        :per-page="perPage"
+        aria-controls="my-table"/>
+      <FilterCount :filtered-item-count="borrowingFilteredNumber" :total-item-count="borrowingTotalNumber"/>
+    </BRow>
   </BContainer>
 </template>
 
 <script>
-
-import {getBorrowingsCount, retrieveBorrowings} from "@/services/api.js";
+import {retrieveBorrowings} from "@/services/api.js";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import {
+  BContainer,
+  BFormGroup,
+  BFormRadioGroup,
+  BPagination,
+  BRow,
+  BTable
+} from "bootstrap-vue-next";
 
 export default {
   name: "ListeEmprunt",
-  components: {FilterCount},
-  data: function () {
+  components: { BContainer, BRow, BPagination, BFormGroup, BFormRadioGroup, BTable, FilterCount },
+  data() {
     return {
-      borrowings: [],
+      isMounted: false,
       currentPage: 1,
       perPage: 10,
       sortBy: "",
       borrowingFilteredNumber: 0,
       borrowingTotalNumber: 0,
-      // firstNameFiltre: "",
-      // familyNameFiltre: "",
       lateStateSelected: "all",
       lateStateOptions: [
-        {text: "En retard", value: "late"},
-        {text: "Dans les temps", value: "on_time"},
-        {text: "Tous", value: "all"},
+        { text: "En retard",      value: "late" },
+        { text: "Dans les temps", value: "on_time" },
+        { text: "Tous",           value: "all" },
       ],
       fields: [
-        {
-          key: "enregistrement",
-          label: "Livre",
-          sortable: false
-        },
-        {
-          key: "date_emprunt",
-          label: "Date d'emprunt",
-          sortable: false
-        },{
-          key: "emprunte",
-          label: "Emprunté ?",
-          sortable: false
-        },{
-          key: "rendu",
-          label: "Rendu ?",
-          sortable: false
-        },
-          {
-          key: "date_retour_prevu",
-          label: "Date de retour prévu",
-          sortable: false
-        },{
-          key: "date_retour_reel",
-          label: "Date de retour réel",
-          sortable: false
-        },
-        {
-          key: "emprunteur",
-          label: "Emprunteur",
-          sortable: false
-        },{
-          key: "gestionnaire",
-          label: "Gestionnaire",
-          sortable: false
-        },
-        {
-          key: "comment",
-          label: "Commentaire",
-          sortable: false
-        },
-      ]
+        { key: "enregistrement",    label: "Livre",                sortable: false },
+        { key: "date_emprunt",      label: "Date d'emprunt",       sortable: false },
+        { key: "emprunte",          label: "Emprunté ?",           sortable: false },
+        { key: "rendu",             label: "Rendu ?",              sortable: false },
+        { key: "date_retour_prevu", label: "Date de retour prévu", sortable: false },
+        { key: "date_retour_reel",  label: "Date de retour réel",  sortable: false },
+        { key: "emprunteur",        label: "Emprunteur",           sortable: false },
+        { key: "gestionnaire",      label: "Gestionnaire",         sortable: false },
+        { key: "comment",           label: "Commentaire",          sortable: false },
+      ],
     }
   },
+
+  computed: {
+    // bootstrap-vue-next attend un tableau [{ key, order }] pour le prop sort-by
+    tableSortBy() {
+      if (!this.sortBy) return [];
+      return [{ key: this.sortBy, order: 'asc' }];
+    },
+  },
+
   methods: {
-    retrieveBorrowings: function(ctx, callback) {
-      let params = "?page="+ctx.currentPage+
-          "&size="+ctx.perPage+
-          "&sortBy="+ctx.sortBy;
+    getLateFilterParam() {
+      if (this.lateStateSelected === "late")    return "late=true";
+      if (this.lateStateSelected === "on_time") return "on_time=true";
+      return "all=true";
+    },
 
-      let filterParams = "";
-      // if(this.firstNameFiltre.length > 0) {
-      //   filterParams = filterParams+"&first_name="+this.firstNameFiltre;
-      // }
-      // if(this.familyNameFiltre.length > 0) {
-      //   filterParams = filterParams+"&family_name="+this.familyNameFiltre;
-      // }
-      if(this.lateStateSelected === "late") {
-        filterParams = filterParams+"&late=true";
-      } else if(this.lateStateSelected === "on_time") {
-        filterParams = filterParams+"&on_time=true";
-      } else if(this.lateStateSelected === "all") {
-        filterParams = filterParams+"&all=true";
-      }
+    // -----------------------------------------------------------------------
+    // Provider — ctx.sortBy est un tableau [{ key, order }] en bvn
+    // currentPage et perPage ne sont pas dans ctx : on utilise this.*
+    // -----------------------------------------------------------------------
+    async retrieveBorrowings(ctx) {
+      const sortKey = Array.isArray(ctx.sortBy) && ctx.sortBy.length > 0
+          ? ctx.sortBy[0].key
+          : this.sortBy;
 
-      if(filterParams.length > 0) {
-        params = params + filterParams;
-      }
-      retrieveBorrowings(params)
-          .then(
-              (response) => {
-                if(response.data.success) {
-                  this.currentPage = 1;
-                  this.borrowings = response.data.borrowings;
-                  this.borrowings = this.borrowings.map((value) => {
-                    const a = {
-                      ...value,
-                      _rowVariant: this.isBorrowingLate(value) ? '' : 'warning'
-                    };
-                    console.log(a);
-                    return a;
-                  });
-                  callback(this.borrowings);
-                }
-              }
-          ).catch(
-          (reason) => {
-            console.log(reason)
-            callback([]);
-          }
-      );
-      return null;
-    },
-    getBorrowingsTotalNumber: function() {
-      let filterParams = "";
-      // if(this.firstNameFiltre.length > 0) {
-      //
-      //   filterParams = filterParams + "first_name=" + encodeURI(this.firstNameFiltre);
-      // }
-      // if(this.familyNameFiltre.length > 0) {
-      //   if(filterParams.length > 0) {
-      //     filterParams = filterParams+"&";
-      //   }
-      //   filterParams = filterParams + "family_name="+encodeURI(this.familyNameFiltre);
-      // }
-      if(this.lateStateSelected === "late") {
-        if(filterParams.length > 0) {
-          filterParams = filterParams+"&";
+      let params = `?page=${this.currentPage}`
+          + `&size=${this.perPage}`
+          + (sortKey ? `&sortBy=${sortKey}` : "")
+          + `&${this.getLateFilterParam()}`;
+
+      try {
+        // ✅ await ajouté
+        const response = await retrieveBorrowings(params);
+        if (response.data.success) {
+          const borrowings = (response.data.borrowings ?? []).map((value) => ({
+            ...value,
+            _rowVariant: this.isBorrowingLate(value) ? '' : 'warning'
+          }));
+          // ✅ Totaux mis à jour avant le return pour que BPagination se recalcule
+          this.borrowingFilteredNumber = response.data.filtered_total ?? borrowings.length;
+          this.borrowingTotalNumber    = response.data.total          ?? borrowings.length;
+          return borrowings;
         }
-        filterParams = filterParams+"late=true";
-      } else if(this.lateStateSelected === "on_time") {
-        if(filterParams.length > 0) {
-          filterParams = filterParams+"&";
-        }
-        filterParams = filterParams+"on_time=true";
-      } else if(this.lateStateSelected === "all") {
-        if(filterParams.length > 0) {
-          filterParams = filterParams+"&";
-        }
-        filterParams = filterParams+"all=true";
+        this.borrowingFilteredNumber = 0;
+        this.borrowingTotalNumber    = 0;
+        return [];
+      } catch (reason) {
+        console.error(reason);
+        this.borrowingFilteredNumber = 0;
+        this.borrowingTotalNumber    = 0;
+        return [];
       }
-      if(filterParams.length > 0) {
-        filterParams = "?" + filterParams;
-      }
-      getBorrowingsCount(filterParams).then(
-          (response) => {
-            if(response.data.success) {
-              this.borrowingFilteredNumber = response.data.filtered_number;
-              this.borrowingTotalNumber = response.data.total;
-            }
-          }
-      )
     },
-    goToBorrowing: function(item) {
-      console.log(item);
-      this.$router.push(`/emprunt/${item.id}`);
+
+    goToBorrowing(event) {
+      this.$router.push(`/emprunt/${event.item.id}`);
     },
+
     isBorrowingLate(item) {
-      if(item.rendu) {
-        return true
-      }
+      if (item.rendu) return true;
       const now = new Date();
-      const today = `${now.getFullYear()}-${now.getMonth()}-${now.getDay()}`;
-      console.log(
-          item.date_retour_prevu,
-          item.rendu,
-          item.date_retour_reel);
+      // ✅ Correction du bug original : getMonth()+1 et getDate() (pas getDay())
+      const mm    = String(now.getMonth() + 1).padStart(2, '0');
+      const dd    = String(now.getDate()).padStart(2, '0');
+      const today = `${now.getFullYear()}-${mm}-${dd}`;
       return today < item.date_retour_prevu;
     },
+
     fromISOtoFrenchDateFormat(isoDate) {
-      if(typeof isoDate !== "undefined") {
+      if (typeof isoDate !== "undefined" && isoDate) {
         const l = isoDate.split("-");
-        if(l.length === 3) {
+        if (l.length === 3) {
           return `${l[2]}/${l[1]}/${l[0]}`;
         }
       }
       return "";
-    }
+    },
+
+    refreshTable() {
+      this.$refs.myTable?.refresh();
+    },
   },
+
   mounted() {
-    this.getBorrowingsTotalNumber();
+    this.$nextTick(() => {
+      this.isMounted = true;
+    });
   },
-  computed: {
-    onFilter: function() {
-      return `${this.lateStateSelected}`;
-      // return `${this.firstNameFiltre} ${this.familyNameFiltre}-${this.lateStateSelected}`;
-    }
-  },
+
   watch: {
-    // firstNameFiltre: function() {
-    //   this.getBorrowingsTotalNumber();
-    //   this.currentPage = 1;
-    // },
-    // familyNameFiltre: function() {
-    //   this.getBorrowingsTotalNumber();
-    //   this.currentPage = 1;
-    // },
-    lateStateSelected: function() {
-      this.getBorrowingsTotalNumber();
-      this.currentPage = 1;
-    }
-  }
+    lateStateSelected() {
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
+    },
+    currentPage() {
+      this.refreshTable();
+    },
+  },
 }
 </script>
 
 <style scoped>
-
 </style>
