@@ -7,10 +7,10 @@
           <BButton-group>
             <BButton @click="goToPreviousRow">&lsaquo;</BButton>
           </BButton-group>
-          <b-input-group>
+          <BInputGroup>
             <BFormInput style="width: 100px" readonly v-model="currentRow"
             class="text-center"/>
-          </b-input-group>
+          </BInputGroup>
           <BButton-group>
             <BButton @click="goToNextRow">&rsaquo;</BButton>
           </BButton-group>

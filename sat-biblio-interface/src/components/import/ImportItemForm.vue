@@ -10,17 +10,17 @@
       <BFormInput v-model="endDate" :disabled="true"/>
     </BFormGroup>
     <BFormGroup label="Description">
-      <b-form-textarea v-model="description" :disabled="disabled"/>
+      <BFormTextarea v-model="description" :disabled="disabled"/>
     </BFormGroup>
     <BFormGroup label="Etat">
-      <b-form-textarea v-model="status" :disabled="disabled"/>
+      <BFormTextarea v-model="status" :disabled="disabled"/>
     </BFormGroup>
     <BFormGroup label="Utilisateur">
       <div v-if="importItem.user" >
-        <b-form-textarea :value="`${importItem.user.firstName} ${importItem.user.familyName}`" :disabled="true"/>
+        <BFormTextarea :value="`${importItem.user.firstName} ${importItem.user.familyName}`" :disabled="true"/>
       </div>
       <div v-else>
-        <b-form-textarea v-model="user" :disabled="true"/>
+        <BFormTextarea v-model="user" :disabled="true"/>
       </div>
     </BFormGroup>
     <BButton type="submit" v-if="!disabled" :disabled="isIncorrect || disabled">Enregistrer</BButton>

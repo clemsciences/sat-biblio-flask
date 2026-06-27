@@ -2,19 +2,17 @@
   <BFormGroup :label="label">
     <vue-typeahead-bootstrap
         v-if="!disabled"
-      v-model="userQuery"
-      :data="suggestedUsers"
-      :serializer="s => s.text"
+      v-model="selectedUserTemp"
+      :items="fetchUsers"
+      :item-projection="s => s ? s.text : ''"
+      :min-input-length="1"
       placeholder="Tapez le prénom ou le nom d'un utilisateur"
-      @update:model-value="getSuggestedUsers"
-      @hit="addUser($event)"
     />
     <BFormInput :model-value="modelValue.text" readonly :disabled="disabled"/>
     <div v-if="!disabled">
       <BButton v-if="modelValue.value > 0" @click="removeUser" :disabled="disabled" class="m-1">Enlever utilisateur</BButton>
       <BButton v-if="modelValue.value > 0" @click="goToUser" :disabled="disabled" class="m-1">Voir utilisateur</BButton>
     </div>
-
   </BFormGroup>
 </template>
 
@@ -24,7 +22,7 @@ import {searchNearUsers} from "@/services/api";
 export default {
   name: "UserSuggestion",
   props: {
-    modelValue: Object, // selectedReference
+    modelValue: Object,
     label: String,
     disabled: {
       type: Boolean,
@@ -33,16 +31,18 @@ export default {
   },
   data: function () {
     return {
-      userQuery: "",
-      // reference: {value: -1, text: ""},
-      // selectedReference: {text: "", value: -1},
-      suggestedUsers: [],
+      selectedUserTemp: null,
     }
   },
   methods: {
-    addUser: function (event) {
-      this.userQuery = "";
-      this.$emit('update:modelValue', event);      // this.selectedReference = event;
+    fetchUsers(query) {
+      if (query.length < 1) return Promise.resolve([]);
+      return searchNearUsers(`user=${encodeURIComponent(query)}`)
+        .then(response => response.data.success ? response.data.suggestedUsers : []);
+    },
+    addUser: function (item) {
+      this.$nextTick(() => { this.selectedUserTemp = null; });
+      this.$emit('update:modelValue', item);
     },
     removeUser: function () {
       const newValue = { ...this.modelValue, value: -1, text: "" };
@@ -52,21 +52,11 @@ export default {
       let routeData = this.$router.resolve(`/utilisateur/lire/${this.modelValue.value}`);
       window.open(routeData.href, '_blank');
     },
-    getSuggestedUsers: function (query) {
-      if(query.length >= 1) {
-        searchNearUsers(`user=${encodeURIComponent(query)}`).then((response) => {
-          if (response.data.success) {
-            console.log("suggestedUsers", response.data)
-            this.suggestedUsers = response.data.suggestedUsers;
-          }
-        }).catch();
-      }
-    },
   },
   watch: {
-    // userQuery: function (newValue) {
-    //   this.getSuggestedUsers(newValue);
-    // },
+    selectedUserTemp(newItem) {
+      if (newItem) this.addUser(newItem);
+    },
   }
 }
 </script>

@@ -20,6 +20,8 @@ import store from "./store";
 import { createHead } from '@vueuse/head'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(App)
 const head = createHead()
@@ -67,6 +69,7 @@ app.use(head)
 // app.component('BImg', BImg);
 // app.component('BDropdownGroup', BDropdownGroup);
 
+app.component('VueDatePicker', VueDatePicker)
 app.component('vue-typeahead-bootstrap', Vue3BootstrapTypeahead)
 app.component("vue-json-pretty", VueJsonPretty)
 

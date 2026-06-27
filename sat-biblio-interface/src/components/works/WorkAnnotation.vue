@@ -13,7 +13,7 @@
     <BFormGroup label="Année ou numéro">
       <BFormInput type="text" v-model="updatedData.yearOrNumber"/>
     </BFormGroup>
-<!--    <b-textarea v-model="text" rows="10" max-rows="30"/>-->
+<!--    <BFormTextarea v-model="text" rows="10" max-rows="30"/>-->
 
     <BButton type="save" @click="save" :disabled="isEqual">Sauver</BButton>
   </BContainer>

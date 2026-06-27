@@ -3,15 +3,12 @@
     <BFormGroup label="Recherche">
       <vue-typeahead-bootstrap
           v-model="namedEntityQuery"
-        :data="suggestedNamedEntities"
-        :serializer="s => s"
+        :items="fetchNamedEntities"
+        :item-projection="s => s || ''"
         placeholder="Tapez le nom d'un lieu, d'une personne, etc"
-        @update:model-value="getSuggestedNamedEntities"
-        @hit="addNamedEntity($event)"
       />
     </BFormGroup>
   </BContainer>
-
 </template>
 
 <script>
@@ -23,40 +20,19 @@ export default {
   data: function() {
     return {
       namedEntityQuery: '',
-      suggestedNamedEntities: [],
-      // selectedNamedEntityId: -1,
-
     }
   },
   methods: {
-    addNamedEntity: function (event) {
-      // this.selectedNamedEntityId = event;
-      this.namedEntityQuery = event;
-      this.$emit("update:modelValue", this.namedEntityQuery);
+    fetchNamedEntities(query) {
+      return searchApproximateNamedEntities("?query=" + encodeURIComponent(query))
+        .then(response => response.data.suggestions || []);
     },
-
-    getSuggestedNamedEntities(query) {
-      // if (query.length >= 2) {
-        searchApproximateNamedEntities("?query="+encodeURIComponent(query)).then(
-            (response) => {
-              this.suggestedNamedEntities = response.data.suggestions;
-            }
-        );
-      // } else {
-      //   searchWorks(encodeURIComponent(`?approximate=false&query=${query}`)).then(
-      //       (response) => {
-      //         this.suggestedNamedEntities = response.data.suggestions;
-      //       }
-      //   );
-      // }
-    }
   },
   watch: {
-    // namedEntityQuery: function(newValue) {
-    //   this.getSuggestedNamedEntities(newValue);
-    // }
+    namedEntityQuery(newValue) {
+      if (newValue) this.$emit("update:modelValue", newValue);
+    },
   }
-
 }
 </script>
 

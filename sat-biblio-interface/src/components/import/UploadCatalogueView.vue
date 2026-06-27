@@ -2,7 +2,7 @@
   <BContainer>
     <BForm @submit.prevent="saveCatalogueItem">
       <BFormGroup label="Fichier">
-      <b-form-file
+      <BFormFile
           browse-text="Explorer"
           v-model="file"
           :state="Boolean(file)"

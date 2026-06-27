@@ -10,7 +10,7 @@
         </BCardText>
       <BForm>
         <BFormGroup>
-          <b-form-file
+          <BFormFile
               browse-text="Explorer"
               v-model="file"
               :state="Boolean(file)"

@@ -10,71 +10,49 @@
                            v-model="borrower"
                            :disabled="disabled || isUpdate"/>
     <BFormGroup label="Date d'emprunt">
-      <b-form-datepicker v-model="borrowingDate"
-                         placeholder="Date de l'emprunt"
-                         :disabled="true"
-                         label-close-button="Fermer"
-                         label-no-date-selected="Aucune date sélectionnée"
-                         label-help="Utilisez les flèches du clavier pour naviguer dans les dates du calendrier"
-                         label-calendar="Calendrier"
-                         label-nav="Navigation dans le calendrier"
-                         label-today="Aujourd'hui"
-                         label-prev-month="Mois précédent"
-                         label-next-month="Mois suivant"
-                         label-current-month="Mois courant"
-                         locale="fr"
-                         start-weekday="1"
-                         size="sm"
+      <VueDatePicker v-model="borrowingDate"
+                     placeholder="Date de l'emprunt"
+                     :disabled="true"
+                     :locale="dpLocale"
+                     :week-start="1"
+                     :time-config="{ enableTimePicker: false }"
+                     :formats="{ input: 'dd/MM/yyyy' }"
+                     :aria-labels="dpAriaLabels"
+                     :action-row="dpActionRow"
       />
     </BFormGroup>
     <BFormGroup label="Date de retour prévue">
-      <b-form-datepicker v-model="dateComebackExpected"
-                         placeholder="Choisissez une date"
-                         label-close-button="Fermer"
-                         label-no-date-selected="Aucune date sélectionnée"
-                         label-help="Utilisez les flèches du clavier pour naviguer dans les dates du calendrier"
-                         label-calendar="Calendrier"
-                         label-nav="Navigation dans le calendrier"
-                         label-today="Aujourd'hui"
-                         label-prev-month="Mois précédent"
-                         label-next-month="Mois suivant"
-                         label-current-month="Mois courant"
-                         locale="fr"
-                         start-weekday="1"
-                         size="sm"
-                         :min="minDate"
-                         :max="maxDate"
-                         style="z-index: 900"
-                         label-reset-button="Réinitialiser"
-                         :reset-button="true"
+      <VueDatePicker v-model="dateComebackExpected"
+                     placeholder="Choisissez une date"
+                     :locale="dpLocale"
+                     :week-start="1"
+                     :time-config="{ enableTimePicker: false }"
+                     :formats="{ input: 'dd/MM/yyyy' }"
+                     :min-date="minDate"
+                     :max-date="maxDate"
+                     :clearable="true"
+                     :aria-labels="dpAriaLabels"
+                     :action-row="dpActionRow"
       />
     </BFormGroup>
     <div v-if="isUpdate">
       <BFormGroup label="Date de retour réel">
-        <b-form-datepicker v-model="actualComebackDate"
-                           placeholder="Choisissez une date"
-                           label-close-button="Fermer"
-                           label-no-date-selected="Aucune date sélectionnée"
-                           label-help="Utilisez les flèches du clavier pour naviguer dans les dates du calendrier"
-                           label-calendar="Calendrier"
-                           label-nav="Navigation dans le calendrier"
-                           label-today="Aujourd'hui"
-                           label-prev-month="Mois précédent"
-                           label-next-month="Mois suivant"
-                           label-current-month="Mois courant"
-                           label-reset-button="Réinitialiser"
-                           locale="fr"
-                           start-weekday="1"
-                           size="sm"
-                           :min="borrowing.borrowingDate"
-                           :max="today"
-                           style="z-index: 900"
-                           :reset-button="true"
+        <VueDatePicker v-model="actualComebackDate"
+                       placeholder="Choisissez une date"
+                       :locale="dpLocale"
+                       :week-start="1"
+                       :time-config="{ enableTimePicker: false }"
+                       :formats="{ input: 'dd/MM/yyyy' }"
+                       :min-date="borrowing.borrowingDate"
+                       :max-date="today"
+                       :clearable="true"
+                       :aria-labels="dpAriaLabels"
+                       :action-row="dpActionRow"
         />
       </BFormGroup>
     </div>
     <BFormGroup label="Commentaire">
-      <b-form-textarea size="3" v-model="comment" :disabled="disabled"/>
+      <BFormTextarea size="3" v-model="comment" :disabled="disabled"/>
     </BFormGroup>
     <BButton type="submit" :disabled="isIncorrect || disabled">Enregistrer</BButton>
     <span class="mx-3">{{ message }}</span>
@@ -86,6 +64,7 @@ import SuggestionUtilisateur from "@/components/utilisateur/SuggestionUtilisateu
 import SuggestionEnregistrement from "@/components/enregistrement/SuggestionEnregistrement.vue";
 import {BookBorrowing} from "@/services/objectManager.js";
 import BorrowingState from "@/components/emprunt/BorrowingState.vue";
+import { fr } from 'date-fns/locale';
 
 
 export default {
@@ -116,7 +95,33 @@ export default {
     return {
       minDate: minDate,
       maxDate: maxDate,
-      today: today
+      today: today,
+      dpLocale: fr,
+      dpAriaLabels: {
+        prevMonth: 'Mois précédent',
+        nextMonth: 'Mois suivant',
+        prevYear: 'Année précédente',
+        nextYear: 'Année suivante',
+        openMonthsOverlay: 'Sélectionner le mois',
+        openYearsOverlay: 'Sélectionner l\'année',
+        clearInput: 'Réinitialiser',
+        calendarIcon: 'Calendrier',
+        menu: 'Navigation dans le calendrier',
+        input: 'Saisie de date',
+        toggleOverlay: 'Basculer la vue',
+        openTimePicker: 'Ouvrir le sélecteur d\'heure',
+        closeTimePicker: 'Fermer le sélecteur d\'heure',
+        timePicker: 'Sélecteur d\'heure',
+        amPmButton: 'Basculer AM/PM',
+        openTpOverlay: () => '',
+        incrementValue: () => '',
+        decrementValue: () => '',
+      },
+      dpActionRow: {
+        selectBtnLabel: 'Sélectionner',
+        cancelBtnLabel: 'Fermer',
+        nowBtnLabel: 'Aujourd\'hui',
+      },
     }
   },
   methods: {},

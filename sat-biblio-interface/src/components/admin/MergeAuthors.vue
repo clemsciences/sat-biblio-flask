@@ -34,12 +34,10 @@
           <h5>Premier auteur</h5>
           <BFormGroup label="Rechercher l'auteur 1">
             <vue-typeahead-bootstrap
-              v-model="query1"
-              :data="suggestions1"
-              :serializer="s => s.text"
+              v-model="selectedAuthor1Temp"
+              :items="query => fetchSuggestions(query, 'suggestions1')"
+              :item-projection="s => s ? s.text : ''"
               placeholder="Tapez le nom de l'auteur"
-              @update:model-value="getSuggestions($event, 'suggestions1')"
-              @hit="selectAuthor1($event)"
             />
           </BFormGroup>
           <div v-if="author1">
@@ -63,12 +61,10 @@
           <h5>Deuxième auteur</h5>
           <BFormGroup label="Rechercher l'auteur 2">
             <vue-typeahead-bootstrap
-              v-model="query2"
-              :data="suggestions2"
-              :serializer="s => s.text"
+              v-model="selectedAuthor2Temp"
+              :items="query => fetchSuggestions(query, 'suggestions2')"
+              :item-projection="s => s ? s.text : ''"
               placeholder="Tapez le nom de l'auteur"
-              @update:model-value="getSuggestions($event, 'suggestions2')"
-              @hit="selectAuthor2($event)"
             />
           </BFormGroup>
           <div v-if="author2">
@@ -140,8 +136,8 @@ export default {
   components: {BRow, BFormGroup, BFormRadio, BCol, BModal, BAlert, BSpinner, BButton, BCard, BContainer, AppTitle},
   data() {
     return {
-      query1: '',
-      query2: '',
+      selectedAuthor1Temp: null,
+      selectedAuthor2Temp: null,
       suggestions1: [],
       suggestions2: [],
       author1: null,
@@ -176,15 +172,16 @@ export default {
     }
   },
   methods: {
-    getSuggestions(query, target) {
-      if (query.length >= 2) {
-        searchNearAuthors(`auteur=${encodeURIComponent(query)}`)
-          .then((response) => {
-            if (response.data.success) {
-              this[target] = response.data.suggestedAuthors;
-            }
-          }).catch();
-      }
+    fetchSuggestions(query, target) {
+      if (query.length < 2) return Promise.resolve([]);
+      return searchNearAuthors(`auteur=${encodeURIComponent(query)}`)
+        .then(response => {
+          if (response.data.success) {
+            this[target] = response.data.suggestedAuthors;
+            return response.data.suggestedAuthors;
+          }
+          return [];
+        });
     },
     selectAuthor1(event) {
       this.author1 = event;
@@ -197,24 +194,22 @@ export default {
       this.fetchDuplicates(event.family_name);
     },
     setAsAuthor1(author) {
-      const event = {
+      const item = {
         text: `${author.first_name} ${author.family_name}`,
         value: author.id,
         family_name: author.family_name,
         first_name: author.first_name
       };
-      this.query1 = event.text;
-      this.selectAuthor1(event);
+      this.selectedAuthor1Temp = item;
     },
     setAsAuthor2(author) {
-      const event = {
+      const item = {
         text: `${author.first_name} ${author.family_name}`,
         value: author.id,
         family_name: author.family_name,
         first_name: author.first_name
       };
-      this.query2 = event.text;
-      this.selectAuthor2(event);
+      this.selectedAuthor2Temp = item;
     },
     fetchDuplicates(familyName) {
       if (familyName && familyName !== "[collectif]" && familyName !== "[anonyme]") {
@@ -314,8 +309,8 @@ export default {
         });
     },
     reset() {
-      this.query1 = '';
-      this.query2 = '';
+      this.selectedAuthor1Temp = null;
+      this.selectedAuthor2Temp = null;
       this.author1 = null;
       this.author2 = null;
       this.books1 = [];
@@ -325,12 +320,12 @@ export default {
     }
   },
   watch: {
-    // query1(val) {
-    //   this.getSuggestions(val, 'suggestions1');
-    // },
-    // query2(val) {
-    //   this.getSuggestions(val, 'suggestions2');
-    // }
+    selectedAuthor1Temp(newItem) {
+      if (newItem) this.selectAuthor1(newItem);
+    },
+    selectedAuthor2Temp(newItem) {
+      if (newItem) this.selectAuthor2(newItem);
+    },
   }
 }
 </script>

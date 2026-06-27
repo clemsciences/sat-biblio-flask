@@ -41,7 +41,7 @@
       <BRow>
         <BCol cols="12">
           <BFormGroup label="Adresse complète" label-for="full-address">
-            <b-form-textarea id="full-address" v-model.trim="form.address" rows="3" required />
+            <BFormTextarea id="full-address" v-model.trim="form.address" rows="3" required />
           </BFormGroup>
         </BCol>
       </BRow>
@@ -60,7 +60,7 @@
         <BCol md="4">
           <BFormGroup label="Courriel" label-for="email" :state="emailState">
             <BFormInput id="email" type="email" v-model.trim="form.email" />
-            <b-form-invalid-feedback v-if="emailState === false">Courriel invalide</b-form-invalid-feedback>
+            <BFormInvalidFeedback v-if="emailState === false">Courriel invalide</BFormInvalidFeedback>
           </BFormGroup>
         </BCol>
       </BRow>
@@ -78,9 +78,9 @@
         </BCol>
         <BCol md="6">
           <BFormGroup label="Options">
-            <b-form-checkbox v-model="form.receiveBulletinByPost">Recevoir le prochain bulletin par la poste (+13 €)</b-form-checkbox>
-            <b-form-checkbox v-model="form.mustReceiveInfoByMail">Je souhaite absolument recevoir les informations par courrier</b-form-checkbox>
-            <b-form-checkbox v-model="form.refusePublishInfo">Je refuse que mon nom et mon adresse figurent dans la liste des sociétaires dans le prochain bulletin</b-form-checkbox>
+            <BFormCheckbox v-model="form.receiveBulletinByPost">Recevoir le prochain bulletin par la poste (+13 €)</BFormCheckbox>
+            <BFormCheckbox v-model="form.mustReceiveInfoByMail">Je souhaite absolument recevoir les informations par courrier</BFormCheckbox>
+            <BFormCheckbox v-model="form.refusePublishInfo">Je refuse que mon nom et mon adresse figurent dans la liste des sociétaires dans le prochain bulletin</BFormCheckbox>
           </BFormGroup>
         </BCol>
       </BRow>
@@ -119,7 +119,7 @@
               <BFormRadio value="virement">Virement bancaire</BFormRadio>
               <BFormRadio value="carte">Carte bancaire ou espèces à la BHT ou pendant une séance mensuelle</BFormRadio>
             </BFormRadioGroup>
-            <b-alert v-if="paymentInstructions" show variant="info" class="mt-2">{{ paymentInstructions }}</b-alert>
+            <BAlert v-if="paymentInstructions" show variant="info" class="mt-2">{{ paymentInstructions }}</BAlert>
           </BFormGroup>
         </BCol>
         <BCol md="6" class="d-flex align-items-center" v-if="form.membershipType">

@@ -47,7 +47,7 @@
       />
     </BFormGroup>
     <BFormGroup label="Description" v-if="!disabled">
-      <b-form-textarea v-model="description"
+      <BFormTextarea v-model="description"
                        :disabled="disabled"
                        :rows="5" size="sm"
                        ref="description"
