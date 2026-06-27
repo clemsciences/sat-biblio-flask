@@ -1,0 +1,58 @@
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sat-biblio-web"
+dynamic = ["version"]
+description = "Web app to manage library books."
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Clément Besnier", email = "clem@clementbesnier.fr"},
+]
+keywords = ["library", "book", "MARC", "UNIMARC", "INTERMARC"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Framework :: Flask",
+]
+dependencies = [
+    "Flask==3.0.0",
+    "Flask-Admin==1.6.1",
+    "Flask-Babel==4.0.0",
+    "Flask-Cors==4.0.0",
+    "Flask-JWT-Extended==4.5.3",
+    "Flask-Mail",
+    "Flask-Migrate==4.0.5",
+    "Flask-Session==0.5.0",
+    "Flask-SQLAlchemy==3.1.0",
+    "Flask-WTF==1.2.0",
+    "lxml",
+    "openpyxl==3.0.9",
+    "rdflib",
+    "requests",
+    "gunicorn",
+    "arkpy",
+    "sat-biblio-referencement @ git+https://github.com/clemsciences/sat-biblio-referencement.git",
+    "flask-login @ git+https://github.com/maxcountryman/flask-login.git@7d98a49bc38d0849367b348bfe37a2b689323419",
+]
+
+[project.urls]
+Homepage = "https://github.com/clemsciences/sat-biblio-flask"
+
+[tool.setuptools]
+packages = ["sat_biblio_server"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {file = "version.txt"}
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["doc", "sat-biblio-interface", "static"]
