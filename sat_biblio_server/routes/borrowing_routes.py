@@ -59,7 +59,7 @@ class BorrowingsHelper:
 
         date_emprunt = args.get("date_emprunt")
         if date_emprunt:
-            the_query = filter(EmpruntLivre2023DB.date_emprunt == date_emprunt)
+            the_query = the_query.filter(EmpruntLivre2023DB.date_emprunt == date_emprunt)
 
         date_retour_prevu = args.get("date_retour_prevu")
         if date_retour_prevu:

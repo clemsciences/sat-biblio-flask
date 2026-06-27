@@ -105,27 +105,20 @@ class MyAdminIndexView(AdminIndexView):
     def index(self):
         if not current_user.is_authenticated:
             return redirect(url_for('admin.login_view'))
-        return super(MyAdminIndexView, self).index()
+        return super().index()
 
     @expose('/login/', methods=('GET', 'POST'))
     def login_view(self):
         # handle user login
         form = AdminLoginForm(request.form)
-        # print('login viw')
         if helpers.validate_form_on_submit(form):
             user = form.get_user()
             login_user(user)
-            # print('validat')
 
         if current_user.is_authenticated:
             return redirect(url_for('admin.index'))
-        # print(form)
         self._template_args['form'] = form
-        # link = "<p>Don't have an account? <a href=\"" + url_for('.register_view') + "\">Click here to register.</a></p>"
-        # self._template_args['link'] = link
-        # print('login ntr')
-        # return render_template('gestion/index.html')
-        return super(MyAdminIndexView, self).index()
+        return super().index()
 
     @expose('/logout/')
     def logout_view(self):
