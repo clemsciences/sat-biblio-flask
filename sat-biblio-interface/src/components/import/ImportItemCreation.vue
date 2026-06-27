@@ -24,7 +24,7 @@
         <BFormInput v-model="importItem.rowsToPreviewNumber" type="number" min="0"/>
       </BFormGroup>
       <BFormGroup label="Ne conserver que les entrées vérifiées">
-        <b-form-checkbox v-model="importItem.filterByVerifiedEntry"/>
+        <BFormCheckbox v-model="importItem.filterByVerifiedEntry"/>
       </BFormGroup>
 <!--    <BFormGroup>-->
     <BRow class="m-2">
@@ -62,7 +62,7 @@
       </div>
     </BFormGroup>
     <BFormGroup label="Description" v-if="columnFitness">
-      <b-form-textarea v-model="importItem.description" :disabled="disabled"/>
+      <BFormTextarea v-model="importItem.description" :disabled="disabled"/>
     </BFormGroup>
     <BRow class="m-2" v-if="columnFitness">
 <!--      <p>{{ isIncorrect }} {{ disabled }}</p>-->

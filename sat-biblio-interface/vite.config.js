@@ -9,6 +9,11 @@ import {BootstrapVueNextResolver} from 'bootstrap-vue-next/resolvers'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    exclude: ['e2e/**', 'node_modules/**'],
+  },
   plugins: [
     vue(),
     Components({

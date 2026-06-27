@@ -7,7 +7,7 @@
 
     <BForm @submit.prevent="sendMessage">
       <BFormGroup label="Message à envoyer à l'administrateur de SatBiblio">
-        <b-form-textarea v-model="textToSend" rows="10"/>
+        <BFormTextarea v-model="textToSend" rows="10"/>
       </BFormGroup>
       <BFormGroup v-if="!connected" label="Donnez votre adresse email pour recevoir une copie de votre message.">
         <BFormInput v-model="emailAddress"/>

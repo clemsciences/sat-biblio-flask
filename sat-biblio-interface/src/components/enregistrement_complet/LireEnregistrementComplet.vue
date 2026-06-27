@@ -65,7 +65,7 @@ export default {
     downloadDublinCore(format) {
       const id = this.recordId;
       const fmt = (format || 'json').toLowerCase();
-      const url = `${process.env.VUE_APP_SITE_API_URL}/book-records-with-reference/${id}/dublin-core/?format=${fmt}`;
+      const url = `${import.meta.env.VITE_APP_SITE_API_URL}/book-records-with-reference/${id}/dublin-core/?format=${fmt}`;
       window.open(url, '_blank');
     },
     retrieve() {

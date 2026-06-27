@@ -1,28 +1,28 @@
 <template>
   <BContainer>
-    <b-navbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
-      <b-navbar-brand to="/" id="accueil-tooltip">
+    <BNavbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
+      <BNavbarBrand to="/" id="accueil-tooltip">
         <h1 class="navbar-brand-title titre-nav-item" style="margin: 0; font-weight: normal; display: inline;">SAT -
           Biblio</h1>
 <!--        <h1 class="navbar-brand-title titre-nav-item">SAT - Biblio</h1>-->
         <BTooltip target="accueil-tooltip" triggers="hover" class="my-tooltip">
               Accueil
         </BTooltip>
-      </b-navbar-brand>
-      <b-navbar-toggle target="navbarSupportedContent"></b-navbar-toggle>
+      </BNavbarBrand>
+      <BNavbarToggle target="navbarSupportedContent"></BNavbarToggle>
       <BCollapse is-nav style="height: 1px;" id="navbarSupportedContent">
-        <b-navbar-nav>
-<!--          <b-nav-item to="/" class="nav-link space-around titre-nav-item">Accueil</b-nav-item>-->
-          <b-nav-item v-if="connected && isContributor">
-            <b-nav-item-dropdown text="Créer" class="titre-nav-item">
+        <BNavbarNav>
+<!--          <BNavItem to="/" class="nav-link space-around titre-nav-item">Accueil</BNavItem>-->
+          <BNavItem v-if="connected && isContributor">
+            <BNavItemDropdown text="Créer" class="titre-nav-item">
               <BDropdownItem to="/catalogue/creer">Nouvelle entrée</BDropdownItem>
               <BDropdownItem to="/auteur/creer" v-if="isAdmin">Auteur</BDropdownItem>
               <BDropdownItem to="/reference-livre/creer" v-if="isAdmin">Référence bibliographique</BDropdownItem>
               <BDropdownItem to="/enregistrement/creer" v-if="isAdmin">Enregistrement dans le catalogue</BDropdownItem>
-            </b-nav-item-dropdown>
-          </b-nav-item>
-          <b-nav-item class="active" active>
-            <b-nav-item-dropdown text="Consulter" class="titre-nav-item">
+            </BNavItemDropdown>
+          </BNavItem>
+          <BNavItem class="active" active>
+            <BNavItemDropdown text="Consulter" class="titre-nav-item">
               <BDropdownItem to="/catalogue">Catalogue</BDropdownItem>
 <!--              <BDropdownItem to="/cotes">Cotes</BDropdownItem>-->
               <BDropdownItem to="/mots-clefs">Mots clef</BDropdownItem>
@@ -31,11 +31,11 @@
               <BDropdownItem to="/reference-livre/liste" v-if="isAdmin">Références bibliographiques</BDropdownItem>
               <BDropdownItem to="/enregistrement/liste" v-if="isAdmin">Catalogue</BDropdownItem>
 <!--                    <router-link class="nav-link" to="/enregistrement/liste">Catalogue</router-link>-->
-            </b-nav-item-dropdown>
-          </b-nav-item>
-<!--          <b-nav-item class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</b-nav-item>-->
-          <b-nav-item v-if="isManager">
-            <b-nav-item-dropdown text="Autres" class="titre-nav-item">
+            </BNavItemDropdown>
+          </BNavItem>
+<!--          <BNavItem class="active nav-link space-around titre-nav-item" to="/rechercher">Rechercher</BNavItem>-->
+          <BNavItem v-if="isManager">
+            <BNavItemDropdown text="Autres" class="titre-nav-item">
               <BDropdownGroup v-if="isManager" id="group-borrowing" header="Emprunter" class="my-nav-group">
                 <BDropdownItem to="/emprunt/livre">Nouvel emprunt</BDropdownItem>
                 <BDropdownItem to="/emprunt/liste">Livres empruntés</BDropdownItem>
@@ -52,44 +52,44 @@
                 <BDropdownItem to="/administrateur">Admin</BDropdownItem>
 <!--                <BDropdownItem to="/gestionnaire-importation">Gestionnaire d'importation</BDropdownItem>-->
               </BDropdownGroup>
-            </b-nav-item-dropdown>
-          </b-nav-item>
+            </BNavItemDropdown>
+          </BNavItem>
 
-          <b-nav-item to="/contact" class="nav-link space-around titre-nav-item">Contact</b-nav-item>
+          <BNavItem to="/contact" class="nav-link space-around titre-nav-item">Contact</BNavItem>
 
-          <b-nav-item class="active" active>
-            <b-nav-item-dropdown text="Divers" class="titre-nav-item">
+          <BNavItem class="active" active>
+            <BNavItemDropdown text="Divers" class="titre-nav-item">
               <BDropdownItem to="/liens">Liens utiles</BDropdownItem>
               <BDropdownItem to="/conception">Conception</BDropdownItem>
               <BDropdownItem to="/notes-de-version">Notes de version</BDropdownItem>
-            </b-nav-item-dropdown>
-          </b-nav-item>
-        </b-navbar-nav>
-        <b-navbar-nav class="ms-auto">
-          <b-nav-item id="connection-tooltip" class="nav-link space-around titre-nav-item ms-auto">
+            </BNavItemDropdown>
+          </BNavItem>
+        </BNavbarNav>
+        <BNavbarNav class="ms-auto">
+          <BNavItem id="connection-tooltip" class="nav-link space-around titre-nav-item ms-auto">
             <template v-if="connected">
               <BTooltip target="connection-tooltip" triggers="hover" class="my-tooltip">
                 {{ connectionTooltipHints }}
               </BTooltip>
             </template>
-            <b-nav-item-dropdown v-if="connected" text="Mon profil" class="titre-nav-item">
+            <BNavItemDropdown v-if="connected" text="Mon profil" class="titre-nav-item">
               <BDropdownItem to="/utilisateur/reinitialiser-mot-de-passe">
                 Changer <br/> de mot de passe
               </BDropdownItem>
               <BDropdownItem to="/utilisateur/deconnexion">Se déconnecter</BDropdownItem>
-            </b-nav-item-dropdown>
-            <b-nav-item-dropdown v-else text="Connexion" class="titre-nav-item">
+            </BNavItemDropdown>
+            <BNavItemDropdown v-else text="Connexion" class="titre-nav-item">
               <BDropdownItem :to="{name: 'utilisateur-connexion'}">
                 Se connecter
               </BDropdownItem>
               <BDropdownItem to="/utilisateur/creer">
                 Nouveau compte
               </BDropdownItem>
-            </b-nav-item-dropdown>
-          </b-nav-item>
-        </b-navbar-nav>
+            </BNavItemDropdown>
+          </BNavItem>
+        </BNavbarNav>
       </BCollapse>
-    </b-navbar>
+    </BNavbar>
   </BContainer>
 
 </template>
@@ -135,7 +135,7 @@ export default {
       window.open('https://www.societearcheotouraine.eu/','_blank');
     },
     getSatBiblioDoc() {
-      window.open(`${process.env.VUE_APP_SITE_API_URL}/static/sat_biblio_documentation-1.pdf`, '_blank');
+      window.open(`${import.meta.env.VITE_APP_SITE_API_URL}/static/sat_biblio_documentation-1.pdf`, '_blank');
     }
   }
 

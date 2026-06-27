@@ -26,7 +26,7 @@
       href="/catalogue"
       class="my-4"
     >
-<!--      <b-icon icon="book"></b-icon>-->
+<!--      <BIcon icon="book"></BIcon>-->
       <IBiBook/>
       Consulter le catalogue
     </BButton>
@@ -160,10 +160,10 @@
 
 
 
-<!--      <b-img src="bht_livres_1.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
-<!--      <b-img src="bht_livres_2.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
-<!--      <b-img src="bht_livres_3.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
-<!--      <b-img src="bht_livres_4.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
+<!--      <BImg src="bht_livres_1.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
+<!--      <BImg src="bht_livres_2.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
+<!--      <BImg src="bht_livres_3.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
+<!--      <BImg src="bht_livres_4.jpg" class="m-3 img-fluid" style="max-width: 200px" alt="Livres sur étagère"/>-->
     </div>
 
     <!-- Bouton toggle et collapsible (placé plus bas à gauche) -->
@@ -190,7 +190,7 @@
     </div>
 
     <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
-<!--      <b-img src="bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg"-->
+<!--      <BImg src="bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg"-->
 <!--             class="m-auto img-fluid"-->
 <!--             style="max-width: 1000px"-->
 <!--             alt="Photo du rez-de-chaussée de la bibliothèque."/>-->

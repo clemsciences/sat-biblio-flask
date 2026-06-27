@@ -12,8 +12,8 @@
       <BButton class="m-2" @click="exporterCSV" :disabled="generating">
         Générer un export au format CSV (.csv)
       </BButton>
-      <b-checkbox v-model="withWeed">Ajouter les ouvrages désherbés</b-checkbox>
-      <b-checkbox v-model="withAuxiliaryColumns">Ajouter les colonnes auxiliaires</b-checkbox>
+      <BFormCheckbox v-model="withWeed">Ajouter les ouvrages désherbés</BFormCheckbox>
+      <BFormCheckbox v-model="withAuxiliaryColumns">Ajouter les colonnes auxiliaires</BFormCheckbox>
     </BRow>
 <!--    <BRow>-->
       <div v-if="generating"  class="d-flex justify-content-center">
@@ -101,7 +101,7 @@ export default {
 
     download: function() {
       let linkToDownload = this.linkToDownload;
-      window.open(`${process.env.VUE_APP_SITE_API_URL}/static/${linkToDownload}`, '_blank');
+      window.open(`${import.meta.env.VITE_APP_SITE_API_URL}/static/${linkToDownload}`, '_blank');
     },
     cancelDownload: function() {
       this.linkToDownload = '';

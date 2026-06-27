@@ -1,15 +1,12 @@
 <template>
-
-
   <BContainer>
     <BFormGroup label="Auteurs" v-if="!disabled">
       <vue-typeahead-bootstrap
-        v-model="author_query"
-        :data="suggestedAuthors"
-        :serializer="s => s.text"
+        v-model="selectedAuthorTemp"
+        :items="fetchAuthors"
+        :item-projection="s => s ? s.text : ''"
         :disabled="disabled"
         placeholder="Tapez le prénom ou le nom de l'auteur"
-        @update:model-value="getSuggestedAuthors"
       />
       <div v-if="suggestedAuthors.length > 0">
         <p>{{suggestedAuthors}}</p>
@@ -19,7 +16,6 @@
       </div>
     </BFormGroup>
   </BContainer>
-
 </template>
 
 <script>
@@ -30,7 +26,7 @@ export default {
   name: "AuthorCheck",
 
   props: {
-    modelValue: Author,  // selectedAuthors
+    modelValue: Author,
     disabled: {
       type: Boolean,
       default: false
@@ -38,50 +34,40 @@ export default {
   },
   data: function () {
     return {
-      author_query: '',
+      selectedAuthorTemp: null,
       suggestedAuthors: [],
       selectedAuthorId: -1,
-      selectedAuthors: [],
-      selectedAuthorsMessage: "Les auteurs sélectionnés vont s'afficher en dessous.",
     }
   },
   methods: {
-    getSuggestedAuthors: function (query) {
-      if (query.length >= 2) {
-        searchNearAuthors(`auteur=${encodeURIComponent(query)}`)
-            .then((response) => {
-              if (response.data.success) {
-                this.suggestedAuthors = response.data.suggestedAuthors;
-              }
-            }).catch();
-      }
+    fetchAuthors(query) {
+      if (query.length < 2) return Promise.resolve([]);
+      return searchNearAuthors(`auteur=${encodeURIComponent(query)}`)
+        .then(response => {
+          if (response.data.success) {
+            this.suggestedAuthors = response.data.suggestedAuthors;
+            return response.data.suggestedAuthors;
+          }
+          return [];
+        });
     },
-    addAuthor: function(event) {
-      // TODO check that chosen Author is not already in selectedAuthors
-      this.selectedAuthorId = event;
-      this.selectedAuthors.push(event);
-      this.author_query = "";
-      this.$emit("update:modelValue", this.selectedAuthors);
+    addAuthor: function(item) {
+      this.selectedAuthorId = item.value;
+      this.$nextTick(() => { this.selectedAuthorTemp = null; });
+      this.$emit("update:modelValue", item);
     },
   },
   watch: {
-    // author_query: function (newValue) {
-    //   this.getSuggestedAuthors(newValue);
-    // },
+    selectedAuthorTemp(newItem) {
+      if (newItem) this.addAuthor(newItem);
+    },
     modelValue: {
       handler(newValue) {
-        this.author_query = ""
-        console.log("youhou")
-        if(newValue.first_name) {
-          this.author_query = newValue.first_name;
+        if (newValue) {
+          this.selectedAuthorTemp = newValue.first_name || newValue.family_name
+            ? { text: `${newValue.first_name || ''} ${newValue.family_name || ''}`.trim(), value: null }
+            : null;
         }
-        if(newValue.family_name) {
-          if(this.author_query) {
-            this.author_query += " ";
-          }
-          this.author_query += newValue.family_name;
-        }
-        this.author_query = newValue.first_name + " " + newValue.family_name;
       },
       deep: true
     },

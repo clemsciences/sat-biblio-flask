@@ -16,30 +16,30 @@
 <!--      </BFormGroup>-->
       <BFormGroup label="Auteur" label-for="search-bnf-author-block" class="my-3">
         <BFormInput type="search" v-model="authorQuery" aria-describedby="search-bnf-author-block"/>
-        <b-form-text id="search-bnf-author-block">
+        <BFormText id="search-bnf-author-block">
           Entrez le prénom et/ou le nom d'un auteur pour retrouver les fiches que vous cherchez.
-        </b-form-text>
+        </BFormText>
       </BFormGroup>
 
       <BFormGroup label="Titre" label-for="search-bnf-title-block" class="my-3">
         <BFormInput type="search" v-model="titleQuery" aria-describedby="search-bnf-title-block"/>
-        <b-form-text id="search-bnf-title-block">
+        <BFormText id="search-bnf-title-block">
           Entrez un titre ou une partie d'un titre pour retrouver les fiches que vous cherchez.
-        </b-form-text>
+        </BFormText>
       </BFormGroup>
 
       <BFormGroup label="ISBN" label-for="search-bnf-isbn-block" class="my-3">
         <BFormInput type="search" v-model="isbnQuery" aria-describedby="search-bnf-isbn-block"/>
-        <b-form-text id="search-bnf-isbn-block">
+        <BFormText id="search-bnf-isbn-block">
           Entrez un ISBN pour retrouver les fiches que vous cherchez.
-        </b-form-text>
+        </BFormText>
       </BFormGroup>
 
       <BFormGroup label="Editeur" label-for="search-bnf-publisher-block" class="my-3">
         <BFormInput type="search" v-model="publisherQuery" aria-describedby="search-bnf-publisher-block"/>
-        <b-form-text id="search-bnf-publisher-block">
+        <BFormText id="search-bnf-publisher-block">
           Entrez un éditeur pour retrouver les fiches que vous cherchez.
-        </b-form-text>
+        </BFormText>
       </BFormGroup>
       <BFormGroup>
         <BButton type="submit">Rechercher</BButton>

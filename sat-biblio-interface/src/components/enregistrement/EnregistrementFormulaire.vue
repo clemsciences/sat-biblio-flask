@@ -46,7 +46,7 @@
 <!--      </BFormGroup>-->
 
       <BFormGroup label="Ligne" v-if="!disabled">
-        <b-form-textarea v-model="row"
+        <BFormTextarea v-model="row"
                          :disabled="disabled"
                          :rows="5" size="sm"
                          row="ligne" ref="ligne"

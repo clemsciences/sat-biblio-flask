@@ -3,7 +3,7 @@
     <h2>Gestion des images</h2>
     <BRow>
       <BCol cols="6">
-        <b-form-file v-model="files"
+        <BFormFile v-model="files"
                      :state="Boolean(files)"
                      placeholder="Choisissez une image ou une archive compressée d'images en .zip"
                      drop-placeholder="Lâchez l'image ou l'archive compressée d'images ici"

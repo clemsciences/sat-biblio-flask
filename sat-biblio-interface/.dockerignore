@@ -1,0 +1,11 @@
+node_modules
+satbiblio-dist
+dist
+.git
+.gitignore
+.dockerignore
+Dockerfile
+README.md
+# package-lock.json (should not be ignored if we want reproducible builds in docker, but current Dockerfile copies it)
+.idea
+.vscode

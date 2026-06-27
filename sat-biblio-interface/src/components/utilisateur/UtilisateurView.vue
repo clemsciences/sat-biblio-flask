@@ -26,7 +26,7 @@
         <BFormInput type="text" v-model="emailAddress" disabled/>
       </BFormGroup>
       <BFormGroup>
-        <b-form-checkbox :disabled="true" :checked="emailConfirmed">Email confirmé</b-form-checkbox>
+        <BFormCheckbox :disabled="true" :checked="emailConfirmed">Email confirmé</BFormCheckbox>
       </BFormGroup>
       <BFormGroup>
         <BButton @click="resendConfirmationEmail" :disabled="emailConfirmed">Renvoyer un email de confirmation</BButton>
