@@ -3,13 +3,14 @@ Manages records in the library.
 
 Records are hints to manage books in the library.
 """
+import datetime
 import json
 import logging
 import os
 import re
 
 from flask import request, session, send_file
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from sqlalchemy.orm import joinedload
 
 import sat_biblio_server.data.validation as dv
@@ -28,39 +29,112 @@ from flask import Response
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
+def _parse_int(value):
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_date(value):
+    if not value:
+        return None
+    try:
+        return datetime.datetime.strptime(str(value).strip()[:10], "%Y-%m-%d")
+    except (TypeError, ValueError):
+        return None
+
+
 class RecordWithReferenceHelper:
 
     @staticmethod
-    def compute_count(args):
+    def build_filtered_query(args):
+        """Construit la requête des enregistrements en appliquant tous les filtres.
+
+        Utilisé de façon uniforme par la liste paginée, le comptage et l'export.
+        """
         cote = args.get("cote", "")
         titre = args.get("titre", "")
         mot_clef = args.get("mot_clef", "")
         author = args.get("author", "")
 
-        the_filtered_query = Enregistrement2023DB.query
-        the_total_query = Enregistrement2023DB.query
+        the_query = Enregistrement2023DB.query
         if cote:
-            the_filtered_query = the_filtered_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
+            the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
         if titre:
-            the_filtered_query = the_filtered_query.join(ReferenceBibliographiqueLivre2023DB) \
+            the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
                 .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
         if mot_clef:
-            the_filtered_query = the_filtered_query.filter(
-                Enregistrement2023DB.aide_a_la_recherche.ilike(f"%{mot_clef}%"))
+            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.ilike(f"%{mot_clef}%"))
         if author:
-            the_filtered_query = (the_filtered_query
-                                  .join(ReferenceBibliographiqueLivre2023DB)
-                                  .join(ReferenceBibliographiqueLivre2023DB.authors)
-                                  .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
-                                              Author2023DB.family_name.ilike(f"%{author}%"))
-                                          )
-                                  ).options(
+            the_query = (the_query
+                         .join(ReferenceBibliographiqueLivre2023DB)
+                         .join(ReferenceBibliographiqueLivre2023DB.authors)
+                         .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
+                                     Author2023DB.family_name.ilike(f"%{author}%"))
+                                 )
+                         ).options(
                 joinedload(Enregistrement2023DB.reference)
                 .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
             )
 
-        filtered_total = the_filtered_query.count()
-        total = the_total_query.count()
+        the_query = RecordWithReferenceHelper._apply_annee_obtention_filter(the_query, args)
+        the_query = RecordWithReferenceHelper._apply_date_modif_filter(the_query, args)
+        return the_query
+
+    @staticmethod
+    def _apply_annee_obtention_filter(the_query, args):
+        mode = args.get("annee_obtention_mode", "").strip()
+        field = Enregistrement2023DB.annee_obtention
+        if mode == "empty":
+            return the_query.filter(or_(field.is_(None), func.trim(field) == ""))
+        # extract_year est une fonction SQLite enregistrée dans __init__.py
+        year = func.extract_year(field)
+        if mode == "before":
+            y = _parse_int(args.get("annee_obtention_year"))
+            if y is not None:
+                return the_query.filter(year < y)
+        elif mode == "after":
+            y = _parse_int(args.get("annee_obtention_year"))
+            if y is not None:
+                return the_query.filter(year > y)
+        elif mode == "between":
+            y_min = _parse_int(args.get("annee_obtention_year_min"))
+            y_max = _parse_int(args.get("annee_obtention_year_max"))
+            if y_min is not None:
+                the_query = the_query.filter(year >= y_min)
+            if y_max is not None:
+                the_query = the_query.filter(year <= y_max)
+        return the_query
+
+    @staticmethod
+    def _apply_date_modif_filter(the_query, args):
+        mode = args.get("date_modif_mode", "").strip()
+        field = Enregistrement2023DB.date_derniere_modification
+        if mode == "empty":
+            return the_query.filter(field.is_(None))
+        one_day = datetime.timedelta(days=1)
+        if mode == "before":
+            d = _parse_date(args.get("date_modif"))
+            if d is not None:
+                return the_query.filter(field < d)
+        elif mode == "after":
+            d = _parse_date(args.get("date_modif"))
+            if d is not None:
+                return the_query.filter(field >= d + one_day)
+        elif mode == "between":
+            d_min = _parse_date(args.get("date_modif_min"))
+            d_max = _parse_date(args.get("date_modif_max"))
+            if d_min is not None:
+                the_query = the_query.filter(field >= d_min)
+            if d_max is not None:
+                the_query = the_query.filter(field < d_max + one_day)
+        return the_query
+
+    @staticmethod
+    def compute_count(args):
+        filtered_total = RecordWithReferenceHelper.build_filtered_query(args).count()
+        total = Enregistrement2023DB.query.count()
         return total, filtered_total
 
 
@@ -95,30 +169,7 @@ def book_records_with_reference():
         n_page, size, sort_by, sort_desc = get_pagination(request)
 
         # region filtre
-        cote = request.args.get("cote", "")
-        titre = request.args.get("titre", "")
-        mot_clef = request.args.get("mot_clef", "")
-        author = request.args.get("author", "")
-
-        the_query = Enregistrement2023DB.query
-        if cote:
-            the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
-        if titre:
-            the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
-                .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
-        if mot_clef:
-            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
-        if author:
-            the_query = (the_query
-                         .join(ReferenceBibliographiqueLivre2023DB)
-                         .join(ReferenceBibliographiqueLivre2023DB.authors)
-                         .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
-                                     Author2023DB.family_name.ilike(f"%{author}%"))
-                                 )
-                         ).options(
-                            joinedload(Enregistrement2023DB.reference)
-                            .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
-                        )
+        the_query = RecordWithReferenceHelper.build_filtered_query(request.args)
         # endregion
 
         if sort_by:
@@ -160,30 +211,7 @@ def book_records_with_reference():
 def book_records_with_reference_export():
     if request.method == "GET":
         # region filtre
-        cote = request.args.get("cote", "")
-        titre = request.args.get("titre", "")
-        mot_clef = request.args.get("mot_clef", "")
-        author = request.args.get("author", "")
-
-        the_query = Enregistrement2023DB.query
-        if cote:
-            the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
-        if titre:
-            the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
-                .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
-        if mot_clef:
-            the_query = the_query.filter(Enregistrement2023DB.aide_a_la_recherche.like(f"%{mot_clef}%"))
-        if author:
-            the_query = (the_query
-                         .join(ReferenceBibliographiqueLivre2023DB)
-                         .join(ReferenceBibliographiqueLivre2023DB.authors)
-                         .filter(or_(Author2023DB.first_name.ilike(f"%{author}%"),
-                                     Author2023DB.family_name.ilike(f"%{author}%"))
-                                 )
-                         ).options(
-                            joinedload(Enregistrement2023DB.reference)
-                            .joinedload(ReferenceBibliographiqueLivre2023DB.authors)
-                        )
+        the_query = RecordWithReferenceHelper.build_filtered_query(request.args)
         the_query = the_query.order_by(Enregistrement2023DB.cote)
 
         enregistrements = []
