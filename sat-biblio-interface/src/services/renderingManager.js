@@ -84,6 +84,10 @@ export function renderEditor(reference) {
  * @returns {string}
  */
 export function renderYear(reference) {
+  const annee = reference.annee ?? reference.publication_annee;
+  if(annee) {
+    return `${annee}`;
+  }
   if(reference.year) {
     return `${reference.year}`;
   }
