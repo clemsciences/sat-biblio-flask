@@ -1,28 +1,26 @@
 # Stage 1: Build stage
-FROM node:16-alpine as build-stage
+FROM node:20-alpine AS build-stage
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies (clean install honoring the lockfile)
+RUN npm ci
 
 # Copy project files
 COPY . .
 
 # Build the app for production
-# VUE_APP_SITE_API_URL can be provided at build time
-ARG VUE_APP_SITE_API_URL
-ENV VUE_APP_SITE_API_URL=$VUE_APP_SITE_API_URL
-# Enable legacy OpenSSL provider for Webpack 4/Vue CLI 4 on newer Node versions
-ENV NODE_OPTIONS=--openssl-legacy-provider
+# VITE_APP_SITE_API_URL can be provided at build time
+ARG VITE_APP_SITE_API_URL
+ENV VITE_APP_SITE_API_URL=$VITE_APP_SITE_API_URL
 
 RUN npm run build
 
 # Stage 2: Production stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine AS production-stage
 
 # Install curl for healthcheck
 RUN apk add --no-cache curl

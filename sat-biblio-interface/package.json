@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vite",
-    "build": "vite build build --outDir satbiblio-dist",
+    "build": "vite build --outDir satbiblio-dist",
     "preview": "vite preview",
     "zip": "tar.exe -a -c -f satbiblio.zip satbiblio-dist",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
