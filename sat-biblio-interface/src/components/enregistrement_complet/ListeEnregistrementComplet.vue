@@ -79,6 +79,46 @@
         </BFormGroup>
       </BCol>
       <BCol lg="4">
+        <BFormGroup label="Année d'obtention" label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <div class="d-flex gap-1 align-items-center">
+            <BFormSelect v-model="anneeObtentionMode" size="sm" :options="dateFilterModeOptions"/>
+            <BFormInput v-if="anneeObtentionMode === 'before' || anneeObtentionMode === 'after'"
+                        v-model="anneeObtentionYear" type="number" size="sm"
+                        placeholder="Année" class="w-auto"/>
+            <template v-if="anneeObtentionMode === 'between'">
+              <BFormInput v-model="anneeObtentionYearMin" type="number" size="sm"
+                          placeholder="De" class="w-auto"/>
+              <BFormInput v-model="anneeObtentionYearMax" type="number" size="sm"
+                          placeholder="À" class="w-auto"/>
+            </template>
+          </div>
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4" v-if="isAdmin">
+        <BFormGroup label="Date dernière modif." label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <div class="d-flex gap-1 align-items-center">
+            <BFormSelect v-model="dateModifMode" size="sm" :options="dateFilterModeOptions"/>
+            <VueDatePicker v-if="dateModifMode === 'before' || dateModifMode === 'after'"
+                           v-model="dateModif" placeholder="Date"
+                           :locale="dpLocale" :week-start="1" :clearable="true"
+                           :time-config="{ enableTimePicker: false }"
+                           :formats="{ input: 'dd/MM/yyyy' }"/>
+            <template v-if="dateModifMode === 'between'">
+              <VueDatePicker v-model="dateModifMin" placeholder="Du"
+                             :locale="dpLocale" :week-start="1" :clearable="true"
+                             :time-config="{ enableTimePicker: false }"
+                             :formats="{ input: 'dd/MM/yyyy' }"/>
+              <VueDatePicker v-model="dateModifMax" placeholder="Au"
+                             :locale="dpLocale" :week-start="1" :clearable="true"
+                             :time-config="{ enableTimePicker: false }"
+                             :formats="{ input: 'dd/MM/yyyy' }"/>
+            </template>
+          </div>
+        </BFormGroup>
+      </BCol>
+      <BCol lg="4">
         <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BButton @click="exportSearchResult" :disabled="isExporting" v-b-tooltip="'Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucun filtre n\'est mis, alors le catalogue entier est exporté.'">
@@ -151,6 +191,7 @@
 
 <script>
 import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecordsWithReference} from "@/services/api.js";
+import { fr } from 'date-fns/locale';
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
 import {
@@ -198,6 +239,22 @@ export default {
       authorFilter: "",
       keywordsFilter: "",
       titleFilter: "",
+      anneeObtentionMode: "",
+      anneeObtentionYear: "",
+      anneeObtentionYearMin: "",
+      anneeObtentionYearMax: "",
+      dateModifMode: "",
+      dateModif: null,
+      dateModifMin: null,
+      dateModifMax: null,
+      dpLocale: fr,
+      dateFilterModeOptions: [
+        { value: "", text: "Aucun filtre" },
+        { value: "empty", text: "Vide / non renseigné" },
+        { value: "before", text: "Avant" },
+        { value: "after", text: "Après" },
+        { value: "between", text: "Entre" },
+      ],
       isExporting: false,
     }
   },
@@ -259,7 +316,59 @@ export default {
       if (this.keywordsFilter.length > 0) {
         parts.push(`mot_clef=${encodeURI(this.keywordsFilter)}`);
       }
+
+      // Filtre sur l'année d'obtention
+      if (this.anneeObtentionMode === 'empty') {
+        parts.push('annee_obtention_mode=empty');
+      } else if ((this.anneeObtentionMode === 'before' || this.anneeObtentionMode === 'after')
+          && this.anneeObtentionYear) {
+        parts.push(`annee_obtention_mode=${this.anneeObtentionMode}`);
+        parts.push(`annee_obtention_year=${encodeURI(this.anneeObtentionYear)}`);
+      } else if (this.anneeObtentionMode === 'between'
+          && (this.anneeObtentionYearMin || this.anneeObtentionYearMax)) {
+        parts.push('annee_obtention_mode=between');
+        if (this.anneeObtentionYearMin) parts.push(`annee_obtention_year_min=${encodeURI(this.anneeObtentionYearMin)}`);
+        if (this.anneeObtentionYearMax) parts.push(`annee_obtention_year_max=${encodeURI(this.anneeObtentionYearMax)}`);
+      }
+
+      // Filtre sur la date de dernière modification (réservé aux administrateurs)
+      if (this.isAdmin) {
+        if (this.dateModifMode === 'empty') {
+          parts.push('date_modif_mode=empty');
+        } else if (this.dateModifMode === 'before' || this.dateModifMode === 'after') {
+          const d = this.formatDateParam(this.dateModif);
+          if (d) {
+            parts.push(`date_modif_mode=${this.dateModifMode}`);
+            parts.push(`date_modif=${d}`);
+          }
+        } else if (this.dateModifMode === 'between') {
+          const dMin = this.formatDateParam(this.dateModifMin);
+          const dMax = this.formatDateParam(this.dateModifMax);
+          if (dMin || dMax) {
+            parts.push('date_modif_mode=between');
+            if (dMin) parts.push(`date_modif_min=${dMin}`);
+            if (dMax) parts.push(`date_modif_max=${dMax}`);
+          }
+        }
+      }
+
       return parts.join('&');
+    },
+
+    formatDateParam(value) {
+      if (!value) return "";
+      const date = value instanceof Date ? value : new Date(value);
+      if (isNaN(date.getTime())) return "";
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    },
+
+    onFilterChanged() {
+      this.getRecordTotalNumber();
+      if (this.isMounted) this.currentPage = 1;
+      this.refreshTable();
     },
 
     // -----------------------------------------------------------------------
@@ -378,6 +487,14 @@ export default {
       this.authorFilter     = "";
       this.keywordsFilter   = "";
       this.titleFilter      = "";
+      this.anneeObtentionMode    = "";
+      this.anneeObtentionYear    = "";
+      this.anneeObtentionYearMin = "";
+      this.anneeObtentionYearMax = "";
+      this.dateModifMode = "";
+      this.dateModif     = null;
+      this.dateModifMin  = null;
+      this.dateModifMax  = null;
       this.$router.replace({ query: {} });
     },
 
@@ -457,6 +574,30 @@ export default {
       this.getRecordTotalNumber();
       if (this.isMounted) this.currentPage = 1;
       this.refreshTable();
+    },
+    anneeObtentionMode() {
+      this.onFilterChanged();
+    },
+    anneeObtentionYear() {
+      this.onFilterChanged();
+    },
+    anneeObtentionYearMin() {
+      this.onFilterChanged();
+    },
+    anneeObtentionYearMax() {
+      this.onFilterChanged();
+    },
+    dateModifMode() {
+      this.onFilterChanged();
+    },
+    dateModif() {
+      this.onFilterChanged();
+    },
+    dateModifMin() {
+      this.onFilterChanged();
+    },
+    dateModifMax() {
+      this.onFilterChanged();
     },
     currentPage() {
       this.refreshTable();
