@@ -36,7 +36,6 @@ dependencies = [
     "rdflib",
     "requests",
     "gunicorn",
-    "arkpy",
     "sat-biblio-referencement @ git+https://github.com/clemsciences/sat-biblio-referencement.git",
     "flask-login @ git+https://github.com/maxcountryman/flask-login.git@7d98a49bc38d0849367b348bfe37a2b689323419",
 ]
