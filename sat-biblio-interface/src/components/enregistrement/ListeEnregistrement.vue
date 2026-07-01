@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import {getBookRecordsCount, retrieveBookRecords} from "@/services/api";
+import {retrieveBookRecords} from "@/services/api";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
 import {

@@ -58,7 +58,10 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "@babel/eslint-parser"
+      "parser": "@babel/eslint-parser",
+      "requireConfigFile": false,
+      "ecmaVersion": "latest",
+      "sourceType": "module"
     },
     "rules": {}
   },

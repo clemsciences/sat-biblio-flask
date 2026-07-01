@@ -13,7 +13,7 @@
 
 <script>
 import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry";
-import {retrieveLogEvents, getLogEventsCount} from "@/services/api";
+import {retrieveLogEvents} from "@/services/api";
 
 export default {
   name: "ListeEntreesLogEvent",

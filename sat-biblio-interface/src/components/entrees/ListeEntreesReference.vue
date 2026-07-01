@@ -11,8 +11,7 @@
 <script>
 import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry.vue";
 import {
-  getEntryListAssociatedToReference,
-  getEntryListAssociatedToReferenceCount
+  getEntryListAssociatedToReference
 } from "@/services/api";
 import {goToEntryView} from "@/services/entries";
 
