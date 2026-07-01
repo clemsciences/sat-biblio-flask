@@ -34,7 +34,7 @@ test.describe('Flux de connexion', () => {
     await page.goto('/utilisateur/connexion')
     await page.locator('input[type="email"], input[type="text"]').first().fill('inconnu@example.com')
     await page.locator('input[type="password"]').fill('mauvais-mot-de-passe')
-    await page.locator('button[type="submit"], button:has-text("Connexion"), button:has-text("Se connecter")').click()
+    await page.locator('form button[type="submit"]').click()
     // L'appli doit rester sur la page de connexion ou afficher une erreur
     await expect(page).toHaveURL(/connexion/)
   })
