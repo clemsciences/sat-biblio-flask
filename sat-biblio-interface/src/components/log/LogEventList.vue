@@ -34,21 +34,18 @@ import {getLogEventsCount, retrieveLogEvents} from "@/services/api.js";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import {
-  BButton,
   BCol,
   BContainer,
   BFormGroup,
-  BFormInput, BFormRadioGroup, BFormSelect, BModal,
+  BFormInput,
   BPagination,
   BRow,
   BTable
 } from "bootstrap-vue-next";
-import FilterCount from "@/components/visuel/FilterCount.vue";
 export default {
   name: "LogEventListView",
-  components: {VueJsonPretty, BButton, BContainer, BRow, BPagination, BCol,
-    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
-    BModal, BTable, AppTitle, FilterCount},
+  components: {VueJsonPretty, BContainer, BRow, BPagination, BCol,
+    BFormGroup, BFormInput, BTable, AppTitle},
   data: function () {
     return {
       logEvents: [],

@@ -24,13 +24,12 @@
 
 <script>
 import {
-  BButton, BCol, BContainer, BFormGroup,
-  BFormInput, BPagination, BRow, BTable
+  BContainer, BPagination, BTable
 } from "bootstrap-vue-next";
 
 export default {
   name: "ListEntriesOfEntry",
-  components: { BButton, BCol, BContainer, BFormGroup, BFormInput, BPagination, BRow, BTable },
+  components: { BContainer, BPagination, BTable },
   props: {
     retrieveListRequest: { type: Function },
     perPage:   { type: Number,  default: 20 },

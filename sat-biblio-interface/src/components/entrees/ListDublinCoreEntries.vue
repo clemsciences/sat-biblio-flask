@@ -85,19 +85,16 @@ import {
   BCol,
   BContainer,
   BFormGroup,
-  BFormInput, BFormRadioGroup, BFormSelect, BModal,
+  BFormInput,
   BPagination,
   BRow,
   BTable
 } from "bootstrap-vue-next";
-import AppTitle from "@/components/visuel/AppTitle.vue";
-import FilterCount from "@/components/visuel/FilterCount.vue";
 export default {
   name: "ListDublinCoreEntriesView",
   components: {
     BButton, BContainer, BRow, BPagination, BCol,
-    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
-    BModal, BTable, AppTitle, FilterCount
+    BFormGroup, BFormInput, BTable
   },
   // components: {ListEntries},
   props: {

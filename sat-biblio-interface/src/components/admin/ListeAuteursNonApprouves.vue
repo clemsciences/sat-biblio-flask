@@ -10,7 +10,6 @@
 
 <script>
 import {
-  getNotValidatedAuthorsCount,
   retrieveNotValidatedAuthors,
 } from "@/services/api";
 import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees.vue";

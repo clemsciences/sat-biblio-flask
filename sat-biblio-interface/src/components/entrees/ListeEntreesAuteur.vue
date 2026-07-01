@@ -15,25 +15,14 @@
 
 <script>
 import ListEntriesOfEntry from "@/components/entrees/ListEntriesOfEntry.vue";
-import {getEntryListAssociatedToAuthor, getEntryListAssociatedToAuthorCount} from "@/services/api.js";
+import {getEntryListAssociatedToAuthor} from "@/services/api.js";
 import {goToEntryView} from "@/services/entries.js";
 import {
-  BButton,
-  BCol,
-  BContainer,
-  BFormGroup,
-  BFormInput, BFormRadioGroup, BFormSelect, BModal,
-  BPagination,
-  BRow,
-  BTable
+  BContainer
 } from "bootstrap-vue-next";
-import AppTitle from "@/components/visuel/AppTitle.vue";
-import FilterCount from "@/components/visuel/FilterCount.vue";
 export default {
   name: "ListeEntreesAuteur",
-  components: {ListEntriesOfEntry, BButton, BContainer, BRow, BPagination, BCol,
-    BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
-    BModal, BTable, AppTitle, FilterCount},
+  components: {ListEntriesOfEntry, BContainer},
   props: {
     authorId: {
       type: Number,

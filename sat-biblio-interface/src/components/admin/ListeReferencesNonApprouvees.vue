@@ -10,7 +10,7 @@
 
 <script>
 import ListeEntreesNonApprouvees from "@/components/admin/ListeEntreesNonApprouvees.vue";
-import {getNotValidatedBookReferencesCount, retrieveNotValidatedBookReferences} from "@/services/api.js";
+import {retrieveNotValidatedBookReferences} from "@/services/api.js";
 export default {
   name: "ListeReferencesNonApprouvees",
   components: {ListeEntreesNonApprouvees},
