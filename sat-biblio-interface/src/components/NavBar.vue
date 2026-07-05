@@ -1,6 +1,6 @@
 <template>
-  <BContainer>
-    <BNavbar toggleable="md" class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
+  <BContainer ref="navRoot">
+    <BNavbar toggleable="md" no-auto-close class="navbar-default fixed-top navbar-dark sat-color-nav" pills>
       <BNavbarBrand to="/" id="accueil-tooltip">
         <h1 class="navbar-brand-title titre-nav-item" style="margin: 0; font-weight: normal; display: inline;">SAT -
           Biblio</h1>
@@ -10,7 +10,7 @@
         </BTooltip>
       </BNavbarBrand>
       <BNavbarToggle target="navbarSupportedContent"></BNavbarToggle>
-      <BCollapse is-nav style="height: 1px;" id="navbarSupportedContent">
+      <BCollapse is-nav v-model="navOpen" style="height: 1px;" id="navbarSupportedContent">
         <BNavbarNav>
 <!--          <BNavItem to="/" class="nav-link space-around titre-nav-item">Accueil</BNavItem>-->
           <BNavItem v-if="connected && isContributor">
@@ -24,6 +24,7 @@
           <BNavItem class="active" active>
             <BNavItemDropdown text="Consulter" class="titre-nav-item">
               <BDropdownItem to="/catalogue">Catalogue</BDropdownItem>
+              <BDropdownItem to="/statistiques">Statistiques</BDropdownItem>
 <!--              <BDropdownItem to="/cotes">Cotes</BDropdownItem>-->
               <BDropdownItem to="/mots-clefs">Mots clef</BDropdownItem>
               <BDropdownItem to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</BDropdownItem>
@@ -101,6 +102,24 @@ import {canContribute, canEdit, canManage, getRightString, isAdmin} from "@/serv
 
 export default {
   name: "NavBar",
+  data() {
+    return {
+      navOpen: false,
+    };
+  },
+  watch: {
+    // Ferme le menu (burger) uniquement lorsqu'on a effectivement navigué,
+    // pas lorsqu'on ouvre un sous-menu déroulant.
+    $route() {
+      this.navOpen = false;
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
+  },
   computed: {
     ...mapState(["connected", "connectionInfo"]),
     isAdmin: function () {
@@ -128,6 +147,16 @@ export default {
     },
   },
   methods: {
+    // Ferme le menu (burger) lorsqu'on clique en dehors de la barre de navigation.
+    handleClickOutside(event) {
+      if (!this.navOpen) {
+        return;
+      }
+      const root = this.$refs.navRoot?.$el ?? this.$refs.navRoot;
+      if (root && !root.contains(event.target)) {
+        this.navOpen = false;
+      }
+    },
     goToGallicaSAT: function() {
       window.open('https://gallica.bnf.fr/ark:/12148/cb34429572f/date.item','_blank');
     },
