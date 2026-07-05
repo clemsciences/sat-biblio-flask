@@ -1,16 +1,13 @@
 <template>
-  <BCard title="">
+  <BCard>
+    <BCardHeader class="fw-bold bg-primary-subtle">Citation bibliographique</BCardHeader>
     <BCardBody>
       <p v-if="rendering.length > 0" id="copy-btn" class="mx-1">
         <span v-if="reference.authorsForm && reference.authorsForm.length > 0">
           {{ reference.authorsForm }}
         </span>
-        <span v-else v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">
-          {{ renderAuthor(i) }},&nbsp;
-        </span>
-        <span v-if="reference.selectedAuthors.length === 0">
-          [anonyme],&nbsp;
-        </span>
+        <span v-else v-for="i in reference.selectedAuthors" :key="`${i.first_name}-${i.family_name}`">{{ renderAuthor(i) }},&nbsp;</span>
+        <span v-if="reference.selectedAuthors.length === 0">[anonyme],&nbsp;</span>
       <span><i>{{renderTitle(reference)}}</i>, {{ renderEditor(reference)}}, {{ renderYear(reference) }}</span>
         <span>{{renderPages(reference)}}</span>
       </p>

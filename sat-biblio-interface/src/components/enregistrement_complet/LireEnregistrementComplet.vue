@@ -9,7 +9,9 @@
       </BDropdown>
     </div>
 
-    <ReferenceLivrePrettyView :reference="reference"/>
+    <BContainer class="mb-3">
+      <ReferenceLivrePrettyView :reference="reference"/>
+    </BContainer>
 
     <EnregistrementCompletFormulaire
         :record-with-reference="bookRecordWithReference"

@@ -22,23 +22,18 @@ export function renderAuthor(author) {
 export function renderReference(reference) {
     let result = "";
     if(reference) {
-        if(typeof reference.authorsForm !== "undefined") {
+        if(reference.authorsForm && reference.authorsForm.length > 0) {
             result += reference.authorsForm;
-        } else if (typeof reference.selectedAuthors !== "undefined") {
-            for (let value of reference.selectedAuthors) {
-                result += `${renderAuthor(value)},`;
-            }
-        } else if (typeof reference.authors !== "undefined") {
-            for(let value of reference.authors) {
-                result += `${renderAuthor(value)}`;
-            }
+        } else if (reference.selectedAuthors && reference.selectedAuthors.length > 0) {
+            result += reference.selectedAuthors.map(renderAuthor).join(", ") + ", ";
+        } else if (reference.authors && reference.authors.length > 0) {
+            result += reference.authors.map(renderAuthor).join(", ") + ", ";
         }
 
         if (result.length === 0) {
-            console.log(result.length === 0);
             result += "[anonyme], "
         }
-        result += `${renderTitle(reference)}, ${renderEditor(reference)}, ${renderYear(reference)} ${renderPages(reference)}`;
+        result += `${renderTitle(reference)}, ${renderEditor(reference)}, ${renderYear(reference)}${renderPages(reference)}`;
     }
     return result;
 }
@@ -106,12 +101,12 @@ export function renderPages(reference) {
         return '';
     }
   if(typeof reference.nb_page === "number") {
-    return `,${reference.nb_page } p.`;
+    return `, ${reference.nb_page } p.`;
   } else if(typeof reference.nb_page === "string") {
     if (reference.nb_page.length === 0) {
       return '';
     } else if(reference.nb_page)
-    return `,${reference.nb_page} p.`;
+    return `, ${reference.nb_page} p.`;
   }
   return '';
 }
