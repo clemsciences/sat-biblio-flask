@@ -31,8 +31,7 @@
                   { value: 'FAM', text: 'FAM' },
                   { value: 'FAP', text: 'FAP' },
                   { value: 'MM', text: 'MM' }
-                ]"
-                  @change="updatePrefixCoteFilter">
+                ]">
               </BFormSelect>
             </BFormGroup>
             <BFormGroup label="Numéro">
@@ -240,9 +239,9 @@ export default {
       keywordsFilter: "",
       titleFilter: "",
       anneeObtentionMode: "",
-      anneeObtentionYear: "",
-      anneeObtentionYearMin: "",
-      anneeObtentionYearMax: "",
+      anneeObtentionYear: "2025",
+      anneeObtentionYearMin: "2020",
+      anneeObtentionYearMax: "2025",
       dateModifMode: "",
       dateModif: null,
       dateModifMin: null,
@@ -496,10 +495,6 @@ export default {
       this.dateModifMin  = null;
       this.dateModifMax  = null;
       this.$router.replace({ query: {} });
-    },
-
-    updatePrefixCoteFilter(event) {
-      this.prefixCoteFiler = event;
     },
 
     onlyDigitsKeydown(e) {
