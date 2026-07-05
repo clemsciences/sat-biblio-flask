@@ -148,6 +148,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SatSubscription: typeof import('./src/components/societaire/SatSubscription.vue')['default']
     SearchBulletin: typeof import('./src/components/recherche/SearchBulletin.vue')['default']
+    StatisticsDashboard: typeof import('./src/components/statistics/StatisticsDashboard.vue')['default']
     SuggestionAuteur: typeof import('./src/components/auteur/SuggestionAuteur.vue')['default']
     SuggestionBulletin: typeof import('./src/components/recherche/SuggestionBulletin.vue')['default']
     SuggestionEnregistrement: typeof import('./src/components/enregistrement/SuggestionEnregistrement.vue')['default']

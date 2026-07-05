@@ -34,3 +34,4 @@ from sat_biblio_server.routes.work_routes import *
 from sat_biblio_server.routes.import_ci_2023_routes import *
 from sat_biblio_server.routes.ark_routes import *
 from sat_biblio_server.routes.sat_subscription_routes import *
+from sat_biblio_server.routes.statistics_routes import *

@@ -27,6 +27,7 @@ import Emprunter from "@/components/emprunt/Emprunter.vue";
 import ListeEmprunt from "@/components/emprunt/ListeEmprunt.vue";
 import ListeAuteur from "@/components/auteur/ListeAuteur.vue";
 import ListeMotsClefs from "@/components/enregistrement/ListeMotsClefs.vue";
+import StatisticsDashboard from "@/components/statistics/StatisticsDashboard.vue";
 import AdminView from "@/components/admin/AdminView.vue";
 import GestionnaireView from "@/components/admin/GestionnaireView.vue";
 import PageNotFoundView from "@/components/PageNotFound.vue";
@@ -300,6 +301,12 @@ const router = createRouter({
             name: "read-catalogue-entry",
             path: '/catalogue/lire/:id',
             component: LireEnregistrementComplet,
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
+        },
+        {
+            name: "statistiques",
+            path: '/statistiques',
+            component: StatisticsDashboard,
             meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
 
