@@ -270,6 +270,10 @@ export function exportBookRecordsWithReference(params) {
         responseType: 'blob'
       });
 }
+
+export function getCatalogueStatistics() {
+  return api.get("/statistics/catalogue/");
+}
 /**
  *
  * @param {Number} bookRecordId
