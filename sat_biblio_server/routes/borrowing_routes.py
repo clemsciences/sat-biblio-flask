@@ -10,6 +10,7 @@ from flask import redirect, session, request
 import logging
 
 from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.data.models import EmpruntLivre
 from sat_biblio_server.managers.mail_manager import send_new_borrowing_email
 from sat_biblio_server.sessions import UserSess
@@ -200,7 +201,7 @@ def borrowings():
                     borrowing_db.enregistrement = record_db
                     db.session.add(borrowing_db)
                     db.session.commit()
-                    LogEventManager(db).add_create_event(borrowing_db.id, session.get("id", -1),
+                    LogEventManager(db).add_create_event(borrowing_db.id, get_current_user_id(),
                                                          EmpruntLivre2023DB.__tablename__,
                                                          values=json.dumps(EmpruntLivre.from_db_to_data(borrowing_db)))
 
@@ -237,7 +238,7 @@ def borrowing(id_: int):
         if borrowing_db:
             db.session.delete(borrowing_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(borrowing_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(borrowing_db.id, get_current_user_id(),
                                                  EmpruntLivre2023DB.__tablename__,
                                                  values=json.dumps(EmpruntLivre.from_db_to_data(borrowing_db)))
             return json_result(True), 204
@@ -308,7 +309,7 @@ def borrowing(id_: int):
 
                 db.session.commit()
                 borrowing_data = EmpruntLivre.from_db_to_data(borrowing_db)
-                LogEventManager(db).add_delete_event(borrowing_db.id, session.get("id", -1),
+                LogEventManager(db).add_update_event(borrowing_db.id, get_current_user_id(),
                                                      EmpruntLivre2023DB.__tablename__,
                                                      values=json.dumps(borrowing_data))
                 return json_result(True, borrowing=borrowing_data,

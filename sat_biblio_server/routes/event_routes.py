@@ -37,7 +37,9 @@ def log_events_request():
         # region filtre
         from_datetime_str = request.args.get("from_datetime", None)
         to_datetime_str = request.args.get("to_datetime", None)
-        table_name = request.args.get("tablename", "")
+        # Accepte les deux noms de paramètre (« table_name » privilégié, « tablename »
+        # toléré pour rester compatible avec d'éventuels clients/anciens caches).
+        table_name = request.args.get("table_name") or request.args.get("tablename") or ""
 
         the_query = LogEventDB.query
         if from_datetime_str:
@@ -108,7 +110,7 @@ def log_event_request(id_):
 
 @sat_biblio.route("/log-events/count/", methods=["GET"])
 def log_events_count():
-    table_name = request.args.get("table_name", "")
+    table_name = request.args.get("table_name") or request.args.get("tablename") or ""
     event_owner_id = request.args.get("event_owner_id", "")
     object_id = request.args.get("object_id", "")
     from_event_datetime_str = request.args.get("from_event_datetime", "")

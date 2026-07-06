@@ -11,7 +11,7 @@ import logging
 from sqlalchemy import text
 
 from sat_biblio_server.managers.log_manager import LogEventManager
-from sat_biblio_server.routes.utils import get_pagination, int_to_bool
+from sat_biblio_server.routes.utils import get_pagination, int_to_bool, get_current_user_id
 from sat_biblio_server.data.models_2023 import ReferenceBibliographiqueLivre2023, Author2023, Enregistrement2023, \
     EmpruntLivre
 from sat_biblio_server import sat_biblio
@@ -55,7 +55,7 @@ def book_references():
             reference_db = ReferenceBibliographiqueLivre2023.from_data_to_db(data)
             db.session.add(reference_db)
             db.session.commit()
-            LogEventManager(db).add_create_event(reference_db.id, session.get("id", -1),
+            LogEventManager(db).add_create_event(reference_db.id, get_current_user_id(),
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values=json.dumps(data))
             return json_result(True, id=reference_db.id, message="La référence a été sauvegardée"), 201
@@ -146,7 +146,7 @@ def book_reference(id_):
             ref_biblio_db.nb_page = data["nb_page"]
 
             db.session.commit()
-            LogEventManager(db).add_update_event(ref_biblio_db.id, session.get("id", -1),
+            LogEventManager(db).add_update_event(ref_biblio_db.id, get_current_user_id(),
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values=json.dumps(dict(
                                                      previous=previous_value,
@@ -161,7 +161,7 @@ def book_reference(id_):
             ref_data = ReferenceBibliographiqueLivre2023.from_db_to_data(ref_biblio_db)
             db.session.delete(ref_biblio_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(ref_biblio_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(ref_biblio_db.id, get_current_user_id(),
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values=json.dumps(ref_data))
             return json_result(True), 204

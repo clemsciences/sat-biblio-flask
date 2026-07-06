@@ -17,6 +17,7 @@ from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibl
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, \
     Enregistrement2023DB
 from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 
@@ -75,7 +76,7 @@ def book_records():
             enregistrement_db = Enregistrement2023.from_data_to_db(data)
             db.session.add(enregistrement_db)
             db.session.commit()
-            LogEventManager(db).add_create_event(enregistrement_db.id, session.get("id", -1),
+            LogEventManager(db).add_create_event(enregistrement_db.id, get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(
                                                      Enregistrement2023.from_db_to_data(enregistrement_db)))
@@ -179,7 +180,7 @@ def book_record(id_):
             record_data = Enregistrement2023.from_db_to_data(enregistrement_db)
             db.session.delete(enregistrement_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(enregistrement_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(enregistrement_db.id, get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(record_data))  # TODO
             return json_result(True), 204
@@ -207,7 +208,7 @@ def book_record(id_):
             db.session.commit()
 
             LogEventManager(db).add_update_event(id_,
-                                                 session.get("id", -1),
+                                                 get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_value,
                                                                         new=Enregistrement2023.from_db_to_data(

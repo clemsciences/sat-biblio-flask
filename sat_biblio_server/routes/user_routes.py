@@ -12,6 +12,7 @@ from sqlalchemy import or_
 from werkzeug.security import generate_password_hash
 
 from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.data.models import User
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server import sat_biblio, UserDB, db
@@ -64,7 +65,7 @@ def connect_user(data):
         token = create_access_token(identity=user.email,
                                     fresh=True,
                                     expires_delta=expires_duration,
-                                    additional_claims={"right": user.right.value})
+                                    additional_claims={"right": user.right.value, "id": user.id})
         # print("created_token", token)
         connect_user_login(user, token)
 
@@ -233,7 +234,7 @@ def create_new_user():
             else:
                 user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
                 if user:
-                    LogEventManager(db).add_create_event(user.id, session.get("id", -1),
+                    LogEventManager(db).add_create_event(user.id, get_current_user_id(),
                                                          UserDB.__tablename__,
                                                          values=json.dumps(user_form))
                     token = user.generate_confirmation_token()
@@ -352,7 +353,7 @@ def user_(id_):
             user_db.family_name = data["family_name"]
             user_db.right = UserRight.from_value(data["right"])
             db.session.commit()
-            LogEventManager(db).add_update_event(user_db.id, session.get("id", -1),
+            LogEventManager(db).add_update_event(user_db.id, get_current_user_id(),
                                                  UserDB.__tablename__,
                                                  values=json.dumps(User.from_db_to_data(user_db)))
             return json_result(True, "L'utilisateur a bien été enregistré."), 200
@@ -363,7 +364,7 @@ def user_(id_):
             # user_db.right.value
             db.session.delete(user_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(user_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(user_db.id, get_current_user_id(),
                                                  UserDB.__tablename__,
                                                  values=json.dumps(User.from_db_to_data(user_db)))
             return json_result(True, "Utilisateur correctement supprimé/"), 204

@@ -22,6 +22,7 @@ from sat_biblio_server.data.models_2023 import Enregistrement2023, ReferenceBibl
 from sat_biblio_server.database import db, ReferenceBibliographiqueLivre2023DB, \
     Enregistrement2023DB
 from sat_biblio_server.managers.log_manager import LogEventManager
+from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.routes import get_pagination, validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 from sat_biblio_server.data.dublin_core import from_data_to_dublin_core, dublin_core_dict_to_xml
@@ -207,11 +208,11 @@ def book_records_with_reference():
             db.session.add(enregistrement_db)
             db.session.commit()
 
-            LogEventManager(db).add_create_event(reference_db.id, session.get("id", -1),
+            LogEventManager(db).add_create_event(reference_db.id, get_current_user_id(),
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values = json.dumps(
                                                      ReferenceBibliographiqueLivre2023.from_db_to_data(reference_db)))
-            LogEventManager(db).add_create_event(enregistrement_db.id, session.get("id", -1),
+            LogEventManager(db).add_create_event(enregistrement_db.id, get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(
                                                      Enregistrement2023.from_db_to_data(enregistrement_db)))
@@ -316,7 +317,7 @@ def book_record_with_reference(id_):
             record_data = Enregistrement2023.from_db_to_data(previous_record_db)
             db.session.delete(previous_record_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(previous_record_db.id, session.get("id", -1),
+            LogEventManager(db).add_delete_event(previous_record_db.id, get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(record_data))  # TODO
             return json_result(True), 204
@@ -376,12 +377,12 @@ def book_record_with_reference(id_):
 
 
             LogEventManager(db).add_update_event(id_,
-                                                 session.get("id", -1),
+                                                 get_current_user_id(),
                                                  ReferenceBibliographiqueLivre2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_reference_data,
                                                                         new=ReferenceBibliographiqueLivre2023.from_db_to_data(current_reference_db))))
             LogEventManager(db).add_update_event(id_,
-                                                 session.get("id", -1),
+                                                 get_current_user_id(),
                                                  Enregistrement2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_record_data,
                                                                         new=Enregistrement2023.from_db_to_data(current_record_db))))
