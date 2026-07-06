@@ -18,8 +18,8 @@
       :per-page="perPage"
       aria-controls="my-table"/>
     <BTable striped bordered hover :provider="retrieveLogEvents" :fields="fields"
-             primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="tableSortBy" @row-dblclicked="goToLogEvent" :filter="onFilter">
+             primary-key="id" ref="logEventsTable" :per-page="perPage" :current-page="currentPage"
+             :sort-by="tableSortBy" @row-dblclicked="goToLogEvent">
       <template #table-caption>La liste des événements dans la base.</template>
       <template #cell(values)="data">
         <vue-json-pretty :data="JSON.parse(data.item.values)"/>
@@ -63,9 +63,18 @@ export default {
           key: 'event_datetime',
           label: 'Date et heure',
           sortable: false,
-          formatter: value => {
-            let d = new Date(value);
-            return new Intl.DateTimeFormat("fr-FR", {dateStyle: "short", timeStyle: "short"}).format(d)+" ("+d.getHours()+":"+d.getMinutes()+")";
+          // bootstrap-vue-next passe un objet { value, key, item } au formatter
+          // (et non l'argument positionnel « value » comme bootstrap-vue en Vue 2)
+          formatter: ({ value }) => {
+            if (!value) return "";
+            // Normalise le format renvoyé par le backend : espace -> T et
+            // microsecondes (6 chiffres) -> millisecondes (3), sinon certains
+            // navigateurs (Firefox) produisent une « Invalid Date » qui fait
+            // planter Intl.DateTimeFormat.format().
+            const normalized = String(value).replace(" ", "T").replace(/(\.\d{3})\d+/, "$1");
+            const d = new Date(normalized);
+            if (isNaN(d.getTime())) return String(value);
+            return new Intl.DateTimeFormat("fr-FR", {dateStyle: "short", timeStyle: "short"}).format(d);
           }
         },
         {
@@ -93,11 +102,12 @@ export default {
   methods: {
     async retrieveLogEvents(ctx) {
       // Provider — ctx.sortBy est un tableau [{ key, order }] en bvn
+      // currentPage et perPage ne sont pas fiables dans ctx : on utilise this.*
       const sortKey = Array.isArray(ctx.sortBy) && ctx.sortBy.length > 0
           ? ctx.sortBy[0].key
           : this.sortBy;
-      let params = "?page="+ctx.currentPage+
-          "&size="+ctx.perPage+
+      let params = "?page="+this.currentPage+
+          "&size="+this.perPage+
           "&sortBy="+sortKey;
 
       let filterParams = "";
@@ -151,6 +161,9 @@ export default {
     goToLogEvent: function(item) {
       console.log(item);
       // this.$router.push(`/evenements/lire/${item.id}`);
+    },
+    refreshTable: function() {
+      this.$refs.logEventsTable?.refresh();
     }
   },
   mounted() {
@@ -161,13 +174,11 @@ export default {
       if(newValue !== oldValue) {
         this.getLogEventsTotalNumber();
         this.currentPage = 1;
+        this.refreshTable();
       }
     },
   },
   computed: {
-    onFilter: function() {
-      return `${this.tableNameFilter}`;
-    },
     // bootstrap-vue-next attend un tableau [{ key, order }] pour le prop sort-by
     tableSortBy: function() {
       return [{ key: this.sortBy, order: 'desc' }];
