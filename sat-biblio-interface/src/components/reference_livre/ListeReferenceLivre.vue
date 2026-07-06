@@ -3,9 +3,13 @@
     <AppTitle title="Liste des références"
            info=""
            id="id-liste-ref"/>
-    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <p>Cliquez sur une ligne pour voir les détails.</p>
+    <BButton v-if="isMobile" class="mb-2" @click="filtersOpen = !filtersOpen">
+      {{ filtersOpen ? 'Masquer les filtres' : 'Afficher les filtres' }}
+    </BButton>
+    <div v-show="!isMobile || filtersOpen">
     <BRow class="my-3">
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="titreFiltre" size="sm"
@@ -13,6 +17,7 @@
         </BFormGroup>
       </BCol>
     </BRow>
+    </div>
     <BRow>
       <BPagination
         v-model="currentPage"
@@ -24,6 +29,8 @@
     </BRow>
 
     <BTable striped bordered hover
+            responsive stacked="md"
+            class="tbody-clickable"
             :provider="retrieveRef"
             :fields="fields"
             primary-key="id"
@@ -31,7 +38,7 @@
             :per-page="perPage"
             :current-page="currentPage"
             :sort-by="tableSortBy"
-            @row-dblclicked="goToReference">
+            @row-clicked="goToReference">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
 
       <template #cell(annee)="data">
@@ -77,7 +84,9 @@
 import {retrieveBookReferences} from "@/services/api.js";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import responsiveList from "@/mixins/responsiveList.js";
 import {
+  BButton,
   BCol,
   BContainer,
   BFormGroup,
@@ -89,7 +98,8 @@ import {
 
 export default {
   name: "ListeReferenceLivre",
-  components: { AppTitle, FilterCount, BContainer, BRow, BPagination, BCol, BFormGroup, BFormInput, BTable },
+  components: { AppTitle, FilterCount, BButton, BContainer, BRow, BPagination, BCol, BFormGroup, BFormInput, BTable },
+  mixins: [responsiveList],
   data() {
     return {
       isMounted: false,
@@ -167,6 +177,7 @@ export default {
   },
 
   mounted() {
+    // La détection responsive (isMobile / matchMedia) est fournie par le mixin responsiveList.
     this.$nextTick(() => {
       this.isMounted = true;
     });
@@ -185,4 +196,8 @@ export default {
 </script>
 
 <style scoped>
+/* Curseur « main » sur les lignes cliquables (clic → détail). */
+.tbody-clickable :deep(tbody tr) {
+  cursor: pointer;
+}
 </style>
