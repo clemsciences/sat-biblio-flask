@@ -77,7 +77,7 @@
               <BDropdownItem to="/utilisateur/reinitialiser-mot-de-passe">
                 Changer <br/> de mot de passe
               </BDropdownItem>
-              <BDropdownItem to="/utilisateur/deconnexion">Se déconnecter</BDropdownItem>
+              <BDropdownItem @click="logout">Se déconnecter</BDropdownItem>
             </BNavItemDropdown>
             <BNavItemDropdown v-else text="Connexion" class="titre-nav-item">
               <BDropdownItem :to="{name: 'utilisateur-connexion'}">
@@ -99,6 +99,7 @@
 
 import {mapState} from "vuex";
 import {canContribute, canEdit, canManage, getRightString, isAdmin} from "@/services/rights";
+import {disconnectUser} from "@/services/api";
 
 export default {
   name: "NavBar",
@@ -147,6 +148,17 @@ export default {
     },
   },
   methods: {
+    // Déconnecte l'utilisateur immédiatement (état local vidé de façon
+    // synchrone) puis prévient le serveur et affiche la page de confirmation.
+    // On ne dépend plus de la navigation pour vider la session : le clic
+    // déconnecte, quoi qu'il arrive ensuite.
+    logout() {
+      this.navOpen = false;
+      this.$store.commit("disconnect");
+      disconnectUser().catch(() => {}).finally(() => {
+        this.$router.push({name: "utilisateur-deconnexion"});
+      });
+    },
     // Ferme le menu (burger) lorsqu'on clique en dehors de la barre de navigation.
     handleClickOutside(event) {
       if (!this.navOpen) {

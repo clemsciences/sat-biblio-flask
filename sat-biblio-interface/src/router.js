@@ -146,7 +146,7 @@ const router = createRouter({
             name: "utilisateur-deconnexion",
             path: '/utilisateur/deconnexion',
             component: DeconnexionView,
-            meta: {needAuth: true, reachableFrom: rights.lecteur}
+            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "utilisateur-lecture",
