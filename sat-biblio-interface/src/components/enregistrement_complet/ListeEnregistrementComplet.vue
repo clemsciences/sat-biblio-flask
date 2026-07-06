@@ -373,9 +373,19 @@ export default {
       return `${y}-${m}-${day}`;
     },
 
+    parseDateParam(value) {
+      if (!value) return null;
+      const parts = String(value).split('-');
+      if (parts.length !== 3) return null;
+      const [y, m, day] = parts.map(Number);
+      if (!y || !m || !day) return null;
+      return new Date(y, m - 1, day);
+    },
+
     onFilterChanged() {
       this.getRecordTotalNumber();
       if (this.isMounted) this.currentPage = 1;
+      if (this.isMounted) this.reloadWithFilters();
       this.refreshTable();
     },
 
@@ -456,6 +466,32 @@ export default {
       if (this.coteFilter)   query.cote   = encodeURIComponent(this.coteFilter);
       if (this.keywordsFilter) query.keywords = encodeURIComponent(this.keywordsFilter);
       if (this.titleFilter)  query.title  = encodeURIComponent(this.titleFilter);
+
+      // Filtre sur l'année d'obtention
+      if (this.anneeObtentionMode) {
+        query.annee_obtention_mode = this.anneeObtentionMode;
+        if (this.anneeObtentionMode === 'before' || this.anneeObtentionMode === 'after') {
+          if (this.anneeObtentionYear) query.annee_obtention_year = this.anneeObtentionYear;
+        } else if (this.anneeObtentionMode === 'between') {
+          if (this.anneeObtentionYearMin) query.annee_obtention_year_min = this.anneeObtentionYearMin;
+          if (this.anneeObtentionYearMax) query.annee_obtention_year_max = this.anneeObtentionYearMax;
+        }
+      }
+
+      // Filtre sur la date de dernière modification (réservé aux administrateurs)
+      if (this.isAdmin && this.dateModifMode) {
+        query.date_modif_mode = this.dateModifMode;
+        if (this.dateModifMode === 'before' || this.dateModifMode === 'after') {
+          const d = this.formatDateParam(this.dateModif);
+          if (d) query.date_modif = d;
+        } else if (this.dateModifMode === 'between') {
+          const dMin = this.formatDateParam(this.dateModifMin);
+          const dMax = this.formatDateParam(this.dateModifMax);
+          if (dMin) query.date_modif_min = dMin;
+          if (dMax) query.date_modif_max = dMax;
+        }
+      }
+
       if (this.currentPage > 1) query.page = this.currentPage;
       query.sortBy   = this.sortBy;
       query.sortDesc = this.sortDesc;
@@ -549,6 +585,23 @@ export default {
     if (q.title    && q.title.length > 0)    this.titleFilter    = decodeURIComponent(q.title);
     if (q.author   && q.author.length > 0)   this.authorFilter   = decodeURIComponent(q.author);
     if (q.keywords && q.keywords.length > 0) this.keywordsFilter = decodeURIComponent(q.keywords);
+
+    // Filtre sur l'année d'obtention
+    if (q.annee_obtention_mode) {
+      this.anneeObtentionMode = q.annee_obtention_mode;
+      if (q.annee_obtention_year)     this.anneeObtentionYear    = q.annee_obtention_year;
+      if (q.annee_obtention_year_min) this.anneeObtentionYearMin = q.annee_obtention_year_min;
+      if (q.annee_obtention_year_max) this.anneeObtentionYearMax = q.annee_obtention_year_max;
+    }
+
+    // Filtre sur la date de dernière modification (réservé aux administrateurs)
+    if (this.isAdmin && q.date_modif_mode) {
+      this.dateModifMode = q.date_modif_mode;
+      if (q.date_modif)     this.dateModif    = this.parseDateParam(q.date_modif);
+      if (q.date_modif_min) this.dateModifMin = this.parseDateParam(q.date_modif_min);
+      if (q.date_modif_max) this.dateModifMax = this.parseDateParam(q.date_modif_max);
+    }
+
     if (q.page)    this.currentPage = parseInt(q.page);
     if (q.sortBy)  this.sortBy      = q.sortBy;
     if (q.sortDesc !== undefined) this.sortDesc = q.sortDesc === 'true';
@@ -561,24 +614,16 @@ export default {
 
   watch: {
     coteFilter() {
-      this.getRecordTotalNumber();
-      if (this.isMounted) this.currentPage = 1;
-      this.refreshTable();
+      this.onFilterChanged();
     },
     authorFilter() {
-      this.getRecordTotalNumber();
-      if (this.isMounted) this.currentPage = 1;
-      this.refreshTable();
+      this.onFilterChanged();
     },
     keywordsFilter() {
-      this.getRecordTotalNumber();
-      if (this.isMounted) this.currentPage = 1;
-      this.refreshTable();
+      this.onFilterChanged();
     },
     titleFilter() {
-      this.getRecordTotalNumber();
-      if (this.isMounted) this.currentPage = 1;
-      this.refreshTable();
+      this.onFilterChanged();
     },
     anneeObtentionMode() {
       this.onFilterChanged();
@@ -605,6 +650,7 @@ export default {
       this.onFilterChanged();
     },
     currentPage() {
+      if (this.isMounted) this.reloadWithFilters();
       this.refreshTable();
     },
     sortBy() {
