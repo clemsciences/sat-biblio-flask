@@ -258,7 +258,7 @@ export default {
           return null;
         }
         let number = parseInt(this.recordWithReference.nb_page);
-        return Number.isNaN(number);
+        return !Number.isNaN(number);
       }
       return null;
     }
