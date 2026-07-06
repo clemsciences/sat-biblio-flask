@@ -68,12 +68,12 @@
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
           <BNavItem id="connection-tooltip" class="nav-link space-around titre-nav-item ms-auto">
-            <template v-if="connected">
+            <template v-if="connected && !profileMenuOpen">
               <BTooltip target="connection-tooltip" triggers="hover" class="my-tooltip">
                 {{ connectionTooltipHints }}
               </BTooltip>
             </template>
-            <BNavItemDropdown v-if="connected" text="Mon profil" class="titre-nav-item">
+            <BNavItemDropdown v-if="connected" v-model="profileMenuOpen" text="Mon profil" class="titre-nav-item">
               <BDropdownItem to="/utilisateur/reinitialiser-mot-de-passe">
                 Changer <br/> de mot de passe
               </BDropdownItem>
@@ -106,6 +106,9 @@ export default {
   data() {
     return {
       navOpen: false,
+      // Vrai quand le menu déroulant « Mon profil » est ouvert : on masque
+      // alors le tooltip pour qu'il ne gêne pas le clic sur les entrées.
+      profileMenuOpen: false,
     };
   },
   watch: {
@@ -154,6 +157,7 @@ export default {
     // déconnecte, quoi qu'il arrive ensuite.
     logout() {
       this.navOpen = false;
+      this.profileMenuOpen = false;
       this.$store.commit("disconnect");
       disconnectUser().catch(() => {}).finally(() => {
         this.$router.push({name: "utilisateur-deconnexion"});
