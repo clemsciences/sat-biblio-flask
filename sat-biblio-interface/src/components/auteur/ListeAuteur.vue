@@ -3,23 +3,27 @@
     <AppTitle title="Liste des auteurs"
        info=""
        id="id-liste-auteurs"/>
-    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <p>Cliquez sur une ligne pour voir les détails.</p>
+    <BButton v-if="isMobile" class="mb-2" @click="filtersOpen = !filtersOpen">
+      {{ filtersOpen ? 'Masquer les filtres' : 'Afficher les filtres' }}
+    </BButton>
+    <div v-show="!isMobile || filtersOpen">
     <BRow class="my-1">
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Prénom" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput type="search" v-model="firstNameFilter" size="sm"
                       placeholder="Filtrer en fonction du prénom"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Nom de famille" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput type="search" v-model="familyNameFilter" size="sm"
                       placeholder="Filtrer en fonction du nom de famille"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BButton @click="clearSearchFields" v-b-tooltip="'Réinitialise les filtres de recherche.'">
@@ -32,6 +36,7 @@
         </BFormGroup>
       </BCol>
     </BRow>
+    </div>
     <BRow>
       <BPagination
         v-model="currentPage"
@@ -42,6 +47,8 @@
       <FilterCount :filtered-item-count="authorFilteredNumber" :total-item-count="authorTotalNumber"/>
     </BRow>
     <BTable striped bordered hover
+            responsive stacked="md"
+            class="tbody-clickable"
             :provider="retrieveAuthors"
             :fields="fields"
             ref="authorTable"
@@ -49,7 +56,7 @@
             :per-page="perPage"
             :current-page="currentPage"
             :sort-by="tableSortBy"
-            @row-dblclicked="goToAuthor">
+            @row-clicked="goToAuthor">
       <template #table-caption>La liste des auteurs dans la base.</template>
     </BTable>
     <BRow>
@@ -67,6 +74,7 @@
 import {getAuthorsCount, retrieveAuthors} from "@/services/api.js";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import responsiveList from "@/mixins/responsiveList.js";
 import {
   BButton,
   BCol,
@@ -83,6 +91,7 @@ export default {
   components: {BButton, BContainer, BRow, BPagination, BCol,
     BFormGroup, BFormInput, BTable, AppTitle, FilterCount
   },
+  mixins: [responsiveList],
   data() {
     return {
       isMounted: false,
@@ -209,6 +218,7 @@ export default {
   //  this.getAuthorTotalNumber();
   //},
   mounted() {
+    // La détection responsive (isMobile / matchMedia) est fournie par le mixin responsiveList.
     const query = this.$route.query;
     if(query.firstName && query.firstName.length > 0) {
       this.firstNameFilter = decodeURIComponent(query.firstName);
@@ -249,5 +259,8 @@ export default {
 </script>
 
 <style scoped>
-
+/* Curseur « main » sur les lignes cliquables (clic → détail). */
+.tbody-clickable :deep(tbody tr) {
+  cursor: pointer;
+}
 </style>

@@ -4,30 +4,34 @@
     id="id-catalogue">
       Catalogue
     </AppTitle>
-    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <p>Cliquez sur une ligne pour voir les détails.</p>
+    <BButton v-if="isMobile" class="mb-2" @click="filtersOpen = !filtersOpen">
+      {{ filtersOpen ? 'Masquer les filtres' : 'Afficher les filtres' }}
+    </BButton>
+    <div v-show="!isMobile || filtersOpen">
     <BRow class="my-1">
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Cote" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="coteFilter" size="sm"
                    placeholder="Filtrer en fonction de la cote"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Auteur" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="authorFilter" size="sm"
                    placeholder="Filtrer en fonction de l'auteur"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Aide à la recherche" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="keywordsFilter" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Titre" label-cols-sm="3"
           label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="titleFilter" size="sm"
@@ -35,6 +39,7 @@
         </BFormGroup>
       </BCol>
     </BRow>
+    </div>
     <BRow>
       <BPagination
           v-model="currentPage"
@@ -46,6 +51,8 @@
     </BRow>
 
     <BTable striped bordered hover
+            responsive stacked="md"
+            class="tbody-clickable"
             :provider="retrieveEnregistrementList"
             :fields="fields"
             primary-key="id"
@@ -53,7 +60,7 @@
             :per-page="perPage"
             :current-page="currentPage"
             :sort-by="tableSortBy"
-            @row-dblclicked="goToEnregistrement">
+            @row-clicked="goToEnregistrement">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </BTable>
 
@@ -73,7 +80,9 @@
 import {retrieveBookRecords} from "@/services/api";
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import responsiveList from "@/mixins/responsiveList.js";
 import {
+  BButton,
   BCol,
   BContainer,
   BFormGroup,
@@ -85,7 +94,8 @@ import {
 
 export default {
   name: "ListeEnregistrement",
-  components: { BContainer, BRow, BPagination, BCol, BFormGroup, BFormInput, BTable, AppTitle, FilterCount },
+  components: { BButton, BContainer, BRow, BPagination, BCol, BFormGroup, BFormInput, BTable, AppTitle, FilterCount },
+  mixins: [responsiveList],
   data() {
     return {
       isMounted: false,
@@ -174,6 +184,7 @@ export default {
   },
 
   mounted() {
+    // La détection responsive (isMobile / matchMedia) est fournie par le mixin responsiveList.
     if (this.$route.query.mot_clef) {
       this.keywordsFilter = this.$route.query.mot_clef;
     }
@@ -207,4 +218,8 @@ export default {
 </script>
 
 <style scoped>
+/* Curseur « main » sur les lignes cliquables du catalogue (clic → détail). */
+.tbody-clickable :deep(tbody tr) {
+  cursor: pointer;
+}
 </style>

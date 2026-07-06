@@ -4,9 +4,13 @@
            id="id-catalogue">
       Catalogue
     </AppTitle>
-    <p>Double-cliquez sur la ligne pour voir les détails.</p>
+    <p>Cliquez sur une ligne pour voir les détails.</p>
+    <BButton v-if="isMobile" class="mb-2" @click="filtersOpen = !filtersOpen">
+      {{ filtersOpen ? 'Masquer les filtres' : 'Afficher les filtres' }}
+    </BButton>
+    <div v-show="!isMobile || filtersOpen">
     <BRow class="my-1">
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BButton v-b-toggle.modal-cote class="d-inline-block">
@@ -56,48 +60,48 @@
           </template>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Auteur" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="authorFilter" size="sm"
                    placeholder="Filtrer en fonction de l'auteur"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Aide à la recherche" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="keywordsFilter" size="sm"
                    placeholder="Filtrer en fonction d'un mot clef"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Titre" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BFormInput v-model="titleFilter" size="sm"
                    placeholder="Filtrer en fonction du titre"/>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="Année d'obtention" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <div class="d-flex gap-1 align-items-center">
+          <div class="d-flex flex-wrap gap-1 align-items-center">
             <BFormSelect v-model="anneeObtentionMode" size="sm" :options="dateFilterModeOptions"/>
             <BFormInput v-if="anneeObtentionMode === 'before' || anneeObtentionMode === 'after'"
                         v-model="anneeObtentionYear" type="number" size="sm"
-                        placeholder="Année" class="w-auto"/>
+                        placeholder="Année" class="flex-fill"/>
             <template v-if="anneeObtentionMode === 'between'">
               <BFormInput v-model="anneeObtentionYearMin" type="number" size="sm"
-                          placeholder="De" class="w-auto"/>
+                          placeholder="De" class="flex-fill"/>
               <BFormInput v-model="anneeObtentionYearMax" type="number" size="sm"
-                          placeholder="À" class="w-auto"/>
+                          placeholder="À" class="flex-fill"/>
             </template>
           </div>
         </BFormGroup>
       </BCol>
-      <BCol lg="4" v-if="isAdmin">
+      <BCol md="6" lg="4" v-if="isAdmin">
         <BFormGroup label="Date dernière modif." label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
-          <div class="d-flex gap-1 align-items-center">
+          <div class="d-flex flex-wrap gap-1 align-items-center">
             <BFormSelect v-model="dateModifMode" size="sm" :options="dateFilterModeOptions"/>
             <VueDatePicker v-if="dateModifMode === 'before' || dateModifMode === 'after'"
                            v-model="dateModif" placeholder="Date"
@@ -117,7 +121,7 @@
           </div>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BButton @click="exportSearchResult" :disabled="isExporting" v-b-tooltip="'Exporte un fichier Excel contenant les éléments du catalogue qui correspondent aux filtres. Si aucun filtre n\'est mis, alors le catalogue entier est exporté.'">
@@ -129,7 +133,7 @@
           </template>
         </BFormGroup>
       </BCol>
-      <BCol lg="4">
+      <BCol md="6" lg="4">
         <BFormGroup label="" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <BButton @click="clearSearchFields" v-b-tooltip="'Réinitialise les filtres de recherche.'">
@@ -154,6 +158,7 @@
         </BFormGroup>
       </BCol>
     </BRow>
+    </div>
     <BRow>
       <BPagination
           v-model="currentPage"
@@ -165,6 +170,8 @@
     </BRow>
 
     <BTable striped bordered hover
+            responsive stacked="md"
+            class="tbody-clickable"
             :provider="retrieveEnregistrementCompleteList"
             :fields="filteredFields"
             primary-key="id"
@@ -172,7 +179,7 @@
             :current-page="currentPage"
             :per-page="perPage"
             :sort-by="tableSortBy"
-            @row-dblclicked="goToEnregistrementComplet">
+            @row-clicked="goToEnregistrementComplet">
       <template #table-caption>La liste des références bibliographiques dans la base.</template>
     </BTable>
 
@@ -193,6 +200,7 @@ import {exportBookRecordsWithReference, getBookRecordsCount, retrieveBookRecords
 import { fr } from 'date-fns/locale';
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import FilterCount from "@/components/visuel/FilterCount.vue";
+import responsiveList from "@/mixins/responsiveList.js";
 import {
   BButton,
   BCol,
@@ -214,6 +222,7 @@ export default {
     BFormGroup, BFormInput, BFormRadioGroup, BFormSelect,
     BModal, BTable, AppTitle, FilterCount
   },
+  mixins: [responsiveList],
   data() {
     return {
       isMounted: false,
@@ -526,6 +535,7 @@ export default {
   },
 
   mounted() {
+    // La détection responsive (isMobile / matchMedia) est fournie par le mixin responsiveList.
     const q = this.$route.query;
 
     if (q.cote && q.cote.length > 0) {
@@ -608,4 +618,8 @@ export default {
 </script>
 
 <style scoped>
+/* Curseur « main » sur les lignes cliquables du catalogue (clic → détail). */
+.tbody-clickable :deep(tbody tr) {
+  cursor: pointer;
+}
 </style>
