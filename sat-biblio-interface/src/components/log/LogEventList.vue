@@ -19,7 +19,7 @@
       aria-controls="my-table"/>
     <BTable striped bordered hover :provider="retrieveLogEvents" :fields="fields"
              primary-key="id" :per-page="perPage" :current-page="currentPage"
-             :sort-by="sortBy" @row-dblclicked="goToLogEvent" :filter="onFilter">
+             :sort-by="tableSortBy" @row-dblclicked="goToLogEvent" :filter="onFilter">
       <template #table-caption>La liste des événements dans la base.</template>
       <template #cell(values)="data">
         <vue-json-pretty :data="JSON.parse(data.item.values)"/>
@@ -92,13 +92,18 @@ export default {
   },
   methods: {
     async retrieveLogEvents(ctx) {
+      // Provider — ctx.sortBy est un tableau [{ key, order }] en bvn
+      const sortKey = Array.isArray(ctx.sortBy) && ctx.sortBy.length > 0
+          ? ctx.sortBy[0].key
+          : this.sortBy;
       let params = "?page="+ctx.currentPage+
           "&size="+ctx.perPage+
-          "&sortBy="+ctx.sortBy;
+          "&sortBy="+sortKey;
 
       let filterParams = "";
       if(this.tableNameFilter.length > 0) {
-        filterParams = filterParams+"&first_name="+this.firstNameFilter;
+        // L'endpoint liste lit le paramètre « tablename » (le comptage lit « table_name »)
+        filterParams = filterParams+"&tablename="+encodeURI(this.tableNameFilter);
       }
 
       if(filterParams.length > 0) {
@@ -107,13 +112,14 @@ export default {
       try {
         const response = await retrieveLogEvents(params);
         if(response.data.success) {
-          this.logEvents = response.data.log_events;
+          this.logEvents = response.data.log_events ?? [];
           this.logEventsTotalNumber = response.data.total;
           // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
           //   this.currentPage = 1;
           // }
           return this.logEvents;
         }
+        return [];
       } catch(reason){
         console.log(reason);
         return [];
@@ -161,6 +167,10 @@ export default {
   computed: {
     onFilter: function() {
       return `${this.tableNameFilter}`;
+    },
+    // bootstrap-vue-next attend un tableau [{ key, order }] pour le prop sort-by
+    tableSortBy: function() {
+      return [{ key: this.sortBy, order: 'desc' }];
     }
   }
 }
