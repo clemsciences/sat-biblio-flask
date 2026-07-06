@@ -82,6 +82,13 @@
         </BFormGroup>
       </BCol>
       <BCol md="6" lg="4">
+        <BFormGroup label="Lieu de publication" label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <BFormInput v-model="lieuPublicationFilter" size="sm"
+                   placeholder="Filtrer en fonction du lieu de publication"/>
+        </BFormGroup>
+      </BCol>
+      <BCol md="6" lg="4">
         <BFormGroup label="Année d'obtention" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <div class="d-flex flex-wrap gap-1 align-items-center">
@@ -93,6 +100,23 @@
               <BFormInput v-model="anneeObtentionYearMin" type="number" size="sm"
                           placeholder="De" class="flex-fill"/>
               <BFormInput v-model="anneeObtentionYearMax" type="number" size="sm"
+                          placeholder="À" class="flex-fill"/>
+            </template>
+          </div>
+        </BFormGroup>
+      </BCol>
+      <BCol md="6" lg="4">
+        <BFormGroup label="Année de publication" label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <div class="d-flex flex-wrap gap-1 align-items-center">
+            <BFormSelect v-model="anneePublicationMode" size="sm" :options="dateFilterModeOptions"/>
+            <BFormInput v-if="anneePublicationMode === 'before' || anneePublicationMode === 'after'"
+                        v-model="anneePublicationYear" type="number" size="sm"
+                        placeholder="Année" class="flex-fill"/>
+            <template v-if="anneePublicationMode === 'between'">
+              <BFormInput v-model="anneePublicationYearMin" type="number" size="sm"
+                          placeholder="De" class="flex-fill"/>
+              <BFormInput v-model="anneePublicationYearMax" type="number" size="sm"
                           placeholder="À" class="flex-fill"/>
             </template>
           </div>
@@ -247,10 +271,15 @@ export default {
       authorFilter: "",
       keywordsFilter: "",
       titleFilter: "",
+      lieuPublicationFilter: "",
       anneeObtentionMode: "",
       anneeObtentionYear: "2025",
       anneeObtentionYearMin: "2020",
       anneeObtentionYearMax: "2025",
+      anneePublicationMode: "",
+      anneePublicationYear: "2000",
+      anneePublicationYearMin: "1900",
+      anneePublicationYearMax: "2000",
       dateModifMode: "",
       dateModif: null,
       dateModifMin: null,
@@ -288,7 +317,8 @@ export default {
     },
     searchFieldsUsed() {
       return this.coteFilter.length > 0 || this.authorFilter.length > 0
-          || this.keywordsFilter.length > 0 || this.titleFilter.length > 0;
+          || this.keywordsFilter.length > 0 || this.titleFilter.length > 0
+          || this.lieuPublicationFilter.length > 0;
     },
     isAdmin() {
       return this.$store.getters.isAdmin;
@@ -324,6 +354,9 @@ export default {
       if (this.keywordsFilter.length > 0) {
         parts.push(`mot_clef=${encodeURI(this.keywordsFilter)}`);
       }
+      if (this.lieuPublicationFilter.length > 0) {
+        parts.push(`lieu_publication=${encodeURI(this.lieuPublicationFilter)}`);
+      }
 
       // Filtre sur l'année d'obtention
       if (this.anneeObtentionMode === 'empty') {
@@ -337,6 +370,20 @@ export default {
         parts.push('annee_obtention_mode=between');
         if (this.anneeObtentionYearMin) parts.push(`annee_obtention_year_min=${encodeURI(this.anneeObtentionYearMin)}`);
         if (this.anneeObtentionYearMax) parts.push(`annee_obtention_year_max=${encodeURI(this.anneeObtentionYearMax)}`);
+      }
+
+      // Filtre sur l'année de publication
+      if (this.anneePublicationMode === 'empty') {
+        parts.push('annee_publication_mode=empty');
+      } else if ((this.anneePublicationMode === 'before' || this.anneePublicationMode === 'after')
+          && this.anneePublicationYear) {
+        parts.push(`annee_publication_mode=${this.anneePublicationMode}`);
+        parts.push(`annee_publication_year=${encodeURI(this.anneePublicationYear)}`);
+      } else if (this.anneePublicationMode === 'between'
+          && (this.anneePublicationYearMin || this.anneePublicationYearMax)) {
+        parts.push('annee_publication_mode=between');
+        if (this.anneePublicationYearMin) parts.push(`annee_publication_year_min=${encodeURI(this.anneePublicationYearMin)}`);
+        if (this.anneePublicationYearMax) parts.push(`annee_publication_year_max=${encodeURI(this.anneePublicationYearMax)}`);
       }
 
       // Filtre sur la date de dernière modification (réservé aux administrateurs)
@@ -466,6 +513,7 @@ export default {
       if (this.coteFilter)   query.cote   = encodeURIComponent(this.coteFilter);
       if (this.keywordsFilter) query.keywords = encodeURIComponent(this.keywordsFilter);
       if (this.titleFilter)  query.title  = encodeURIComponent(this.titleFilter);
+      if (this.lieuPublicationFilter) query.lieu_publication = encodeURIComponent(this.lieuPublicationFilter);
 
       // Filtre sur l'année d'obtention
       if (this.anneeObtentionMode) {
@@ -475,6 +523,17 @@ export default {
         } else if (this.anneeObtentionMode === 'between') {
           if (this.anneeObtentionYearMin) query.annee_obtention_year_min = this.anneeObtentionYearMin;
           if (this.anneeObtentionYearMax) query.annee_obtention_year_max = this.anneeObtentionYearMax;
+        }
+      }
+
+      // Filtre sur l'année de publication
+      if (this.anneePublicationMode) {
+        query.annee_publication_mode = this.anneePublicationMode;
+        if (this.anneePublicationMode === 'before' || this.anneePublicationMode === 'after') {
+          if (this.anneePublicationYear) query.annee_publication_year = this.anneePublicationYear;
+        } else if (this.anneePublicationMode === 'between') {
+          if (this.anneePublicationYearMin) query.annee_publication_year_min = this.anneePublicationYearMin;
+          if (this.anneePublicationYearMax) query.annee_publication_year_max = this.anneePublicationYearMax;
         }
       }
 
@@ -531,10 +590,15 @@ export default {
       this.authorFilter     = "";
       this.keywordsFilter   = "";
       this.titleFilter      = "";
+      this.lieuPublicationFilter = "";
       this.anneeObtentionMode    = "";
       this.anneeObtentionYear    = "";
       this.anneeObtentionYearMin = "";
       this.anneeObtentionYearMax = "";
+      this.anneePublicationMode    = "";
+      this.anneePublicationYear    = "";
+      this.anneePublicationYearMin = "";
+      this.anneePublicationYearMax = "";
       this.dateModifMode = "";
       this.dateModif     = null;
       this.dateModifMin  = null;
@@ -585,6 +649,7 @@ export default {
     if (q.title    && q.title.length > 0)    this.titleFilter    = decodeURIComponent(q.title);
     if (q.author   && q.author.length > 0)   this.authorFilter   = decodeURIComponent(q.author);
     if (q.keywords && q.keywords.length > 0) this.keywordsFilter = decodeURIComponent(q.keywords);
+    if (q.lieu_publication && q.lieu_publication.length > 0) this.lieuPublicationFilter = decodeURIComponent(q.lieu_publication);
 
     // Filtre sur l'année d'obtention
     if (q.annee_obtention_mode) {
@@ -592,6 +657,14 @@ export default {
       if (q.annee_obtention_year)     this.anneeObtentionYear    = q.annee_obtention_year;
       if (q.annee_obtention_year_min) this.anneeObtentionYearMin = q.annee_obtention_year_min;
       if (q.annee_obtention_year_max) this.anneeObtentionYearMax = q.annee_obtention_year_max;
+    }
+
+    // Filtre sur l'année de publication
+    if (q.annee_publication_mode) {
+      this.anneePublicationMode = q.annee_publication_mode;
+      if (q.annee_publication_year)     this.anneePublicationYear    = q.annee_publication_year;
+      if (q.annee_publication_year_min) this.anneePublicationYearMin = q.annee_publication_year_min;
+      if (q.annee_publication_year_max) this.anneePublicationYearMax = q.annee_publication_year_max;
     }
 
     // Filtre sur la date de dernière modification (réservé aux administrateurs)
@@ -625,6 +698,9 @@ export default {
     titleFilter() {
       this.onFilterChanged();
     },
+    lieuPublicationFilter() {
+      this.onFilterChanged();
+    },
     anneeObtentionMode() {
       this.onFilterChanged();
     },
@@ -635,6 +711,18 @@ export default {
       this.onFilterChanged();
     },
     anneeObtentionYearMax() {
+      this.onFilterChanged();
+    },
+    anneePublicationMode() {
+      this.onFilterChanged();
+    },
+    anneePublicationYear() {
+      this.onFilterChanged();
+    },
+    anneePublicationYearMin() {
+      this.onFilterChanged();
+    },
+    anneePublicationYearMax() {
       this.onFilterChanged();
     },
     dateModifMode() {
