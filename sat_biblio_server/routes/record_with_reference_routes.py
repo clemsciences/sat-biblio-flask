@@ -10,7 +10,7 @@ import os
 import re
 
 from flask import request, session, send_file
-from sqlalchemy import or_, func
+from sqlalchemy import or_, and_, func
 from sqlalchemy.orm import joinedload
 
 import sat_biblio_server.data.validation as dv
@@ -57,10 +57,24 @@ class RecordWithReferenceHelper:
         titre = args.get("titre", "")
         mot_clef = args.get("mot_clef", "")
         author = args.get("author", "")
+        lieu_publication = args.get("lieu_publication", "")
 
         the_query = Enregistrement2023DB.query
         if cote:
             the_query = the_query.filter(Enregistrement2023DB.cote.ilike(f"%{cote}%"))
+        if lieu_publication:
+            # On compare les formes normalisées du lieu (mêmes règles que le
+            # gazetteer des statistiques) pour un regroupement cohérent : ainsi
+            # « Tours » ne capture pas « Chambray-lès-Tours ». .has() génère un
+            # EXISTS et n'entre donc pas en conflit avec les jointures ci-dessous.
+            from sat_biblio_server.data.gazetteer import normalize_place
+            normalized_place = normalize_place(lieu_publication)
+            the_query = the_query.filter(
+                Enregistrement2023DB.reference.has(
+                    func.normalize_place(ReferenceBibliographiqueLivre2023DB.lieu_edition)
+                    == normalized_place
+                )
+            )
         if titre:
             the_query = the_query.join(ReferenceBibliographiqueLivre2023DB) \
                 .filter(ReferenceBibliographiqueLivre2023DB.titre.ilike(f"%{titre}%"))
@@ -79,6 +93,7 @@ class RecordWithReferenceHelper:
             )
 
         the_query = RecordWithReferenceHelper._apply_annee_obtention_filter(the_query, args)
+        the_query = RecordWithReferenceHelper._apply_annee_publication_filter(the_query, args)
         the_query = RecordWithReferenceHelper._apply_date_modif_filter(the_query, args)
         return the_query
 
@@ -105,6 +120,44 @@ class RecordWithReferenceHelper:
                 the_query = the_query.filter(year >= y_min)
             if y_max is not None:
                 the_query = the_query.filter(year <= y_max)
+        return the_query
+
+    @staticmethod
+    def _apply_annee_publication_filter(the_query, args):
+        """Filtre sur l'année de publication (champ texte `annee` de la référence).
+
+        Comme `annee` est du texte libre (« s. d. », « 1989 »…), on en extrait
+        l'année via la fonction SQLite `extract_year`. Le critère porte sur la
+        référence liée et est appliqué via .has() (EXISTS) pour ne pas entrer en
+        conflit avec les jointures titre/auteur.
+        """
+        mode = args.get("annee_publication_mode", "").strip()
+        if not mode:
+            return the_query
+        # extract_year est une fonction SQLite enregistrée dans db_manager.py
+        year = func.extract_year(ReferenceBibliographiqueLivre2023DB.annee)
+        relation = Enregistrement2023DB.reference
+        if mode == "empty":
+            # « Non renseigné » = aucune année exploitable (couvre « s. d. », vide, NULL).
+            return the_query.filter(relation.has(year.is_(None)))
+        if mode == "before":
+            y = _parse_int(args.get("annee_publication_year"))
+            if y is not None:
+                return the_query.filter(relation.has(year < y))
+        elif mode == "after":
+            y = _parse_int(args.get("annee_publication_year"))
+            if y is not None:
+                return the_query.filter(relation.has(year > y))
+        elif mode == "between":
+            y_min = _parse_int(args.get("annee_publication_year_min"))
+            y_max = _parse_int(args.get("annee_publication_year_max"))
+            criteria = []
+            if y_min is not None:
+                criteria.append(year >= y_min)
+            if y_max is not None:
+                criteria.append(year <= y_max)
+            if criteria:
+                return the_query.filter(relation.has(and_(*criteria)))
         return the_query
 
     @staticmethod

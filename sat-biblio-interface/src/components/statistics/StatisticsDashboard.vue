@@ -20,6 +20,14 @@
         <BCardHeader class="fw-bold bg-primary-subtle">{{ histo.title }}</BCardHeader>
         <BCardBody>
           <p class="text-muted small mb-3">{{ histo.subtitle }}</p>
+          <div v-if="histo.id === 'publication'"
+               class="d-flex align-items-center gap-2 mb-3">
+            <label for="id-publication-step" class="form-label mb-0 small">
+              Pas de l'histogramme :
+            </label>
+            <BFormSelect id="id-publication-step" v-model="publicationStep"
+                         :options="stepOptions" size="sm" class="w-auto"/>
+          </div>
           <div v-if="histo.chart.bars.length === 0" class="text-muted fst-italic">
             Aucune donnée disponible.
           </div>
@@ -29,7 +37,7 @@
               <rect v-for="bar in histo.chart.bars" :key="`b-${bar.year}`"
                     :x="bar.x" :y="bar.y" :width="bar.width" :height="bar.height"
                     rx="2" class="bar">
-                <title>{{ bar.year }} : {{ bar.count }}</title>
+                <title>{{ bar.label }} : {{ bar.count }}</title>
               </rect>
               <text v-for="bar in histo.chart.bars.filter(b => b.showLabel)" :key="`l-${bar.year}`"
                     :x="bar.x + bar.width / 2" :y="chartHeight + 14"
@@ -110,8 +118,15 @@ export default {
     return {
       loading: true,
       error: "",
-      acquisitionYears: [],
       publicationYears: [],
+      publicationStep: 10,
+      stepOptions: [
+        { value: 1, text: "1 an" },
+        { value: 5, text: "5 ans" },
+        { value: 10, text: "10 ans" },
+        { value: 20, text: "20 ans" },
+        { value: 50, text: "50 ans" },
+      ],
       cotes: [],
       publicationPlaces: [],
       placesLocated: 0,
@@ -135,7 +150,6 @@ export default {
       this.error = "";
       getCatalogueStatistics().then((response) => {
         if (response.data.success) {
-          this.acquisitionYears = response.data.acquisition_years || [];
           this.publicationYears = response.data.publication_years || [];
           this.cotes = response.data.cotes || [];
           this.publicationPlaces = response.data.publication_places || [];
@@ -175,12 +189,43 @@ export default {
       for (const place of this.publicationPlaces) {
         L.marker([place.lat, place.lon])
           .addTo(this.map)
-          .bindPopup(`<strong>${place.place}</strong><br>${place.count} publication(s)`);
+          .bindPopup(this.buildPlacePopup(place));
         bounds.push([place.lat, place.lon]);
       }
       if (bounds.length > 0) {
         this.map.fitBounds(bounds, { padding: [30, 30] });
       }
+    },
+
+    // Construit le contenu de la popup d'un marqueur : nom du lieu, nombre de
+    // publications et lien vers le catalogue filtré sur ce lieu de publication.
+    buildPlacePopup(place) {
+      const container = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = place.place;
+      container.appendChild(title);
+      container.appendChild(document.createElement("br"));
+      container.appendChild(
+        document.createTextNode(`${place.count} publication(s)`)
+      );
+      container.appendChild(document.createElement("br"));
+
+      const target = { name: "catalogue", query: { lieu_publication: place.place } };
+      const link = document.createElement("a");
+      link.href = this.$router.resolve(target).href;
+      link.textContent = "Voir les enregistrements";
+      // Navigation SPA au clic gauche ; le href réel permet « ouvrir dans un
+      // nouvel onglet » et le clic-milieu.
+      link.addEventListener("click", (event) => {
+        if (event.defaultPrevented || event.button !== 0
+            || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+          return;
+        }
+        event.preventDefault();
+        this.$router.push(target);
+      });
+      container.appendChild(link);
+      return container;
     },
 
     // Construit la géométrie d'un histogramme vertical à partir de [{year, count}].
@@ -194,6 +239,7 @@ export default {
         const h = (d.count / maxCount) * height;
         return {
           year: d.year,
+          label: d.label ?? d.year,
           count: d.count,
           x: i * (barWidth + gap),
           y: height - h,
@@ -204,6 +250,25 @@ export default {
       });
       const width = Math.max(data.length * (barWidth + gap), 1);
       return { bars, width, maxCount };
+    },
+
+    // Regroupe [{year, count}] par tranches de `step` années.
+    // Le libellé d'une tranche est l'intervalle couvert (ex. « 1900–1909 »).
+    binYears(data, step) {
+      const size = Number(step);
+      if (size <= 1) return data;
+      const bins = new Map();
+      for (const d of data) {
+        const start = Math.floor(d.year / size) * size;
+        bins.set(start, (bins.get(start) || 0) + d.count);
+      }
+      return [...bins.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([start, count]) => ({
+          year: start,
+          label: `${start}–${start + size - 1}`,
+          count,
+        }));
     },
 
     yearRange(data) {
@@ -224,20 +289,12 @@ export default {
     yearHistograms() {
       return [
         {
-          id: "acquisition",
-          title: "Années d'obtention",
-          subtitle: this.acquisitionYears.length === 0
-            ? ""
-            : `${this.totalCount(this.acquisitionYears)} enregistrements avec une année définie (${this.yearRange(this.acquisitionYears)}).`,
-          chart: this.buildVerticalChart(this.acquisitionYears),
-        },
-        {
           id: "publication",
           title: "Années de publication",
           subtitle: this.publicationYears.length === 0
             ? ""
             : `${this.totalCount(this.publicationYears)} références avec une année définie (${this.yearRange(this.publicationYears)}).`,
-          chart: this.buildVerticalChart(this.publicationYears),
+          chart: this.buildVerticalChart(this.binYears(this.publicationYears, this.publicationStep)),
         },
       ];
     },

@@ -37,7 +37,10 @@ def extract_year_from_text(value):
 def register_sqlite_functions(dbapi_connection, connection_record):
     """Enregistre les fonctions SQL personnalisées (disponibles pour SQLite)."""
     if hasattr(dbapi_connection, "create_function"):
+        # Import paresseux : évite tout cycle d'import à l'initialisation du paquet.
+        from sat_biblio_server.data.gazetteer import normalize_place
         dbapi_connection.create_function("extract_year", 1, extract_year_from_text)
+        dbapi_connection.create_function("normalize_place", 1, normalize_place)
 
 
 class JsonEncodedDict(db.TypeDecorator):
