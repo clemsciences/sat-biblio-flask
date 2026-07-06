@@ -16,6 +16,7 @@ from flask_jwt_extended import get_jwt_identity
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
 from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.managers.catalogue_manager import Catalogue2023, Catalogue2023Row
 from sat_biblio_server.database import db, ImportDB
 from sat_biblio_server.managers.import_manager import ImportManager2023, CatalogueFileManager, CsvReader
@@ -188,7 +189,7 @@ def imports_ci_2023():
         # rows_to_preview_number = data.get("rowsToPreviewNumber", 0)
         first_rows_to_ignore_number = data.get("firstRowsToIgnoreNumber", 0)
         start_date = datetime.datetime.utcnow()
-        id_user = session.get("id", -1)
+        id_user = get_current_user_id()
         if id_user == -1:
             try:
                 email_identity = get_jwt_identity()

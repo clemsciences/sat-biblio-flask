@@ -11,7 +11,7 @@ from flask import redirect, request, session
 from sqlalchemy import or_, and_
 
 from sat_biblio_server.managers.log_manager import LogEventManager
-from sat_biblio_server.routes.utils import get_pagination, int_to_bool
+from sat_biblio_server.routes.utils import get_pagination, int_to_bool, get_current_user_id
 from sat_biblio_server.data import validation
 # from sat_biblio_server.data.models import Author, ReferenceBibliographiqueLivre, Enregistrement
 from sat_biblio_server.data.models_2023 import Author2023, ReferenceBibliographiqueLivre2023, Enregistrement2023
@@ -95,7 +95,7 @@ def authors_():
                 author_db = Author2023.from_data_to_db(data)
                 db.session.add(author_db)
                 db.session.commit()
-                LogEventManager(db).add_create_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
+                LogEventManager(db).add_create_event(author_db.id, get_current_user_id(), Author2023DB.__tablename__,
                                                  values=json.dumps(data))
                 return json_result(True, "Ajout de l'auteur correctement effectué.", id=author_db.id), 201
             return json_result(True, "L'auteur existe déjà.", id=author_exists.id), 200
@@ -133,7 +133,7 @@ def author_(id_):
             author.first_name = data["first_name"]
             author.family_name = data["family_name"]
             db.session.commit()
-            LogEventManager(db).add_update_event(id_, session.get("id", -1), Author2023DB.__tablename__,
+            LogEventManager(db).add_update_event(id_, get_current_user_id(), Author2023DB.__tablename__,
                                                  values=json.dumps(dict(previous=previous_value, new=data)))
             return json_result(True, "Auteur correctement mis à jour."), 200
         else:
@@ -147,7 +147,7 @@ def author_(id_):
             author_data = Author2023.from_db_to_data(author_db)
             db.session.delete(author_db)
             db.session.commit()
-            LogEventManager(db).add_delete_event(author_db.id, session.get("id", -1), Author2023DB.__tablename__,
+            LogEventManager(db).add_delete_event(author_db.id, get_current_user_id(), Author2023DB.__tablename__,
                                              values=json.dumps(author_data))
             return json_result(True), 204
         return json_result(False), 400
@@ -297,7 +297,7 @@ def merge_authors():
     db.session.commit()
 
     # Log the merge
-    LogEventManager(db).add_update_event(id_keep, session.get("id", -1), Author2023DB.__tablename__,
+    LogEventManager(db).add_update_event(id_keep, get_current_user_id(), Author2023DB.__tablename__,
                                          values=json.dumps(dict(action="merge",
                                                                 merged_author_id=id_delete,
                                                                 merged_author_name=f"{author_delete.first_name} {author_delete.family_name}")))
@@ -307,7 +307,7 @@ def merge_authors():
     db.session.delete(author_delete)
     db.session.commit()
 
-    LogEventManager(db).add_delete_event(id_delete, session.get("id", -1), Author2023DB.__tablename__,
+    LogEventManager(db).add_delete_event(id_delete, get_current_user_id(), Author2023DB.__tablename__,
                                          values=json.dumps(author_delete_data))
 
     return json_result(True, message="Fusion effectuée avec succès."), 200

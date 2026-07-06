@@ -19,7 +19,7 @@
       aria-controls="my-table"/>
     <BTable striped bordered hover :provider="retrieveLogEvents" :fields="fields"
              primary-key="id" ref="logEventsTable" :per-page="perPage" :current-page="currentPage"
-             :sort-by="tableSortBy" @row-dblclicked="goToLogEvent">
+             :sort-by="tableSortBy" :filter="tableNameFilter" @row-dblclicked="goToLogEvent">
       <template #table-caption>La liste des événements dans la base.</template>
       <template #cell(values)="data">
         <vue-json-pretty :data="JSON.parse(data.item.values)"/>
@@ -112,8 +112,7 @@ export default {
 
       let filterParams = "";
       if(this.tableNameFilter.length > 0) {
-        // L'endpoint liste lit le paramètre « tablename » (le comptage lit « table_name »)
-        filterParams = filterParams+"&tablename="+encodeURI(this.tableNameFilter);
+        filterParams = filterParams+"&table_name="+encodeURI(this.tableNameFilter);
       }
 
       if(filterParams.length > 0) {
@@ -123,10 +122,9 @@ export default {
         const response = await retrieveLogEvents(params);
         if(response.data.success) {
           this.logEvents = response.data.log_events ?? [];
-          this.logEventsTotalNumber = response.data.total;
-          // if(this.authorTotalNumber< (this.currentPage-1)*ctx.perPage) {
-          //   this.currentPage = 1;
-          // }
+          // Le total vient de l'endpoint /count/ (getLogEventsTotalNumber) :
+          // l'endpoint liste ne renvoie pas « total », il ne faut donc pas
+          // écraser logEventsTotalNumber ici (sinon la pagination casse).
           return this.logEvents;
         }
         return [];
@@ -176,6 +174,11 @@ export default {
         this.currentPage = 1;
         this.refreshTable();
       }
+    },
+    // Rejoue le provider quand l'utilisateur change de page : bootstrap-vue-next
+    // ne relance pas le provider de façon fiable sur le prop :current-page.
+    currentPage: function () {
+      this.refreshTable();
     },
   },
   computed: {

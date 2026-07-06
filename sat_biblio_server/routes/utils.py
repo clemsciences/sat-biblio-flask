@@ -18,3 +18,33 @@ def int_to_bool(query):
         return False
     else:
         raise ValueError
+
+
+def get_current_user_id():
+    """
+    Identifiant de l'utilisateur courant, pour tracer l'auteur d'un événement.
+
+    L'authentification se fait principalement par JWT (Bearer) et, en repli,
+    par session Flask. On lit donc le JWT en priorité (claim « id » si présent,
+    sinon l'identité = email résolue en base), puis la session.
+    Retourne -1 si aucun utilisateur n'est identifiable.
+
+    Les imports sont faits localement pour éviter les imports circulaires
+    (sat_biblio_server importe le paquet routes au démarrage).
+    """
+    from flask import session
+    from flask_jwt_extended import verify_jwt_in_request, get_jwt, get_jwt_identity
+    from sat_biblio_server import UserDB
+    try:
+        verify_jwt_in_request(optional=True)
+        claims = get_jwt() or {}
+        if claims.get("id"):
+            return claims["id"]
+        identity = get_jwt_identity()
+        if identity:
+            user = UserDB.query.filter_by(email=identity).first()
+            if user:
+                return user.id
+    except Exception:
+        pass
+    return session.get("id", -1)
