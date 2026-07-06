@@ -24,7 +24,7 @@
           <BNavItem class="active" active>
             <BNavItemDropdown text="Consulter" class="titre-nav-item">
               <BDropdownItem to="/catalogue">Catalogue</BDropdownItem>
-              <BDropdownItem to="/statistiques">Statistiques</BDropdownItem>
+              <BDropdownItem to="/statistiques" v-if="connected">Statistiques</BDropdownItem>
 <!--              <BDropdownItem to="/cotes">Cotes</BDropdownItem>-->
               <BDropdownItem to="/mots-clefs">Mots clef</BDropdownItem>
               <BDropdownItem to="/enregistrement/liste" v-if="isAdmin">Liste des enregistrements</BDropdownItem>
