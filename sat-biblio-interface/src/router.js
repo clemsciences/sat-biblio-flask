@@ -307,7 +307,7 @@ const router = createRouter({
             name: "statistiques",
             path: '/statistiques',
             component: StatisticsDashboard,
-            meta: {needAuth: false, reachableFrom: rights.lecteur}
+            meta: {needAuth: true, reachableFrom: rights.lecteur}
         },
 
         // endregion

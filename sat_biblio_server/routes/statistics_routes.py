@@ -12,6 +12,7 @@ from collections import Counter
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.data.gazetteer import lookup_place
 from sat_biblio_server.database import db, Enregistrement2023DB, ReferenceBibliographiqueLivre2023DB
+from sat_biblio_server.routes import validation_connexion_et_retour_defaut
 from sat_biblio_server.utils import json_result
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
@@ -33,6 +34,7 @@ def _extract_year(value, min_year=1400, max_year=2100):
 
 
 @sat_biblio.route("/statistics/catalogue/", methods=["GET"])
+@validation_connexion_et_retour_defaut("email", ["GET"])
 def catalogue_statistics():
     # Années d'obtention — on ignore les valeurs non définies / non exploitables.
     acquisition_counter = Counter()
