@@ -14,9 +14,25 @@ from sat_biblio_server.data.models import LogEvent
 import sat_biblio_server.data.validation as dv
 from sat_biblio_server.database import db
 from sat_biblio_server.routes import get_pagination, int_to_bool, validation_connexion_et_retour_defaut
-from sat_biblio_server.utils import json_result
+from sat_biblio_server.utils import json_result, EventEnum
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
+
+
+def _parse_event_types(raw):
+    """Convertit une liste de chaînes (séparées par des virgules) en membres
+    EventEnum valides (les valeurs inconnues sont ignorées).
+    Nécessaire car la colonne event_type est un Enum(EventEnum), pas une chaîne."""
+    result = []
+    for t in (raw or "").split(","):
+        t = t.strip()
+        if not t:
+            continue
+        try:
+            result.append(EventEnum(t))
+        except ValueError:
+            pass
+    return result
 
 
 # region log events
@@ -40,6 +56,9 @@ def log_events_request():
         # Accepte les deux noms de paramètre (« table_name » privilégié, « tablename »
         # toléré pour rester compatible avec d'éventuels clients/anciens caches).
         table_name = request.args.get("table_name") or request.args.get("tablename") or ""
+        # Multi-sélection : listes exactes séparées par des virgules.
+        selected_table_names = [t for t in request.args.get("table_names", "").split(",") if t]
+        selected_event_types = _parse_event_types(request.args.get("event_types", ""))
 
         the_query = LogEventDB.query
         if from_datetime_str:
@@ -48,14 +67,20 @@ def log_events_request():
         if to_datetime_str:
             to_datetime = datetime.datetime.fromisoformat(to_datetime_str)
             the_query = the_query.filter(LogEventDB.event_datetime <= to_datetime)
-        if table_name:
+        if selected_table_names:
+            the_query = the_query.filter(LogEventDB.table_name.in_(selected_table_names))
+        elif table_name:
             the_query = the_query.filter(LogEventDB.table_name.like(f"%{table_name}%"))
+        if selected_event_types:
+            the_query = the_query.filter(LogEventDB.event_type.in_(selected_event_types))
         # endregion
 
-        if sort_by:
-            the_query = the_query.order_by(sort_by)
+        # Tri : par défaut du plus récent au plus ancien (event_datetime décroissant).
+        sort_column = sort_by if sort_by else "event_datetime"
+        if sort_desc:
+            the_query = the_query.order_by(db.desc(sort_column))
         else:
-            the_query = the_query.order_by("event_datetime")
+            the_query = the_query.order_by(db.asc(sort_column))
 
         log_events = []
         for log_event_db in the_query.paginate(page=n_page, per_page=size).items:
@@ -111,14 +136,20 @@ def log_event_request(id_):
 @sat_biblio.route("/log-events/count/", methods=["GET"])
 def log_events_count():
     table_name = request.args.get("table_name") or request.args.get("tablename") or ""
+    selected_table_names = [t for t in request.args.get("table_names", "").split(",") if t]
+    selected_event_types = _parse_event_types(request.args.get("event_types", ""))
     event_owner_id = request.args.get("event_owner_id", "")
     object_id = request.args.get("object_id", "")
     from_event_datetime_str = request.args.get("from_event_datetime", "")
     to_event_datetime_str = request.args.get("to_event_datetime", "")
 
     the_query = LogEventDB.query
-    if table_name:
+    if selected_table_names:
+        the_query = the_query.filter(LogEventDB.table_name.in_(selected_table_names))
+    elif table_name:
         the_query = the_query.filter(LogEventDB.table_name.like(f"%{table_name}%"))
+    if selected_event_types:
+        the_query = the_query.filter(LogEventDB.event_type.in_(selected_event_types))
     if event_owner_id:
         the_query = the_query.filter_by(event_owner_id=event_owner_id)
     if object_id:
@@ -133,4 +164,21 @@ def log_events_count():
     number = the_query.count()
     logging.debug(number)
     return json_result(True, total=number), 200
+
+
+@sat_biblio.route("/log-events/table-names/", methods=["GET"])
+def log_events_table_names():
+    """Liste distincte des noms de tables présents dans les logs (pour le filtre)."""
+    rows = db.session.query(LogEventDB.table_name).distinct().all()
+    names = sorted({r[0] for r in rows if r[0]})
+    return json_result(True, table_names=names), 200
+
+
+@sat_biblio.route("/log-events/event-types/", methods=["GET"])
+def log_events_event_types():
+    """Liste distincte des types d'événements présents dans les logs (pour le filtre)."""
+    rows = db.session.query(LogEventDB.event_type).distinct().all()
+    # event_type est un Enum(EventEnum) : on renvoie les valeurs chaînes.
+    types = sorted({(r[0].value if hasattr(r[0], "value") else r[0]) for r in rows if r[0]})
+    return json_result(True, event_types=types), 200
 # endregion

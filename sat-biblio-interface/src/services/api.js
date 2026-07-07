@@ -346,6 +346,14 @@ export function getLogEventsCount(params, token) {
   return api.get(`/log-events/count/${params}`, { headers: { Authorization: `Bearer ${token}` } });
 }
 
+export function getLogEventTableNames() {
+  return api.get("/log-events/table-names/");
+}
+
+export function getLogEventEventTypes() {
+  return api.get("/log-events/event-types/");
+}
+
 // endregion
 
 
