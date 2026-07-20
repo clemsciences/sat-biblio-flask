@@ -40,12 +40,22 @@
 
     <BButton variant="secondary"
     size="md"
-    href="#video-introduction"
-    class="my-4">
+    class="my-4"
+    @click="showVideo = !showVideo">
       <IBiFilePlay />
-      Voir la vidéo d'introduction
-
+      {{ showVideo ? "Cacher la vidéo d'introduction" : "Voir la vidéo d'introduction" }}
     </BButton>
+
+    <div v-if="showVideo" id="video-introduction" class="ratio ratio-16x9 mx-auto my-4" style="max-width: 560px">
+      <iframe
+        src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    </div>
 
     <div class="d-flex flex-wrap justify-content-center align-items-center mt-5" id="book-images">
 
@@ -213,16 +223,6 @@ bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg 1400w"
 src="bht_rdc_1_dyb5uq/bht_rdc_1_dyb5uq_c_scale,w_1400.jpg"
 alt=""/>
     </div>
-<!--    <iframe width="560" height="315" src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>-->
-
-    <div id="video-introduction">
-      <embed
-        type="iframe"
-        aspect="16by9"
-        src="https://www.youtube.com/embed/nqsV88Uqhpg?si=6IzUGsdQaHQw-6gX"
-        allowfullscreen
-      />
-    </div>
   </BContainer>
 </template>
 <script>
@@ -233,6 +233,11 @@ import {BButton, BContainer, BImg, BListGroup, BListGroupItem} from "bootstrap-v
 export default {
 name: "AccueilView",
   components: {BListGroupItem, BListGroup, BImg, BButton, BContainer},
+  data() {
+    return {
+      showVideo: false
+    };
+  },
   computed: {
     ...mapState(["connected", "connectionInfo"]),
     rightString: function () {
