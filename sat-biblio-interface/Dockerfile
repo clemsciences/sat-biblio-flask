@@ -12,10 +12,17 @@ RUN npm ci
 # Copy project files
 COPY . .
 
-# Build the app for production
-# VITE_APP_SITE_API_URL can be provided at build time
+# Build the app for production.
+# VITE_APP_SITE_API_URL can be overridden at build time:
+#   docker build --build-arg VITE_APP_SITE_API_URL=https://… .
+# Left unset, the build falls back to the value in .env.production.
+#
+# Do NOT turn this into `ENV VITE_APP_SITE_API_URL=$VITE_APP_SITE_API_URL`: an ARG
+# with no default is the empty string, ENV would then define the variable *empty*,
+# and Vite prioritises real env vars over .env files — silently baking an empty API
+# URL into the bundle. A bare ARG is simply absent from the environment when it is
+# not passed, which is what makes the .env.production fallback work.
 ARG VITE_APP_SITE_API_URL
-ENV VITE_APP_SITE_API_URL=$VITE_APP_SITE_API_URL
 
 RUN npm run build
 
@@ -35,11 +42,19 @@ COPY --from=build-stage /app/satbiblio-dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Set ownership to non-root user
-RUN chown -R satbiblio:satbiblio /usr/share/nginx/html /var/cache/nginx /var/run /var/log/nginx
+# Set ownership to non-root user.
+# /var/run is deliberately absent: it is a symlink to /run, so `chown -R` would
+# retarget the link itself and leave /run root-owned. The pid file is moved to /tmp
+# below instead.
+RUN chown -R satbiblio:satbiblio /usr/share/nginx/html /var/cache/nginx /var/log/nginx
 
-# Use a custom pid file location that the non-root user can write to
-RUN sed -i 's/\/var\/run\/nginx.pid/\/tmp\/nginx.pid/g' /etc/nginx/nginx.conf
+# Use a custom pid file location that the non-root user can write to.
+# Match the `pid` directive itself rather than a hardcoded path: the image declares
+# `pid /run/nginx.pid;`, so a substitution on "/var/run/nginx.pid" silently matches
+# nothing and nginx dies at startup with
+#   [emerg] open() "/run/nginx.pid" failed (13: Permission denied)
+RUN sed -i 's|^pid .*;|pid /tmp/nginx.pid;|' /etc/nginx/nginx.conf && \
+    grep -q '^pid /tmp/nginx.pid;' /etc/nginx/nginx.conf
 
 USER satbiblio
 
