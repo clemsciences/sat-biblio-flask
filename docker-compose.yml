@@ -16,18 +16,37 @@ services:
       - JWT_SECRET_KEY=change-me-too
       - EMAIL_ADDRESS=admin@example.com
       - MAIL_PASSWORD=password
+      # The production config pins SERVER_NAME to api.satbiblio.clementbesnier.eu, and
+      # Flask then 404s every request whose Host header differs. Empty disables that
+      # check so the API answers on http://localhost:5000/.
+      - SERVER_NAME=
+      # Must match the origin the browser loads the SPA from (the `interface` service),
+      # otherwise the browser blocks every cross-origin API call.
+      - CORS_ORIGINS=http://localhost:8085
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 20s
+      retries: 3
 
   interface:
     build:
       context: ./sat-biblio-interface
       args:
-        - VUE_APP_SITE_API_URL=http://localhost:5000/api
+        # Vite, not Vue CLI: the variable MUST be named VITE_APP_SITE_API_URL, and it
+        # is baked into the bundle at build time — changing it requires a rebuild
+        # (`docker compose build interface`), not just a restart.
+        # No /api suffix: services/api.js calls paths like /users/connect/ directly on
+        # this baseURL.
+        - VITE_APP_SITE_API_URL=http://localhost:5000/
     ports:
-      - "80:8080"
+      - "8085:8080"
     restart: always
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   sat_biblio_data:

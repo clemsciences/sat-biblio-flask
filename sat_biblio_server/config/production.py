@@ -37,8 +37,13 @@ class Config:
     BABEL_DEFAULT_LOCALE = "fr"
     BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
 
-    SERVER_NAME = "api.satbiblio.clementbesnier.eu"
-    VUE_SERVER_NAME = "bht.societearcheotouraine.fr"
+    # Overridable so the same image can run behind another host name (docker-compose,
+    # staging). Defaults are the production values, so prod behaviour is unchanged.
+    # Note: Flask only serves requests whose Host header matches SERVER_NAME. Setting
+    # SERVER_NAME to an empty string yields None, which disables that filtering — this
+    # is what makes the stack reachable on http://localhost:5000/.
+    SERVER_NAME = os.environ.get("SERVER_NAME", "api.satbiblio.clementbesnier.eu") or None
+    VUE_SERVER_NAME = os.environ.get("VUE_SERVER_NAME", "bht.societearcheotouraine.fr")
 
     # region sqlalchemy
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or \
@@ -92,7 +97,7 @@ class Config:
     CORS_INTERCEPT_EXCEPTIONS = True
     CORS_MAX_AGE = None
     CORS_METHODS = ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
-    CORS_ORIGINS = "https://bht.societearcheotouraine.fr"
+    CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "https://bht.societearcheotouraine.fr")
     CORS_RESOURCES = "/*"
     CORS_SEND_WILDCARD = True
     CORS_SUPPORTS_CREDENTIALS = True
