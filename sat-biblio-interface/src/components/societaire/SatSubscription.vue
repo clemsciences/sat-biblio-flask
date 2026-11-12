@@ -7,7 +7,7 @@
       </BCol>
     </BRow>
 
-    <BFormGroup @submit.prevent="onSubmit">
+    <BForm @submit.prevent="onSubmit">
       <fieldset class="mb-4 p-3 border rounded">
         <legend class="w-auto px-2 h5">Première personne</legend>
         <BRow>
@@ -136,16 +136,16 @@
           <span class="mx-3 text-success">{{ message }}</span>
         </BCol>
       </BRow>
-    </BFormGroup>
+    </BForm>
   </BContainer>
 </template>
 
 <script>
 import { sendSatSubscription } from "@/services/api";
-import {BButton, BCol, BFormGroup, BFormRadio, BRow} from "bootstrap-vue-next";
+import {BButton, BCol, BForm, BFormGroup, BFormRadio, BRow} from "bootstrap-vue-next";
 export default {
   name: "SatSubscription",
-  components: {BRow, BFormGroup, BFormRadio, BButton, BCol},
+  components: {BRow, BForm, BFormGroup, BFormRadio, BButton, BCol},
   data() {
     return {
       form: {
