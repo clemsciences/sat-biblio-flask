@@ -132,8 +132,11 @@
 
       <BRow class="mt-3">
         <BCol>
-          <BButton type="submit" variant="primary" :disabled="!isValid">Envoyer</BButton>
-          <span class="mx-3 text-success">{{ message }}</span>
+          <BButton type="submit" variant="primary" :disabled="!isValid || sending">
+            <BSpinner v-if="sending" small class="me-1" />
+            {{ sending ? "Envoi en cours…" : "Envoyer" }}
+          </BButton>
+          <span class="mx-3 text-success" role="status">{{ message }}</span>
         </BCol>
       </BRow>
     </BForm>
@@ -167,7 +170,8 @@ export default {
         secondProfession: "",
         secondBirthYear: 1960
       },
-      message: ""
+      message: "",
+      sending: false
     };
   },
   computed: {
@@ -210,11 +214,13 @@ export default {
   },
   methods: {
     async onSubmit() {
-      if (!this.isValid) return;
+      if (!this.isValid || this.sending) return;
       const payload = {
         ...this.form,
         totalAmount: this.totalAmount
       };
+      this.sending = true;
+      this.message = "";
       try {
         const { data } = await sendSatSubscription(payload);
         if (data && data.success) {
@@ -225,6 +231,8 @@ export default {
       } catch (e) {
         this.message = "Echec de l'envoi de la demande.";
         // console.error(e);
+      } finally {
+        this.sending = false;
       }
     }
   }
