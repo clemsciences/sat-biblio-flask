@@ -146,30 +146,32 @@
 <script>
 import { sendSatSubscription } from "@/services/api";
 import {BButton, BCol, BForm, BFormGroup, BFormRadio, BRow} from "bootstrap-vue-next";
+const emptyForm = () => ({
+  firstName: "",
+  lastName: "",
+  address: "",
+  phoneLandline: "",
+  phoneMobile: "",
+  email: "",
+  membershipType: null, // student|single|couple
+  receiveBulletinByPost: false,
+  paymentMethod: null, // cheque|virement|carte
+  mustReceiveInfoByMail: false,
+  refusePublishInfo: false,
+  profession: "",
+  birthYear: 1960,
+  secondFirstName: "",
+  secondLastName: "",
+  secondProfession: "",
+  secondBirthYear: 1960
+});
+
 export default {
   name: "SatSubscription",
   components: {BRow, BForm, BFormGroup, BFormRadio, BButton, BCol},
   data() {
     return {
-      form: {
-        firstName: "",
-        lastName: "",
-        address: "",
-        phoneLandline: "",
-        phoneMobile: "",
-        email: "",
-        membershipType: null, // student|single|couple
-        receiveBulletinByPost: false,
-        paymentMethod: null, // cheque|virement|carte
-        mustReceiveInfoByMail: false,
-        refusePublishInfo: false,
-        profession: "",
-        birthYear: 1960,
-        secondFirstName: "",
-        secondLastName: "",
-        secondProfession: "",
-        secondBirthYear: 1960
-      },
+      form: emptyForm(),
       message: "",
       isError: false,
       sending: false
@@ -227,6 +229,7 @@ export default {
         const { data } = await sendSatSubscription(payload);
         if (data && data.success) {
           this.message = data.message || "Demande envoyée avec succès.";
+          this.form = emptyForm();
         } else {
           this.isError = true;
           this.message = (data && data.message) || "Echec de l'envoi de la demande.";
