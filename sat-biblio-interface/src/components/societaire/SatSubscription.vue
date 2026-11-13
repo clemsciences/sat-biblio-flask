@@ -79,7 +79,7 @@
         <BCol md="6">
           <BFormGroup label="Options">
             <BFormCheckbox v-model="form.receiveBulletinByPost">Recevoir le prochain bulletin par la poste (+13 €)</BFormCheckbox>
-            <BFormCheckbox v-model="form.mustReceiveInfoByMail">Je souhaite absolument recevoir les informations par courrier</BFormCheckbox>
+<!--            <BFormCheckbox v-model="form.mustReceiveInfoByMail">Je souhaite absolument recevoir les informations par courrier</BFormCheckbox>-->
             <BFormCheckbox v-model="form.refusePublishInfo">Je refuse que mon nom et mon adresse figurent dans la liste des sociétaires dans le prochain bulletin</BFormCheckbox>
           </BFormGroup>
         </BCol>
