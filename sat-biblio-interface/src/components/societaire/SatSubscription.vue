@@ -136,7 +136,7 @@
             <BSpinner v-if="sending" small class="me-1" />
             {{ sending ? "Envoi en cours…" : "Envoyer" }}
           </BButton>
-          <span class="mx-3 text-success" role="status">{{ message }}</span>
+          <span class="mx-3" :class="isError ? 'text-danger' : 'text-success'" role="status">{{ message }}</span>
         </BCol>
       </BRow>
     </BForm>
@@ -171,6 +171,7 @@ export default {
         secondBirthYear: 1960
       },
       message: "",
+      isError: false,
       sending: false
     };
   },
@@ -221,14 +222,17 @@ export default {
       };
       this.sending = true;
       this.message = "";
+      this.isError = false;
       try {
         const { data } = await sendSatSubscription(payload);
         if (data && data.success) {
           this.message = data.message || "Demande envoyée avec succès.";
         } else {
+          this.isError = true;
           this.message = (data && data.message) || "Echec de l'envoi de la demande.";
         }
       } catch (e) {
+        this.isError = true;
         this.message = "Echec de l'envoi de la demande.";
         // console.error(e);
       } finally {
