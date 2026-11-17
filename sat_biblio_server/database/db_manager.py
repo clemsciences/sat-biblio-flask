@@ -5,6 +5,7 @@
 import datetime
 import json
 import re
+import unicodedata
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -33,6 +34,22 @@ def extract_year_from_text(value):
     return int(m.group(0)) if m else None
 
 
+def text_sort_key(value):
+    """Forme d'un texte pour le tri et la recherche : sans accents ni casse.
+
+    SQLite compare les chaînes octet par octet : sans cela « éditions Perrin »
+    ou « Œuvre des martyrs » seraient rangés après « Z ». On retire aussi la
+    ponctuation de tête (« (Tours) », « . Recueil… »). Les chaînes vides et
+    NULL donnent "".
+    """
+    if value is None:
+        return ""
+    s = str(value).casefold().replace("œ", "oe").replace("æ", "ae")
+    s = "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+    s = re.sub(r"\s+", " ", s)
+    return re.sub(r"^[^\w]+", "", s).strip()
+
+
 @event.listens_for(Engine, "connect")
 def register_sqlite_functions(dbapi_connection, connection_record):
     """Enregistre les fonctions SQL personnalisées (disponibles pour SQLite)."""
@@ -41,6 +58,7 @@ def register_sqlite_functions(dbapi_connection, connection_record):
         from sat_biblio_server.data.gazetteer import normalize_place
         dbapi_connection.create_function("extract_year", 1, extract_year_from_text)
         dbapi_connection.create_function("normalize_place", 1, normalize_place)
+        dbapi_connection.create_function("sort_key", 1, text_sort_key, deterministic=True)
 
 
 class JsonEncodedDict(db.TypeDecorator):

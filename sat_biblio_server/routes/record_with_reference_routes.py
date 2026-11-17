@@ -59,6 +59,7 @@ class RecordWithReferenceHelper:
         mot_clef = args.get("mot_clef", "")
         author = args.get("author", "")
         lieu_publication = args.get("lieu_publication", "")
+        editeur = args.get("editeur", "").strip()
 
         the_query = Enregistrement2023DB.query
         if cote:
@@ -74,6 +75,16 @@ class RecordWithReferenceHelper:
                 Enregistrement2023DB.reference.has(
                     func.normalize_place(ReferenceBibliographiqueLivre2023DB.lieu_edition)
                     == normalized_place
+                )
+            )
+        if editeur:
+            # Comparaison sans accents ni casse (fonction SQLite sort_key).
+            # .has() (EXISTS) plutôt qu'une jointure, pour ne pas entrer en
+            # conflit avec les jointures titre/auteur ci-dessous.
+            from sat_biblio_server.database.db_manager import text_sort_key
+            the_query = the_query.filter(
+                Enregistrement2023DB.reference.has(
+                    func.sort_key(ReferenceBibliographiqueLivre2023DB.editeur).like(f"%{text_sort_key(editeur)}%")
                 )
             )
         if titre:
@@ -233,6 +244,14 @@ def book_records_with_reference():
                 field = Enregistrement2023DB.annee_obtention
             elif sort_by == "date_derniere_modification":
                 field = Enregistrement2023DB.date_derniere_modification
+            elif sort_by == "editeur":
+                # Sous-requête corrélée plutôt qu'une jointure : les filtres
+                # titre/auteur joignent déjà la référence. sort_key ignore
+                # accents, casse et ponctuation de tête.
+                field = (db.session.query(func.sort_key(ReferenceBibliographiqueLivre2023DB.editeur))
+                         .filter(ReferenceBibliographiqueLivre2023DB.id == Enregistrement2023DB.id_reference)
+                         .correlate(Enregistrement2023DB)
+                         .scalar_subquery())
             else:
                 field = Enregistrement2023DB.cote
 
@@ -253,6 +272,7 @@ def book_records_with_reference():
             # print(record)
             if record and record['reference']:
                 record["authors"] = ", ".join([author["first_name"] + " " + author["family_name"] for author in record["reference"]['authors']])
+                record["editeur"] = record["reference"].get("editeur", "")
                 record["reference"] = record['reference']['titre']
                 enregistrements.append(record)
             else:

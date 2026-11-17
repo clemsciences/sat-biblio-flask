@@ -89,6 +89,13 @@
         </BFormGroup>
       </BCol>
       <BCol md="6" lg="4">
+        <BFormGroup label="Éditeur" label-cols-sm="3"
+                      label-align-sm="right" label-size="sm" class="mb-0">
+          <BFormInput v-model="editeurFilter" size="sm"
+                   placeholder="Filtrer en fonction de l'éditeur"/>
+        </BFormGroup>
+      </BCol>
+      <BCol md="6" lg="4">
         <BFormGroup label="Année d'obtention" label-cols-sm="3"
                       label-align-sm="right" label-size="sm" class="mb-0">
           <div class="d-flex flex-wrap gap-1 align-items-center">
@@ -260,6 +267,7 @@ export default {
         { key: "cote", label: "Cote", sortable: true },
         { key: "reference", label: "Titre", sortable: false },
         { key: "authors", label: "Auteurs", sortable: false },
+        { key: "editeur", label: "Éditeur", sortable: true },
         { key: "annee_obtention", label: "Année d'obtention", sortable: true },
         { key: "provenance", label: "Provenance", sortable: false },
         { key: "aide_a_la_recherche", label: "Aide à la recherche", sortable: false },
@@ -272,6 +280,7 @@ export default {
       keywordsFilter: "",
       titleFilter: "",
       lieuPublicationFilter: "",
+      editeurFilter: "",
       anneeObtentionMode: "",
       anneeObtentionYear: "2025",
       anneeObtentionYearMin: "2020",
@@ -318,7 +327,7 @@ export default {
     searchFieldsUsed() {
       return this.coteFilter.length > 0 || this.authorFilter.length > 0
           || this.keywordsFilter.length > 0 || this.titleFilter.length > 0
-          || this.lieuPublicationFilter.length > 0;
+          || this.lieuPublicationFilter.length > 0 || this.editeurFilter.length > 0;
     },
     isAdmin() {
       return this.$store.getters.isAdmin;
@@ -331,6 +340,7 @@ export default {
       const options = [
         { text: 'Cote', value: 'cote' },
         { text: "Année d'obtention", value: 'annee_obtention' },
+        { text: 'Éditeur', value: 'editeur' },
       ];
       if (this.isAdmin) {
         options.push({ text: 'Date dernière modification', value: 'date_derniere_modification' });
@@ -356,6 +366,9 @@ export default {
       }
       if (this.lieuPublicationFilter.length > 0) {
         parts.push(`lieu_publication=${encodeURI(this.lieuPublicationFilter)}`);
+      }
+      if (this.editeurFilter.length > 0) {
+        parts.push(`editeur=${encodeURIComponent(this.editeurFilter)}`);
       }
 
       // Filtre sur l'année d'obtention
@@ -514,6 +527,7 @@ export default {
       if (this.keywordsFilter) query.keywords = encodeURIComponent(this.keywordsFilter);
       if (this.titleFilter)  query.title  = encodeURIComponent(this.titleFilter);
       if (this.lieuPublicationFilter) query.lieu_publication = encodeURIComponent(this.lieuPublicationFilter);
+      if (this.editeurFilter) query.editeur = encodeURIComponent(this.editeurFilter);
 
       // Filtre sur l'année d'obtention
       if (this.anneeObtentionMode) {
@@ -591,6 +605,7 @@ export default {
       this.keywordsFilter   = "";
       this.titleFilter      = "";
       this.lieuPublicationFilter = "";
+      this.editeurFilter = "";
       this.anneeObtentionMode    = "";
       this.anneeObtentionYear    = "";
       this.anneeObtentionYearMin = "";
@@ -650,6 +665,7 @@ export default {
     if (q.author   && q.author.length > 0)   this.authorFilter   = decodeURIComponent(q.author);
     if (q.keywords && q.keywords.length > 0) this.keywordsFilter = decodeURIComponent(q.keywords);
     if (q.lieu_publication && q.lieu_publication.length > 0) this.lieuPublicationFilter = decodeURIComponent(q.lieu_publication);
+    if (q.editeur && q.editeur.length > 0) this.editeurFilter = decodeURIComponent(q.editeur);
 
     // Filtre sur l'année d'obtention
     if (q.annee_obtention_mode) {
@@ -699,6 +715,9 @@ export default {
       this.onFilterChanged();
     },
     lieuPublicationFilter() {
+      this.onFilterChanged();
+    },
+    editeurFilter() {
       this.onFilterChanged();
     },
     anneeObtentionMode() {
