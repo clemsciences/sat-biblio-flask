@@ -234,9 +234,11 @@ def create_new_user():
             else:
                 user = sm.UserSess.create_new(user_form, generate_password_hash(user_form["password"]))
                 if user:
+                    # Jamais de mot de passe dans le journal des événements.
+                    logged_form = {k: v for k, v in user_form.items() if "password" not in k.lower()}
                     LogEventManager(db).add_create_event(user.id, get_current_user_id(),
                                                          UserDB.__tablename__,
-                                                         values=json.dumps(user_form))
+                                                         values=json.dumps(logged_form))
                     token = user.generate_confirmation_token()
                     link = f"https://bht.societearcheotouraine.fr/utilisateur/verification-enregistrement?" \
                            f"inscription_token={token}&email={user.email}"
