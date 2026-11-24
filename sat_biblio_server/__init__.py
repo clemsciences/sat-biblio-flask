@@ -14,7 +14,6 @@ from flask_mail import Mail
 from wtforms.validators import ValidationError, DataRequired
 from wtforms import StringField, PasswordField
 import wtforms
-from werkzeug.security import check_password_hash
 from flask_admin import Admin, AdminIndexView, expose, helpers
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
@@ -66,24 +65,21 @@ class SatAdminModelView(ModelView):
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for('admin.login_view', next=request.url))
 
 
 class AdminLoginForm(wtforms.Form):
     email = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
 
-    def validate_login(self, field):
+    def validate_password(self, field):
+        # WTForms appelle validate_<champ> : ce validateur doit porter le nom
+        # d'un champ existant, sinon il n'est jamais exécuté. Même message que
+        # l'e-mail soit inconnu ou le mot de passe faux, pour ne pas révéler
+        # quels comptes existent.
         user = self.get_user()
-
-        if user is None:
-            raise ValidationError('Invalid user')
-
-        # we're comparing the plaintext pw with the hash from the db
-        if not check_password_hash(user.password, self.password.data):
-            # to compare plain text passwords use
-            # if user.password != self.password.data:
-            raise ValidationError('Invalid password')
+        if user is None or not user.verify_password(field.data):
+            raise ValidationError("Identifiant ou mot de passe incorrect.")
 
     def get_user(self):
         return db.session.query(UserDB).filter_by(email=self.email.data).first()
@@ -113,7 +109,8 @@ class MyAdminIndexView(AdminIndexView):
         form = AdminLoginForm(request.form)
         if helpers.validate_form_on_submit(form):
             user = form.get_user()
-            login_user(user)
+            if user is not None and user.verify_password(form.password.data):
+                login_user(user)
 
         if current_user.is_authenticated:
             return redirect(url_for('admin.index'))
