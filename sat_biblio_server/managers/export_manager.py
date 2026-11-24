@@ -326,7 +326,7 @@ class ExportCatalogueManager:
             column_letter = get_column_letter(i)
             current_sheet.column_dimensions[column_letter].width = width
             # current_sheet.column_dimensions[column_letter].height = 10
-        current_sheet.auto_filter.ref = f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(len(catalogue_2025.rows))}{len(catalogue_2025.rows) + shift_i_row}"
+        current_sheet.auto_filter.ref = f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(len(Catalogue2025.COLUMNS))}{len(catalogue_2025.rows) + shift_i_row}"
         current_sheet.auto_filter.add_sort_condition(
             f"{get_column_letter(1)}{shift_i_row}:{get_column_letter(1)}{len(catalogue_2025.rows) + shift_i_row}")
         # endregion
