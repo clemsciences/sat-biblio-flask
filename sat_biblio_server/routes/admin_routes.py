@@ -13,9 +13,9 @@ def login_admin():
         password = request.form.get("password", "")
         user = UserDB.query.filter_by(email=email).first()
         if not user:
-            return render_template("admin/login.html", message="bad user or bad assword")
+            return render_template("admin/login.html", message="Identifiant ou mot de passe incorrect.")
         if not user.verify_password(password):
-            return render_template("admin/login.html", message="bad user or bad passwor")
+            return render_template("admin/login.html", message="Identifiant ou mot de passe incorrect.")
         if not login_user(user):
-            return render_template("admin/login.html", message="bad user or bad pssword")
+            return render_template("admin/login.html", message="Identifiant ou mot de passe incorrect.")
         return redirect("/admin/")
