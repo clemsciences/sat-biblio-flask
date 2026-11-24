@@ -15,7 +15,7 @@ from flask_jwt_extended import get_jwt_identity
 
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
-from sat_biblio_server.routes import validation_connexion_et_retour_defaut, validation_droit_et_retour_defaut
+from sat_biblio_server.routes import validation_droit_et_retour_defaut
 from sat_biblio_server.utils import UserRight
 from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.managers.catalogue_manager import Catalogue2023, Catalogue2023Row
@@ -37,7 +37,7 @@ class CatalogueAction:
 
 
 @sat_biblio.route("/import-ci-2023/catalogues/<string:key>/", methods=["GET", "DELETE"])
-@validation_connexion_et_retour_defaut("email", ["DELETE"])
+@validation_droit_et_retour_defaut(UserRight.gestionnaire, ["DELETE"])
 def manage_ci_2023_catalogue(key):
     """
     GET:
@@ -119,7 +119,7 @@ def manage_ci_2023_catalogue(key):
 
 
 @sat_biblio.route("/import-ci-2023/catalogues/", methods=["POST", "GET"])
-@validation_connexion_et_retour_defaut("email", ["POST"])
+@validation_droit_et_retour_defaut(UserRight.gestionnaire, ["POST"])
 def manage_ci_2023_catalogues():
     """
     POST: upload a new catalogue.
@@ -159,7 +159,7 @@ def get_ci_2023_catalogues_count():
 
 # region imports
 @sat_biblio.route("/import-ci-2023/", methods=["GET", "POST"])
-@validation_connexion_et_retour_defaut("email", ["POST"])
+@validation_droit_et_retour_defaut(UserRight.gestionnaire, ["POST"])
 def imports_ci_2023():
     """
     GET: get the list of imports with pagination and 'description' filtering
