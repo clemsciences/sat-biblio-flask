@@ -8,6 +8,8 @@ from sat_biblio_referencement.database import PublishedWorksDB
 from sat_biblio_referencement.data.published_work_data import PublishedWorksData
 
 from sat_biblio_server import json_result, sat_biblio, PACKDIR
+from sat_biblio_server.routes import validation_droit_et_retour_defaut
+from sat_biblio_server.utils import UserRight
 
 TABLE_PUBLICATION_2004_PATH = os.path.join(PACKDIR, "static", TABLE_PUBLICATION_2004_FILENAME)
 sbr_dbm = DatabaseManager(False, False, path=TABLE_PUBLICATION_2004_PATH)
@@ -15,6 +17,7 @@ sbr_dbm.prepare()
 
 
 @sat_biblio.route("/works/published/", methods=["GET", "POST"])
+@validation_droit_et_retour_defaut(UserRight.editeur, ["POST"])
 def published_works_list_request():
     """
     published_works
@@ -39,6 +42,7 @@ def published_works_list_request():
 
 
 @sat_biblio.route("/works/published/<int:id_>/", methods=["GET", "PUT", "DELETE"])
+@validation_droit_et_retour_defaut(UserRight.editeur, ["PUT", "DELETE"])
 def published_work_request(id_):
     """
     published_works

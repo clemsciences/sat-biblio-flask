@@ -370,6 +370,12 @@ export function getCataloguesCountRequest(params) {
   return api.get(`/import-ci-2023/catalogues/count/${params}`);
 }
 
+export function processImportExportRequest(formData, token) {
+  return api.post("/import-export/process", formData, {
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
+  });
+}
+
 export function uploadOneCatalogueRequest(formData, token) {
   return api.post("/import-ci-2023/catalogues/", formData, { headers: { Authorization: `Bearer ${token}` } });
 }

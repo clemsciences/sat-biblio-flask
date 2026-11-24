@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import {processImportExportRequest} from "@/services/api.js";
 
 export default {
   name: "ImportExport",
@@ -70,11 +70,7 @@ export default {
         let formData = new FormData();
         formData.append("file", this.file);
         formData.append("method", this.selectedModel)
-        axios.post("/import-export/process", formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then(
+        processImportExportRequest(formData, this.$store.state.connectionInfo.token).then(
             (response) => {
               let data = response.data;
               console.log(data);

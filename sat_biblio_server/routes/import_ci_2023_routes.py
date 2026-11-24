@@ -15,7 +15,8 @@ from flask_jwt_extended import get_jwt_identity
 
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
-from sat_biblio_server.routes import validation_connexion_et_retour_defaut
+from sat_biblio_server.routes import validation_connexion_et_retour_defaut, validation_droit_et_retour_defaut
+from sat_biblio_server.utils import UserRight
 from sat_biblio_server.routes.utils import get_current_user_id
 from sat_biblio_server.managers.catalogue_manager import Catalogue2023, Catalogue2023Row
 from sat_biblio_server.database import db, ImportDB
@@ -263,6 +264,7 @@ def imports_ci_2023_count():
     return json_result(True, total_count=total_count, filtered_count=filtered_count)
 
 @sat_biblio.route("/import-ci-2023/<int:import_id>/", methods=["GET", "PUT", "DELETE"])
+@validation_droit_et_retour_defaut(UserRight.gestionnaire, ["PUT", "DELETE"])
 def import_ci_2023(import_id):
     """
     GET: get the import by id

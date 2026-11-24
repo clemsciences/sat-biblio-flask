@@ -10,12 +10,15 @@ from werkzeug.utils import secure_filename
 
 from sat_biblio_server.managers.catalogue_manager import CatalogueConverter
 from sat_biblio_server import sat_biblio, json_result
+from sat_biblio_server.routes import validation_droit_et_retour_defaut
+from sat_biblio_server.utils import UserRight
 from sat_biblio_server.config.production import Config
 from sat_biblio_server.managers.import_manager import ImportManager
 from sat_biblio_server.managers.export_manager import ExportCatalogueManager
 
 
 @sat_biblio.route("/import-export/process", methods=["POST"])
+@validation_droit_et_retour_defaut(UserRight.gestionnaire, ["POST"])
 def process_import_export():
     if request.method == "POST":
         if "file" not in request.files:
