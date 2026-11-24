@@ -11,6 +11,7 @@ from flask_mail import Message
 from sat_biblio_server import sat_biblio
 from sat_biblio_server.utils import json_result
 from sat_biblio_server.managers.mail_manager import send_email
+from sat_biblio_server.limiter import limiter, PUBLIC_FORM_LIMIT
 
 try:
     from openpyxl import Workbook
@@ -329,6 +330,7 @@ def _compose_email_body(payload: dict, to_member: bool = False, with_pdf: bool =
 
 @sat_biblio.route("/send-sat", methods=["POST"])  # path required in issue description
 @sat_biblio.route("/send-sat/", methods=["POST"])  # tolerate trailing slash
+@limiter.limit(PUBLIC_FORM_LIMIT)
 def send_sat_subscription():
     data = request.get_json() or {}
 

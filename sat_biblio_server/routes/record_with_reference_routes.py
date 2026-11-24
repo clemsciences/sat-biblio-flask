@@ -27,6 +27,7 @@ from sat_biblio_server.routes import get_pagination, validation_connexion_et_ret
 from sat_biblio_server.utils import json_result
 from sat_biblio_server.data.dublin_core import from_data_to_dublin_core, dublin_core_dict_to_xml
 from flask import Response
+from sat_biblio_server.limiter import limiter, EXPORT_LIMIT
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
@@ -262,6 +263,7 @@ def book_records_with_reference():
                            filtered_total=filtered_total,  total=total), 200
 
 @sat_biblio.route("/book-records-with-reference/export/", methods=["GET"])
+@limiter.limit(EXPORT_LIMIT)
 def book_records_with_reference_export():
     if request.method == "GET":
         # region filtre

@@ -6,9 +6,11 @@ from flask import request, session
 
 from sat_biblio_server import sat_biblio, UserDB, json_result
 from sat_biblio_server.managers.mail_manager import envoyer_message_contact
+from sat_biblio_server.limiter import limiter, PUBLIC_FORM_LIMIT
 
 
 @sat_biblio.route("/contact/send-message/", methods=["POST"])
+@limiter.limit(PUBLIC_FORM_LIMIT)
 def send_email_to_admin():
     """
 

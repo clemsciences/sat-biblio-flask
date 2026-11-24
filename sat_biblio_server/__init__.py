@@ -28,6 +28,7 @@ from sat_biblio_server.database.users import UserDB
 from sat_biblio_server.database.events import LogEventDB
 from sat_biblio_server.database.imports import ImportDB, ImportedItemsDB
 from sat_biblio_server.utils import json_result
+from sat_biblio_server.limiter import limiter, LOGIN_LIMIT
 
 
 PACKDIR = os.path.abspath(os.path.dirname(__file__))
@@ -104,6 +105,7 @@ class MyAdminIndexView(AdminIndexView):
         return super().index()
 
     @expose('/login/', methods=('GET', 'POST'))
+    @limiter.limit(LOGIN_LIMIT, methods=["POST"])
     def login_view(self):
         # handle user login
         form = AdminLoginForm(request.form)
@@ -140,6 +142,10 @@ def create_app(config):
     @app.errorhandler(500)
     def internal_server_error(e):
         return json_result(False, message="500"), 500  # "500.html"), 500
+
+    @app.errorhandler(429)
+    def too_many_requests(e):
+        return json_result(False, message="Trop de tentatives. Merci de réessayer plus tard."), 429
 
     @app.errorhandler(CSRFError)
     def csrf_error(reason):
@@ -180,6 +186,7 @@ def create_app(config):
     }})
     mail.init_app(app)
     jwt.init_app(app)
+    limiter.init_app(app)
 
     # admin page
     admin = Admin(app, "Administration",

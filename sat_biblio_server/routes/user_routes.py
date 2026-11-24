@@ -21,6 +21,7 @@ import sat_biblio_server.database as dbm
 from sat_biblio_server.managers import mail_manager
 import sat_biblio_server.sessions.session_manager as sm
 from sat_biblio_server.utils import json_result, UserRight
+from sat_biblio_server.limiter import limiter, ACCOUNT_EMAIL_LIMIT, LOGIN_LIMIT
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>", ]
 
@@ -43,6 +44,7 @@ def connect_user_login(user: UserDB, token: str):
 
 
 @sat_biblio.route("/users/connect/", methods=["POST"])
+@limiter.limit(LOGIN_LIMIT)
 def login():
     data = request.get_json()
     return connect_user(data)
@@ -173,6 +175,7 @@ def generate_new_password(password_length=10):
 
 
 @sat_biblio.route("/users/forgotten-password/", methods=["POST"])
+@limiter.limit(ACCOUNT_EMAIL_LIMIT)
 def send_forgotten_password_email():
     """
     Email a user with a new password.
@@ -194,6 +197,7 @@ def send_forgotten_password_email():
 
 
 @sat_biblio.route("/users/new-password/", methods=["POST"])
+@limiter.limit(LOGIN_LIMIT)
 def set_new_password():
     """
     Change password for a user.
@@ -223,6 +227,7 @@ def set_new_password():
 
 # region creation
 @sat_biblio.route("/users/create/", methods=["POST"])
+@limiter.limit(ACCOUNT_EMAIL_LIMIT)
 def create_new_user():
     if request.method == "POST":
         user_form = request.get_json()
