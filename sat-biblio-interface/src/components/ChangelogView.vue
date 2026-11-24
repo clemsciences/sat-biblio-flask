@@ -41,6 +41,7 @@
 import AppTitle from "@/components/visuel/AppTitle.vue";
 import axios from "axios";
 import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 export default {
   name: "ChangelogView",
@@ -80,7 +81,9 @@ export default {
     },
     renderMarkdown(text) {
       if (!text) return "";
-      return marked(text);
+      // marked ne filtre pas le HTML présent dans le Markdown : on le nettoie
+      // avant de l'insérer avec v-html.
+      return DOMPurify.sanitize(marked(text));
     }
   }
 };
