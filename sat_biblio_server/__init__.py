@@ -147,6 +147,17 @@ def create_app(config):
     def internal_server_error(e):
         return json_result(False, message="500"), 500  # "500.html"), 500
 
+    @app.after_request
+    def add_security_headers(response):
+        # L'API renvoie du JSON et les pages Flask-Admin : rien ne doit être
+        # interprété avec un autre type, ni affiché dans un cadre.
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        if request.is_secure:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000")
+        return response
+
     @app.errorhandler(429)
     def too_many_requests(e):
         return json_result(False, message="Trop de tentatives. Merci de réessayer plus tard."), 429
