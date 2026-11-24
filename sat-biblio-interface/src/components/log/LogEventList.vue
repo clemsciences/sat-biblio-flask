@@ -215,7 +215,7 @@ export default {
       );
     },
     prettyEventType: function(type) {
-      return {create: "Création", update: "Modification", delete: "Suppression"}[type] ?? type;
+      return {create: "Création", update: "Modification", delete: "Suppression", login_failure: "Échec de connexion"}[type] ?? type;
     }
   },
   mounted() {

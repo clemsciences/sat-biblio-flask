@@ -59,6 +59,7 @@ def connect_user(data):
     if dv.check_user_connection(data):
         user, message = UserDB.authenticate(**data)
         if not user:
+            LogEventManager(db).add_login_failure_event(data.get("email"), request.remote_addr, "api")
             return json_result(False,
                                message=message,
                                connected=False), 401

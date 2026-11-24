@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from sat_biblio_server import LogEventDB
 from sat_biblio_server.utils import EventEnum
@@ -29,3 +30,13 @@ class LogEventManager:
 
     def add_update_event(self, object_id: int, event_owner_id: int, table_name: str, values: str = None):
         self._add_event(EventEnum.update, object_id, datetime.datetime.now(), event_owner_id, table_name, values)
+
+    def add_login_failure_event(self, email: str, ip: str, source: str):
+        """Trace un échec de connexion (jamais le mot de passe tenté).
+
+        :param email: identifiant saisi
+        :param ip: adresse IP de la requête
+        :param source: point d'entrée (« api », « stjoern », « flask-admin »)
+        """
+        values = json.dumps(dict(email=(email or "")[:200], ip=ip, source=source))
+        self._add_event(EventEnum.login_failure, None, datetime.datetime.now(), -1, "User", values)

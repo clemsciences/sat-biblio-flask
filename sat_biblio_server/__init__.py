@@ -113,6 +113,10 @@ class MyAdminIndexView(AdminIndexView):
             user = form.get_user()
             if user is not None and user.verify_password(form.password.data):
                 login_user(user)
+        elif request.method == "POST":
+            # Import local : log_manager importe ce module.
+            from sat_biblio_server.managers.log_manager import LogEventManager
+            LogEventManager(db).add_login_failure_event(form.email.data, request.remote_addr, "flask-admin")
 
         if current_user.is_authenticated:
             return redirect(url_for('admin.index'))

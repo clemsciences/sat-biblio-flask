@@ -65,6 +65,7 @@ class EventEnum(enum.Enum):
     create = "create"
     delete = "delete"
     update = "update"
+    login_failure = "login_failure"
 
 
 # region TEMPS
