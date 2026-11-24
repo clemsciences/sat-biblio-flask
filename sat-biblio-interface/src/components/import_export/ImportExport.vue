@@ -36,14 +36,6 @@
     </BCard>
         </BCol>
     </BRow>
-<!--    <BCard title="Anciennces importation">-->
-<!--      <BRow class="my-3">-->
-<!--          <BButton to="/importation">Importation fine</BButton>-->
-<!--      </BRow>-->
-<!--      <BRow>-->
-<!--          <BButton to="/importation-globale">Importation globale</BButton>-->
-<!--      </BRow>-->
-<!--    </BCard>-->
 
     <div v-if="isProcessing">
       <BSpinner label="chargement"  class="m-2"/>

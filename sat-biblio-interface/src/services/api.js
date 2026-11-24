@@ -358,16 +358,6 @@ export function getLogEventEventTypes() {
 
 
 // region import
-// region import csv
-export function markRowAsProcessed(nRow) {
-  return api.get(`/import-csv/rows/${nRow}/add-store`)
-}
-
-export function markRowAsNotProcessed(nRow) {
-  return api.get(`/import-csv/rows/${nRow}/remove-store`);
-}
-// endregion
-
 // export function importOneCatalogue() {
 //   return api.post("/imports-ci-2023/");
 // }
@@ -423,19 +413,6 @@ export function previewCatalogueRequest(key, ignoreNFirstRows, nFirstRows, filte
   return api.get(`/import-ci-2023/catalogues/${key}/?action=preview&ignore_n_first_rows=${ignoreNFirstRows}&n_first_rows=${nFirstRows}&filter_by_verified_entry=${filterByVerifiedEntry}`)
 }
 
-// region too much
-export function goToNextNotMarkedRow(nRow) {
-  return api.get(`/import-csv/rows/${nRow}/go-to-next-not-marked-row`);
-}
-
-export function importAllCatalogue() {
-  return api.get("/import/all/");
-}
-
-export function deleteAllCatalogue() {
-  return api.delete("/import/catalogue/");
-}
-// endregion
 // endregion
 
 // region export

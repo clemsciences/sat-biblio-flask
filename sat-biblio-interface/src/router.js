@@ -35,11 +35,8 @@ import {isValidJwt} from "@/services/authentication.js";
 import {rights} from "@/services/rights.js";
 import store from "@/store.js";
 import UtilisateurView from "@/components/utilisateur/UtilisateurView.vue";
-// import ImportTester from "@/components/import/ImportTester.vue";
-import ImportTester2 from "@/components/import/ImportTester2.vue";
 import LireEmprunt from "@/components/emprunt/LireEmprunt.vue";
 import LogEventListView from "@/components/log/LogEventList.vue";
-import GlobalImport from "@/components/import/GlobalImport.vue";
 import ListDublinCoreEntriesView from "@/components/entrees/ListDublinCoreEntries.vue";
 // import ImageManager from "@/components/images/ImageManager.vue";
 import ImportExport from "@/components/import_export/ImportExport.vue";
@@ -194,18 +191,6 @@ const router = createRouter({
             path: "/gestionnaire-importation",
             component: ImportExport,
             meta: {needAuth: true, reachableFrom: rights.administrateur}
-        },
-        {
-            name: 'import-csv',
-            path: "/importation",
-            component: ImportTester2,
-            meta: {needAuth: false, reachableFrom: rights.lecteur}
-        },
-        {
-            name: 'import-csv-globale',
-            path: "/importation-globale",
-            component: GlobalImport,
-            meta: {needAuth: false, reachableFrom: rights.lecteur}
         },
         {
             name: "import-lists",
