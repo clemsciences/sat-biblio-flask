@@ -330,8 +330,8 @@ export function getBorrowingStateOfRecord(recordId) {
 // endregion
 
 // region contact
-export function sendMessageToAdmin(message, theSum, emailAddress) {
-  return api.post('/contact/send-message/', {message, theSum, emailAddress});
+export function sendMessageToAdmin(message, emailAddress, website, elapsedSeconds) {
+  return api.post('/contact/send-message/', {message, emailAddress, website, elapsedSeconds});
 }
 // endregion
 
