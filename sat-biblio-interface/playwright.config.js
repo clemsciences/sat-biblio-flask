@@ -4,6 +4,8 @@ export default defineConfig({
   testDir: './e2e',
   timeout: 15_000,
   retries: 0,
+  // En CI, on garde aussi un rapport HTML, publié comme artefact du workflow.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:5173',
     headless: true,
