@@ -43,22 +43,18 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    # Image officielle : navigateurs et dépendances système déjà installés, ce
+    # qui évite « playwright install --with-deps », cassé à chaque changement
+    # d'image ubuntu-latest. Sa version doit suivre celle de @playwright/test
+    # dans package-lock.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Setup Node JS"
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: sat-biblio-interface/package-lock.json
-
       - name: "Install packages"
         run: npm ci
-
-      - name: "Install Playwright browsers"
-        run: npx playwright install --with-deps chromium
 
       - name: "End-to-end tests (Playwright)"
         run: npm run test:e2e
